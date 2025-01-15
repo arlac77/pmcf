@@ -5,6 +5,9 @@
     "access": "public"
   },
   "description": "Poor mans configuration management",
+  "keywords": [
+    "config management"
+  ],
   "contributors": [
     {
       "name": "Markus Felten",
@@ -12,6 +15,14 @@
     }
   ],
   "license": "0BSD",
+  "bin": {
+    "gen-host-defs": "./bin/gen-host-defs",
+    "gen-location-defs": "./bin/gen-location-defs",
+    "gen-named-defs": "./bin/gen-named-defs",
+    "host-info": "./bin/host-info",
+    "location-info": "./bin/location-info",
+    "network": "./bin/network"
+  },
   "scripts": {
     "cover": "--overwrite-- c8 -x 'tests/**/*' --temp-directory build/tmp ava --timeout 4m tests/*-ava.mjs tests/*-ava-node.mjs && c8 report -r lcov -o build/coverage --temp-directory build/tmp",
     "test": "node --run test:ava",
