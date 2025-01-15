@@ -4,6 +4,7 @@ import { join } from "node:path";
 export class Base {
   owner;
   name;
+  description;
 
   static get typeName() {
     return "base";
@@ -31,8 +32,14 @@ export class Base {
 
   constructor(owner, data) {
     this.owner = owner;
-    if (data?.name) {
-      this.name = data.name;
+
+    if (data) {
+      if (data.name) {
+        this.name = data.name;
+      }
+      if (data.description) {
+        this.description = data.description;
+      }
     }
   }
 
@@ -52,6 +59,15 @@ export class Base {
       return this;
     }
     return this.owner.network;
+  }
+
+  #directory;
+  set directory(directory) {
+    this.#directory = directory;
+  }
+
+  get directory() {
+    return this.#directory || this.name;
   }
 
   expand(object) {
@@ -79,7 +95,9 @@ export class Base {
   toJSON() {
     return {
       name: this.name,
-      owner: this.owner.name
+      directory: this.directory,
+      owner: this.owner.name,
+      description: this.description
     };
   }
 }
@@ -92,7 +110,6 @@ export class World {
   directory;
   #byName = new Map();
 
-  /** @typedef {Map<string,Location>} */ #locations = new Map();
   /** @typedef {Map<string,Host>} */ #hosts = new Map();
 
   constructor(directory) {
@@ -114,7 +131,6 @@ export class World {
             await readFile(join(this.directory, name), "utf8")
           );
 
-          data.directory = baseName;
           data.name = baseName;
           const object = new type(this, data);
           this.#byName.set(data.name, object);
@@ -124,20 +140,17 @@ export class World {
   }
 
   async named(name) {
+    await this.load();
     return this.#byName.get(name);
   }
 
   async *locations() {
-    if (this.#locations.size > 0) {
-      for (const location of this.#locations.values()) {
-        yield location;
-      }
-    }
+    await this.load();
 
-    for await (const name of glob(Location.fileNameGlob, {
-      cwd: this.directory
-    })) {
-      yield this.location(name);
+    for (const object of this.#byName.values()) {
+      if (object instanceof Location) {
+        yield object;
+      }
     }
   }
 
@@ -162,29 +175,7 @@ export class World {
   }
 
   async location(name) {
-    name = Location.baseName(name);
-    if (name === undefined) {
-      return undefined;
-    }
-
-    let location = this.#locations.get(name);
-    if (location) {
-      return location;
-    }
-
-    const directory = join(this.directory, name);
-    try {
-      const data = JSON.parse(
-        await readFile(join(directory, Location.typeFileName), "utf8")
-      );
-
-      data.directory = directory;
-      data.name = name;
-
-      location = new Location(this, data);
-    } catch {} // TODO
-    this.#locations.set(name, location);
-    return location;
+    return this.#byName.get(Location.baseName(name));
   }
 
   async host(name) {
@@ -248,7 +239,6 @@ export class World {
 }
 
 export class Host extends Base {
-  directory;
   networkInterfaces = {};
   services = {};
   postinstall = [];
@@ -413,7 +403,6 @@ export class Host extends Base {
       ...super.toJSON(),
       ...Object.fromEntries(
         [
-          "directory",
           "location",
           "model",
           "os",
@@ -438,7 +427,6 @@ export class Host extends Base {
 export class Model extends Host {}
 
 export class Location extends Base {
-  directory;
   domain;
   dns;
   #administratorEmail;
@@ -608,6 +596,8 @@ export class Location extends Base {
 export class Network extends Base {
   #hosts = new Map();
   kind;
+  scope;
+  metric;
   ipv4;
   ipv4_netmask;
   subnet;
@@ -650,7 +640,10 @@ export class Network extends Base {
   toJSON() {
     return {
       ...super.toJSON(),
-      kind: this.kind
+      kind: this.kind,
+      ipv4: this.ipv4,
+      scope: this.scope,
+      metric: this.metric
     };
   }
 }
