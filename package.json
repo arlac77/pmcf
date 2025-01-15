@@ -24,18 +24,18 @@
     "network": "./bin/network"
   },
   "scripts": {
-    "cover": "--overwrite-- c8 -x 'tests/**/*' --temp-directory build/tmp ava --timeout 4m tests/*-ava.mjs tests/*-ava-node.mjs && c8 report -r lcov -o build/coverage --temp-directory build/tmp",
     "test": "node --run test:ava",
-    "test:ava": "--overwrite-- ava --timeout 4m tests/*-ava.mjs tests/*-ava-node.mjs",
-    "docs": "--overwrite-- documentation readme --section=API ./src**/*.mjs",
+    "test:ava": "ava --timeout 4m tests/*-ava.mjs tests/*-ava-node.mjs",
+    "cover": "c8 -x 'tests/**/*' --temp-directory build/tmp ava --timeout 4m tests/*-ava.mjs tests/*-ava-node.mjs && c8 report -r lcov -o build/coverage --temp-directory build/tmp",
+    "docs": "documentation readme --section=API ./src**/*.mjs",
     "lint": "node --run lint:docs",
-    "lint:docs": "--overwrite-- documentation lint ./src**/*.mjs"
+    "lint:docs": "documentation lint ./src**/*.mjs"
   },
   "devDependencies": {
-    "semantic-release": "^24.2.1",
-    "c8": "^10.1.3",
     "ava": "^6.2.0",
-    "documentation": "^14.0.3"
+    "c8": "^10.1.3",
+    "documentation": "^14.0.3",
+    "semantic-release": "^24.2.1"
   },
   "engines": {
     "node": ">=22.13.0"
