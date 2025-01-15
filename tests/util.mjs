@@ -1,5 +1,5 @@
 export function assertObject(t, object, expected, name) {
-  t.is(object.name, name);
+  t.is(object.name, name, name);
 
   if (expected.instanceof) {
     t.true(object instanceof expected.instanceof);
@@ -11,7 +11,7 @@ export function assertObject(t, object, expected, name) {
       case "instanceof":
         break;
       default:
-        t.is(object[k], v);
+        t.is(object[k], v, `${name}: ${k}`);
     }
   }
 }
