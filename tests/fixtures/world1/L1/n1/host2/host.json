@@ -1,0 +1,4 @@
+{
+  "os": "linux",
+  "extends": ["model/m1"]
+}
