@@ -1,7 +1,7 @@
 import { readFile, writeFile, mkdir, glob } from "node:fs/promises";
 import { join } from "node:path";
 
-class Base {
+export class Base {
   owner;
   name;
 
@@ -36,20 +36,21 @@ class Base {
     }
   }
 
-  get typeName()
-  {
+  get typeName() {
     return this.constructor.typeName;
   }
 
-  get host()
-  {
-    if(this instanceof Host) { return this; }
+  get host() {
+    if (this instanceof Host) {
+      return this;
+    }
     return this.owner.host;
   }
 
-  get network()
-  {
-    if(this instanceof Network) { return this; }
+  get network() {
+    if (this instanceof Network) {
+      return this;
+    }
     return this.owner.network;
   }
 
@@ -84,16 +85,46 @@ class Base {
 }
 
 export class World {
-  baseDir;
+  static get types() {
+    return _types;
+  }
+
+  directory;
+  #byName = new Map();
+
   /** @typedef {Map<string,Location>} */ #locations = new Map();
   /** @typedef {Map<string,Host>} */ #hosts = new Map();
 
-  constructor(baseDir) {
-    this.baseDir = baseDir;
+  constructor(directory) {
+    this.directory = directory;
   }
 
   get name() {
     return "";
+  }
+
+  async load() {
+    for (const type of Object.values(World.types)) {
+      for await (const name of glob(type.fileNameGlob, {
+        cwd: this.directory
+      })) {
+        const baseName = type.baseName(name);
+        if (!this.#byName.get(baseName)) {
+          const data = JSON.parse(
+            await readFile(join(this.directory, name), "utf8")
+          );
+
+          data.directory = baseName;
+          data.name = baseName;
+          const object = new type(this, data);
+          this.#byName.set(data.name, object);
+        }
+      }
+    }
+  }
+
+  async named(name) {
+    return this.#byName.get(name);
   }
 
   async *locations() {
@@ -104,7 +135,7 @@ export class World {
     }
 
     for await (const name of glob(Location.fileNameGlob, {
-      cwd: this.baseDir
+      cwd: this.directory
     })) {
       yield this.location(name);
     }
@@ -118,7 +149,7 @@ export class World {
     }
 
     for await (const name of glob(Host.fileNameGlob, {
-      cwd: this.baseDir
+      cwd: this.directory
     })) {
       yield this.host(name);
     }
@@ -141,7 +172,7 @@ export class World {
       return location;
     }
 
-    const directory = join(this.baseDir, name);
+    const directory = join(this.directory, name);
     try {
       const data = JSON.parse(
         await readFile(join(directory, Location.typeFileName), "utf8")
@@ -168,7 +199,7 @@ export class World {
       return host;
     }
 
-    const directory = join(this.baseDir, name);
+    const directory = join(this.directory, name);
     const data = JSON.parse(
       await readFile(join(directory, Host.typeFileName), "utf8")
     );
@@ -216,7 +247,7 @@ export class World {
   }
 }
 
-class Host extends Base {
+export class Host extends Base {
   directory;
   networkInterfaces = {};
   services = {};
@@ -404,9 +435,9 @@ class Host extends Base {
   }
 }
 
-class Model extends Host {}
+export class Model extends Host {}
 
-class Location extends Base {
+export class Location extends Base {
   directory;
   domain;
   dns;
@@ -574,7 +605,7 @@ class Location extends Base {
   }
 }
 
-class Network extends Base {
+export class Network extends Base {
   #hosts = new Map();
   kind;
   ipv4;
@@ -624,7 +655,7 @@ class Network extends Base {
   }
 }
 
-class Subnet extends Base {
+export class Subnet extends Base {
   networks = new Set();
 
   static get typeName() {
@@ -653,7 +684,7 @@ const ServiceTypes = {
   dhcp: {}
 };
 
-class Service extends Base {
+export class Service extends Base {
   alias;
   #weight;
   #priority;
@@ -732,6 +763,13 @@ class Service extends Base {
     };
   }
 }
+
+const _types = Object.fromEntries(
+  [Location, Network, Subnet, Host, /*Model,*/ Service].map(t => [
+    t.typeName,
+    t
+  ])
+);
 
 export async function writeLines(dir, name, lines) {
   await mkdir(dir, { recursive: true });
