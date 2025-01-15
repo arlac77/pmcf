@@ -1,0 +1,40 @@
+#!/usr/bin/env node
+
+import { cwd, argv } from "node:process";
+import { World } from "../src/model.mjs";
+
+const world = new World(argv[2] || cwd());
+const location = await world.location(argv[3] || "SW");
+
+function q(str) {
+  return str.match(/^\w+$/) ? str : `"${str}"`;
+}
+function id(str) {
+  return str.replaceAll(/-/g,'');
+}
+
+console.log("graph G {");
+console.log("  node [shape=record];");
+for await (const host of location.hosts()) {
+  console.log(
+    `  ${id(host.name)} [label="${host.name}|{${Object.entries(
+      host.networkInterfaces
+    )
+      .map(([n, i]) => `<${id(n)}> ${n}`)
+      .join("|")}}"];`
+  );
+}
+
+for await (const network of location.networks()) {
+  console.log(`  ${id(network.name)} [label="${network.name}\\n${network.ipv4}" shape=circle];`);
+
+  for await (const host of network.hosts()) {
+    for (const [n, i] of Object.entries(host.networkInterfaces)) {
+      if (i.network === network) {
+        console.log(`  ${id(network.name)} -- ${id(host.name)}:${id(n)};`);
+      }
+    }
+  }
+}
+
+console.log("}");

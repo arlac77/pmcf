@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+import { cwd, argv } from "node:process";
+import { World } from "../src/model.mjs";
+
+const world = new World(argv[2] || cwd());
+
+const locationName = argv[3];
+
+if (locationName) {
+  const location = await world.location(locationName);
+  await location.load();
+  console.log(location.toJSON());
+} else {
+  for await (const location of world.locations()) {
+    console.log(location.name);
+    console.log("  ", (await location.service({ type: "dns"}))?.toString());
+  }
+}

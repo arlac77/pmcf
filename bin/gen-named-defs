@@ -1,0 +1,211 @@
+#!/usr/bin/env node
+
+import { cwd, argv } from "node:process";
+import { join } from "node:path";
+import { createHmac } from "node:crypto";
+
+import { World, writeLines } from "../src/model.mjs";
+
+const world = new World(argv[2] || cwd());
+const location = await world.location(argv[3] || "SW");
+const targetDir = argv[4] || `pkg/mf-named-${location.name}`;
+const ttl = location.dnsRecordTTL;
+const updates = [
+  Math.ceil(Date.now() / 1000),
+  36000,
+  72000,
+  600000,
+  60000
+].join(" ");
+
+const NAME_LEN = 35;
+
+await generateNamedDefs(location, targetDir);
+
+console.log("depends", "mf-named");
+console.log("replaces", "mf-named-zones");
+console.log("description", `named defintions for ${location.name}`);
+
+/*for await (const location of world.locations()) {
+  await generateNamedDefs(location, targetDir);
+}*/
+
+async function generateNamedDefs(location, targetDir) {
+  const domain = location.domain;
+
+  if (domain) {
+    const zones = [];
+    const records = new Set();
+
+    const nameserver = (await location.service({ type: "dns" }))?.owner;
+    const rname = location.administratorEmail.replace(/@/,'.');
+
+    for await (const mail of location.services({ type: "smtp" })) {
+      records.add(
+        `${"@".padEnd(NAME_LEN, " ")} ${ttl} IN MX    ${mail.priority} ${
+          mail.owner.domainName
+        }.`
+      );
+    }
+
+    console.log(
+      location.name,
+      location.domain,
+      nameserver?.hostName,
+      rname
+    );
+
+    const catalogZone = {
+      id: `catalog.${domain}`,
+      file: `catalog.${domain}.zone`,
+      records: new Set([
+        `${"@".padEnd(NAME_LEN, " ")} ${ttl} IN SOA   ${
+          nameserver.domainName
+        }. ${rname}. (${updates})`,
+        `${"@".padEnd(NAME_LEN, " ")} ${ttl} IN NS    ${nameserver.ipAddress}.`,
+        `${("version."+domain+'.').padEnd(NAME_LEN, " ")}    IN TXT   "2"`
+      ])
+    };
+
+    const zone = {
+      id: domain,
+      file: `${domain}.zone`,
+      records: new Set([
+        `${"@".padEnd(NAME_LEN, " ")} ${ttl} IN SOA   ${
+          nameserver.domainName
+        }. ${rname}. (${updates})`,
+        `${"@".padEnd(NAME_LEN, " ")} ${ttl} IN NS    ${nameserver.ipAddress}.`,
+        ...records
+      ])
+    };
+    zones.push(zone);
+
+    for await (const subnet of location.subnets()) {
+      if (subnet.address) {
+        const reverse = reverseAddress(subnet.address);
+        const reverseArpa = reverseArpaAddress(subnet.address);
+        const zone = {
+          id: reverseArpa,
+          file: `${reverse}.zone`,
+          records: new Set([
+            `${"@".padEnd(NAME_LEN, " ")} ${ttl} IN SOA   ${
+              nameserver.domainName
+            }. ${rname}. (${updates})`,
+            `${(reverseArpa + ".").padEnd(NAME_LEN, " ")} ${ttl} IN NS    ${
+              nameserver.domainName
+            }.`
+          ])
+        };
+        zones.push(zone);
+        subnet.reverseZone = zone;
+      }
+    }
+
+    for await (const {
+      address,
+      networkInterface
+    } of location.networkAddresses()) {
+      const host = networkInterface.host;
+      zone.records.add(
+        `${host.hostName.padEnd(NAME_LEN, " ")} ${ttl} IN ${
+          address.indexOf(".") >= 0 ? "A   " : "AAAA"
+        }  ${normalizeIPAddress(address)}`
+      );
+
+      for (const service of Object.values(host.services)) {
+        if (service.master && service.alias) {
+          zone.records.add(
+            `${service.alias.padEnd(NAME_LEN, " ")} ${ttl} IN CNAME ${
+              host.domainName
+            }.`
+          );
+        }
+
+        if (service.prefix) {
+          zone.records.add(
+            `${`${service.prefix}.${host.domainName}.`.padEnd(
+              NAME_LEN,
+              " "
+            )} ${ttl} IN SRV   ${String(service.priority).padStart(4)} ${String(
+              service.weight
+            ).padStart(3)} ${String(service.port).padStart(5)} ${
+              host.domainName
+            }.`
+          );
+        }
+      }
+
+      const reverseZone = networkInterface.network.subnet?.reverseZone;
+
+      if (reverseZone && address.indexOf(".") >= 0) {
+        reverseZone.records.add(
+          `${(reverseArpaAddress(address) + ".").padEnd(
+            NAME_LEN,
+            " "
+          )} ${ttl} IN PTR   ${networkInterface.host.domainName}.`
+        );
+      }
+    }
+
+    const zoneConfig = [];
+
+    zones.push(catalogZone);
+
+    for (const zone of zones) {
+      if(zone !== catalogZone) {
+        const hash = createHmac("md5", zone.id).digest("hex");
+        catalogZone.records.add(`${hash}.zones.${domain}. IN PTR   ${zone.id}.`);
+      }
+
+      zoneConfig.push(`zone \"${zone.id}\" {`);
+      zoneConfig.push(`  type master;`);
+      zoneConfig.push(`  file \"${zone.file}\";`);
+
+      const u = location.dnsAllowedUpdates;
+      zoneConfig.push(`  allow-update { ${u.length ? u.join(';') : "none" }; };`);
+      zoneConfig.push(`  notify yes;`);
+      zoneConfig.push(`};`);
+      zoneConfig.push("");
+
+      writeLines(join(targetDir, "var/lib/named"), zone.file, zone.records);
+    }
+
+    writeLines(
+      join(targetDir, "etc/named.d/zones"),
+      `${domain}.zone.conf`,
+      zoneConfig
+    );
+  }
+}
+
+export function reverseAddress(address) {
+  if (address.indexOf(".") >= 0) {
+    return address.split(".").reverse().join(".");
+  }
+
+  return normalizeIPAddress(address)
+    .replaceAll(":", "")
+    .split("")
+    .reverse()
+    .join(".");
+}
+
+export function reverseArpaAddress(address) {
+  return (
+    reverseAddress(address) +
+    (address.indexOf(".") >= 0 ? ".in-addr.arpa" : ".ip6.arpa")
+  );
+}
+
+export function normalizeIPAddress(address) {
+  if (address.indexOf(".") >= 0) {
+    return address;
+  }
+  address = address.replace(/\/\d+$/, "");
+  const parts = address.split(":");
+  const i = parts.indexOf("");
+  if (i >= 0) {
+    parts.splice(i, 1, ..."0".repeat(9 - parts.length));
+  }
+  return parts.map(s => s.padStart(4, "0")).join(":");
+}

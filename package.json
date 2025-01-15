@@ -6,7 +6,8 @@
   },
   "description": "Poor mans configuration management",
   "keywords": [
-    "config management"
+    "config management",
+    "config"
   ],
   "contributors": [
     {
