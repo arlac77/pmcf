@@ -1,17 +1,23 @@
 export function assertObject(t, object, expected, name) {
   t.is(object?.name, name, name);
 
-  if (expected.instanceof) {
-    t.true(object instanceof expected.instanceof, `instanceof ${expected.instanceof.name}`);
-  }
-
   for (const [k, v] of Object.entries(expected)) {
     switch (k) {
       case "name":
+        break;
       case "instanceof":
+        t.true(
+          object instanceof expected.instanceof,
+          `instanceof ${expected.instanceof.name}`
+        );
         break;
       default:
-        t.is(object[k], v, `${name}: ${k}`);
+        if(typeof v === "object" && v.name ) {
+          t.is(object[k].name, v.name, `${name}: ${k}.name`);
+        }
+        else {
+          t.is(object[k], v, `${name}: ${k}`);
+        }
     }
   }
 }

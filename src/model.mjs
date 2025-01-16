@@ -51,6 +51,17 @@ export class Base {
     return this.constructor.typeName;
   }
 
+  get world() {
+    return this.owner.world;
+  }
+
+  get location() {
+    if (this instanceof Location) {
+      return this;
+    }
+    return this.owner.location;
+  }
+
   get host() {
     if (this instanceof Host) {
       return this;
@@ -58,11 +69,8 @@ export class Base {
     return this.owner.host;
   }
 
-  get network() {
-    if (this instanceof Network) {
-      return this;
-    }
-    return this.owner.network;
+  network(name) {
+    return this.owner.network(name);
   }
 
   #directory;
@@ -121,6 +129,10 @@ export class World {
     return "";
   }
 
+  get world() {
+    return this;
+  }
+
   async _loadType(name, type) {
     const baseName = type.baseName(name);
 
@@ -134,10 +146,21 @@ export class World {
         )
       );
 
+      let owner;
+      let path = baseName.split("/");
+
+      if (path.length > 1 && path[0] !== "model" && path[0] != "services") {
+        // TODO
+        path.length -= 1;
+        owner = await this._loadType(path.join("/"), Location);
+      } else {
+        owner = this;
+      }
+
       data.name = baseName;
 
       type = await type.prepareData(this, data);
-      object = new type(this, data);
+      object = new type(owner, data);
       this.#byName.set(data.name, object);
     }
 
@@ -193,6 +216,9 @@ export class World {
     return this._loadType(name, Host);
   }
 
+  addHost(host) {}
+  network(name) {}
+
   async *subnets() {
     for await (const location of this.locations()) {
       yield* location.subnets();
@@ -212,7 +238,6 @@ export class Host extends Base {
   networkInterfaces = {};
   services = {};
   postinstall = [];
-  location;
   #extends = [];
   #provides = new Set();
   #replaces = new Set();
@@ -221,6 +246,7 @@ export class Host extends Base {
   #os;
   #distribution;
   #deployment;
+  #location;
 
   static get typeName() {
     return "host";
@@ -245,11 +271,15 @@ export class Host extends Base {
   constructor(owner, data) {
     super(owner, data);
 
+    if (data.location !== undefined) {
+      this.#location = data.location;
+      delete data.location;
+    }
+
     if (data.deployment !== undefined) {
       this.#deployment = data.deployment;
       delete data.deployment;
     }
-
     if (data.extends !== undefined) {
       this.#extends = data.extends;
       delete data.extends;
@@ -281,13 +311,13 @@ export class Host extends Base {
 
     Object.assign(this, { services: {}, networkInterfaces: {} }, data);
 
-    this.location?.addHost(this);
+    owner.addHost(this);
 
     for (const [name, iface] of Object.entries(this.networkInterfaces)) {
       iface.host = this;
       iface.name = name;
       if (iface.network) {
-        iface.network = this.location?.network(iface.network);
+        iface.network = this.network(iface.network);
       }
     }
 
@@ -305,6 +335,10 @@ export class Host extends Base {
 
   get extends() {
     return this.#extends.map(e => this.expand(e));
+  }
+
+  get location() {
+    return this.#location || super.location;
   }
 
   get provides() {
