@@ -6,10 +6,10 @@ import { world1 } from "./fixtures.mjs";
 test("Host basics", async t => {
   const world = new World(new URL("fixtures/world1", import.meta.url).pathname);
 
-  assertObject(
+  await assertObject(
     t,
-    await world.host(/*named*/ "L1/host1"),
-    ...world1(world, "L1/host1")
+    await world.host("L1/host1"),
+    world1(world, "L1/host1")
   );
 });
 

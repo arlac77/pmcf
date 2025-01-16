@@ -4,7 +4,7 @@ import { Location, Network, Host, Model, World } from "../src/model.mjs";
  *
  * @param {World} world
  * @param {string|string[]} filter
- * @returns {Object|Array}
+ * @returns {Object}
  */
 export function world1(world, filter) {
   const L1 = { instanceof: Location, owner: world, description: "somewhere" };
@@ -24,12 +24,21 @@ export function world1(world, filter) {
     ipv4: "192.168.1.0/24",
     ipv4_netmask: "24"
   };
-  L1.networks = [L1n1];
+  const L1n2 = {
+    instanceof: Network,
+    owner: L1,
+    scope: "site",
+    kind: "ethernet",
+    metric: 1010,
+    ipv4: "192.168.1.0/24",
+    ipv4_netmask: "24"
+  };
+  L1.networks = [L1n1 ,L1n2];
 
   const all = {
     L1,
-    L2,
     "L1/n1": L1n1,
+    "L1/n2": L1n2,
     "L1/n1/host2": {
       instanceof: Host,
       owner: L1n1,
@@ -42,6 +51,7 @@ export function world1(world, filter) {
       location: L1,
       os: "linux"
     },
+    L2,
     "model/m1": {
       instanceof: Model,
       owner: world,
@@ -54,7 +64,7 @@ export function world1(world, filter) {
   }
 
   if (typeof filter === "string") {
-    return [all[filter], filter];
+    return all[filter];
   }
 
   const filtered = {};
