@@ -5,10 +5,9 @@ import { createHmac } from "node:crypto";
 import { writeLines } from "../src/model.mjs";
 import { prepare } from "../src/cmd.mjs";
 
-const { world, args } = prepare();
+const { world, args, options } = prepare();
 
 const location = await world.location(args[0] || "SW");
-const targetDir = args[1] || `pkg/mf-named-${location.name}`;
 const ttl = location.dnsRecordTTL;
 const updates = [
   Math.ceil(Date.now() / 1000),
@@ -20,7 +19,7 @@ const updates = [
 
 const NAME_LEN = 35;
 
-await generateNamedDefs(location, targetDir);
+await generateNamedDefs(location, options.output);
 
 console.log("depends", "mf-named");
 console.log("replaces", "mf-named-zones");

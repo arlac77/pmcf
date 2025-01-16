@@ -5,18 +5,16 @@ import { join } from "node:path";
 import { writeLines, sectionLines } from "../src/model.mjs";
 import { prepare } from "../src/cmd.mjs";
 
-const { world, args } = prepare();
+const { world, args, options } = prepare();
 
 const hostName = args[0];
 
 const host = await world.host(hostName);
 
-const targetDir = args[1] || `pkg/host-${host.hostName}`;
-
-await generateNetworkDefs(host, targetDir);
-await generateMachineInfo(host, targetDir);
-await copySshKeys(host, targetDir);
-await generateKnownHosts(world.hosts(), join(targetDir, "root", ".ssh"));
+await generateNetworkDefs(host, options.output);
+await generateMachineInfo(host, options.output);
+await copySshKeys(host, options.output);
+await generateKnownHosts(world.hosts(), join(options.output, "root", ".ssh"));
 
 console.log("provides", "host", ...host.provides);
 console.log("depends", `location-${host.location.name}`, ...host.depends);

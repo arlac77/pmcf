@@ -161,7 +161,7 @@ export class World {
 
       type = await type.prepareData(this, data);
       object = new type(owner, data);
-      this.#byName.set(data.name, object);
+      this.#byName.set(object.name, object);
     }
 
     return object;

@@ -5,12 +5,11 @@ import { join } from "node:path";
 import { writeLines, sectionLines } from "../src/model.mjs";
 import { prepare } from "../src/cmd.mjs";
 
-const { world, args } = prepare();
+const { world, args, options } = prepare();
 
 const location = await world.location(args[0] || "SW");
-const targetDir = args[1];
 
-await generateLocationDefs(location, targetDir);
+await generateLocationDefs(location, options.output);
 
 console.log(
   "provides",
