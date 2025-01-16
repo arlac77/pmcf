@@ -18,7 +18,7 @@ export class Base {
     return "**/" + this.typeFileName;
   }
 
-  static refinedType(data) {
+  static async prepareData(world, data) {
     return this;
   }
 
@@ -121,23 +121,35 @@ export class World {
     return "";
   }
 
+  async _loadType(name, type) {
+    const baseName = type.baseName(name);
+
+    let object = this.#byName.get(baseName);
+
+    if (!object) {
+      const data = JSON.parse(
+        await readFile(
+          join(this.directory, baseName, type.typeFileName),
+          "utf8"
+        )
+      );
+
+      data.name = baseName;
+
+      type = await type.prepareData(this, data);
+      object = new type(this, data);
+      this.#byName.set(data.name, object);
+    }
+
+    return object;
+  }
+
   async load() {
     for (let type of Object.values(World.types)) {
       for await (const name of glob(type.fileNameGlob, {
         cwd: this.directory
       })) {
-        const baseName = type.baseName(name);
-        if (!this.#byName.get(baseName)) {
-          const data = JSON.parse(
-            await readFile(join(this.directory, name), "utf8")
-          );
-
-          data.name = baseName;
-
-          type = type.refinedType(data);
-          const object = new type(this, data);
-          this.#byName.set(data.name, object);
-        }
+        await this._loadType(name, type);
       }
     }
   }
@@ -174,34 +186,11 @@ export class World {
   }
 
   async location(name) {
-    await this.load();
-    return this.#byName.get(Location.baseName(name));
+    return this._loadType(name, Location);
   }
 
   async host(name) {
-    await this.load();
-    return this.#byName.get(Host.baseName(name));
-    /*
-    if (!data.name) {
-      data.name = name;
-    } else {
-      name = data.name;
-    }
-
-    if (!data.location) {
-      const parts = name.split(/\//);
-
-      if (parts.length > 1 && parts[0] !== "services" && parts[0] !== "model") {
-        data.location = parts[0];
-      }
-    }
-
-    data.location = await this.location(data.location);
-
-    if (data.extends) {
-      data.extends = await Promise.all(data.extends.map(e => this.host(e)));
-    }
-    */
+    return this._loadType(name, Host);
   }
 
   async *subnets() {
@@ -237,7 +226,15 @@ export class Host extends Base {
     return "host";
   }
 
-  static refinedType(data) {
+  static async prepareData(world, data) {
+    if (data.location) {
+      data.location = await world.location(data.location);
+    }
+
+    if (data.extends) {
+      data.extends = await Promise.all(data.extends.map(e => world.host(e)));
+    }
+
     if (data.name?.indexOf("model/") >= 0) {
       return Model;
     }
