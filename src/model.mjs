@@ -18,6 +18,10 @@ export class Base {
     return "**/" + this.typeFileName;
   }
 
+  static refinedType(data) {
+    return this;
+  }
+
   static baseName(name) {
     if (!name) {
       return undefined;
@@ -121,7 +125,7 @@ export class World {
   }
 
   async load() {
-    for (const type of Object.values(World.types)) {
+    for (let type of Object.values(World.types)) {
       for await (const name of glob(type.fileNameGlob, {
         cwd: this.directory
       })) {
@@ -132,6 +136,11 @@ export class World {
           );
 
           data.name = baseName;
+
+          const t2 = type.refinedType(data);
+          if (t2) {
+            type = t2;
+          }
           const object = new type(this, data);
           this.#byName.set(data.name, object);
         }
@@ -155,16 +164,12 @@ export class World {
   }
 
   async *hosts() {
-    if (this.#hosts.size > 0) {
-      for (const host of this.#hosts.values()) {
-        yield host;
-      }
-    }
+    await this.load();
 
-    for await (const name of glob(Host.fileNameGlob, {
-      cwd: this.directory
-    })) {
-      yield this.host(name);
+    for (const object of this.#byName.values()) {
+      if (object instanceof Host) {
+        yield object;
+      }
     }
   }
 
@@ -175,27 +180,14 @@ export class World {
   }
 
   async location(name) {
+    await this.load();
     return this.#byName.get(Location.baseName(name));
   }
 
   async host(name) {
-    name = Host.baseName(name);
-
-    if (name === undefined) {
-      return undefined;
-    }
-
-    let host = this.#hosts.get(name);
-    if (host) {
-      return host;
-    }
-
-    const directory = join(this.directory, name);
-    const data = JSON.parse(
-      await readFile(join(directory, Host.typeFileName), "utf8")
-    );
-
-    data.directory = directory;
+    await this.load();
+    return this.#byName.get(Host.baseName(name));
+    /*
 
     if (!data.name) {
       data.name = name;
@@ -216,11 +208,7 @@ export class World {
     if (data.extends) {
       data.extends = await Promise.all(data.extends.map(e => this.host(e)));
     }
-
-    host = new (data.name.indexOf("model/") >= 0 ? Model : Host)(this, data);
-
-    this.#hosts.set(name, host);
-    return host;
+    */
   }
 
   async *subnets() {
@@ -254,6 +242,14 @@ export class Host extends Base {
 
   static get typeName() {
     return "host";
+  }
+
+  static refinedType(data) {
+    if (data.name?.indexOf("model/") >= 0) {
+      return Model;
+    }
+
+    return this;
   }
 
   constructor(owner, data) {

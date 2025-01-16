@@ -1,8 +1,8 @@
 export function assertObject(t, object, expected, name) {
-  t.is(object.name, name, name);
+  t.is(object?.name, name, name);
 
   if (expected.instanceof) {
-    t.true(object instanceof expected.instanceof);
+    t.true(object instanceof expected.instanceof, `instanceof ${expected.instanceof.name}`);
   }
 
   for (const [k, v] of Object.entries(expected)) {
