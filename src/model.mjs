@@ -137,10 +137,7 @@ export class World {
 
           data.name = baseName;
 
-          const t2 = type.refinedType(data);
-          if (t2) {
-            type = t2;
-          }
+          type = type.refinedType(data);
           const object = new type(this, data);
           this.#byName.set(data.name, object);
         }
