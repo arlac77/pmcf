@@ -6,7 +6,7 @@
   },
   "exports": {
     ".": {
-      "default": "{{main}}"
+      "default": "./src/model.mjs"
     }
   },
   "description": "Poor mans configuration management",
@@ -22,12 +22,11 @@
   ],
   "license": "0BSD",
   "bin": {
-    "gen-host-defs": "./bin/gen-host-defs",
-    "gen-location-defs": "./bin/gen-location-defs",
-    "gen-named-defs": "./bin/gen-named-defs",
-    "host-info": "./bin/host-info",
-    "location-info": "./bin/location-info",
-    "network": "./bin/network"
+    "pmcf-host-defs": "./bin/pmcf-host-defs",
+    "pmcf-location-defs": "./bin/pmcf-location-defs",
+    "pmcf-named-defs": "./bin/pmcf-named-defs",
+    "pmcf-info": "./bin/pmcf-info",
+    "pmcf-network": "./bin/pmcf-network"
   },
   "scripts": {
     "prepare": "node --run prepare:typescript",
@@ -41,6 +40,7 @@
     "lint:typescript": "tsc --allowJs --checkJs --noEmit --resolveJsonModule --target es2024 --lib es2024 -m esnext --module nodenext --moduleResolution nodenext ./src**/*.mjs"
   },
   "devDependencies": {
+    "@types/node": "^22.10.7",
     "ava": "^6.2.0",
     "c8": "^10.1.3",
     "documentation": "^14.0.3",

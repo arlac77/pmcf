@@ -114,8 +114,6 @@ export class World {
   directory;
   #byName = new Map();
 
-  /** @typedef {Map<string,Host>} */ #hosts = new Map();
-
   constructor(directory) {
     this.directory = directory;
   }
@@ -185,7 +183,6 @@ export class World {
     await this.load();
     return this.#byName.get(Host.baseName(name));
     /*
-
     if (!data.name) {
       data.name = name;
     } else {
