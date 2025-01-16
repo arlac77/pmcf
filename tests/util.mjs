@@ -1,5 +1,7 @@
-export function assertObject(t, object, expected, name) {
-  t.is(object?.name, name, name);
+export async function assertObject(t, object, expected, name) {
+  if (name) {
+    t.is(object?.name, name, name);
+  }
 
   for (const [k, v] of Object.entries(expected)) {
     switch (k) {
@@ -12,11 +14,36 @@ export function assertObject(t, object, expected, name) {
         );
         break;
       default:
-        if(typeof v === "object" && v.name ) {
-          t.is(object[k].name, v.name, `${name}: ${k}.name`);
+        let value = object[k];
+
+        if (typeof value === "function") {
+          value = object[k]();
+          if (value.next) {
+            /*const result = [];
+            for await( const x of value) {
+              result.push(x);
+            }
+
+            value = result;
+            */
+            //console.log("ASYNC ITER",await value.next());
+            const res = await value.next();
+            value = res.value;
+            value = value ? [value] : [];
+          }
         }
-        else {
-          t.is(object[k], v, `${name}: ${k}`);
+        if (Array.isArray(v)) {
+          let i = 0;
+          for (const vv of v) {
+            await assertObject(t, value[i], vv);
+            i++;
+          }
+        } else {
+          if (typeof v === "object" && v.name) {
+            t.is(value.name, v.name, `${name}: ${k}.name`);
+          } else {
+            t.is(value, v, `${name}: ${k}`);
+          }
         }
     }
   }
@@ -30,6 +57,6 @@ export async function assertObjects(t, iterator, expected) {
   }
 
   for (const [name, exp] of Object.entries(expected)) {
-    assertObject(t, objects.get(name), exp, name);
+    await assertObject(t, objects.get(name), exp, name);
   }
 }

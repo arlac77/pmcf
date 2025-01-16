@@ -24,6 +24,7 @@ export function world1(world, filter) {
     ipv4: "192.168.1.0/24",
     ipv4_netmask: "24"
   };
+  L1.networks = [L1n1];
 
   const all = {
     L1,

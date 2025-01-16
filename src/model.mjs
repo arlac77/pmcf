@@ -69,7 +69,7 @@ export class Base {
     return this.owner.host;
   }
 
-  network(name) {
+  async network(name) {
     return this.owner.network(name);
   }
 
@@ -217,6 +217,7 @@ export class World {
   }
 
   addHost(host) {}
+  addNetwork(network) {}
   network(name) {}
 
   async *subnets() {
@@ -487,10 +488,6 @@ export class Location extends Base {
     }
   }
 
-  async load() {
-    for await (const host of this.owner.hosts());
-  }
-
   async *hosts() {
     for await (const host of this.owner.hosts()) {
       if (host.location === this) {
@@ -525,12 +522,7 @@ export class Location extends Base {
     }
   }
 
-  network(name) {
-    return this.#networks.get(name);
-  }
-
   async *networkAddresses() {
-    await this.load();
     for await (const host of this.hosts()) {
       for (const networkAddresses of host.networkAddresses()) {
         yield networkAddresses;
@@ -538,15 +530,17 @@ export class Location extends Base {
     }
   }
 
+  async network(name) {
+    return this.#networks.get(name);
+  }
+
   async *networks() {
-    await this.load();
     for (const network of this.#networks.values()) {
       yield network;
     }
   }
 
   async *subnets() {
-    await this.load();
     for (const subnet of this.#subnets.values()) {
       yield subnet;
     }
@@ -560,6 +554,11 @@ export class Location extends Base {
     let network = this.#networks.get(data.name);
     if (network) {
       return network;
+    }
+
+    if(data instanceof Network) {
+      this.#networks.set(data.name, data);
+      return data;
     }
 
     network = new Network(this, data);
@@ -605,7 +604,7 @@ export class Location extends Base {
   }
 
   get propertyNames() {
-    return [...super.propertyNames, "domain"];
+    return [...super.propertyNames, "domain" /*, "hosts"*/];
   }
 
   toJSON() {
@@ -640,6 +639,8 @@ export class Network extends Base {
         this.ipv4_netmask = m[1];
       }
     }
+
+    owner.addNetwork(this);
   }
 
   get subnetAddress() {
@@ -808,8 +809,13 @@ function extractFrom(object, propertyNames) {
   const json = {};
   for (const p of propertyNames) {
     const value = object[p];
+
     if (value !== undefined) {
-      json[p] = value;
+      if (value instanceof Base) {
+        json[p] = { name: object.name };
+      } else {
+        json[p] = value;
+      }
     }
   }
   return json;
