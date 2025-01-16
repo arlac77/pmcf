@@ -57,7 +57,7 @@ async function generateLocationDefs(location, dir) {
   await mkdir(locationDir, { recursive: true });
 
   copyFile(
-    join(location.directory, "location.json"),
+    join(world.directory, location.directory, "location.json"),
     join(locationDir, "location.json")
   );
 }
