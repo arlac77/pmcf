@@ -1,5 +1,11 @@
 import { Location, Network, Host, Model } from "../src/model.mjs";
 
+/**
+ * 
+ * @param {*} world 
+ * @param {*} filter 
+ * @returns {Object|Array}
+ */
 export function world1(world, filter) {
   const L1 = { instanceof: Location, owner: world, description: "somewhere" };
   const L2 = { instanceof: Location, description: "somewhere else" };
@@ -35,6 +41,10 @@ export function world1(world, filter) {
       chassis: "server"
     }
   };
+
+  if (typeof filter === "string") {
+    return [all[filter], filter];
+  }
 
   const filtered = {};
   for (const [k, v] of Object.entries(all)) {

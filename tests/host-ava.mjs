@@ -9,8 +9,7 @@ test("Host basics", async t => {
   assertObject(
     t,
     await world.host(/*named*/ "L1/host1"),
-    world1(world)["L1/host1"],
-    "L1/host1"
+    ...world1(world, "L1/host1")
   );
 });
 

@@ -5,7 +5,7 @@ import { World } from "../src/model.mjs";
 
 test("Location basics", async t => {
   const world = new World(new URL("fixtures/world1", import.meta.url).pathname);
-  assertObject(t, await world.named("L1"), world1(world)["L1"], "L1");
+  assertObject(t, await world.named("L1"), ...world1(world, "L1"));
 });
 
 test("Location all", async t => {
