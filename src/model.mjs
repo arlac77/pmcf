@@ -96,13 +96,12 @@ export class Base {
     return this.typeName + ":" + this.owner.name + "/" + this.name;
   }
 
+  get propertyNames() {
+    return ["name", "description", "directory", "owner"];
+  }
+
   toJSON() {
-    return {
-      name: this.name,
-      directory: this.directory,
-      owner: this.owner.name,
-      description: this.description
-    };
+    return extractFrom(this, this.propertyNames);
   }
 }
 
@@ -388,24 +387,24 @@ export class Host extends Base {
     return readFile(join(this.directory, `ssh_host_${type}_key.pub`), "utf8");
   }
 
+  get propertyNames() {
+    return [
+      ...super.propertyNames,
+      "os",
+      "distribution",
+      "deployment",
+      "master",
+      "location",
+      "model",
+      "replaces",
+      "depends",
+      "networkInterfaces"
+    ];
+  }
+
   toJSON() {
     return {
       ...super.toJSON(),
-      ...Object.fromEntries(
-        [
-          "location",
-          "model",
-          "os",
-          "distribution",
-          "deployment",
-          "replaces",
-          "depends",
-          "master",
-          "networkInterfaces"
-        ]
-          .filter(p => this[p])
-          .map(p => [p, this[p]])
-      ),
       extends: this.extends.map(host => host.name),
       services: Object.fromEntries(
         Object.values(this.services).map(s => [s.name, s.toJSON()])
@@ -574,10 +573,13 @@ export class Location extends Base {
     return this.#administratorEmail || "admin@" + this.domain;
   }
 
+  get propertyNames() {
+    return [...super.propertyNames, "domain"];
+  }
+
   toJSON() {
     return {
       ...super.toJSON(),
-      domain: this.domain,
       hosts: [...this.#hosts.keys()].sort()
     };
   }
@@ -627,14 +629,8 @@ export class Network extends Base {
     this.#hosts.set(host.name, host);
   }
 
-  toJSON() {
-    return {
-      ...super.toJSON(),
-      kind: this.kind,
-      ipv4: this.ipv4,
-      scope: this.scope,
-      metric: this.metric
-    };
+  get propertyNames() {
+    return [...super.propertyNames, "kind", "ipv4", "scope", "metric"];
   }
 }
 
@@ -734,16 +730,16 @@ export class Service extends Base {
     return this.#type || this.name;
   }
 
-  toJSON() {
-    return {
-      ...super.toJSON(),
-      ipAddress: this.ipAddress,
-      alias: this.alias,
-      type: this.type,
-      master: this.master,
-      priority: this.priority,
-      weight: this.weight
-    };
+  get propertyNames() {
+    return [
+      ...super.propertyNames,
+      "ipAddress",
+      "alias",
+      "type",
+      "master",
+      "priority",
+      "weight"
+    ];
   }
 }
 
@@ -775,4 +771,15 @@ export function sectionLines(sectionName, values) {
   }
 
   return lines;
+}
+
+function extractFrom(object, propertyNames) {
+  const json = {};
+  for (const p of propertyNames) {
+    const value = object[p];
+    if (value !== undefined) {
+      json[p] = value;
+    }
+  }
+  return json;
 }
