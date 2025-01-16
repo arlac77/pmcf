@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
-import { cwd, argv } from "node:process";
-import { World } from "../src/model.mjs";
+import { prepare } from "../src/cmd.mjs";
 
-const world = new World(argv[2] || cwd());
-const location = await world.location(argv[3] || "SW");
+const { world, args } = prepare();
+
+const location = await world.location(args[0] || "SW");
 
 function q(str) {
   return str.match(/^\w+$/) ? str : `"${str}"`;
 }
 function id(str) {
-  return str.replaceAll(/-/g,'');
+  return str.replaceAll(/-/g, "");
 }
 
 console.log("graph G {");
@@ -26,7 +26,11 @@ for await (const host of location.hosts()) {
 }
 
 for await (const network of location.networks()) {
-  console.log(`  ${id(network.name)} [label="${network.name}\\n${network.ipv4}" shape=circle];`);
+  console.log(
+    `  ${id(network.name)} [label="${network.name}\\n${
+      network.ipv4
+    }" shape=circle];`
+  );
 
   for await (const host of network.hosts()) {
     for (const [n, i] of Object.entries(host.networkInterfaces)) {

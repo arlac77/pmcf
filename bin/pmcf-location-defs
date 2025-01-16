@@ -1,17 +1,23 @@
 #!/usr/bin/env node
 
-import { cwd, argv } from "node:process";
 import { mkdir, copyFile } from "node:fs/promises";
 import { join } from "node:path";
-import { World, writeLines, sectionLines } from "../src/model.mjs";
+import { writeLines, sectionLines } from "../src/model.mjs";
+import { prepare } from "../src/cmd.mjs";
 
-const world = new World(argv[2] || cwd());
-const location = await world.location(argv[3] || "SW");
-const targetDir = argv[4];
+const { world, args } = prepare();
+
+const location = await world.location(args[0] || "SW");
+const targetDir = args[1];
 
 await generateLocationDefs(location, targetDir);
 
-console.log("provides", "location", "mf-location", `mf-location-${location.name}`);
+console.log(
+  "provides",
+  "location",
+  "mf-location",
+  `mf-location-${location.name}`
+);
 console.log("replaces", `mf-location-${location.name}`);
 console.log("description", `location definitions for ${location.name}`);
 

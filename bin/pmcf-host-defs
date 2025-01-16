@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 
 import { writeFile, mkdir, copyFile, glob } from "node:fs/promises";
-import { cwd, argv } from "node:process";
 import { join } from "node:path";
-import { World, writeLines, sectionLines } from "../src/model.mjs";
+import { writeLines, sectionLines } from "../src/model.mjs";
+import { prepare } from "../src/cmd.mjs";
 
-const world = new World(argv[2] || cwd());
+const { world, args } = prepare();
 
-const hostName = argv[3];
+const hostName = args[0];
 
 const host = await world.host(hostName);
 
-const targetDir = argv[4] || `pkg/host-${host.hostName}`;
+const targetDir = args[1] || `pkg/host-${host.hostName}`;
 
 await generateNetworkDefs(host, targetDir);
 await generateMachineInfo(host, targetDir);

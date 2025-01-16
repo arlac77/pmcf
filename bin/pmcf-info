@@ -1,10 +1,8 @@
 #!/usr/bin/env node
-import { cwd, argv } from "node:process";
-import { World } from "../src/model.mjs";
+import { prepare } from "../src/cmd.mjs";
+const { world, args } = prepare();
 
-const world = new World(argv[2] || cwd());
-
-const objectName = argv[3];
+const objectName = args[0];
 
 if (objectName) {
   const object = await world.named(objectName);

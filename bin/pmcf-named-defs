@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
-import { cwd, argv } from "node:process";
 import { join } from "node:path";
 import { createHmac } from "node:crypto";
+import { writeLines } from "../src/model.mjs";
+import { prepare } from "../src/cmd.mjs";
 
-import { World, writeLines } from "../src/model.mjs";
+const { world, args } = prepare();
 
-const world = new World(argv[2] || cwd());
-const location = await world.location(argv[3] || "SW");
-const targetDir = argv[4] || `pkg/mf-named-${location.name}`;
+const location = await world.location(args[0] || "SW");
+const targetDir = args[1] || `pkg/mf-named-${location.name}`;
 const ttl = location.dnsRecordTTL;
 const updates = [
   Math.ceil(Date.now() / 1000),
@@ -38,7 +38,7 @@ async function generateNamedDefs(location, targetDir) {
     const records = new Set();
 
     const nameserver = (await location.service({ type: "dns" }))?.owner;
-    const rname = location.administratorEmail.replace(/@/,'.');
+    const rname = location.administratorEmail.replace(/@/, ".");
 
     for await (const mail of location.services({ type: "smtp" })) {
       records.add(
@@ -48,12 +48,7 @@ async function generateNamedDefs(location, targetDir) {
       );
     }
 
-    console.log(
-      location.name,
-      location.domain,
-      nameserver?.hostName,
-      rname
-    );
+    console.log(location.name, location.domain, nameserver?.hostName, rname);
 
     const catalogZone = {
       id: `catalog.${domain}`,
@@ -63,7 +58,7 @@ async function generateNamedDefs(location, targetDir) {
           nameserver.domainName
         }. ${rname}. (${updates})`,
         `${"@".padEnd(NAME_LEN, " ")} ${ttl} IN NS    ${nameserver.ipAddress}.`,
-        `${("version."+domain+'.').padEnd(NAME_LEN, " ")}    IN TXT   "2"`
+        `${("version." + domain + ".").padEnd(NAME_LEN, " ")}    IN TXT   "2"`
       ])
     };
 
@@ -152,9 +147,11 @@ async function generateNamedDefs(location, targetDir) {
     zones.push(catalogZone);
 
     for (const zone of zones) {
-      if(zone !== catalogZone) {
+      if (zone !== catalogZone) {
         const hash = createHmac("md5", zone.id).digest("hex");
-        catalogZone.records.add(`${hash}.zones.${domain}. IN PTR   ${zone.id}.`);
+        catalogZone.records.add(
+          `${hash}.zones.${domain}. IN PTR   ${zone.id}.`
+        );
       }
 
       zoneConfig.push(`zone \"${zone.id}\" {`);
@@ -162,7 +159,9 @@ async function generateNamedDefs(location, targetDir) {
       zoneConfig.push(`  file \"${zone.file}\";`);
 
       const u = location.dnsAllowedUpdates;
-      zoneConfig.push(`  allow-update { ${u.length ? u.join(';') : "none" }; };`);
+      zoneConfig.push(
+        `  allow-update { ${u.length ? u.join(";") : "none"}; };`
+      );
       zoneConfig.push(`  notify yes;`);
       zoneConfig.push(`};`);
       zoneConfig.push("");
