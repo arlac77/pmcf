@@ -1,5 +1,6 @@
 [![npm](https://img.shields.io/npm/v/pmcf.svg)](https://www.npmjs.com/package/pmcf)
 [![License](https://img.shields.io/badge/License-0BSD-blue.svg)](https://spdx.org/licenses/0BSD.html)
+[![Typed with TypeScript](https://flat.badgen.net/badge/icon/Typed?icon=typescript\&label\&labelColor=blue\&color=555555)](https://typescriptlang.org)
 [![bundlejs](https://deno.bundlejs.com/?q=pmcf\&badge=detailed)](https://bundlejs.com/?q=pmcf)
 [![downloads](http://img.shields.io/npm/dm/pmcf.svg?style=flat-square)](https://npmjs.org/package/pmcf)
 [![GitHub Issues](https://img.shields.io/github/issues/arlac77/pmcf.svg?style=flat-square)](https://github.com/arlac77/pmcf/issues)
