@@ -113,20 +113,22 @@ export class Base {
   }
 }
 
-export class World {
+export class Owner extends Base {
+  addHost(host) {}
+  addNetwork(network) {}
+  async network(name) {}
+}
+
+export class World extends Owner {
   static get types() {
     return _types;
   }
 
-  directory;
   #byName = new Map();
 
   constructor(directory) {
+    super(undefined, { name: "" });
     this.directory = directory;
-  }
-
-  get name() {
-    return "";
   }
 
   get world() {
@@ -216,10 +218,6 @@ export class World {
     return this._loadType(name, Host);
   }
 
-  addHost(host) {}
-  addNetwork(network) {}
-  network(name) {}
-
   async *subnets() {
     for await (const location of this.locations()) {
       yield* location.subnets();
@@ -232,6 +230,225 @@ export class World {
         yield networkAddresses;
       }
     }
+  }
+}
+
+export class Location extends Owner {
+  domain;
+  dns;
+  #administratorEmail;
+  #hosts = new Map();
+  #networks = new Map();
+  #subnets = new Map();
+
+  static get typeName() {
+    return "location";
+  }
+
+  constructor(owner, data) {
+    super(owner, data);
+
+    const networks = data.networks;
+    delete data.networks;
+    Object.assign(this, data);
+
+    if (networks) {
+      for (const [name, network] of Object.entries(networks)) {
+        network.name = name;
+        this.addNetwork(network);
+      }
+
+      for (const network of this.#networks.values()) {
+        if (network.bridges) {
+          network.bridges = new Set(
+            network.bridges.map(b => {
+              const n = this.network(b);
+              if (!n) {
+                console.error(`No network named ${b}`);
+              }
+              return n;
+            })
+          );
+        }
+      }
+    }
+  }
+
+  async *hosts() {
+    for await (const host of this.owner.hosts()) {
+      if (host.location === this) {
+        yield host;
+      }
+    }
+  }
+
+  async service(filter) {
+    let best;
+    for await (const service of this.services(filter)) {
+      if (!best || service.priority < best.priority) {
+        best = service;
+      }
+    }
+
+    return best;
+  }
+
+  async *services(filter) {
+    for await (const host of this.hosts()) {
+      for (const service of Object.values(host.services)) {
+        if (
+          !filter ||
+          filter.type === "*" ||
+          filter.type === service.type ||
+          filter.name === service.name
+        ) {
+          yield service;
+        }
+      }
+    }
+  }
+
+  async *networkAddresses() {
+    for await (const host of this.hosts()) {
+      for (const networkAddresses of host.networkAddresses()) {
+        yield networkAddresses;
+      }
+    }
+  }
+
+  async network(name) {
+    return this.#networks.get(name);
+  }
+
+  async *networks() {
+    for (const network of this.#networks.values()) {
+      yield network;
+    }
+  }
+
+  async *subnets() {
+    for (const subnet of this.#subnets.values()) {
+      yield subnet;
+    }
+  }
+
+  addNetwork(data) {
+    if (!data?.name) {
+      return undefined;
+    }
+
+    let network = this.#networks.get(data.name);
+    if (network) {
+      return network;
+    }
+
+    if (data instanceof Network) {
+      this.#networks.set(data.name, data);
+      return data;
+    }
+
+    network = new Network(this, data);
+    this.#networks.set(data.name, network);
+
+    const subnetAddress = network.subnetAddress;
+
+    if (subnetAddress) {
+      let subnet = this.#subnets.get(subnetAddress);
+      if (!subnet) {
+        subnet = new Subnet(this, subnetAddress);
+        this.#subnets.set(subnetAddress, subnet);
+      }
+      network.subnet = subnet;
+      subnet.networks.add(network);
+    }
+    return network;
+  }
+
+  addHost(host) {
+    this.#hosts.set(host.name, host);
+
+    for (const [name, iface] of Object.entries(host.networkInterfaces)) {
+      const network = this.addNetwork({ name: iface.network });
+      if (!network) {
+        console.error("Missing network", host.name, name);
+      } else {
+        network.addHost(host);
+      }
+    }
+  }
+
+  get dnsAllowedUpdates() {
+    return this.dns?.allowedUpdates || [];
+  }
+
+  get dnsRecordTTL() {
+    return this.dns?.recordTTL || "1W";
+  }
+
+  get administratorEmail() {
+    return this.#administratorEmail || "admin@" + this.domain;
+  }
+
+  get propertyNames() {
+    return [...super.propertyNames, "domain" /*, "hosts"*/];
+  }
+
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      hosts: [...this.#hosts.keys()].sort()
+    };
+  }
+}
+
+export class Network extends Base {
+  #hosts = new Map();
+  kind;
+  scope;
+  metric;
+  ipv4;
+  ipv4_netmask;
+  subnet;
+
+  static get typeName() {
+    return "network";
+  }
+
+  constructor(owner, data) {
+    super(owner, data);
+
+    Object.assign(this, data);
+
+    if (this.ipv4) {
+      const m = this.ipv4.match(/\/(\d+)$/);
+      if (m) {
+        this.ipv4_netmask = m[1];
+      }
+    }
+
+    owner.addNetwork(this);
+  }
+
+  get subnetAddress() {
+    if (this.ipv4) {
+      const [addr, bits] = this.ipv4.split(/\//);
+      const parts = addr.split(/\./);
+      return parts.slice(0, bits / 8).join(".");
+    }
+  }
+
+  async *hosts() {
+    for (const host of this.#hosts.values()) {
+      yield host;
+    }
+  }
+
+  addHost(host) {
+    this.#hosts.set(host.name, host);
+  }
+
+  get propertyNames() {
+    return [...super.propertyNames, "kind", "ipv4", "scope", "metric"];
   }
 }
 
@@ -447,224 +664,6 @@ export class Host extends Base {
 
 export class Model extends Host {}
 
-export class Location extends Base {
-  domain;
-  dns;
-  #administratorEmail;
-  #hosts = new Map();
-  #networks = new Map();
-  #subnets = new Map();
-
-  static get typeName() {
-    return "location";
-  }
-
-  constructor(owner, data) {
-    super(owner, data);
-
-    const networks = data.networks;
-    delete data.networks;
-    Object.assign(this, data);
-
-    if (networks) {
-      for (const [name, network] of Object.entries(networks)) {
-        network.name = name;
-        this.addNetwork(network);
-      }
-
-      for (const network of this.#networks.values()) {
-        if (network.bridges) {
-          network.bridges = new Set(
-            network.bridges.map(b => {
-              const n = this.network(b);
-              if (!n) {
-                console.error(`No network named ${b}`);
-              }
-              return n;
-            })
-          );
-        }
-      }
-    }
-  }
-
-  async *hosts() {
-    for await (const host of this.owner.hosts()) {
-      if (host.location === this) {
-        yield host;
-      }
-    }
-  }
-
-  async service(filter) {
-    let best;
-    for await (const service of this.services(filter)) {
-      if (!best || service.priority < best.priority) {
-        best = service;
-      }
-    }
-
-    return best;
-  }
-
-  async *services(filter) {
-    for await (const host of this.hosts()) {
-      for (const service of Object.values(host.services)) {
-        if (
-          !filter ||
-          filter.type === "*" ||
-          filter.type === service.type ||
-          filter.name === service.name
-        ) {
-          yield service;
-        }
-      }
-    }
-  }
-
-  async *networkAddresses() {
-    for await (const host of this.hosts()) {
-      for (const networkAddresses of host.networkAddresses()) {
-        yield networkAddresses;
-      }
-    }
-  }
-
-  async network(name) {
-    return this.#networks.get(name);
-  }
-
-  async *networks() {
-    for (const network of this.#networks.values()) {
-      yield network;
-    }
-  }
-
-  async *subnets() {
-    for (const subnet of this.#subnets.values()) {
-      yield subnet;
-    }
-  }
-
-  addNetwork(data) {
-    if (!data?.name) {
-      return undefined;
-    }
-
-    let network = this.#networks.get(data.name);
-    if (network) {
-      return network;
-    }
-
-    if(data instanceof Network) {
-      this.#networks.set(data.name, data);
-      return data;
-    }
-
-    network = new Network(this, data);
-    this.#networks.set(data.name, network);
-
-    const subnetAddress = network.subnetAddress;
-
-    if (subnetAddress) {
-      let subnet = this.#subnets.get(subnetAddress);
-      if (!subnet) {
-        subnet = new Subnet(this, subnetAddress);
-        this.#subnets.set(subnetAddress, subnet);
-      }
-      network.subnet = subnet;
-      subnet.networks.add(network);
-    }
-    return network;
-  }
-
-  addHost(host) {
-    this.#hosts.set(host.name, host);
-
-    for (const [name, iface] of Object.entries(host.networkInterfaces)) {
-      const network = this.addNetwork({ name: iface.network });
-      if (!network) {
-        console.error("Missing network", host.name, name);
-      } else {
-        network.addHost(host);
-      }
-    }
-  }
-
-  get dnsAllowedUpdates() {
-    return this.dns?.allowedUpdates || [];
-  }
-
-  get dnsRecordTTL() {
-    return this.dns?.recordTTL || "1W";
-  }
-
-  get administratorEmail() {
-    return this.#administratorEmail || "admin@" + this.domain;
-  }
-
-  get propertyNames() {
-    return [...super.propertyNames, "domain" /*, "hosts"*/];
-  }
-
-  toJSON() {
-    return {
-      ...super.toJSON(),
-      hosts: [...this.#hosts.keys()].sort()
-    };
-  }
-}
-
-export class Network extends Base {
-  #hosts = new Map();
-  kind;
-  scope;
-  metric;
-  ipv4;
-  ipv4_netmask;
-  subnet;
-
-  static get typeName() {
-    return "network";
-  }
-
-  constructor(owner, data) {
-    super(owner, data);
-
-    Object.assign(this, data);
-
-    if (this.ipv4) {
-      const m = this.ipv4.match(/\/(\d+)$/);
-      if (m) {
-        this.ipv4_netmask = m[1];
-      }
-    }
-
-    owner.addNetwork(this);
-  }
-
-  get subnetAddress() {
-    if (this.ipv4) {
-      const [addr, bits] = this.ipv4.split(/\//);
-      const parts = addr.split(/\./);
-      return parts.slice(0, bits / 8).join(".");
-    }
-  }
-
-  async *hosts() {
-    for (const host of this.#hosts.values()) {
-      yield host;
-    }
-  }
-
-  addHost(host) {
-    this.#hosts.set(host.name, host);
-  }
-
-  get propertyNames() {
-    return [...super.propertyNames, "kind", "ipv4", "scope", "metric"];
-  }
-}
 
 export class Subnet extends Base {
   networks = new Set();
