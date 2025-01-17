@@ -117,6 +117,7 @@ export class Owner extends Base {
   #hosts = new Map();
   #networks = new Map();
   #subnets = new Map();
+  #bridges = new Set();
 
   async *hosts() {
     for (const host of this.#hosts.values()) {
@@ -142,6 +143,46 @@ export class Owner extends Base {
     this.#networks.set(network.name, network);
   }
 
+  addBridge(network, destinationNetworks) {
+    console.log(
+      "BRIDGE",
+      network.name,
+      destinationNetworks.map(n => (this.network(n) ? n : `(${n})`))
+    );
+
+    let bridge;
+
+    for (bridge of this.#bridges) {
+      if (bridge.has(network.name)) {
+        bridge.delete(network.name);
+        bridge.add(network);
+
+        console.log(
+          "REPLACE",
+          network.name,
+          [...bridge].map(n => n.name||`(${n})`)
+        );
+
+        break;
+      }
+
+      if (bridge.has(network)) {
+        break;
+      }
+    }
+
+    if (!bridge) {
+      bridge = new Set([network]);
+      this.#bridges.add(bridge);
+    }
+
+    for (const name of destinationNetworks) {
+      bridge.add(this.network(name) || name);
+    }
+
+    return bridge;
+  }
+
   addSubnet(subnet) {
     this.#subnets.set(subnet.name, subnet);
   }
@@ -159,6 +200,7 @@ export class Owner extends Base {
       ...super.toJSON(),
       networks: [...this.#networks.keys()].sort(),
       subnets: [...this.#subnets.keys()].sort(),
+      bridges: [...this.#bridges.keys()].sort(),
       hosts: [...this.#hosts.keys()].sort()
     };
   }
@@ -299,22 +341,6 @@ export class Location extends Owner {
         data.name = name;
         new Network(this, data);
       }
-
-      /*
-      for (const network of this.#networks.values()) {
-        if (network.bridges) {
-          network.bridges = new Set(
-            network.bridges.map(b => {
-              const n = this.network(b);
-              if (!n) {
-                console.error(`No network named ${b}`);
-              }
-              return n;
-            })
-          );
-        }
-      }
-      */
     }
   }
 
@@ -383,6 +409,7 @@ export class Network extends Owner {
   metric;
   ipv4;
   subnet;
+  bridge;
 
   static get typeName() {
     return "network";
@@ -390,6 +417,12 @@ export class Network extends Owner {
 
   constructor(owner, data) {
     super(owner, data);
+
+    let bridges;
+    if (data.bridges) {
+      bridges = data.bridges;
+      delete data.bridges;
+    }
 
     Object.assign(this, data);
 
@@ -406,6 +439,10 @@ export class Network extends Owner {
     }
 
     owner.addNetwork(this);
+
+    if (bridges) {
+      this.bridge = owner.addBridge(this, bridges);
+    }
   }
 
   get ipv4_netmask() {
@@ -424,7 +461,14 @@ export class Network extends Owner {
   }
 
   get propertyNames() {
-    return [...super.propertyNames, "kind", "ipv4", "scope", "metric"];
+    return [
+      ...super.propertyNames,
+      "kind",
+      "ipv4",
+      "scope",
+      "metric",
+      "bridge"
+    ];
   }
 }
 
