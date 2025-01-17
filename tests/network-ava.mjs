@@ -11,9 +11,19 @@ test("Network basics", async t => {
 test("bridges", t => {
   const owner = new Owner();
 
-  const n1 = new Network(owner, { name: "n1", bridge: "n2" });
-  const n2 = new Network(owner, { name: "n2", bridge: ["n1"] });
+  const n1 = new Network(owner, { name: "n1"  });
+
+  /*
+  const n2 = new Network(owner, { name: "n2", bridge: "n1" });
 
   t.true(n2.bridge.has(n1));
   t.true(n1.bridge.has(n2));
+*/
+  const n3 = new Network(owner, { name: "n3", bridge: "n4" });
+  const n4 = new Network(owner, { name: "n4" });
+
+  owner.resolve();
+  
+  t.true(n4.bridge.has(n3));
+  t.true(n3.bridge.has(n4));
 });

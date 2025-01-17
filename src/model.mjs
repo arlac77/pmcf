@@ -169,10 +169,49 @@ export class Owner extends Base {
       }
 
       for (const name of asArray(destinationNetworks)) {
-        bridge.add(this.network(name) || name);
+        const other = this.network(name);
+        if (other) {
+          bridge.add(other);
+          other.bridge = bridge;
+        } else {
+          bridge.add(name);
+          this.resolveLater(() => this._resolveBridges());
+        }
       }
 
       return bridge;
+    }
+  }
+
+  _resolveBridges() {
+    for (const bridge of this.#bridges) {
+      console.log(bridgeToJSON(bridge));
+      for (const network of bridge) {
+        if (typeof network === "string") {
+          const other = this.network(network);
+
+          if (other) {
+            bridge.delete(network);
+            bridge.add(other);
+            other.bridge = bridge;
+            console.log("RESOLVE", network, other, bridgeToJSON(bridge));
+          } else {
+            this.error(`Unresolvabale bridge network`, network);
+          }
+        }
+      }
+    }
+  }
+
+  #resolveActions = [];
+
+  resolveLater(action) {
+    this.#resolveActions.push(action);
+  }
+
+  resolve() {
+    for (const action of this.#resolveActions) {
+      action();
     }
   }
 
