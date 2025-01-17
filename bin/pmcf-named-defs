@@ -74,7 +74,7 @@ async function generateNamedDefs(location, targetDir) {
     };
     zones.push(zone);
 
-    for await (const subnet of location.subnets()) {
+    for (const subnet of location.subnets()) {
       if (subnet.address) {
         const reverse = reverseAddress(subnet.address);
         const reverseArpa = reverseArpaAddress(subnet.address);

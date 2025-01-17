@@ -101,7 +101,7 @@ export class Base {
   }
 
   toString() {
-    return this.typeName + ":" + this.owner.name + "/" + this.name;
+    return this.typeName + ":" + (this.owner?.name || "") + "/" + this.name;
   }
 
   get propertyNames() {
@@ -114,9 +114,54 @@ export class Base {
 }
 
 export class Owner extends Base {
-  addHost(host) {}
-  addNetwork(network) {}
-  async network(name) {}
+  #hosts = new Map();
+  #networks = new Map();
+  #subnets = new Map();
+
+  async *hosts() {
+    for (const host of this.#hosts.values()) {
+      yield host;
+    }
+  }
+
+  addHost(host) {
+    this.#hosts.set(host.name, host);
+  }
+
+  network(name) {
+    return this.#networks.get(name);
+  }
+
+  async *networks() {
+    for (const network of this.#networks.values()) {
+      yield network;
+    }
+  }
+
+  addNetwork(network) {
+    this.#networks.set(network.name, network);
+  }
+
+  addSubnet(subnet) {
+    this.#subnets.set(subnet.name, subnet);
+  }
+
+  subnet(name) {
+    return this.#subnets.get(name);
+  }
+
+  subnets() {
+    return this.#subnets.values();
+  }
+
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      networks: [...this.#networks.keys()].sort(),
+      subnets: [...this.#subnets.keys()].sort(),
+      hosts: [...this.#hosts.keys()].sort()
+    };
+  }
 }
 
 export class World extends Owner {
@@ -237,9 +282,6 @@ export class Location extends Owner {
   domain;
   dns;
   #administratorEmail;
-  #hosts = new Map();
-  #networks = new Map();
-  #subnets = new Map();
 
   static get typeName() {
     return "location";
@@ -253,11 +295,12 @@ export class Location extends Owner {
     Object.assign(this, data);
 
     if (networks) {
-      for (const [name, network] of Object.entries(networks)) {
-        network.name = name;
-        this.addNetwork(network);
+      for (const [name, data] of Object.entries(networks)) {
+        data.name = name;
+        new Network(this, data);
       }
 
+      /*
       for (const network of this.#networks.values()) {
         if (network.bridges) {
           network.bridges = new Set(
@@ -271,6 +314,7 @@ export class Location extends Owner {
           );
         }
       }
+      */
     }
   }
 
@@ -316,67 +360,6 @@ export class Location extends Owner {
     }
   }
 
-  async network(name) {
-    return this.#networks.get(name);
-  }
-
-  async *networks() {
-    for (const network of this.#networks.values()) {
-      yield network;
-    }
-  }
-
-  async *subnets() {
-    for (const subnet of this.#subnets.values()) {
-      yield subnet;
-    }
-  }
-
-  addNetwork(data) {
-    if (!data?.name) {
-      return undefined;
-    }
-
-    let network = this.#networks.get(data.name);
-    if (network) {
-      return network;
-    }
-
-    if (data instanceof Network) {
-      this.#networks.set(data.name, data);
-      return data;
-    }
-
-    network = new Network(this, data);
-    this.#networks.set(data.name, network);
-
-    const subnetAddress = network.subnetAddress;
-
-    if (subnetAddress) {
-      let subnet = this.#subnets.get(subnetAddress);
-      if (!subnet) {
-        subnet = new Subnet(this, subnetAddress);
-        this.#subnets.set(subnetAddress, subnet);
-      }
-      network.subnet = subnet;
-      subnet.networks.add(network);
-    }
-    return network;
-  }
-
-  addHost(host) {
-    this.#hosts.set(host.name, host);
-
-    for (const [name, iface] of Object.entries(host.networkInterfaces)) {
-      const network = this.addNetwork({ name: iface.network });
-      if (!network) {
-        console.error("Missing network", host.name, name);
-      } else {
-        network.addHost(host);
-      }
-    }
-  }
-
   get dnsAllowedUpdates() {
     return this.dns?.allowedUpdates || [];
   }
@@ -392,22 +375,13 @@ export class Location extends Owner {
   get propertyNames() {
     return [...super.propertyNames, "domain" /*, "hosts"*/];
   }
-
-  toJSON() {
-    return {
-      ...super.toJSON(),
-      hosts: [...this.#hosts.keys()].sort()
-    };
-  }
 }
 
-export class Network extends Base {
-  #hosts = new Map();
+export class Network extends Owner {
   kind;
   scope;
   metric;
   ipv4;
-  ipv4_netmask;
   subnet;
 
   static get typeName() {
@@ -419,14 +393,26 @@ export class Network extends Base {
 
     Object.assign(this, data);
 
-    if (this.ipv4) {
-      const m = this.ipv4.match(/\/(\d+)$/);
-      if (m) {
-        this.ipv4_netmask = m[1];
+    const subnetAddress = this.subnetAddress;
+
+    if (subnetAddress) {
+      let subnet = owner.subnet(subnetAddress);
+      if (!subnet) {
+        subnet = new Subnet(owner, { name: subnetAddress });
       }
+
+      this.subnet = subnet;
+      subnet.networks.add(this);
     }
 
     owner.addNetwork(this);
+  }
+
+  get ipv4_netmask() {
+    const m = this.ipv4?.match(/\/(\d+)$/);
+    if (m) {
+      return m[1];
+    }
   }
 
   get subnetAddress() {
@@ -435,16 +421,6 @@ export class Network extends Base {
       const parts = addr.split(/\./);
       return parts.slice(0, bits / 8).join(".");
     }
-  }
-
-  async *hosts() {
-    for (const host of this.#hosts.values()) {
-      yield host;
-    }
-  }
-
-  addHost(host) {
-    this.#hosts.set(host.name, host);
   }
 
   get propertyNames() {
@@ -535,7 +511,14 @@ export class Host extends Base {
       iface.host = this;
       iface.name = name;
       if (iface.network) {
-        iface.network = this.network(iface.network);
+        const network = owner.network(iface.network);
+
+        if (!network) {
+          console.error(`${this.toString()}: Missing network`, iface.network);
+        } else {
+          iface.network = network;
+          network.addHost(this);
+        }
       }
     }
 
@@ -664,7 +647,6 @@ export class Host extends Base {
 
 export class Model extends Host {}
 
-
 export class Subnet extends Base {
   networks = new Set();
 
@@ -672,8 +654,12 @@ export class Subnet extends Base {
     return "subnet";
   }
 
-  constructor(owner, address) {
-    super(owner, { name: address });
+  constructor(owner, data) {
+    super(owner, data);
+
+    Object.assign(this, data);
+
+    owner.addSubnet(this);
   }
 
   get address() {
