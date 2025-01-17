@@ -103,6 +103,10 @@ export class Base {
   error(...args) {
     console.error(`${this.toString()}:`, ...args);
   }
+  
+  info(...args) {
+    console.info(`${this.toString()}:`, ...args);
+  }
 
   toString() {
     return this.typeName + ":" + (this.owner?.name || "") + "/" + this.name;
