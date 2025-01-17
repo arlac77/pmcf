@@ -168,7 +168,7 @@ export class Owner extends Base {
         this.#bridges.add(bridge);
       }
 
-      for (const name of destinationNetworks) {
+      for (const name of asArray(destinationNetworks)) {
         bridge.add(this.network(name) || name);
       }
 
@@ -409,10 +409,10 @@ export class Network extends Owner {
   constructor(owner, data) {
     super(owner, data);
 
-    let bridges;
-    if (data.bridges) {
-      bridges = data.bridges;
-      delete data.bridges;
+    let bridge;
+    if (data.bridge) {
+      bridge = data.bridge;
+      delete data.bridge;
     }
 
     Object.assign(this, data);
@@ -431,7 +431,7 @@ export class Network extends Owner {
 
     owner.addNetwork(this);
 
-    this.bridge = owner.addBridge(this, bridges);
+    this.bridge = owner.addBridge(this, bridge);
   }
 
   get ipv4_netmask() {
@@ -841,4 +841,8 @@ function extractFrom(object, propertyNames) {
 
 function bridgeToJSON(bridge) {
   return [...bridge].map(n => n.name || `(${n})`).sort();
+}
+
+function asArray(value) {
+  return Array.isArray(value) ? value : value === undefined ? [] : [value];
 }
