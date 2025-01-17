@@ -8,7 +8,7 @@ test("Host basics", async t => {
 
   await assertObject(
     t,
-    await world.host("L1/host1"),
+    await world.named("L1/host1"),
     world1(world, "L1/host1")
   );
 });

@@ -243,7 +243,7 @@ export class World extends Owner {
 
       type = await type.prepareData(this, data);
       object = new type(owner, data);
-      this.#byName.set(object.name, object);
+      this.addObject(object);
     }
 
     return object;
@@ -257,6 +257,10 @@ export class World extends Owner {
         await this._loadType(name, type);
       }
     }
+  }
+
+  addObject(object) {
+    this.#byName.set(object.name, object);
   }
 
   async named(name) {
@@ -296,12 +300,6 @@ export class World extends Owner {
 
   async host(name) {
     return this._loadType(name, Host);
-  }
-
-  async *subnets() {
-    for await (const location of this.locations()) {
-      yield* location.subnets();
-    }
   }
 
   async *networkAddresses() {
