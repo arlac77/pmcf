@@ -100,6 +100,10 @@ export class Base {
     return object;
   }
 
+  error(...args) {
+    console.error(`${this.toString()}:`, ...args);
+  }
+
   toString() {
     return this.typeName + ":" + (this.owner?.name || "") + "/" + this.name;
   }
@@ -144,43 +148,32 @@ export class Owner extends Base {
   }
 
   addBridge(network, destinationNetworks) {
-    console.log(
-      "BRIDGE",
-      network.name,
-      destinationNetworks.map(n => (this.network(n) ? n : `(${n})`))
-    );
+    if (destinationNetworks) {
+      let bridge;
 
-    let bridge;
+      for (bridge of this.#bridges) {
+        if (bridge.has(network.name)) {
+          bridge.delete(network.name);
+          bridge.add(network);
+          break;
+        }
 
-    for (bridge of this.#bridges) {
-      if (bridge.has(network.name)) {
-        bridge.delete(network.name);
-        bridge.add(network);
-
-        console.log(
-          "REPLACE",
-          network.name,
-          [...bridge].map(n => n.name||`(${n})`)
-        );
-
-        break;
+        if (bridge.has(network)) {
+          break;
+        }
       }
 
-      if (bridge.has(network)) {
-        break;
+      if (!bridge) {
+        bridge = new Set([network]);
+        this.#bridges.add(bridge);
       }
-    }
 
-    if (!bridge) {
-      bridge = new Set([network]);
-      this.#bridges.add(bridge);
-    }
+      for (const name of destinationNetworks) {
+        bridge.add(this.network(name) || name);
+      }
 
-    for (const name of destinationNetworks) {
-      bridge.add(this.network(name) || name);
+      return bridge;
     }
-
-    return bridge;
   }
 
   addSubnet(subnet) {
@@ -200,7 +193,7 @@ export class Owner extends Base {
       ...super.toJSON(),
       networks: [...this.#networks.keys()].sort(),
       subnets: [...this.#subnets.keys()].sort(),
-      bridges: [...this.#bridges.keys()].sort(),
+      bridges: [...this.#bridges].map(b => bridgeToJSON(b)),
       hosts: [...this.#hosts.keys()].sort()
     };
   }
@@ -440,9 +433,7 @@ export class Network extends Owner {
 
     owner.addNetwork(this);
 
-    if (bridges) {
-      this.bridge = owner.addBridge(this, bridges);
-    }
+    this.bridge = owner.addBridge(this, bridges);
   }
 
   get ipv4_netmask() {
@@ -557,11 +548,11 @@ export class Host extends Base {
       if (iface.network) {
         const network = owner.network(iface.network);
 
-        if (!network) {
-          console.error(`${this.toString()}: Missing network`, iface.network);
-        } else {
+        if (network) {
           iface.network = network;
           network.addHost(this);
+        } else {
+          this.error("Missing network", iface.network);
         }
       }
     }
@@ -848,4 +839,8 @@ function extractFrom(object, propertyNames) {
     }
   }
   return json;
+}
+
+function bridgeToJSON(bridge) {
+  return [...bridge].map(n => n.name || `(${n})`).sort();
 }
