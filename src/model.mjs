@@ -79,7 +79,7 @@ export class Base {
   }
 
   get directory() {
-    return this.#directory || this.name;
+    return this.#directory || join(this.owner.directory, this.name);
   }
 
   expand(object) {
@@ -103,7 +103,7 @@ export class Base {
   error(...args) {
     console.error(`${this.toString()}:`, ...args);
   }
-  
+
   info(...args) {
     console.info(`${this.toString()}:`, ...args);
   }
@@ -692,6 +692,8 @@ export class Host extends Base {
   }
 
   async publicKey(type = "ed25519") {
+    console.log("DIR", join(this.directory, `ssh_host_${type}_key.pub`));
+
     return readFile(join(this.directory, `ssh_host_${type}_key.pub`), "utf8");
   }
 
