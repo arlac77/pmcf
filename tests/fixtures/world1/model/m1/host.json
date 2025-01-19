@@ -1,3 +1,4 @@
 {
-    "chassis" : "server"
+  "chassis": "server",
+  "model": true
 }

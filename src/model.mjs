@@ -27,20 +27,14 @@ export class Base {
       return undefined;
     }
 
-    if (name.endsWith("/" + this.typeFileName)) {
-      return name.substring(0, name.length - this.typeFileName.length - 1);
-    }
-
-    return name;
+    return name.replace(/\/\w+\.json$/, "");
   }
 
   constructor(owner, data) {
     this.owner = owner;
 
     if (data) {
-      if (data.name) {
-        this.name = data.name;
-      }
+      this.name = data.name;
       if (data.description) {
         this.description = data.description;
       }
@@ -82,6 +76,10 @@ export class Base {
     return this.#directory || join(this.owner.directory, this.name);
   }
 
+  get fullName() {
+    return join(this.owner.fullName, this.name);
+  }
+
   expand(object) {
     if (typeof object === "string") {
       return object.replaceAll(/\$\{([^\}]*)\}/g, (match, m1) => {
@@ -109,7 +107,7 @@ export class Base {
   }
 
   toString() {
-    return this.typeName + ":" + (this.owner?.name || "") + "/" + this.name;
+    return `${this.fullName}(${this.typeName})`;
   }
 
   get propertyNames() {
@@ -133,8 +131,13 @@ export class Owner extends Base {
     }
   }
 
+  addObject(object) {
+    this.world.addObject(object);
+  }
+
   addHost(host) {
     this.#hosts.set(host.name, host);
+    this.addObject(host);
   }
 
   network(name) {
@@ -244,7 +247,11 @@ export class Owner extends Base {
 
 export class World extends Owner {
   static get types() {
-    return _types;
+    return _typesByName;
+  }
+
+  static get typeName() {
+    return "world";
   }
 
   #byName = new Map();
@@ -252,39 +259,64 @@ export class World extends Owner {
   constructor(directory) {
     super(undefined, { name: "" });
     this.directory = directory;
+    this.addObject(this);
+  }
+
+  get fullName() {
+    return "";
   }
 
   get world() {
     return this;
   }
 
-  async _loadType(name, type) {
-    const baseName = type.baseName(name);
+  async load(name, options) {
+    if (name === "") {
+      return this;
+    }
+    const baseName = Base.baseName(name);
 
     let object = this.#byName.get(baseName);
 
     if (!object) {
-      const data = JSON.parse(
-        await readFile(
-          join(this.directory, baseName, type.typeFileName),
-          "utf8"
-        )
-      );
-
-      let owner;
       let path = baseName.split("/");
+      path.pop();
 
-      if (path.length > 1 && path[0] !== "model" && path[0] != "services") {
-        // TODO
-        path.length -= 1;
-        owner = await this._loadType(path.join("/"), Location);
+      let data;
+      let type = options?.type;
+      if (type) {
+        data = JSON.parse(
+          await readFile(
+            join(this.directory, baseName, type.typeFileName),
+            "utf8"
+          )
+        );
       } else {
-        owner = this;
+        for (type of _types) {
+          try {
+            data = JSON.parse(
+              await readFile(
+                join(this.directory, baseName, type.typeFileName),
+                "utf8"
+              )
+            );
+            break;
+          } catch {}
+        }
+
+        if (!data) {
+          return this.load(path.join("/"), options);
+        }
       }
 
-      data.name = baseName;
+      const owner = await this.load(path.join("/"));
+
+      const length = owner.fullName.length;
+      const n = baseName[length] === "/" ? length + 1 : length;
+      data.name = baseName.substring(n);
 
       type = await type.prepareData(this, data);
+
       object = new type(owner, data);
       this.addObject(object);
     }
@@ -292,27 +324,27 @@ export class World extends Owner {
     return object;
   }
 
-  async load() {
+  async loadAll() {
     for (let type of Object.values(World.types)) {
       for await (const name of glob(type.fileNameGlob, {
         cwd: this.directory
       })) {
-        await this._loadType(name, type);
+        await this.load(name, { type });
       }
     }
   }
 
   addObject(object) {
-    this.#byName.set(object.name, object);
+    this.#byName.set(object.fullName, object);
   }
 
   async named(name) {
-    await this.load();
+    await this.loadAll();
     return this.#byName.get(name);
   }
 
   async *locations() {
-    await this.load();
+    await this.loadAll();
 
     for (const object of this.#byName.values()) {
       if (object instanceof Location) {
@@ -322,7 +354,7 @@ export class World extends Owner {
   }
 
   async *hosts() {
-    await this.load();
+    await this.loadAll();
 
     for (const object of this.#byName.values()) {
       if (object instanceof Host) {
@@ -338,11 +370,11 @@ export class World extends Owner {
   }
 
   async location(name) {
-    return this._loadType(name, Location);
+    return this.load(name, { type: Location });
   }
 
   async host(name) {
-    return this._loadType(name, Host);
+    return this.load(name, { type: Host });
   }
 
   async *networkAddresses() {
@@ -508,6 +540,7 @@ export class Host extends Base {
   networkInterfaces = {};
   services = {};
   postinstall = [];
+  #isModel = false;
   #extends = [];
   #provides = new Set();
   #replaces = new Set();
@@ -516,6 +549,8 @@ export class Host extends Base {
   #os;
   #distribution;
   #deployment;
+  #chassis;
+  #vendor;
   #location;
 
   static get typeName() {
@@ -531,15 +566,16 @@ export class Host extends Base {
       data.extends = await Promise.all(data.extends.map(e => world.host(e)));
     }
 
-    if (data.name?.indexOf("model/") >= 0) {
-      return Model;
-    }
-
     return this;
   }
 
   constructor(owner, data) {
     super(owner, data);
+
+    if (data.model) {
+      this.#isModel = true;
+      delete data.model;
+    }
 
     if (data.location !== undefined) {
       this.#location = data.location;
@@ -549,6 +585,14 @@ export class Host extends Base {
     if (data.deployment !== undefined) {
       this.#deployment = data.deployment;
       delete data.deployment;
+    }
+    if (data.chassis !== undefined) {
+      this.#chassis = data.chassis;
+      delete data.chassis;
+    }
+    if (data.vendor !== undefined) {
+      this.#vendor = data.vendor;
+      delete data.vendor;
     }
     if (data.extends !== undefined) {
       this.#extends = data.extends;
@@ -584,18 +628,8 @@ export class Host extends Base {
     owner.addHost(this);
 
     for (const [name, iface] of Object.entries(this.networkInterfaces)) {
-      iface.host = this;
       iface.name = name;
-      if (iface.network) {
-        const network = owner.network(iface.network);
-
-        if (network) {
-          iface.network = network;
-          network.addHost(this);
-        } else {
-          this.error("Missing network", iface.network);
-        }
-      }
+      this.networkInterfaces[name] = new NetworkInterface(this, iface);
     }
 
     for (const [name, data] of Object.entries(
@@ -607,7 +641,15 @@ export class Host extends Base {
   }
 
   get deployment() {
-    return this.#deployment || this.extends.find(e => e.deployment);
+    return this.#deployment || this.extends.find(e => e.deployment)?.deployment;
+  }
+
+  get chassis() {
+    return this.#chassis || this.extends.find(e => e.chassis)?.chassis;
+  }
+
+  get vendor() {
+    return this.#vendor || this.extends.find(e => e.vendor)?.vendor;
   }
 
   get extends() {
@@ -652,8 +694,12 @@ export class Host extends Base {
     return this.#distribution || this.extends.find(e => e.distribution);
   }
 
+  get isModel() {
+    return this.#isModel;
+  }
+
   get model() {
-    return this.extends.find(h => h instanceof Model);
+    return this.extends.find(h => h.isModel);
   }
 
   get domain() {
@@ -692,8 +738,6 @@ export class Host extends Base {
   }
 
   async publicKey(type = "ed25519") {
-    console.log("DIR", join(this.directory, `ssh_host_${type}_key.pub`));
-
     return readFile(join(this.directory, `ssh_host_${type}_key.pub`), "utf8");
   }
 
@@ -723,7 +767,32 @@ export class Host extends Base {
   }
 }
 
-export class Model extends Host {}
+export class NetworkInterface extends Base {
+  static get typeName() {
+    return "network_interface";
+  }
+
+  constructor(owner, data) {
+    super(owner, data);
+
+    if (data.network) {
+      const network = owner.owner.network(data.network);
+
+      if (network) {
+        data.network = network;
+        network.addHost(owner);
+      } else {
+        this.error("Missing network", data.network);
+      }
+    }
+
+    Object.assign(this, data);
+  }
+
+  get host() {
+    return this.owner;
+  }
+}
 
 export class Subnet extends Base {
   networks = new Set();
@@ -838,12 +907,8 @@ export class Service extends Base {
   }
 }
 
-const _types = Object.fromEntries(
-  [Location, Network, Subnet, Host, /*Model,*/ Service].map(t => [
-    t.typeName,
-    t
-  ])
-);
+const _types = [Location, Network, Subnet, Host, Service];
+const _typesByName = Object.fromEntries(_types.map(t => [t.typeName, t]));
 
 export async function writeLines(dir, name, lines) {
   await mkdir(dir, { recursive: true });

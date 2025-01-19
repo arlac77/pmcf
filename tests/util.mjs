@@ -1,4 +1,6 @@
 export async function assertObject(t, object, expected, path = []) {
+  t.truthy(object, `${path.join("/")}: present`);
+
   for (const [k, v] of Object.entries(expected)) {
     switch (k) {
       case "instanceof":
@@ -36,10 +38,10 @@ export async function assertObjects(t, iterator, expected, path = []) {
   const objects = new Map();
 
   for await (const i of iterator) {
-    objects.set(i.name, i);
+    objects.set(i.fullName, i);
   }
 
   for (const [name, exp] of Object.entries(expected)) {
-    await assertObject(t, objects.get(name), exp, [...path, exp]);
+    await assertObject(t, objects.get(name), exp, [...path, name]);
   }
 }

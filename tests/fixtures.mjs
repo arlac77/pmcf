@@ -1,4 +1,4 @@
-import { Location, Network, Host, Model, World } from "../src/model.mjs";
+import { Location, Network, Host, World } from "../src/model.mjs";
 
 /**
  *
@@ -40,6 +40,7 @@ export function world1(world, filter) {
     "L1/n1": L1n1,
     "L1/n2": L1n2,
     "L1/n1/host2": {
+      name: "host2",
       instanceof: Host,
       owner: L1n1,
       location: L1,
@@ -53,14 +54,19 @@ export function world1(world, filter) {
     },
     L2,
     "model/m1": {
-      instanceof: Model,
+      name: "model/m1",
+      instanceof: Host,
       owner: world,
+      isModel: true,
       chassis: "server"
     }
   };
 
   for (const [k, v] of Object.entries(all)) {
-    v.name = k;
+    if(!v.name) {
+      const path = k.split('/');
+      v.name = path.pop();
+    }
   }
 
   if (typeof filter === "string") {

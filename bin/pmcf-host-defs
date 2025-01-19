@@ -28,10 +28,10 @@ async function generateMachineInfo(host, dir) {
     etcDir,
     "machine-info",
     Object.entries({
-      CHASSIS: host.model.chassis,
+      CHASSIS: host.chassis,
       DEPLOYMENT: host.deployment,
       LOCATION: host.location.name,
-      HARDWARE_VENDOR: host.model.vendor,
+      HARDWARE_VENDOR: host.vendor,
       HARDWARE_MODEL: host.modelName
     }).map(([k, v]) => `${k}=${v}`)
   );
