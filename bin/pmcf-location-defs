@@ -21,7 +21,7 @@ console.log("replaces", `mf-location-${location.name}`);
 console.log("description", `location definitions for ${location.name}`);
 
 async function generateLocationDefs(location, dir) {
-  const sl = location.dns_servers;
+  const sl = location.dns.servers;
   const s1 = sl.shift();
 
   await writeLines(
@@ -51,7 +51,7 @@ async function generateLocationDefs(location, dir) {
     join(dir, "etc/systemd/timesyncd.conf.d"),
     `${location.name}.conf`,
     sectionLines("Time", {
-      NTP: location.ntp_servers.join(" "),
+      NTP: location.ntp.servers.join(" "),
       PollIntervalMinSec: 60,
       SaveIntervalSec: 3600
     })
