@@ -572,11 +572,6 @@ export class Host extends Base {
   constructor(owner, data) {
     super(owner, data);
 
-    if (data.model) {
-      this.#isModel = true;
-      delete data.model;
-    }
-
     if (data.location !== undefined) {
       this.#location = data.location;
       delete data.location;
@@ -652,6 +647,14 @@ export class Host extends Base {
     return this.#vendor || this.extends.find(e => e.vendor)?.vendor;
   }
 
+  get isModel() {
+    return (this.#vendor || this.#chassis) ? true : false;
+  }
+
+  get model() {
+    return this.extends.find(h => h.isModel);
+  }
+
   get extends() {
     return this.#extends.map(e => this.expand(e));
   }
@@ -692,14 +695,6 @@ export class Host extends Base {
 
   get distribution() {
     return this.#distribution || this.extends.find(e => e.distribution);
-  }
-
-  get isModel() {
-    return this.#isModel;
-  }
-
-  get model() {
-    return this.extends.find(h => h.isModel);
   }
 
   get domain() {
