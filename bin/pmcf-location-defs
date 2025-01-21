@@ -21,7 +21,7 @@ console.log("replaces", `mf-location-${location.name}`);
 console.log("description", `location definitions for ${location.name}`);
 
 async function generateLocationDefs(location, dir) {
-  const sl = location.dns.servers;
+  const sl = (await Array.fromAsync(location.dns.services())).map(s=>s.ipAddress);
   const s1 = sl.shift();
 
   await writeLines(

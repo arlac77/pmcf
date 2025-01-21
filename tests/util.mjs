@@ -9,6 +9,13 @@ export async function assertObject(t, object, expected, path = []) {
           `${[...path, k].join("/")}: ${expected.instanceof.name}`
         );
         break;
+      case "services":
+        for (const [name, sd] of Object.entries(v)) {
+          const service = [...object.services({ name })][0];
+          t.is(service.name, name);
+          t.is(service.type, sd.type);
+        }
+        break;
       default:
         let value = object[k];
 

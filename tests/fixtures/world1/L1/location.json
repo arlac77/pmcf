@@ -1,3 +1,8 @@
 {
-  "description": "somewhere"
+  "description": "somewhere",
+  "dns": {
+    "forwardsTo": ["GLOBAL/cloudflare", "GLOBAL/google"],
+    "allowedUpdates": ["trusted"],
+    "recordTTL": "1W"
+  }
 }

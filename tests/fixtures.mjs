@@ -33,7 +33,7 @@ export function world1(world, filter) {
     ipv4: "192.168.1.0/24",
     ipv4_netmask: "24"
   };
-  L1.networks = [L1n1 ,L1n2];
+  L1.networks = [L1n1, L1n2];
 
   const all = {
     L1,
@@ -50,7 +50,10 @@ export function world1(world, filter) {
       instanceof: Host,
       owner: L1,
       location: L1,
-      os: "linux"
+      os: "linux",
+      services: {
+        dns: { type: "dns" }
+      }
     },
     L2,
     "model/m1": {
@@ -63,8 +66,8 @@ export function world1(world, filter) {
   };
 
   for (const [k, v] of Object.entries(all)) {
-    if(!v.name) {
-      const path = k.split('/');
+    if (!v.name) {
+      const path = k.split("/");
       v.name = path.pop();
     }
   }

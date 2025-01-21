@@ -1,0 +1,10 @@
+{
+  "networkInterfaces": {
+    "eth0": {
+      "ipv4": "1.1.1.1"
+    }
+  },
+  "services": {
+    "dns": { "type": "dns" }
+  }
+}

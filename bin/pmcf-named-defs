@@ -106,7 +106,7 @@ async function generateNamedDefs(location, targetDir) {
         }  ${normalizeIPAddress(address)}`
       );
 
-      for (const service of Object.values(host.services)) {
+      for (const service of host.services()) {
         if (service.master && service.alias) {
           zone.records.add(
             `${service.alias.padEnd(NAME_LEN, " ")} ${ttl} IN CNAME ${
@@ -115,9 +115,9 @@ async function generateNamedDefs(location, targetDir) {
           );
         }
 
-        if (service.prefix) {
+        if (service.srvPrefix) {
           zone.records.add(
-            `${`${service.prefix}.${host.domainName}.`.padEnd(
+            `${`${service.srvPrefix}.${host.domainName}.`.padEnd(
               NAME_LEN,
               " "
             )} ${ttl} IN SRV   ${String(service.priority).padStart(4)} ${String(

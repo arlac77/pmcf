@@ -13,7 +13,7 @@ test("Host basics", async t => {
   );
 });
 
-test.only("Host all", async t => {
+test("Host all", async t => {
   const world = new World(new URL("fixtures/world1", import.meta.url).pathname);
   await assertObjects(
     t,

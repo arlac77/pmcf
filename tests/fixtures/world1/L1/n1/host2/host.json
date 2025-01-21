@@ -1,4 +1,12 @@
 {
   "os": "linux",
-  "extends": ["model/m1"]
+  "extends": ["model/m1"],
+  "networkInterfaces": {
+    "eth0": {
+      "ipv4": "192.168.1.2"
+    }
+  },
+  "services": {
+    "dns": { "type": "dns", "alias": "dns" }
+  }
 }

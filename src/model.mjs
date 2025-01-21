@@ -41,6 +41,14 @@ export class Base {
     }
   }
 
+  withOwner(owner) {
+    if (this.owner !== owner) {
+      return new this.constructor(owner, this);
+    }
+
+    return this;
+  }
+
   get typeName() {
     return this.constructor.typeName;
   }
@@ -77,7 +85,7 @@ export class Base {
   }
 
   get fullName() {
-    return join(this.owner.fullName, this.name);
+    return this.owner ? join(this.owner.fullName, this.name) : this.name;
   }
 
   expand(object) {
@@ -192,7 +200,7 @@ export class Owner extends Base {
 
   _resolveBridges() {
     for (const bridge of this.#bridges) {
-      console.log(bridgeToJSON(bridge));
+      this.info(bridgeToJSON(bridge));
       for (const network of bridge) {
         if (typeof network === "string") {
           const other = this.network(network);
@@ -201,7 +209,7 @@ export class Owner extends Base {
             bridge.delete(network);
             bridge.add(other);
             other.bridge = bridge;
-            console.log("RESOLVE", network, other, bridgeToJSON(bridge));
+            this.info("RESOLVE", network, other, bridgeToJSON(bridge));
           } else {
             this.error(`Unresolvabale bridge network`, network);
           }
@@ -386,9 +394,31 @@ export class World extends Owner {
   }
 }
 
+class DNSService {
+  owner;
+  forwardsTo = [];
+  constructor(owner, data) {
+    this.owner = owner;
+    Object.assign(this, data);
+  }
+
+  async *services() {
+    const filter = { type: "dns" };
+
+    yield* this.owner.services(filter);
+
+    for (const s of this.forwardsTo) {
+      const host = await this.owner.world.load(s);
+
+      yield* host.services(filter);
+    }
+  }
+}
+
 export class Location extends Owner {
   domain;
-  dns;
+  #dns;
+  ntp = { servers: [] };
   #administratorEmail;
 
   static get typeName() {
@@ -398,6 +428,13 @@ export class Location extends Owner {
   constructor(owner, data) {
     super(owner, data);
 
+    let dns;
+    if (data.dns) {
+      dns = data.dns;
+      delete data.dns;
+    }
+
+    this.#dns = new DNSService(this, dns);
     const networks = data.networks;
     delete data.networks;
     Object.assign(this, data);
@@ -418,6 +455,10 @@ export class Location extends Owner {
     }
   }
 
+  get dns() {
+    return this.#dns;
+  }
+
   async service(filter) {
     let best;
     for await (const service of this.services(filter)) {
@@ -431,15 +472,8 @@ export class Location extends Owner {
 
   async *services(filter) {
     for await (const host of this.hosts()) {
-      for (const service of Object.values(host.services)) {
-        if (
-          !filter ||
-          filter.type === "*" ||
-          filter.type === service.type ||
-          filter.name === service.name
-        ) {
-          yield service;
-        }
+      for await (const service of host.services(filter)) {
+        yield service;
       }
     }
   }
@@ -538,9 +572,8 @@ export class Network extends Owner {
 
 export class Host extends Base {
   networkInterfaces = {};
-  services = {};
   postinstall = [];
-  #isModel = false;
+  #services = [];
   #extends = [];
   #provides = new Set();
   #replaces = new Set();
@@ -618,20 +651,27 @@ export class Host extends Base {
       delete data.provides;
     }
 
-    Object.assign(this, { services: {}, networkInterfaces: {} }, data);
+    if (data.services) {
+      for (const [name, sd] of Object.entries(data.services)) {
+        sd.name = name;
+        new Service(this, sd);
+      }
+      delete data.services;
+    }
+
+    for (const host of this.extends) {
+      for (const service of host.services()) {
+        service.withOwner(this);
+      }
+    }
+
+    Object.assign(this, { networkInterfaces: {} }, data);
 
     owner.addHost(this);
 
     for (const [name, iface] of Object.entries(this.networkInterfaces)) {
       iface.name = name;
       this.networkInterfaces[name] = new NetworkInterface(this, iface);
-    }
-
-    for (const [name, data] of Object.entries(
-      Object.assign({}, ...this.extends.map(e => e.services), this.services)
-    )) {
-      data.name = name;
-      this.services[name] = new Service(this, data);
     }
   }
 
@@ -648,7 +688,7 @@ export class Host extends Base {
   }
 
   get isModel() {
-    return (this.#vendor || this.#chassis) ? true : false;
+    return this.#vendor || this.#chassis ? true : false;
   }
 
   get model() {
@@ -714,6 +754,23 @@ export class Host extends Base {
     return this.hostName + "." + this.domain;
   }
 
+  addService(service) {
+    this.#services.push(service);
+  }
+
+  *services(filter) {
+    for (const service of this.#services) {
+      if (
+        !filter ||
+        filter.type === "*" ||
+        filter.type === service.type ||
+        filter.name === service.name
+      ) {
+        yield service;
+      }
+    }
+  }
+
   *networkAddresses() {
     for (const [name, networkInterface] of Object.entries(
       this.networkInterfaces
@@ -756,7 +813,7 @@ export class Host extends Base {
       ...super.toJSON(),
       extends: this.extends.map(host => host.name),
       services: Object.fromEntries(
-        Object.values(this.services).map(s => [s.name, s.toJSON()])
+        [...this.services()].map(s => [s.name, s.toJSON()])
       )
     };
   }
@@ -810,15 +867,15 @@ export class Subnet extends Base {
 }
 
 const ServiceTypes = {
-  dns: { prefix: "_dns._udp", port: 53 },
-  ldap: { prefix: "_ldap._tcp", port: 389 },
-  http: { prefix: "_http._tcp", port: 80 },
-  https: { prefix: "_http._tcp", port: 443 },
-  rtsp: { prefix: "_rtsp._tcp", port: 554 },
-  smtp: { prefix: "_smtp._tcp", port: 25 },
-  ssh: { prefix: "_ssh._tcp", port: 22 },
-  imap: { prefix: "_imap._tcp", port: 143 },
-  imaps: { prefix: "_imaps._tcp", port: 993 },
+  dns: { srvPrefix: "_dns._udp", port: 53 },
+  ldap: { srvPrefix: "_ldap._tcp", port: 389 },
+  http: { srvPrefix: "_http._tcp", port: 80 },
+  https: { srvPrefix: "_http._tcp", port: 443 },
+  rtsp: { srvPrefix: "_rtsp._tcp", port: 554 },
+  smtp: { srvPrefix: "_smtp._tcp", port: 25 },
+  ssh: { srvPrefix: "_ssh._tcp", port: 22 },
+  imap: { srvPrefix: "_imap._tcp", port: 143 },
+  imaps: { srvPrefix: "_imaps._tcp", port: 993 },
   dhcp: {}
 };
 
@@ -858,11 +915,38 @@ export class Service extends Base {
     }
 
     Object.assign(this, data);
+
     this.owner = owner;
+
+    owner.addService(this);
   }
 
-  get prefix() {
-    return ServiceTypes[this.type]?.prefix;
+  withOwner(owner) {
+    if (this.owner !== owner) {
+      const data = { name: this.name };
+      if (this.alias) {
+        data.alias = this.alias;
+      }
+      if (this.#type) {
+        data.type = this.#type;
+      }
+      if (this.#weight) {
+        data.weight = this.#weight;
+      }
+      if (this.#port) {
+        data.port = this.#port;
+      }
+      if (this.#ipAddress) {
+        data.ipAddress = this.#ipAddress;
+      }
+      return new this.constructor(owner, data);
+    }
+
+    return this;
+  }
+
+  get srvPrefix() {
+    return ServiceTypes[this.type]?.srvPrefix;
   }
 
   get ipAddress() {
