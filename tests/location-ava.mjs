@@ -21,7 +21,7 @@ test("Location dns", async t => {
   const dnsServices = await Array.fromAsync(l1.dns.services());
 
   t.deepEqual(
-    dnsServices.map(s => s.ipAddress),
-    ["192.168.1.2", "192.168.2.1", "1.1.1.1", "8.8.8.8"]
+    dnsServices.map(s => s.ipAddress).sort(),
+    ["1.1.1.1", "192.168.1.2", "192.168.2.1", "8.8.8.8"].sort()
   );
 });

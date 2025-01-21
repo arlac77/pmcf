@@ -148,6 +148,25 @@ export class Owner extends Base {
     this.addObject(host);
   }
 
+  async service(filter) {
+    let best;
+    for await (const service of this.services(filter)) {
+      if (!best || service.priority < best.priority) {
+        best = service;
+      }
+    }
+
+    return best;
+  }
+
+  async *services(filter) {
+    for await (const host of this.hosts()) {
+      for await (const service of host.services(filter)) {
+        yield service;
+      }
+    }
+  }
+
   network(name) {
     return this.#networks.get(name);
   }
@@ -396,7 +415,11 @@ export class World extends Owner {
 
 class DNSService {
   owner;
+
+  allowedUpdates = [];
+  recordTTL = "1W";
   forwardsTo = [];
+
   constructor(owner, data) {
     this.owner = owner;
     Object.assign(this, data);
@@ -408,9 +431,8 @@ class DNSService {
     yield* this.owner.services(filter);
 
     for (const s of this.forwardsTo) {
-      const host = await this.owner.world.load(s);
-
-      yield* host.services(filter);
+      const owner = await this.owner.world.load(s);
+      yield* owner.services(filter);
     }
   }
 }
@@ -459,24 +481,6 @@ export class Location extends Owner {
     return this.#dns;
   }
 
-  async service(filter) {
-    let best;
-    for await (const service of this.services(filter)) {
-      if (!best || service.priority < best.priority) {
-        best = service;
-      }
-    }
-
-    return best;
-  }
-
-  async *services(filter) {
-    for await (const host of this.hosts()) {
-      for await (const service of host.services(filter)) {
-        yield service;
-      }
-    }
-  }
 
   async *networkAddresses() {
     for await (const host of this.hosts()) {
@@ -484,14 +488,6 @@ export class Location extends Owner {
         yield networkAddresses;
       }
     }
-  }
-
-  get dnsAllowedUpdates() {
-    return this.dns?.allowedUpdates || [];
-  }
-
-  get dnsRecordTTL() {
-    return this.dns?.recordTTL || "1W";
   }
 
   get administratorEmail() {

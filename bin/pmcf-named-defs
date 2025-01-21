@@ -8,7 +8,6 @@ import { prepare } from "../src/cmd.mjs";
 const { world, args, options } = prepare();
 
 const location = await world.location(args[0] || "SW");
-const ttl = location.dnsRecordTTL;
 const updates = [
   Math.ceil(Date.now() / 1000),
   36000,
@@ -30,7 +29,9 @@ console.log("description", `named defintions for ${location.name}`);
 }*/
 
 async function generateNamedDefs(location, targetDir) {
+  const dns = location.dns;
   const domain = location.domain;
+  const ttl = dns.recordTTL;
 
   if (domain) {
     const zones = [];
@@ -157,9 +158,8 @@ async function generateNamedDefs(location, targetDir) {
       zoneConfig.push(`  type master;`);
       zoneConfig.push(`  file \"${zone.file}\";`);
 
-      const u = location.dnsAllowedUpdates;
       zoneConfig.push(
-        `  allow-update { ${u.length ? u.join(";") : "none"}; };`
+        `  allow-update { ${dns.allowedUpdates.length ? dns.allowedUpdates.join(";") : "none"}; };`
       );
       zoneConfig.push(`  notify yes;`);
       zoneConfig.push(`};`);
