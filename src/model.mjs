@@ -413,15 +413,13 @@ export class World extends Owner {
   }
 }
 
-class DNSService {
-  owner;
-
+class DNSService extends Base {
   allowedUpdates = [];
   recordTTL = "1W";
   forwardsTo = [];
 
   constructor(owner, data) {
-    this.owner = owner;
+    super(owner, data);
     Object.assign(this, data);
   }
 
@@ -434,6 +432,10 @@ class DNSService {
       const owner = await this.owner.world.load(s);
       yield* owner.services(filter);
     }
+  }
+
+  get propertyNames() {
+    return ["recordTTL", "forwardsTo", "allowedUpdates"];
   }
 }
 
@@ -494,7 +496,7 @@ export class Location extends Owner {
   }
 
   get propertyNames() {
-    return [...super.propertyNames, "domain" /*, "hosts"*/];
+    return [...super.propertyNames, "domain", "administratorEmail", "dns"];
   }
 }
 
@@ -780,6 +782,10 @@ export class Host extends Base {
     }
   }
 
+  get ipAddresses() {
+    return [...this.networkAddresses()].map(na => na.address);
+  }
+
   get ipAddress() {
     for (const a of this.networkAddresses()) {
       return a.address;
@@ -882,7 +888,7 @@ export class Service extends Base {
   #priority;
   #type;
   #port;
-  #ipAddress;
+  #ipAddresses;
 
   static get typeName() {
     return "service";
@@ -906,9 +912,9 @@ export class Service extends Base {
       this.#port = data.port;
       delete data.port;
     }
-    if (data.ipAddress) {
-      this.#ipAddress = data.ipAddress;
-      delete data.ipAddress;
+    if (data.ipAddresses) {
+      this.#ipAddresses = data.ipAddresses;
+      delete data.ipAddresses;
     }
 
     Object.assign(this, data);
@@ -933,8 +939,8 @@ export class Service extends Base {
       if (this.#port) {
         data.port = this.#port;
       }
-      if (this.#ipAddress) {
-        data.ipAddress = this.#ipAddress;
+      if (this.#ipAddresses) {
+        data.ipAddresses = this.#ipAddresses;
       }
       return new this.constructor(owner, data);
     }
@@ -953,8 +959,8 @@ export class Service extends Base {
     }
   }
 
-  get ipAddress() {
-    return this.#ipAddress || this.owner.ipAddress;
+  get ipAddresses() {
+    return this.#ipAddresses || this.owner.ipAddresses;
   }
 
   get port() {
@@ -980,7 +986,7 @@ export class Service extends Base {
   get propertyNames() {
     return [
       ...super.propertyNames,
-      "ipAddress",
+      "ipAddresses",
       "port",
       "protocol",
       "alias",
