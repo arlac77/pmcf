@@ -20,6 +20,7 @@ test("Service basics", async t => {
   t.is(s1.priority, 17);
   t.is(s1.weight, 5);
   t.is(s1.port, 53);
+  t.is(s1.protocol, "udp");
   t.is(s1.srvPrefix, "_dns._udp");
   t.is(s1.ipAddress, "10.0.0.1");
 
@@ -38,7 +39,8 @@ test("Service basics", async t => {
   t.is(s2.priority, 19);
   t.is(s2.weight, 5);
   t.is(s2.port, 53);
-  t.is(s1.srvPrefix, "_dns._udp");
+  t.is(s2.protocol, "udp");
+  t.is(s2.srvPrefix, "_dns._udp");
   t.is(s2.ipAddress, "10.0.0.2");
   t.is([...h2.services({ type: "dns" })][0], s2);
 

@@ -863,15 +863,15 @@ export class Subnet extends Base {
 }
 
 const ServiceTypes = {
-  dns: { srvPrefix: "_dns._udp", port: 53 },
-  ldap: { srvPrefix: "_ldap._tcp", port: 389 },
-  http: { srvPrefix: "_http._tcp", port: 80 },
-  https: { srvPrefix: "_http._tcp", port: 443 },
-  rtsp: { srvPrefix: "_rtsp._tcp", port: 554 },
-  smtp: { srvPrefix: "_smtp._tcp", port: 25 },
-  ssh: { srvPrefix: "_ssh._tcp", port: 22 },
-  imap: { srvPrefix: "_imap._tcp", port: 143 },
-  imaps: { srvPrefix: "_imaps._tcp", port: 993 },
+  dns: { protocol: "udp", port: 53 },
+  ldap: { protocol: "tcp", port: 389 },
+  http: { protocol: "tcp", port: 80 },
+  https: { protocol: "tcp", port: 443 },
+  rtsp: { protocol: "tcp", port: 554 },
+  smtp: { protocol: "tcp", port: 25 },
+  ssh: { protocol: "tcp", port: 22 },
+  imap: { protocol: "tcp", port: 143 },
+  imaps: { protocol: "tcp", port: 993 },
   dhcp: {}
 };
 
@@ -941,8 +941,16 @@ export class Service extends Base {
     return this;
   }
 
+  get protocol()
+  {
+    return ServiceTypes[this.type]?.protocol;
+  }
+  
   get srvPrefix() {
-    return ServiceTypes[this.type]?.srvPrefix;
+    const st = ServiceTypes[this.type];
+    if(st) {
+      return `_${this.type}._${st.protocol}`;
+    }
   }
 
   get ipAddress() {
@@ -973,6 +981,8 @@ export class Service extends Base {
     return [
       ...super.propertyNames,
       "ipAddress",
+      "port",
+      "protocol",
       "alias",
       "type",
       "master",
