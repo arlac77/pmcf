@@ -1,7 +1,7 @@
 {
   "description": "somewhere",
   "dns": {
-    "forwardsTo": ["GLOBAL"],
+    "forwardsTo": "GLOBAL",
     "allowedUpdates": ["trusted"],
     "recordTTL": "1W"
   }

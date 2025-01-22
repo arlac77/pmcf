@@ -430,7 +430,7 @@ class DNSService {
 
     yield* this.owner.services(filter);
 
-    for (const s of this.forwardsTo) {
+    for (const s of asArray(this.forwardsTo)) {
       const owner = await this.owner.world.load(s);
       yield* owner.services(filter);
     }
@@ -480,7 +480,6 @@ export class Location extends Owner {
   get dns() {
     return this.#dns;
   }
-
 
   async *networkAddresses() {
     for await (const host of this.hosts()) {
@@ -592,7 +591,9 @@ export class Host extends Base {
     }
 
     if (data.extends) {
-      data.extends = await Promise.all(asArray(data.extends).map(e => world.host(e)));
+      data.extends = await Promise.all(
+        asArray(data.extends).map(e => world.host(e))
+      );
     }
 
     return this;
@@ -941,14 +942,13 @@ export class Service extends Base {
     return this;
   }
 
-  get protocol()
-  {
+  get protocol() {
     return ServiceTypes[this.type]?.protocol;
   }
-  
+
   get srvPrefix() {
     const st = ServiceTypes[this.type];
-    if(st) {
+    if (st) {
       return `_${this.type}._${st.protocol}`;
     }
   }
