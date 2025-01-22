@@ -592,7 +592,7 @@ export class Host extends Base {
     }
 
     if (data.extends) {
-      data.extends = await Promise.all(data.extends.map(e => world.host(e)));
+      data.extends = await Promise.all(asArray(data.extends).map(e => world.host(e)));
     }
 
     return this;
