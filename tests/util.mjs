@@ -30,8 +30,13 @@ export async function assertObject(t, object, expected, path = []) {
             i++;
           }
         } else {
-          if (typeof v === "object" && v.name) {
-            t.is(value.name, v.name, `${path.join("/")}: ${k}.name`);
+          if (typeof v === "object") {
+            if(v.name) {
+              t.is(value.name, v.name, `${path.join("/")}: ${k}.name`);
+            }
+            else {
+              assertObject(t, value, v, [...path, k]);
+            }
           } else {
             t.is(value, v, `${[...path, k].join("/")}:`);
           }
