@@ -45,6 +45,13 @@ export function world1(world, filter) {
       owner: L1n1,
       location: L1,
       os: "linux"
+      networkInterfaces : {
+        wifi0: {
+          network: L1n2,
+          metric: 1010,
+          ssid: "ID2"
+        }
+      }
     },
     "L1/host1": {
       instanceof: Host,

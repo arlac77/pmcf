@@ -776,6 +776,10 @@ export class Host extends Base {
 
   addNetworkInterface(networkInterface) {
     this.networkInterfaces[networkInterface.name] = networkInterface;
+
+    if(networkInterface.network) {
+      networkInterface.network.addHost(this);
+    }
   }
 
   *networkAddresses() {
@@ -866,12 +870,14 @@ export class NetworkInterface extends Base {
 
       if (network) {
         data.network = network;
-        network.addHost(owner);
       } else {
         this.error("Missing network", data.network);
       }
     }
-
+    else if(owner.owner instanceof Network) {
+      data.network = owner.owner;
+    }
+    
     Object.assign(this, data);
 
     owner.addNetworkInterface(this);
