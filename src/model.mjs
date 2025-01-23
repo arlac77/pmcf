@@ -105,7 +105,7 @@ export class Base {
           return new Set([...object].map(e => this.expand(e)));
         }
 
-        /*return Object.fromEntries(
+      /*return Object.fromEntries(
           Object.entries(object).map(([k, v]) => [k, this.expand(v)])
         );*/
     }
@@ -645,15 +645,15 @@ export class Host extends Base {
       delete data.master;
     }
     if (data.depends !== undefined) {
-      this.#depends = new Set(data.depends);
+      this.#depends = new Set(asArray(data.depends));
       delete data.depends;
     }
     if (data.replaces !== undefined) {
-      this.#replaces = new Set(data.replaces);
+      this.#replaces = new Set(asArray(data.replaces));
       delete data.replaces;
     }
     if (data.provides !== undefined) {
-      this.#provides = new Set(data.provides);
+      this.#provides = new Set(asArray(data.provides));
       delete data.provides;
     }
 
