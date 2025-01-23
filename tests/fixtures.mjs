@@ -46,7 +46,7 @@ export function world1(world, filter) {
       location: L1,
       os: "linux",
       networkInterfaces : {
-        wifi0: {
+        wlan0: {
           network: L1n2,
           metric: 1010,
           ssid: "ID2"
