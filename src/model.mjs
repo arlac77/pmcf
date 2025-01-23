@@ -833,8 +833,33 @@ export class NetworkInterface extends Base {
     return "network_interface";
   }
 
+  #scope;
+  #metric;
+  #ssid;
+  #psk;
+  arpbridge;
+  hwaddr;
+  network;
+
   constructor(owner, data) {
     super(owner, data);
+
+    if (data.ssid) {
+      this.#ssid = data.ssid;
+      delete data.ssid;
+    }
+    if (data.psk) {
+      this.#psk = data.psk;
+      delete data.psk;
+    }
+    if (data.scope) {
+      this.#psk = data.scope;
+      delete data.scope;
+    }
+    if (data.metric) {
+      this.#metric = data.metric;
+      delete data.psmetric;
+    }
 
     if (data.network) {
       const network = owner.owner.network(data.network);
@@ -850,10 +875,41 @@ export class NetworkInterface extends Base {
     Object.assign(this, data);
 
     owner.addNetworkInterface(this);
+
+    //this.arpbridge = owner.addARPBridge(this, data.arpbridge);
   }
 
   get host() {
     return this.owner;
+  }
+
+  get scope() {
+    return this.#scope || this.network?.scope || "global";
+  }
+
+  get metric() {
+    return this.#metric || this.network?.metric || 1004;
+  }
+
+  get ssid() {
+    return this.#ssid || this.network?.ssid;
+  }
+
+  get psk() {
+    return this.#psk || this.network?.psk;
+  }
+
+  get propertyNames() {
+    return [
+      ...super.propertyNames,
+      "arpbridge",
+      "hwaddr",
+      "network",
+      "ssid",
+      "psk",
+      "scope",
+      "metric"
+    ];
   }
 }
 

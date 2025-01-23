@@ -98,8 +98,8 @@ async function generateNetworkDefs(host, dir) {
           "",
           sectionLines("Route", {
             ...routeSectionExtra,
-            Scope: network?.network.scope || "global",
-            Metric: network?.network.metric || 1004,
+            Scope: network.scope,
+            Metric: network.metric,
             InitialCongestionWindow: 20,
             InitialAdvertisedReceiveWindow: 20
           }),
@@ -137,8 +137,8 @@ ctrl_interface=DIR=/run/wpa_supplicant GROUP=netdev
 update_config=1
 p2p_disabled=1
 network={
-  ssid="${network.ssid || network.network?.ssid}"
-  psk=${network.psk || network.network?.psk}
+  ssid="${network.ssid}"
+  psk=${network.psk}
   scan_ssid=1
 }`,
           "utf8"
