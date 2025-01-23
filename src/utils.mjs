@@ -31,3 +31,11 @@ export function bridgeToJSON(bridge) {
 export function asArray(value) {
   return Array.isArray(value) ? value : value === undefined ? [] : [value];
 }
+
+export function isIPv4Address(address) {
+  return address.indexOf(".") >= 0;
+}
+
+export function isIPv6Address(address) {
+  return address.indexOf(":") >= 0;
+}

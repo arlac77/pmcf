@@ -2,7 +2,7 @@
 
 import { join } from "node:path";
 import { createHmac } from "node:crypto";
-import { writeLines } from "../src/utils.mjs";
+import { writeLines, isIPv4Address } from "../src/utils.mjs";
 import { prepare } from "../src/cmd.mjs";
 
 const { world, args, options } = prepare();
@@ -103,7 +103,7 @@ async function generateNamedDefs(location, targetDir) {
       const host = networkInterface.host;
       zone.records.add(
         `${host.hostName.padEnd(NAME_LEN, " ")} ${ttl} IN ${
-          address.indexOf(".") >= 0 ? "A   " : "AAAA"
+          isIPv4Address(address) ? "A   " : "AAAA"
         }  ${normalizeIPAddress(address)}`
       );
 
@@ -132,7 +132,7 @@ async function generateNamedDefs(location, targetDir) {
 
       const reverseZone = networkInterface.network.subnet?.reverseZone;
 
-      if (reverseZone && address.indexOf(".") >= 0) {
+      if (reverseZone && isIPv4Address(address)) {
         reverseZone.records.add(
           `${(reverseArpaAddress(address) + ".").padEnd(
             NAME_LEN,
@@ -159,7 +159,9 @@ async function generateNamedDefs(location, targetDir) {
       zoneConfig.push(`  file \"${zone.file}\";`);
 
       zoneConfig.push(
-        `  allow-update { ${dns.allowedUpdates.length ? dns.allowedUpdates.join(";") : "none"}; };`
+        `  allow-update { ${
+          dns.allowedUpdates.length ? dns.allowedUpdates.join(";") : "none"
+        }; };`
       );
       zoneConfig.push(`  notify yes;`);
       zoneConfig.push(`};`);
@@ -177,7 +179,7 @@ async function generateNamedDefs(location, targetDir) {
 }
 
 export function reverseAddress(address) {
-  if (address.indexOf(".") >= 0) {
+  if (isIPv4Address(address)) {
     return address.split(".").reverse().join(".");
   }
 
@@ -191,12 +193,12 @@ export function reverseAddress(address) {
 export function reverseArpaAddress(address) {
   return (
     reverseAddress(address) +
-    (address.indexOf(".") >= 0 ? ".in-addr.arpa" : ".ip6.arpa")
+    (isIPv4Address(address) ? ".in-addr.arpa" : ".ip6.arpa")
   );
 }
 
 export function normalizeIPAddress(address) {
-  if (address.indexOf(".") >= 0) {
+  if (isIPv4Address(address)) {
     return address;
   }
   address = address.replace(/\/\d+$/, "");

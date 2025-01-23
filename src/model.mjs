@@ -668,14 +668,14 @@ export class Host extends Base {
       }
     }
 
-    Object.assign(this, { networkInterfaces: {} }, data);
-
-    owner.addHost(this);
+    Object.assign(this, data);
 
     for (const [name, iface] of Object.entries(this.networkInterfaces)) {
       iface.name = name;
-      this.networkInterfaces[name] = new NetworkInterface(this, iface);
+      new NetworkInterface(this, iface);
     }
+
+    owner.addHost(this);
   }
 
   get deployment() {
@@ -774,10 +774,12 @@ export class Host extends Base {
     }
   }
 
+  addNetworkInterface(networkInterface) {
+    this.networkInterfaces[networkInterface.name] = networkInterface;
+  }
+
   *networkAddresses() {
-    for (const [name, networkInterface] of Object.entries(
-      this.networkInterfaces
-    )) {
+    for (const networkInterface of Object.values(this.networkInterfaces)) {
       for (const attribute of ["ipv4", "ipv6", "link-local-ipv6"]) {
         if (networkInterface[attribute]) {
           yield { address: networkInterface[attribute], networkInterface };
@@ -846,6 +848,8 @@ export class NetworkInterface extends Base {
     }
 
     Object.assign(this, data);
+
+    owner.addNetworkInterface(this);
   }
 
   get host() {
