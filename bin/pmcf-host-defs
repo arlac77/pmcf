@@ -2,7 +2,7 @@
 
 import { writeFile, mkdir, copyFile, glob } from "node:fs/promises";
 import { join } from "node:path";
-import { writeLines, sectionLines } from "../src/model.mjs";
+import { writeLines, sectionLines } from "../src/utils.mjs";
 import { prepare } from "../src/cmd.mjs";
 
 const { world, args, options } = prepare();

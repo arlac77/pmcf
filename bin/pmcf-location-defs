@@ -2,7 +2,7 @@
 
 import { mkdir, copyFile } from "node:fs/promises";
 import { join } from "node:path";
-import { writeLines, sectionLines } from "../src/model.mjs";
+import { writeLines, sectionLines } from "../src/utils.mjs";
 import { prepare } from "../src/cmd.mjs";
 
 const { world, args, options } = prepare();
@@ -21,7 +21,7 @@ console.log("replaces", `mf-location-${location.name}`);
 console.log("description", `location definitions for ${location.name}`);
 
 async function generateLocationDefs(location, dir) {
-  const sl = (await Array.fromAsync(location.dns.services())).map(s=>s.ipAddress);
+  const sl = (await Array.fromAsync(location.dns.services())).map(s=>s.ipAddresses).flat()
   const s1 = sl.shift();
 
   await writeLines(

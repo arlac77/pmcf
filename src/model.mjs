@@ -1,6 +1,7 @@
-import { readFile, writeFile, mkdir, glob } from "node:fs/promises";
+import { readFile, glob } from "node:fs/promises";
 import { join } from "node:path";
 import { getAttribute } from "pacc";
+import { asArray, bridgeToJSON } from "./utils.mjs";
 
 export class Base {
   owner;
@@ -139,6 +140,37 @@ export class Owner extends Base {
   #networks = new Map();
   #subnets = new Map();
   #bridges = new Set();
+  #dns;
+  #administratorEmail;
+  domain;
+  ntp = { servers: [] };
+
+  constructor(owner, data) {
+    super(owner, data);
+
+    let dns;
+    if (data?.dns) {
+      dns = data.dns;
+      delete data.dns;
+    }
+
+    this.#dns = new DNSService(this, dns);
+
+    if (data?.networks) {
+      const networks = data.networks;
+      delete data.networks;
+
+      for (const [name, data] of Object.entries(networks)) {
+        data.name = name;
+        new Network(this, data);
+      }
+    }
+    Object.assign(this, data);
+  }
+
+  get dns() {
+    return this.#dns;
+  }
 
   async *hosts() {
     for (const host of this.#hosts.values()) {
@@ -244,6 +276,14 @@ export class Owner extends Base {
     }
   }
 
+  async *networkAddresses() {
+    for await (const host of this.hosts()) {
+      for (const networkAddresses of host.networkAddresses()) {
+        yield networkAddresses;
+      }
+    }
+  }
+
   #resolveActions = [];
 
   resolveLater(action) {
@@ -266,6 +306,14 @@ export class Owner extends Base {
 
   subnets() {
     return this.#subnets.values();
+  }
+
+  get administratorEmail() {
+    return this.#administratorEmail || "admin@" + this.domain;
+  }
+
+  get propertyNames() {
+    return [...super.propertyNames, "domain", "administratorEmail", "dns"];
   }
 
   toJSON() {
@@ -410,20 +458,16 @@ export class World extends Owner {
   async host(name) {
     return this.load(name, { type: Host });
   }
-
-  async *networkAddresses() {
-    for await (const host of this.hosts()) {
-      for (const networkAddresses of host.networkAddresses()) {
-        yield networkAddresses;
-      }
-    }
-  }
 }
 
 class DNSService extends Base {
   allowedUpdates = [];
   recordTTL = "1W";
   forwardsTo = [];
+
+  static get typeName() {
+    return "dns";
+  }
 
   constructor(owner, data) {
     super(owner, data);
@@ -447,35 +491,8 @@ class DNSService extends Base {
 }
 
 export class Location extends Owner {
-  domain;
-  #dns;
-  ntp = { servers: [] };
-  #administratorEmail;
-
   static get typeName() {
     return "location";
-  }
-
-  constructor(owner, data) {
-    super(owner, data);
-
-    let dns;
-    if (data.dns) {
-      dns = data.dns;
-      delete data.dns;
-    }
-
-    this.#dns = new DNSService(this, dns);
-    const networks = data.networks;
-    delete data.networks;
-    Object.assign(this, data);
-
-    if (networks) {
-      for (const [name, data] of Object.entries(networks)) {
-        data.name = name;
-        new Network(this, data);
-      }
-    }
   }
 
   async *hosts() {
@@ -484,26 +501,6 @@ export class Location extends Owner {
         yield host;
       }
     }
-  }
-
-  get dns() {
-    return this.#dns;
-  }
-
-  async *networkAddresses() {
-    for await (const host of this.hosts()) {
-      for (const networkAddresses of host.networkAddresses()) {
-        yield networkAddresses;
-      }
-    }
-  }
-
-  get administratorEmail() {
-    return this.#administratorEmail || "admin@" + this.domain;
-  }
-
-  get propertyNames() {
-    return [...super.propertyNames, "domain", "administratorEmail", "dns"];
   }
 }
 
@@ -1005,52 +1002,21 @@ export class Service extends Base {
   }
 }
 
-const _types = [Location, Network, Subnet, Host, Service];
+const _types = [Location, Network, Subnet, Host, Service, DNSService];
 const _typesByName = Object.fromEntries(_types.map(t => [t.typeName, t]));
 
-export async function writeLines(dir, name, lines) {
-  await mkdir(dir, { recursive: true });
-  return writeFile(
-    join(dir, name),
-    [...lines]
-      .flat()
-      .filter(line => line !== undefined)
-      .map(l => l + "\n")
-      .join(""),
-    "utf8"
-  );
-}
-
-export function sectionLines(sectionName, values) {
-  const lines = [`[${sectionName}]`];
-
-  for (const [name, value] of Object.entries(values)) {
-    lines.push(`${name}=${value}`);
-  }
-
-  return lines;
-}
-
-function extractFrom(object, propertyNames) {
+export function extractFrom(object, propertyNames) {
   const json = {};
   for (const p of propertyNames) {
     const value = object[p];
 
     if (value !== undefined) {
-      if (value instanceof Base) {
-        json[p] = { name: object.name };
+      if (value instanceof Base && value.name) {
+        json[p] = { name: value.name };
       } else {
         json[p] = value;
       }
     }
   }
   return json;
-}
-
-function bridgeToJSON(bridge) {
-  return [...bridge].map(n => n.name || `(${n})`).sort();
-}
-
-function asArray(value) {
-  return Array.isArray(value) ? value : value === undefined ? [] : [value];
 }

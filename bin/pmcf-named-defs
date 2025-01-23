@@ -2,7 +2,7 @@
 
 import { join } from "node:path";
 import { createHmac } from "node:crypto";
-import { writeLines } from "../src/model.mjs";
+import { writeLines } from "../src/utils.mjs";
 import { prepare } from "../src/cmd.mjs";
 
 const { world, args, options } = prepare();
