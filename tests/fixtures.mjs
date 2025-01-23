@@ -44,7 +44,7 @@ export function world1(world, filter) {
       instanceof: Host,
       owner: L1n1,
       location: L1,
-      os: "linux"
+      os: "linux",
       networkInterfaces : {
         wifi0: {
           network: L1n2,
