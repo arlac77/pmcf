@@ -12,8 +12,7 @@ export async function assertObject(t, object, expected, path = []) {
       case "services":
         for (const [name, sd] of Object.entries(v)) {
           const service = [...object.services({ name })][0];
-          t.is(service.name, name);
-          t.is(service.type, sd.type);
+          assertObject(t, service, sd, [...path, name]);
         }
         break;
       default:

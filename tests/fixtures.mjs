@@ -52,7 +52,7 @@ export function world1(world, filter) {
       location: L1,
       os: "linux",
       services: {
-        dns: { type: "dns" }
+        dns: { type: "dns", alias: "dns" }
       }
     },
     L2,

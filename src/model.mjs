@@ -1,5 +1,6 @@
 import { readFile, writeFile, mkdir, glob } from "node:fs/promises";
 import { join } from "node:path";
+import { getAttribute } from "pacc";
 
 export class Base {
   owner;
@@ -89,18 +90,24 @@ export class Base {
   }
 
   expand(object) {
-    if (typeof object === "string") {
-      return object.replaceAll(/\$\{([^\}]*)\}/g, (match, m1) => {
-        return this[m1] || "${" + m1 + "}";
-      });
-    }
+    switch (typeof object) {
+      case "string":
+        return object.replaceAll(/\$\{([^\}]*)\}/g, (match, m1) => {
+          return getAttribute(this, m1) || "${" + m1 + "}";
+        });
 
-    if (Array.isArray(object)) {
-      return object.map(e => this.expand(e));
-    }
+      case "object":
+        if (Array.isArray(object)) {
+          return object.map(e => this.expand(e));
+        }
 
-    if (object instanceof Set) {
-      return new Set([...object].map(e => this.expand(e)));
+        if (object instanceof Set) {
+          return new Set([...object].map(e => this.expand(e)));
+        }
+
+        /*return Object.fromEntries(
+          Object.entries(object).map(([k, v]) => [k, this.expand(v)])
+        );*/
     }
 
     return object;
