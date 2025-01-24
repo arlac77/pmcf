@@ -26,6 +26,10 @@ export class DNSService extends Base {
     }
   }
 
+  get domains() {
+    return [this.owner.domain];
+  }
+
   get propertyNames() {
     return ["recordTTL", "forwardsTo", "allowedUpdates"];
   }

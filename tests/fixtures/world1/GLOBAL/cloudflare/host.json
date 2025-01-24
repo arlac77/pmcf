@@ -1,4 +1,5 @@
 {
+  "priority": 10,
   "networkInterfaces": {
     "eth0": {
       "ipv4": "1.1.1.1",

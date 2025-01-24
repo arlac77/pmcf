@@ -21,16 +21,29 @@ console.log("replaces", `mf-location-${location.name}`);
 console.log("description", `location definitions for ${location.name}`);
 
 async function generateLocationDefs(location, dir) {
-  const sl = (await Array.fromAsync(location.dns.services())).map(s=>s.ipAddresses).flat()
-  const s1 = sl.shift();
+  const dns = location.dns;
+  const dnsServices = (await Array.fromAsync(dns.services())).sort(
+    (a, b) => a.priority - b.priority
+  );
+
+  console.log(dnsServices);
+
+  const master = dnsServices
+    .filter(s => s.priority < 10)
+    .map(s => s.ipAddresses)
+    .flat();
+  const fallback = dnsServices
+    .filter(s => s.priority >= 10)
+    .map(s => s.ipAddresses)
+    .flat();
 
   await writeLines(
     join(dir, "etc/systemd/resolved.conf.d"),
     `${location.name}.conf`,
     sectionLines("Resolve", {
-      DNS: s1,
-      FallbackDNS: sl.join(","),
-      Domains: location.domain,
+      DNS: master.join(" "),
+      FallbackDNS: fallback.join(" "),
+      Domains: dns.domains.join(" "),
       DNSSEC: "no",
       MulticastDNS: "yes",
       LLMNR: "no"
