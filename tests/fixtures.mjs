@@ -1,4 +1,4 @@
-import { Location, Network, Host, World } from "../src/model.mjs";
+import { Location, Network, Host, World } from "pmcf";
 
 /**
  *

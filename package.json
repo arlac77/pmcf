@@ -6,7 +6,7 @@
   },
   "exports": {
     ".": {
-      "default": "./src/model.mjs"
+      "default": "./src/module.mjs"
     }
   },
   "description": "Poor mans configuration management",

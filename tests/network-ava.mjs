@@ -1,5 +1,5 @@
 import test from "ava";
-import { World, Owner, Network } from "../src/model.mjs";
+import { World, Owner, Network } from "pmcf";
 import { assertObject } from "./util.mjs";
 import { world1 } from "./fixtures.mjs";
 

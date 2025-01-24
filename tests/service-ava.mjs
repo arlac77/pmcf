@@ -1,5 +1,5 @@
 import test from "ava";
-import { World, Location, Host, Service } from "../src/model.mjs";
+import { World, Location, Host, Service } from "pmcf";
 
 test("Service basics", async t => {
   const world = new World("/somwhere");

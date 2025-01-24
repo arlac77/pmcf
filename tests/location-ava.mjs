@@ -1,7 +1,7 @@
 import test from "ava";
 import { assertObject, assertObjects } from "./util.mjs";
 import { world1 } from "./fixtures.mjs";
-import { World } from "../src/model.mjs";
+import { World } from "pmcf";
 
 test("Location basics", async t => {
   const world = new World(new URL("fixtures/world1", import.meta.url).pathname);

@@ -1,5 +1,5 @@
 import test from "ava";
-import { World } from "../src/model.mjs";
+import { World } from "pmcf";
 import { assertObject } from "./util.mjs";
 import { world1 } from "./fixtures.mjs";
 

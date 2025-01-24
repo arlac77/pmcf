@@ -1,5 +1,5 @@
 import test from "ava";
-import { World } from "../src/model.mjs";
+import { World } from "pmcf";
 
 test("load all", async t => {
   const world = new World(new URL("fixtures/world1", import.meta.url).pathname);

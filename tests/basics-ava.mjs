@@ -7,7 +7,7 @@ import {
   Service,
   Subnet,
   Base
-} from "../src/model.mjs";
+} from "pmcf";
 
 test("types", t => {
   t.is(World.types.location, Location);
