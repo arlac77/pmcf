@@ -87,7 +87,7 @@ export class Base {
   }
 
   get fullName() {
-    return this.owner ? join(this.owner.fullName, this.name) : this.name;
+    return this.owner?.fullName ? join(this.owner.fullName, this.name) : this.name;
   }
 
   expand(object) {
@@ -112,6 +112,29 @@ export class Base {
     }
 
     return object;
+  }
+
+  #finalize;
+
+  finalize(action) {
+    if (!this.#finalize) {
+      this.#finalize = [];
+    }
+    this.#finalize.push(action);
+  }
+
+  execFinalize() {
+    if (this.#finalize) {
+      //this.info("finalize");
+      let i = 0;
+      for (const action of this.#finalize) {
+        if (action) {
+          this.#finalize[i] = undefined;
+          action();
+        }
+        i++;
+      }
+    }
   }
 
   error(...args) {
@@ -166,6 +189,18 @@ export class Owner extends Base {
       }
     }
     Object.assign(this, data);
+
+    this.finalize(() => {
+      for (const network of this.#networks.values()) {
+        network.execFinalize();
+      }
+    });
+
+    this.finalize(() => {
+      for (const host of this.#hosts.values()) {
+        host.execFinalize();
+      }
+    });
   }
 
   get dns() {
@@ -248,7 +283,7 @@ export class Owner extends Base {
           other.bridge = bridge;
         } else {
           bridge.add(name);
-          this.resolveLater(() => this._resolveBridges());
+          this.finalize(() => this._resolveBridges());
         }
       }
 
@@ -281,18 +316,6 @@ export class Owner extends Base {
       for (const networkAddresses of host.networkAddresses()) {
         yield networkAddresses;
       }
-    }
-  }
-
-  #resolveActions = [];
-
-  resolveLater(action) {
-    this.#resolveActions.push(action);
-  }
-
-  resolve() {
-    for (const action of this.#resolveActions) {
-      action();
     }
   }
 
@@ -414,6 +437,8 @@ export class World extends Owner {
         await this.load(name, { type });
       }
     }
+
+    this.execFinalize();
   }
 
   addObject(object) {
@@ -676,6 +701,12 @@ export class Host extends Base {
     }
 
     owner.addHost(this);
+
+    this.finalize(() => {
+      for (const ni of Object.values(this.networkInterfaces)) {
+        ni.execFinalize();
+      }
+    });
   }
 
   get deployment() {
@@ -777,7 +808,7 @@ export class Host extends Base {
   addNetworkInterface(networkInterface) {
     this.networkInterfaces[networkInterface.name] = networkInterface;
 
-    if(networkInterface.network) {
+    if (networkInterface.network) {
       networkInterface.network.addHost(this);
     }
   }
@@ -841,9 +872,9 @@ export class NetworkInterface extends Base {
   #metric;
   #ssid;
   #psk;
+  #network;
   arpbridge;
   hwaddr;
-  network;
 
   constructor(owner, data) {
     super(owner, data);
@@ -866,23 +897,44 @@ export class NetworkInterface extends Base {
     }
 
     if (data.network) {
-      const network = owner.owner.network(data.network);
+      let network = owner.owner.network(data.network);
 
       if (network) {
-        data.network = network;
+        this.network = network;
       } else {
-        this.error("Missing network", data.network);
+        network = data.network;
+        this.finalize(() => (this.network = network));
       }
+
+      delete data.network;
+    } else if (owner.owner instanceof Network) {
+      this.network = owner.owner;
     }
-    else if(owner.owner instanceof Network) {
-      data.network = owner.owner;
-    }
-    
+
     Object.assign(this, data);
 
     owner.addNetworkInterface(this);
 
     //this.arpbridge = owner.addARPBridge(this, data.arpbridge);
+  }
+
+  get network() {
+    return this.#network;
+  }
+
+  set network(networkOrName) {
+    if (!(networkOrName instanceof Network)) {
+      let network = this.owner.owner.network(networkOrName);
+
+      if (network) {
+        this.#network = network;
+        return;
+      } else {
+        this.error("Unknown network", networkOrName);
+      }
+    }
+
+    this.#network = networkOrName;
   }
 
   get host() {

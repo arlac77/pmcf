@@ -45,11 +45,12 @@ export function world1(world, filter) {
       owner: L1n1,
       location: L1,
       os: "linux",
-      networkInterfaces : {
+      networkInterfaces: {
         wlan0: {
           network: L1n1,
           metric: 1010,
-          ssid: "ID2"
+          ssid: "ID2",
+          ipv4: "192.168.1.2"
         }
       }
     },
@@ -58,6 +59,13 @@ export function world1(world, filter) {
       owner: L1,
       location: L1,
       os: "linux",
+      networkInterfaces: {
+        eth0: {
+          //network: L1n2,
+          metric: 1004,
+          ipv4: "192.168.1.1"
+        }
+      },
       services: {
         dns: { type: "dns", alias: "dns" }
       }

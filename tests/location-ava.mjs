@@ -22,6 +22,6 @@ test("Location dns", async t => {
 
   t.deepEqual(
     dnsServices.map(s => s.ipAddresses[0]).sort(),
-    ["1.1.1.1", "192.168.1.2", "192.168.2.1", "8.8.8.8"].sort()
+    ["1.1.1.1", "192.168.1.1", "192.168.1.2", "8.8.8.8"].sort()
   );
 });

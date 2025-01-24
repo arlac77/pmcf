@@ -6,6 +6,8 @@ import { world1 } from "./fixtures.mjs";
 test("Host basics", async t => {
   const world = new World(new URL("fixtures/world1", import.meta.url).pathname);
 
+  world.execFinalize();
+
   await assertObject(
     t,
     await world.named("L1/host1"),

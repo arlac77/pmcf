@@ -8,7 +8,7 @@ test("Network basics", async t => {
   await assertObject(t, await world.named("L1/n1"), world1(world, "L1/n1"));
 });
 
-test("bridges", t => {
+test("Network bridges", t => {
   const owner = new Owner();
 
   const n1 = new Network(owner, { name: "n1"  });
@@ -22,7 +22,7 @@ test("bridges", t => {
   const n3 = new Network(owner, { name: "n3", bridge: "n4" });
   const n4 = new Network(owner, { name: "n4" });
 
-  owner.resolve();
+  owner.execFinalize();
   
   t.true(n4.bridge.has(n3));
   t.true(n3.bridge.has(n4));
