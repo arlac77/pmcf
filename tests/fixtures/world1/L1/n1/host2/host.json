@@ -3,7 +3,7 @@
   "extends": "model/m1",
   "networkInterfaces": {
     "wlan0": {
-      "ipv4": "192.168.1.2"
+      "ipAddresses": "192.168.1.2"
     }
   },
   "services": {

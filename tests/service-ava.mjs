@@ -8,7 +8,7 @@ test("Service basics", async t => {
 
   const h1 = new Host(l1, {
     name: "h1",
-    networkInterfaces: { eth0: { ipv4: "10.0.0.1" } }
+    networkInterfaces: { eth0: { ipAddresses: "10.0.0.1" } }
   });
 
   const s1 = new Service(h1, { name: "dns", weight: 5, priority: 3, alias: "primary-dns" });
@@ -28,7 +28,7 @@ test("Service basics", async t => {
   const h2 = new Host(l1, {
     name: "h2",
     priority: 19,
-    networkInterfaces: { eth0: { ipv4: "10.0.0.2" } }
+    networkInterfaces: { eth0: { ipAddresses: "10.0.0.2" } }
   });
 
   const s2 = s1.withOwner(h2);

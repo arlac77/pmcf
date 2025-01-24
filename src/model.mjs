@@ -1,6 +1,6 @@
 import { readFile, glob } from "node:fs/promises";
 import { join } from "node:path";
-import { asArray, bridgeToJSON } from "./utils.mjs";
+import { asArray, bridgeToJSON, isIPv4Address, isIPv6Address} from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { DNSService } from "./dns.mjs";
 
@@ -639,10 +639,8 @@ export class Host extends Base {
 
   *networkAddresses() {
     for (const networkInterface of Object.values(this.networkInterfaces)) {
-      for (const attribute of ["ipv4", "ipv6", "link-local-ipv6"]) {
-        if (networkInterface[attribute]) {
-          yield { address: networkInterface[attribute], networkInterface };
-        }
+      for (const address of networkInterface.ipAddresses) {
+        yield { address, networkInterface };
       }
     }
   }
@@ -692,6 +690,7 @@ export class NetworkInterface extends Base {
     return "network_interface";
   }
 
+  #ipAddresses = [];
   #scope;
   #metric;
   #ssid;
@@ -702,6 +701,26 @@ export class NetworkInterface extends Base {
 
   constructor(owner, data) {
     super(owner, data);
+
+    if (data.ipv4) {
+      this.#ipAddresses.push(...asArray(data.ipv4));
+      delete data.ipv4;
+    }
+
+    if (data["link-local-ipv6"]) {
+      this.#ipAddresses.push(...asArray(data["link-local-ipv6"]));
+      delete data["link-local-ipv6"];
+    }
+
+    if (data.ipv6) {
+      this.#ipAddresses.push(...asArray(data.ipv6));
+      delete data.ipv6;
+    }
+
+    if (data.ipAddresses) {
+      this.#ipAddresses.push(...asArray(data.ipAddresses));
+      delete data.ipAddresses;
+    }
 
     if (data.ssid) {
       this.#ssid = data.ssid;
@@ -740,6 +759,20 @@ export class NetworkInterface extends Base {
     owner.addNetworkInterface(this);
 
     //this.arpbridge = owner.addARPBridge(this, data.arpbridge);
+  }
+
+  get ipAddresses() {
+    return this.#ipAddresses;
+  }
+
+  get ipv4Addresses()
+  {
+    return this.#ipAddresses.filter(a => isIPv4Address(a));
+  }
+
+  get ipv6Addresses()
+  {
+    return this.#ipAddresses.filter(a => isIPv6Address(a));
   }
 
   get network() {
@@ -790,7 +823,8 @@ export class NetworkInterface extends Base {
       "ssid",
       "psk",
       "scope",
-      "metric"
+      "metric",
+      "ipAddresses"
     ];
   }
 }
@@ -864,8 +898,6 @@ export class Service extends Base {
     }
 
     Object.assign(this, data);
-
-  //  this.owner = owner;
 
     owner.addService(this);
   }

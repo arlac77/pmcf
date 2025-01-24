@@ -50,7 +50,7 @@ export function world1(world, filter) {
           network: L1n1,
           metric: 1010,
           ssid: "ID2",
-          ipv4: "192.168.1.2"
+          ipAddresses: ["192.168.1.2"]
         }
       }
     },
@@ -63,7 +63,7 @@ export function world1(world, filter) {
         eth0: {
           //network: L1n2,
           metric: 1004,
-          ipv4: "192.168.1.1"
+          ipAddresses: ["192.168.1.1"]
         }
       },
       services: {
