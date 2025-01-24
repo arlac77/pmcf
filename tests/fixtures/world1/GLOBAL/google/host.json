@@ -1,5 +1,4 @@
 {
-  "priority": 11,
   "networkInterfaces": {
     "eth0": {
       "ipv4": "8.8.8.8",
@@ -7,6 +6,6 @@
     }
   },
   "services": {
-    "dns": { "type": "dns" }
+    "dns": { "type": "dns", "priority": 11 }
   }
 }

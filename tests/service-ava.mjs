@@ -8,16 +8,15 @@ test("Service basics", async t => {
 
   const h1 = new Host(l1, {
     name: "h1",
-    priority: 17,
     networkInterfaces: { eth0: { ipv4: "10.0.0.1" } }
   });
 
-  const s1 = new Service(h1, { name: "dns", weight: 5, alias: "primary-dns" });
+  const s1 = new Service(h1, { name: "dns", weight: 5, priority: 3, alias: "primary-dns" });
 
   t.is(s1.name, "dns");
   t.is(s1.type, "dns");
   t.is(s1.alias, "primary-dns");
-  t.is(s1.priority, 17);
+  t.is(s1.priority, 3);
   t.is(s1.weight, 5);
   t.is(s1.port, 53);
   t.is(s1.protocol, "udp");

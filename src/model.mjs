@@ -865,7 +865,7 @@ export class Service extends Base {
 
     Object.assign(this, data);
 
-    this.owner = owner;
+  //  this.owner = owner;
 
     owner.addService(this);
   }
@@ -914,7 +914,7 @@ export class Service extends Base {
   }
 
   get priority() {
-    return /*this.#priority || */ this.owner.priority || 99;
+    return this.#priority || this.owner.priority || 99;
   }
 
   get weight() {
