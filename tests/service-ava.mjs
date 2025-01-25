@@ -22,6 +22,7 @@ test("Service basics", async t => {
   t.is(s1.protocol, "udp");
   t.is(s1.srvPrefix, "_dns._udp");
   t.deepEqual(s1.ipAddresses, ["10.0.0.1"]);
+  t.deepEqual(s1.addresses, ["10.0.0.1:53"]);
 
   t.is([...h1.services({ type: "dns" })][0], s1);
 
@@ -41,6 +42,7 @@ test("Service basics", async t => {
   t.is(s2.protocol, "udp");
   t.is(s2.srvPrefix, "_dns._udp");
   t.deepEqual(s2.ipAddresses, ["10.0.0.2"]);
+  t.deepEqual(s2.addresses, ["10.0.0.2:53"]);
   t.is([...h2.services({ type: "dns" })][0], s2);
 
   const services = await Array.fromAsync(l1.services({ type: "dns" }));

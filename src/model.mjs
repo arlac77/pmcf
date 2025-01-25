@@ -955,6 +955,10 @@ export class Service extends Base {
     return this.#ipAddresses || this.owner.ipAddresses;
   }
 
+  get addresses() {
+    return this.ipAddresses.map(a => `${a}:${this.port}`);
+  }
+
   get port() {
     return this.#port || ServiceTypes[this.type]?.port;
   }
