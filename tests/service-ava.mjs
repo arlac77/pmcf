@@ -11,7 +11,12 @@ test("Service basics", async t => {
     networkInterfaces: { eth0: { ipAddresses: "10.0.0.1" } }
   });
 
-  const s1 = new Service(h1, { name: "dns", weight: 5, priority: 3, alias: "primary-dns" });
+  const s1 = new Service(h1, {
+    name: "dns",
+    weight: 5,
+    priority: 3,
+    alias: "primary-dns"
+  });
 
   t.is(s1.name, "dns");
   t.is(s1.type, "dns");
@@ -50,4 +55,15 @@ test("Service basics", async t => {
   t.deepEqual(services, [s1, s2]);
 
   t.is(s1, await l1.service({ type: "dns" }));
+});
+
+test("Service without protocol", t => {
+  const world = new World("/somwhere");
+
+  const h1 = new Host(world, {
+    name: "h1",
+    networkInterfaces: { eth0: { ipAddresses: "10.0.0.1" } }
+  });
+  const s1 = new Service(h1, { name: "dhcp", weight: 5, priority: 3 });
+  t.is(s1.srvPrefix, undefined);
 });
