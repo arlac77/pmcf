@@ -31,10 +31,9 @@ console.log("description", `named defintions for ${location.name}`);
 
 async function generateNamedDefs(location, targetDir) {
   const dns = location.dns;
-  const domain = location.domain;
   const ttl = dns.recordTTL;
 
-  if (domain) {
+  for (const domain of dns.domains) {
     const zones = [];
     const records = new Set();
 
@@ -49,7 +48,7 @@ async function generateNamedDefs(location, targetDir) {
       );
     }
 
-    console.log(location.name, location.domain, nameserver?.hostName, rname);
+    console.log(location.name, domain, nameserver?.hostName, rname);
 
     const catalogZone = {
       id: `catalog.${domain}`,
