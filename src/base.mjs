@@ -58,15 +58,15 @@ export class Base {
   }
 
   get location() {
-    return this.owner.location;
+    return this.owner?.location;
   }
 
   get host() {
-    return this.owner.host;
+    return this.owner?.host;
   }
 
-  async network(name) {
-    return this.owner.network(name);
+  get network() {
+    return this.owner?.network;
   }
 
   #directory;

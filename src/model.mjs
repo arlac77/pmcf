@@ -92,7 +92,7 @@ export class Owner extends Base {
     }
   }
 
-  network(name) {
+  networkNamed(name) {
     return this.#networks.get(name);
   }
 
@@ -128,7 +128,7 @@ export class Owner extends Base {
       }
 
       for (const name of asArray(destinationNetworks)) {
-        const other = this.network(name);
+        const other = this.networkNamed(name);
         if (other) {
           bridge.add(other);
           other.bridge = bridge;
@@ -147,7 +147,7 @@ export class Owner extends Base {
       this.info(bridgeToJSON(bridge));
       for (const network of bridge) {
         if (typeof network === "string") {
-          const other = this.network(network);
+          const other = this.networkNamed(network);
 
           if (other) {
             bridge.delete(network);
@@ -326,14 +326,6 @@ export class World extends Owner {
       yield location.domain;
     }
   }
-
-  async location(name) {
-    return this.load(name, { type: Location });
-  }
-
-  async host(name) {
-    return this.load(name, { type: Host });
-  }
 }
 
 export class Location extends Owner {
@@ -443,12 +435,12 @@ export class Host extends Base {
 
   static async prepareData(world, data) {
     if (data.location) {
-      data.location = await world.location(data.location);
+      data.location = await world.load(data.location, { type: Location });
     }
 
     if (data.extends) {
       data.extends = await Promise.all(
-        asArray(data.extends).map(e => world.host(e))
+        asArray(data.extends).map(e => world.load(e, { type: Host }))
       );
     }
 
@@ -745,7 +737,7 @@ export class NetworkInterface extends Base {
     }
 
     if (data.network) {
-      let network = owner.owner.network(data.network);
+      let network = owner.owner.networkNamed(data.network);
 
       if (network) {
         this.network = network;
@@ -790,7 +782,7 @@ export class NetworkInterface extends Base {
 
   set network(networkOrName) {
     if (!(networkOrName instanceof Network)) {
-      let network = this.owner.owner.network(networkOrName);
+      let network = this.owner.owner.networkNamed(networkOrName);
 
       if (network) {
         this.#network = network;

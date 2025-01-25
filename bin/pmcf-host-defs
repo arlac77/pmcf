@@ -2,14 +2,15 @@
 
 import { writeFile, mkdir, copyFile, glob } from "node:fs/promises";
 import { join } from "node:path";
+import { Host } from "pmcf";
 import { writeLines, sectionLines } from "../src/utils.mjs";
-import { prepare } from "../src/cmd.mjs";
+import { prepare, } from "../src/cmd.mjs";
 
 const { world, args, options } = prepare();
 
 const hostName = args[0];
 
-const host = await world.host(hostName);
+const host = await world.load(hostName,{ type: Host });
 
 await generateNetworkDefs(host, options.output);
 await generateMachineInfo(host, options.output);

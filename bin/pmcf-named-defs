@@ -2,12 +2,13 @@
 
 import { join } from "node:path";
 import { createHmac } from "node:crypto";
+import { Location } from "pmcf";
 import { writeLines, isIPv4Address } from "../src/utils.mjs";
 import { prepare } from "../src/cmd.mjs";
 
 const { world, args, options } = prepare();
 
-const location = await world.location(args[0] || "SW");
+const location = await world.load(args[0], { type: Location });
 const updates = [
   Math.ceil(Date.now() / 1000),
   36000,
