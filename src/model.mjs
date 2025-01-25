@@ -153,7 +153,7 @@ export class Owner extends Base {
             bridge.delete(network);
             bridge.add(other);
             other.bridge = bridge;
-            this.info("RESOLVE", network, other, bridgeToJSON(bridge));
+            //this.info("RESOLVE", network, other, bridgeToJSON(bridge));
           } else {
             this.error(`Unresolvabale bridge network`, network);
           }
@@ -975,6 +975,7 @@ export class Service extends Base {
     return [
       ...super.propertyNames,
       "ipAddresses",
+      "addresses",
       "port",
       "protocol",
       "alias",
