@@ -69,6 +69,10 @@ export class Base {
     return this.owner?.network;
   }
 
+  get administratorEmail() {
+    return this.owner?.administratorEmail;
+  }
+
   #directory;
   set directory(directory) {
     this.#directory = directory;

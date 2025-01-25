@@ -2,13 +2,12 @@
 
 import { join } from "node:path";
 import { createHmac } from "node:crypto";
-import { Location } from "pmcf";
 import { writeLines, isIPv4Address } from "../src/utils.mjs";
 import { prepare } from "../src/cmd.mjs";
 
 const { world, args, options } = prepare();
 
-const location = await world.load(args[0], { type: Location });
+const owner = await world.load(args[0]);
 const updates = [
   Math.ceil(Date.now() / 1000),
   36000,
@@ -19,77 +18,74 @@ const updates = [
 
 const NAME_LEN = 35;
 
-await generateNamedDefs(location, options.output);
+await generateNamedDefs(owner, options.output);
 
 console.log("depends", "mf-named");
 console.log("replaces", "mf-named-zones");
-console.log("description", `named defintions for ${location.name}`);
+console.log("description", `named defintions for ${owner.name}`);
 
-/*for await (const location of world.locations()) {
-  await generateNamedDefs(location, targetDir);
-}*/
-
-async function generateNamedDefs(location, targetDir) {
-  const dns = location.dns;
+async function generateNamedDefs(owner, targetDir) {
+  const dns = owner.dns;
   const ttl = dns.recordTTL;
 
   for (const domain of dns.domains) {
     const zones = [];
     const records = new Set();
 
-    const nameserver = (await location.service({ type: "dns" }))?.owner;
-    const rname = location.administratorEmail.replace(/@/, ".");
+    const nameserver = (await owner.service({ type: "dns" }))?.owner;
+    const rname = dns.administratorEmail.replace(/@/, ".");
 
-    for await (const mail of location.services({ type: "smtp" })) {
+    const createRecord = (key, type, value) => {
+      return {
+        key,
+        type,
+        value,
+        toString: () =>
+          `${key.padEnd(NAME_LEN, " ")} ${ttl} IN ${type} ${value}`
+      };
+    };
+
+    for await (const mail of owner.services({ type: "smtp" })) {
       records.add(
-        `${"@".padEnd(NAME_LEN, " ")} ${ttl} IN MX    ${mail.priority} ${
-          mail.owner.domainName
-        }.`
+        createRecord("@", "MX", `${mail.priority} ${mail.owner.domainName}.`)
       );
     }
 
-    console.log(location.name, domain, nameserver?.hostName, rname);
+    console.log(owner.name, domain, nameserver?.hostName, rname);
+
+    const SOARecord = createRecord(
+      "@",
+      "SOA",
+      `${nameserver?.domainName}. ${rname}. (${updates})`
+    );
+
+    const NSRecord = createRecord("@", "NS", `${nameserver?.ipAddress}.`);
 
     const catalogZone = {
       id: `catalog.${domain}`,
       file: `catalog.${domain}.zone`,
       records: new Set([
-        `${"@".padEnd(NAME_LEN, " ")} ${ttl} IN SOA   ${
-          nameserver.domainName
-        }. ${rname}. (${updates})`,
-        `${"@".padEnd(NAME_LEN, " ")} ${ttl} IN NS    ${nameserver.ipAddress}.`,
-        `${("version." + domain + ".").padEnd(NAME_LEN, " ")}    IN TXT   "2"`
+        SOARecord,
+        NSRecord,
+        createRecord(`version.${domain}.`, "TXT", '"2"')
       ])
     };
 
     const zone = {
       id: domain,
       file: `${domain}.zone`,
-      records: new Set([
-        `${"@".padEnd(NAME_LEN, " ")} ${ttl} IN SOA   ${
-          nameserver.domainName
-        }. ${rname}. (${updates})`,
-        `${"@".padEnd(NAME_LEN, " ")} ${ttl} IN NS    ${nameserver.ipAddress}.`,
-        ...records
-      ])
+      records: new Set([SOARecord, NSRecord, ...records])
     };
     zones.push(zone);
 
-    for (const subnet of location.subnets()) {
+    for (const subnet of owner.subnets()) {
       if (subnet.address) {
         const reverse = reverseAddress(subnet.address);
         const reverseArpa = reverseArpaAddress(subnet.address);
         const zone = {
           id: reverseArpa,
           file: `${reverse}.zone`,
-          records: new Set([
-            `${"@".padEnd(NAME_LEN, " ")} ${ttl} IN SOA   ${
-              nameserver.domainName
-            }. ${rname}. (${updates})`,
-            `${(reverseArpa + ".").padEnd(NAME_LEN, " ")} ${ttl} IN NS    ${
-              nameserver.domainName
-            }.`
-          ])
+          records: new Set([SOARecord, NSRecord])
         };
         zones.push(zone);
         subnet.reverseZone = zone;
@@ -99,33 +95,34 @@ async function generateNamedDefs(location, targetDir) {
     for await (const {
       address,
       networkInterface
-    } of location.networkAddresses()) {
+    } of owner.networkAddresses()) {
       const host = networkInterface.host;
       zone.records.add(
-        `${host.hostName.padEnd(NAME_LEN, " ")} ${ttl} IN ${
-          isIPv4Address(address) ? "A   " : "AAAA"
-        }  ${normalizeIPAddress(address)}`
+        createRecord(
+          host.hostName,
+          isIPv4Address(address) ? "A   " : "AAAA",
+          normalizeIPAddress(address)
+        )
       );
 
       for (const service of host.services()) {
         if (service.master && service.alias) {
           zone.records.add(
-            `${service.alias.padEnd(NAME_LEN, " ")} ${ttl} IN CNAME ${
-              host.domainName
-            }.`
+            createRecord(service.alias, "CNAME", `${host.domainName}.`)
           );
         }
 
         if (service.srvPrefix) {
           zone.records.add(
-            `${`${service.srvPrefix}.${host.domainName}.`.padEnd(
-              NAME_LEN,
-              " "
-            )} ${ttl} IN SRV   ${String(service.priority).padStart(4)} ${String(
-              service.weight
-            ).padStart(3)} ${String(service.port).padStart(5)} ${
-              host.domainName
-            }.`
+            createRecord(
+              `${service.srvPrefix}.${host.domainName}.`,
+              "SRV",
+              `${String(service.priority).padStart(4)} ${String(
+                service.weight
+              ).padStart(3)} ${String(service.port).padStart(5)} ${
+                host.domainName
+              }.`
+            )
           );
         }
       }
@@ -134,10 +131,11 @@ async function generateNamedDefs(location, targetDir) {
 
       if (reverseZone && isIPv4Address(address)) {
         reverseZone.records.add(
-          `${(reverseArpaAddress(address) + ".").padEnd(
-            NAME_LEN,
-            " "
-          )} ${ttl} IN PTR   ${networkInterface.host.domainName}.`
+          createRecord(
+            reverseArpaAddress(address) + ".",
+            "PTR",
+            `${networkInterface.host.domainName}.`
+          )
         );
       }
     }
