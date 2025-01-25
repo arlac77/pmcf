@@ -1,6 +1,11 @@
 import { readFile, glob } from "node:fs/promises";
 import { join } from "node:path";
-import { asArray, bridgeToJSON, isIPv4Address, isIPv6Address} from "./utils.mjs";
+import {
+  asArray,
+  bridgeToJSON,
+  isIPv4Address,
+  isIPv6Address
+} from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { DNSService } from "./dns.mjs";
 
@@ -696,6 +701,7 @@ export class NetworkInterface extends Base {
   #ssid;
   #psk;
   #network;
+  #kind;
   arpbridge;
   hwaddr;
 
@@ -705,11 +711,6 @@ export class NetworkInterface extends Base {
     if (data.ipv4) {
       this.#ipAddresses.push(...asArray(data.ipv4));
       delete data.ipv4;
-    }
-
-    if (data["link-local-ipv6"]) {
-      this.#ipAddresses.push(...asArray(data["link-local-ipv6"]));
-      delete data["link-local-ipv6"];
     }
 
     if (data.ipv6) {
@@ -736,7 +737,11 @@ export class NetworkInterface extends Base {
     }
     if (data.metric) {
       this.#metric = data.metric;
-      delete data.psmetric;
+      delete data.metric;
+    }
+    if (data.kind) {
+      this.#kind = data.kind;
+      delete data.kind;
     }
 
     if (data.network) {
@@ -765,13 +770,17 @@ export class NetworkInterface extends Base {
     return this.#ipAddresses;
   }
 
-  get ipv4Addresses()
-  {
+  get ipAddressesWithNetmask() {
+    return this.#ipAddresses.map(a =>
+      isIPv4Address(a) ? `${a}/${this.network.ipv4_netmask}` : a
+    );
+  }
+
+  get ipv4Addresses() {
     return this.#ipAddresses.filter(a => isIPv4Address(a));
   }
 
-  get ipv6Addresses()
-  {
+  get ipv6Addresses() {
     return this.#ipAddresses.filter(a => isIPv6Address(a));
   }
 
@@ -814,6 +823,10 @@ export class NetworkInterface extends Base {
     return this.#psk || this.network?.psk;
   }
 
+  get kind() {
+    return this.#kind || this.network?.kind;
+  }
+
   get propertyNames() {
     return [
       ...super.propertyNames,
@@ -824,7 +837,8 @@ export class NetworkInterface extends Base {
       "psk",
       "scope",
       "metric",
-      "ipAddresses"
+      "ipAddresses",
+      "kind"
     ];
   }
 }

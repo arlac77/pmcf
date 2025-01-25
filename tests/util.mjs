@@ -1,4 +1,13 @@
 export async function assertObject(t, object, expected, path = []) {
+  switch (typeof expected) {
+    case "string":
+    case "number":
+    case "boolean":
+      t.is(object, expected, `${path.join("/")}: is`);
+      return;
+      break;
+  }
+
   t.truthy(object, `${path.join("/")}: present`);
 
   for (const [k, v] of Object.entries(expected)) {
@@ -31,10 +40,9 @@ export async function assertObject(t, object, expected, path = []) {
           }
         } else {
           if (typeof v === "object") {
-            if(v.name) {
+            if (v.name) {
               t.is(value.name, v.name, `${path.join("/")}: ${k}.name`);
-            }
-            else {
+            } else {
               assertObject(t, value, v, [...path, k]);
             }
           } else {
