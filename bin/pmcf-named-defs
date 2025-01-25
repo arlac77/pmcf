@@ -16,8 +16,6 @@ const updates = [
   60000
 ].join(" ");
 
-const NAME_LEN = 35;
-
 await generateNamedDefs(owner, options.output);
 
 console.log("depends", "mf-named");
@@ -35,13 +33,15 @@ async function generateNamedDefs(owner, targetDir) {
     const nameserver = (await owner.service({ type: "dns" }))?.owner;
     const rname = dns.administratorEmail.replace(/@/, ".");
 
+    let maxKeyLength;
+
     const createRecord = (key, type, value) => {
       return {
         key,
         type,
         value,
         toString: () =>
-          `${key.padEnd(NAME_LEN, " ")} ${ttl} IN ${type} ${value}`
+          `${key.padEnd(maxKeyLength, " ")} ${ttl} IN ${type.padEnd(5, " ")} ${value}`
       };
     };
 
@@ -148,7 +148,7 @@ async function generateNamedDefs(owner, targetDir) {
       if (zone !== catalogZone) {
         const hash = createHmac("md5", zone.id).digest("hex");
         catalogZone.records.add(
-          `${hash}.zones.${domain}. IN PTR   ${zone.id}.`
+          createRecord(`${hash}.zones.${domain}.`, "PTR", `${zone.id}.`)
         );
       }
 
@@ -164,6 +164,13 @@ async function generateNamedDefs(owner, targetDir) {
       zoneConfig.push(`  notify yes;`);
       zoneConfig.push(`};`);
       zoneConfig.push("");
+
+      maxKeyLength = 0;
+      for (const r of zone.records) {
+        if (r.key.length > maxKeyLength) {
+          maxKeyLength = r.key.length;
+        }
+      }
 
       writeLines(join(targetDir, "var/lib/named"), zone.file, zone.records);
     }
