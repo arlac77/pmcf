@@ -22,7 +22,7 @@ export function world1(world, filter) {
     ssid: "ID2",
     description: "home wifi",
     ipv4: "192.168.1.0/24",
-    ipv4_netmask: "24"
+    netmask: 24
   };
   const L1n2 = {
     instanceof: Network,
@@ -31,7 +31,7 @@ export function world1(world, filter) {
     kind: "ethernet",
     metric: 1010,
     ipv4: "192.168.1.0/24",
-    ipv4_netmask: "24"
+    netmask: 24
   };
   L1.networks = [L1n1, L1n2];
 
