@@ -8,7 +8,7 @@ test("Service basics", async t => {
 
   const h1 = new Host(l1, {
     name: "h1",
-    networkInterfaces: { eth0: { ipAddresses: "10.0.0.1" } }
+    networkInterfaces: { eth0: { ipAddresses: "10.0.0.1/16" } }
   });
 
   const s1 = new Service(h1, {

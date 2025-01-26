@@ -4,7 +4,8 @@ import {
   asArray,
   bridgeToJSON,
   isIPv4Address,
-  isIPv6Address
+  isIPv6Address,
+  normalizeIPAddress
 } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { Service } from "./service.mjs";
@@ -659,13 +660,11 @@ export class Host extends Base {
   }
 
   get ipAddresses() {
-    return [...this.networkAddresses()].map(na => na.address);
+    return [...this.networkAddresses()].map(na => normalizeIPAddress(na.address));
   }
 
   get ipAddress() {
-    for (const a of this.networkAddresses()) {
-      return a.address;
-    }
+    return this.ipAddresses[0];
   }
 
   async publicKey(type = "ed25519") {

@@ -39,3 +39,16 @@ export function isIPv4Address(address) {
 export function isIPv6Address(address) {
   return address.indexOf(":") >= 0;
 }
+
+export function normalizeIPAddress(address) {
+  address = address.replace(/\/\d+$/, "");
+  if (isIPv4Address(address)) {
+    return address;
+  }
+  const parts = address.split(":");
+  const i = parts.indexOf("");
+  if (i >= 0) {
+    parts.splice(i, 1, ..."0".repeat(9 - parts.length));
+  }
+  return parts.map(s => s.padStart(4, "0")).join(":");
+}

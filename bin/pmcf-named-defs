@@ -2,7 +2,11 @@
 
 import { join } from "node:path";
 import { createHmac } from "node:crypto";
-import { writeLines, isIPv4Address } from "../src/utils.mjs";
+import {
+  writeLines,
+  isIPv4Address,
+  normalizeIPAddress
+} from "../src/utils.mjs";
 import { prepare } from "../src/cmd.mjs";
 
 const { world, args, options } = prepare();
@@ -41,7 +45,10 @@ async function generateNamedDefs(owner, targetDir) {
         type,
         value,
         toString: () =>
-          `${key.padEnd(maxKeyLength, " ")} ${ttl} IN ${type.padEnd(5, " ")} ${value}`
+          `${key.padEnd(maxKeyLength, " ")} ${ttl} IN ${type.padEnd(
+            5,
+            " "
+          )} ${value}`
       };
     };
 
@@ -200,17 +207,4 @@ export function reverseArpaAddress(address) {
     reverseAddress(address) +
     (isIPv4Address(address) ? ".in-addr.arpa" : ".ip6.arpa")
   );
-}
-
-export function normalizeIPAddress(address) {
-  if (isIPv4Address(address)) {
-    return address;
-  }
-  address = address.replace(/\/\d+$/, "");
-  const parts = address.split(":");
-  const i = parts.indexOf("");
-  if (i >= 0) {
-    parts.splice(i, 1, ..."0".repeat(9 - parts.length));
-  }
-  return parts.map(s => s.padStart(4, "0")).join(":");
 }
