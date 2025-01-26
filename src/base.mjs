@@ -122,8 +122,14 @@ export class Base {
   }
 
   execFinalize() {
+    this.traverse(object => {
+      //console.log(object.toString());
+      object._finalize();
+    });
+  }
+
+  _finalize() {
     if (this.#finalize) {
-      //this.info("finalize");
       let i = 0;
       for (const action of this.#finalize) {
         if (action) {
@@ -133,6 +139,23 @@ export class Base {
         i++;
       }
     }
+  }
+
+  traverse(visitor, ...args) {
+    const visited = new Set();
+    this._traverse(visited, visitor, ...args);
+  }
+
+  _traverse(visited, visitor, ...args) {
+    if (visited.has(this)) {
+      return false;
+    }
+
+    visited.add(this);
+
+    visitor(this, ...args);
+
+    return true;
   }
 
   error(...args) {

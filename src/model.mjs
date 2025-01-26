@@ -41,18 +41,22 @@ export class Owner extends Base {
       }
     }
     Object.assign(this, data);
+  }
 
-    this.finalize(() => {
+  _traverse(...args) {
+    if (super._traverse(...args)) {
       for (const network of this.#networks.values()) {
-        network.execFinalize();
+        network._traverse(...args);
       }
-    });
 
-    this.finalize(() => {
       for (const host of this.#hosts.values()) {
-        host.execFinalize();
+        host._traverse(...args);
       }
-    });
+
+      return true;
+    }
+
+    return false;
   }
 
   get dns() {
@@ -217,6 +221,18 @@ export class World extends Owner {
     super(undefined, { name: "" });
     this.directory = directory;
     this.addObject(this);
+  }
+
+  _traverse(...args) {
+    if (super._traverse(...args)) {
+      for (const object of this.#byName.values()) {
+        object._traverse(...args);
+      }
+
+      return true;
+    }
+
+    return false;
   }
 
   get fullName() {
@@ -514,12 +530,20 @@ export class Host extends Base {
     }
 
     owner.addHost(this);
+  }
 
-    this.finalize(() => {
+  _traverse(...args) {
+    if (super._traverse(...args)) {
       for (const ni of Object.values(this.networkInterfaces)) {
-        ni.execFinalize();
+        ni._traverse(...args);
       }
-    });
+      for (const service of this.services()) {
+        service._traverse(...args);
+      }
+
+      return true;
+    }
+    return false;
   }
 
   get deployment() {
