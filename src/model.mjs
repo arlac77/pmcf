@@ -429,7 +429,6 @@ export class Host extends Base {
   #deployment;
   #chassis;
   #vendor;
-  #location;
 
   static get typeName() {
     return "host";
@@ -451,11 +450,6 @@ export class Host extends Base {
 
   constructor(owner, data) {
     super(owner, data);
-
-    if (data.location !== undefined) {
-      this.#location = data.location;
-      delete data.location;
-    }
 
     if (data.deployment !== undefined) {
       this.#deployment = data.deployment;
@@ -550,10 +544,6 @@ export class Host extends Base {
 
   get extends() {
     return this.#extends.map(e => this.expand(e));
-  }
-
-  get location() {
-    return this.#location || super.location;
   }
 
   get provides() {
@@ -856,7 +846,6 @@ export class Subnet extends Base {
     return this.name;
   }
 }
-
 
 const _types = [Location, Network, Subnet, Host, Service, DNSService];
 const _typesByName = Object.fromEntries(_types.map(t => [t.typeName, t]));
