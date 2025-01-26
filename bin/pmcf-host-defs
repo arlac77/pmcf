@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { writeFile, mkdir, copyFile, glob } from "node:fs/promises";
+import { writeFile, mkdir, copyFile, glob, chmod } from "node:fs/promises";
 import { join } from "node:path";
 import { Host } from "pmcf";
 import { writeLines, sectionLines } from "../src/utils.mjs";
@@ -151,7 +151,9 @@ async function copySshKeys(host, dir) {
   await mkdir(sshDir, { recursive: true });
 
   for await (const file of glob("ssh_host_*", { cwd: host.directory })) {
-    copyFile(join(host.directory, file), join(sshDir, file));
+    const destinationFileName = join(sshDir, file);
+    await copyFile(join(host.directory, file), destinationFileName);
+    await chmod(destinationFileName, destinationFileName.endsWith('.pub') ? 0o0644 : 0o0600);
   }
 }
 
