@@ -122,10 +122,7 @@ export class Base {
   }
 
   execFinalize() {
-    this.traverse(object => {
-      //console.log(object.toString());
-      object._finalize();
-    });
+    this.traverse(object => object._finalize());
   }
 
   _finalize() {

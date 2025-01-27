@@ -159,7 +159,6 @@ export class Owner extends Base {
             bridge.delete(network);
             bridge.add(other);
             other.bridge = bridge;
-            //this.info("RESOLVE", network, other, bridgeToJSON(bridge));
           } else {
             this.error(`Unresolvabale bridge network`, network);
           }
