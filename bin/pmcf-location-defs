@@ -22,33 +22,10 @@ console.log("replaces", `mf-location-${location.name}`);
 console.log("description", `location definitions for ${location.name}`);
 
 async function generateLocationDefs(location, dir) {
-  const dns = location.dns;
-  const dnsServices = (await Array.fromAsync(dns.services())).sort(
-    (a, b) => a.priority - b.priority
-  );
-
-  console.log(dnsServices);
-
-  const master = dnsServices
-    .filter(s => s.priority < 10)
-    .map(s => s.ipAddresses)
-    .flat();
-  const fallback = dnsServices
-    .filter(s => s.priority >= 10)
-    .map(s => s.ipAddresses)
-    .flat();
-
   await writeLines(
     join(dir, "etc/systemd/resolved.conf.d"),
     `${location.name}.conf`,
-    sectionLines("Resolve", {
-      DNS: master.join(" "),
-      FallbackDNS: fallback.join(" "),
-      Domains: dns.domains.join(" "),
-      DNSSEC: "no",
-      MulticastDNS: "yes",
-      LLMNR: "no"
-    })
+    sectionLines("Resolve", await location.dns.resolvedConfig())
   );
 
   await writeLines(
@@ -75,7 +52,7 @@ async function generateLocationDefs(location, dir) {
 
   await mkdir(locationDir, { recursive: true });
 
-  copyFile(
+  await copyFile(
     join(location.directory, "location.json"),
     join(locationDir, "location.json")
   );

@@ -42,8 +42,8 @@ async function generateNamedDefs(owner, targetDir) {
     const createRecord = (key, type, value) => {
       return {
         key,
-        type,
-        value,
+       /*type,
+        value,*/
         toString: () =>
           `${key.padEnd(maxKeyLength, " ")} ${ttl} IN ${type.padEnd(
             5,

@@ -33,4 +33,28 @@ export class DNSService extends Base {
   get propertyNames() {
     return ["recordTTL", "forwardsTo", "allowedUpdates"];
   }
+
+  async resolvedConfig() {
+    const dnsServices = (await Array.fromAsync(this.services())).sort(
+      (a, b) => a.priority - b.priority
+    );
+
+    const master = dnsServices
+      .filter(s => s.priority < 10)
+      .map(s => s.ipAddresses)
+      .flat();
+    const fallback = dnsServices
+      .filter(s => s.priority >= 10)
+      .map(s => s.ipAddresses)
+      .flat();
+
+    return {
+      DNS: master.join(" "),
+      FallbackDNS: fallback.join(" "),
+      Domains: this.domains.join(" "),
+      DNSSEC: "no",
+      MulticastDNS: "yes",
+      LLMNR: "no"
+    };
+  }
 }
