@@ -35,8 +35,26 @@ export function world1(world, filter) {
   };
   L1.networks = [L1n1, L1n2];
 
+  const p1 = {
+    name: "p1",
+  };
+  const p2 = {
+    name: "p2",
+  };
+
+  const L1C1 = {
+    name: "C1",
+    hosts: [p1, p2]
+  };
+
+  p1.owner = L1C1;
+  p2.owner = L1C1;
+  
   const all = {
     L1,
+    "L1/C1": L1C1,
+    "L1/C1/p1": p1,
+    "L1/C1/p2": p2,
     "L1/n1": L1n1,
     "L1/n2": L1n2,
     "L1/n1/host2": {
