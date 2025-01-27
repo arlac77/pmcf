@@ -25,7 +25,7 @@ export function sectionLines(sectionName, values) {
 }
 
 export function bridgeToJSON(bridge) {
-  return [...bridge].map(n => n.name || `(${n})`).sort();
+  return [...bridge].map(n => n.fullName || `(${n})`).sort();
 }
 
 export function asArray(value) {

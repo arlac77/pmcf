@@ -5,5 +5,5 @@
   "ipv4": "192.168.1.0/24",
   "ssid": "ID2",
   "metric": 1010,
-  "bridge": "n2"
+  "bridge": "L1/n2"
 }

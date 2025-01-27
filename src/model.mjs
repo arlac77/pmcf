@@ -109,7 +109,7 @@ export class Owner extends Base {
   }
 
   addNetwork(network) {
-    this.#networks.set(network.name, network);
+    this.#networks.set(network.fullName, network);
   }
 
   addBridge(network, destinationNetworks) {

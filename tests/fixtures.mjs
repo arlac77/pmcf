@@ -63,10 +63,10 @@ export function world1(world, filter) {
       os: "linux",
       networkInterfaces: {
         eth0: {
-          //network: L1n2,
-          metric: 1004,
+          network: L1n1,
+          metric: 1010,
           ipAddresses: ["192.168.1.1"],
-          //ipAddressesWithNetmask: ["192.168.1.1/24"]
+          ipAddressesWithNetmask: ["192.168.1.1/24"]
         }
       },
       services: {
