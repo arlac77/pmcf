@@ -37,9 +37,21 @@ export function world1(world, filter) {
 
   const p1 = {
     name: "p1",
+    networkInterfaces: {
+      eth0: {
+        //    network: L1n1,
+        ipAddresses: ["192.168.1.10"]
+      }
+    }
   };
   const p2 = {
     name: "p2",
+    networkInterfaces: {
+      eth0: {
+        //    network: L1n1,
+        ipAddresses: ["192.168.1.11"]
+      }
+    }
   };
 
   const L1C1 = {
@@ -49,7 +61,7 @@ export function world1(world, filter) {
 
   p1.owner = L1C1;
   p2.owner = L1C1;
-  
+
   const all = {
     L1,
     "L1/C1": L1C1,

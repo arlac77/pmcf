@@ -43,6 +43,7 @@ export class Base {
 
   withOwner(owner) {
     if (this.owner !== owner) {
+      // @ts-ignore
       return new this.constructor(owner, this);
     }
 
@@ -50,6 +51,7 @@ export class Base {
   }
 
   get typeName() {
+    // @ts-ignore
     return this.constructor.typeName;
   }
 

@@ -5,6 +5,7 @@ import { DNSService } from "./dns.mjs";
 
 export class Owner extends Base {
   #hosts = new Map();
+  #clusters = new Map();
   #networks = new Map();
   #subnets = new Map();
   #bridges = new Set();
@@ -46,6 +47,10 @@ export class Owner extends Base {
         host._traverse(...args);
       }
 
+      for (const cluster of this.#clusters.values()) {
+        cluster._traverse(...args);
+      }
+
       return true;
     }
 
@@ -71,6 +76,11 @@ export class Owner extends Base {
     this.addObject(host);
   }
 
+  addCluster(cluster) {
+    this.#clusters.set(cluster.name, cluster);
+    this.addObject(cluster);
+  }
+
   async service(filter) {
     let best;
     for await (const service of this.services(filter)) {
@@ -91,6 +101,7 @@ export class Owner extends Base {
   }
 
   networkNamed(name) {
+    //console.log(this.toString(), name, this.#networks.keys());
     return this.#networks.get(name);
   }
 
@@ -195,5 +206,93 @@ export class Owner extends Base {
       bridges: [...this.#bridges].map(b => bridgeToJSON(b)),
       hosts: [...this.#hosts.keys()].sort()
     };
+  }
+}
+
+export class Network extends Owner {
+  kind;
+  scope;
+  metric;
+  ipv4;
+  subnet;
+  bridge;
+
+  static get typeName() {
+    return "network";
+  }
+
+  constructor(owner, data) {
+    super(owner, data);
+
+    let bridge;
+    if (data.bridge) {
+      bridge = data.bridge;
+      delete data.bridge;
+    }
+
+    Object.assign(this, data);
+
+    const subnetAddress = this.subnetAddress;
+
+    if (subnetAddress) {
+      let subnet = owner.subnet(subnetAddress);
+      if (!subnet) {
+        subnet = new Subnet(owner, { name: subnetAddress });
+      }
+
+      this.subnet = subnet;
+      subnet.networks.add(this);
+    }
+
+    owner.addNetwork(this);
+
+    this.bridge = owner.addBridge(this, bridge);
+  }
+
+  get netmask() {
+    const m = this.ipv4?.match(/\/(\d+)$/);
+    if (m) {
+      return parseInt(m[1]);
+    }
+  }
+
+  get subnetAddress() {
+    if (this.ipv4) {
+      const [addr, bits] = this.ipv4.split(/\//);
+      const parts = addr.split(/\./);
+      return parts.slice(0, bits / 8).join(".");
+    }
+  }
+
+  get propertyNames() {
+    return [
+      ...super.propertyNames,
+      "kind",
+      "ipv4",
+      "netmask",
+      "scope",
+      "metric",
+      "bridge"
+    ];
+  }
+}
+
+export class Subnet extends Base {
+  networks = new Set();
+
+  static get typeName() {
+    return "subnet";
+  }
+
+  constructor(owner, data) {
+    super(owner, data);
+
+    Object.assign(this, data);
+
+    owner.addSubnet(this);
+  }
+
+  get address() {
+    return this.name;
   }
 }

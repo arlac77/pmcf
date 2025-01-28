@@ -71,6 +71,7 @@ export class Service extends Base {
       if (this.#ipAddresses) {
         data.ipAddresses = this.#ipAddresses;
       }
+      // @ts-ignore
       return new this.constructor(owner, data);
     }
 

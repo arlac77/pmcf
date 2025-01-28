@@ -7,7 +7,7 @@ import {
   normalizeIPAddress
 } from "./utils.mjs";
 import { Base } from "./base.mjs";
-import { Owner } from "./owner.mjs";
+import { Owner, Network, Subnet } from "./owner.mjs";
 import { Service } from "./service.mjs";
 import { Cluster } from "./cluster.mjs";
 import { DNSService } from "./dns.mjs";
@@ -169,73 +169,6 @@ export class Location extends Owner {
   }
 }
 
-export class Network extends Owner {
-  kind;
-  scope;
-  metric;
-  ipv4;
-  subnet;
-  bridge;
-
-  static get typeName() {
-    return "network";
-  }
-
-  constructor(owner, data) {
-    super(owner, data);
-
-    let bridge;
-    if (data.bridge) {
-      bridge = data.bridge;
-      delete data.bridge;
-    }
-
-    Object.assign(this, data);
-
-    const subnetAddress = this.subnetAddress;
-
-    if (subnetAddress) {
-      let subnet = owner.subnet(subnetAddress);
-      if (!subnet) {
-        subnet = new Subnet(owner, { name: subnetAddress });
-      }
-
-      this.subnet = subnet;
-      subnet.networks.add(this);
-    }
-
-    owner.addNetwork(this);
-
-    this.bridge = owner.addBridge(this, bridge);
-  }
-
-  get netmask() {
-    const m = this.ipv4?.match(/\/(\d+)$/);
-    if (m) {
-      return parseInt(m[1]);
-    }
-  }
-
-  get subnetAddress() {
-    if (this.ipv4) {
-      const [addr, bits] = this.ipv4.split(/\//);
-      const parts = addr.split(/\./);
-      return parts.slice(0, bits / 8).join(".");
-    }
-  }
-
-  get propertyNames() {
-    return [
-      ...super.propertyNames,
-      "kind",
-      "ipv4",
-      "netmask",
-      "scope",
-      "metric",
-      "bridge"
-    ];
-  }
-}
 
 export class Host extends Base {
   networkInterfaces = {};
@@ -655,25 +588,6 @@ export class NetworkInterface extends Base {
   }
 }
 
-export class Subnet extends Base {
-  networks = new Set();
-
-  static get typeName() {
-    return "subnet";
-  }
-
-  constructor(owner, data) {
-    super(owner, data);
-
-    Object.assign(this, data);
-
-    owner.addSubnet(this);
-  }
-
-  get address() {
-    return this.name;
-  }
-}
 
 const _types = [Location, Network, Subnet, Host, Cluster, Service, DNSService];
 const _typesByName = Object.fromEntries(_types.map(t => [t.typeName, t]));
