@@ -7,7 +7,6 @@ export class Cluster extends Owner {
 
   constructor(owner, data) {
     super(owner, data);
-
-    owner.addCluster(this);
+    owner.addObject(this);
   }
 }

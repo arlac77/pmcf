@@ -9,6 +9,14 @@ export class Base {
   static get typeName() {
     return "base";
   }
+  
+  static get pluralTypeName() {
+    return this.typeName + "s";
+  }
+
+  static get nameLookupName() {
+    return this.typeName + "Named";
+  }
 
   static get typeFileName() {
     return this.typeName + ".json";
@@ -18,16 +26,14 @@ export class Base {
     return "**/" + this.typeFileName;
   }
 
-  static async prepareData(world, data) {
+  static async prepareData(root, data) {
     return this;
   }
 
-  static baseName(name) {
-    if (!name) {
-      return undefined;
+  static normalizeName(name) {
+    if (name !== undefined) {
+      return name.replace(/\/\w+\.json$/, "");
     }
-
-    return name.replace(/\/\w+\.json$/, "");
   }
 
   constructor(owner, data) {
@@ -55,8 +61,8 @@ export class Base {
     return this.constructor.typeName;
   }
 
-  get world() {
-    return this.owner.world;
+  get root() {
+    return this.owner.root;
   }
 
   get location() {
@@ -85,7 +91,7 @@ export class Base {
   }
 
   get fullName() {
-    return this.owner?.fullName
+    return this.owner && this.name
       ? join(this.owner.fullName, this.name)
       : this.name;
   }

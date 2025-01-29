@@ -12,16 +12,14 @@ import { Service } from "./service.mjs";
 import { Cluster } from "./cluster.mjs";
 import { DNSService } from "./dns.mjs";
 
-export class World extends Owner {
+export class Root extends Owner {
   static get types() {
     return _typesByName;
   }
 
   static get typeName() {
-    return "world";
+    return "root";
   }
-
-  #byName = new Map();
 
   constructor(directory) {
     super(undefined, { name: "" });
@@ -29,82 +27,72 @@ export class World extends Owner {
     this.addObject(this);
   }
 
-  _traverse(...args) {
-    if (super._traverse(...args)) {
-      for (const object of this.#byName.values()) {
-        object._traverse(...args);
-      }
-
-      return true;
-    }
-
-    return false;
-  }
-
   get fullName() {
     return "";
   }
 
-  get world() {
+  get root() {
     return this;
   }
 
   async load(name, options) {
-    if (name === "") {
-      return this;
+    const fullName = Base.normalizeName(name);
+    let object = this.named(fullName);
+    if (object) {
+      return object;
     }
-    const baseName = Base.baseName(name);
 
-    let object = this.#byName.get(baseName);
+    //console.log("LOAD", fullName);
 
-    if (!object) {
-      let path = baseName.split("/");
-      path.pop();
+    let path = fullName.split("/");
+    path.pop();
 
-      let data;
-      let type = options?.type;
-      if (type) {
-        data = JSON.parse(
-          await readFile(
-            join(this.directory, baseName, type.typeFileName),
-            "utf8"
-          )
-        );
-      } else {
-        for (type of _types) {
-          try {
-            data = JSON.parse(
-              await readFile(
-                join(this.directory, baseName, type.typeFileName),
-                "utf8"
-              )
-            );
-            break;
-          } catch {}
-        }
-
-        if (!data) {
-          return this.load(path.join("/"), options);
-        }
+    let data;
+    let type = options?.type;
+    if (type) {
+      data = JSON.parse(
+        await readFile(
+          join(this.directory, fullName, type.typeFileName),
+          "utf8"
+        )
+      );
+    } else {
+      for (type of _types) {
+        try {
+          data = JSON.parse(
+            await readFile(
+              join(this.directory, fullName, type.typeFileName),
+              "utf8"
+            )
+          );
+          break;
+        } catch {}
       }
 
-      const owner = await this.load(path.join("/"));
-
-      const length = owner.fullName.length;
-      const n = baseName[length] === "/" ? length + 1 : length;
-      data.name = baseName.substring(n);
-
-      type = await type.prepareData(this, data);
-
-      object = new type(owner, data);
-      this.addObject(object);
+      if (!data) {
+        return this.load(path.join("/"), options);
+      }
     }
+
+    const owner = await this.load(path.join("/"));
+
+    const length = owner.fullName.length;
+    const n = fullName[length] === "/" ? length + 1 : length;
+    data.name = fullName.substring(n);
+
+    type = await type.prepareData(this, data);
+
+    object = new type(owner, data);
+
+    this._addObject(type.typeName, fullName, object);
+
+    //console.log("FINISH LOAD", object.fullName);
 
     return object;
   }
 
   async loadAll() {
-    for (let type of Object.values(World.types)) {
+    for (let type of Object.values(Root.types)) {
       for await (const name of glob(type.fileNameGlob, {
         cwd: this.directory
       })) {
@@ -113,41 +101,6 @@ export class World extends Owner {
     }
 
     this.execFinalize();
-  }
-
-  addObject(object) {
-    this.#byName.set(object.fullName, object);
-  }
-
-  async named(name) {
-    await this.loadAll();
-    return this.#byName.get(name);
-  }
-
-  async *locations() {
-    await this.loadAll();
-
-    for (const object of this.#byName.values()) {
-      if (object instanceof Location) {
-        yield object;
-      }
-    }
-  }
-
-  async *hosts() {
-    await this.loadAll();
-
-    for (const object of this.#byName.values()) {
-      if (object instanceof Host) {
-        yield object;
-      }
-    }
-  }
-
-  async *domains() {
-    for await (const location of this.locations()) {
-      yield location.domain;
-    }
   }
 }
 
@@ -159,16 +112,7 @@ export class Location extends Owner {
   get location() {
     return this;
   }
-
-  async *hosts() {
-    for await (const host of this.owner.hosts()) {
-      if (host.location === this) {
-        yield host;
-      }
-    }
-  }
 }
-
 
 export class Host extends Base {
   networkInterfaces = {};
@@ -189,14 +133,14 @@ export class Host extends Base {
     return "host";
   }
 
-  static async prepareData(world, data) {
+  static async prepareData(root, data) {
     if (data.location) {
-      data.location = await world.load(data.location, { type: Location });
+      data.location = await root.load(data.location, { type: Location });
     }
 
     if (data.extends) {
       data.extends = await Promise.all(
-        asArray(data.extends).map(e => world.load(e, { type: Host }))
+        asArray(data.extends).map(e => root.load(e, { type: Host }))
       );
     }
 
@@ -268,7 +212,7 @@ export class Host extends Base {
       new NetworkInterface(this, iface);
     }
 
-    owner.addHost(this);
+    owner.addObject(this);
   }
 
   _traverse(...args) {
@@ -385,7 +329,7 @@ export class Host extends Base {
     this.networkInterfaces[networkInterface.name] = networkInterface;
 
     if (networkInterface.network) {
-      networkInterface.network.addHost(this);
+      networkInterface.network.addObject(this);
     }
   }
 
@@ -398,7 +342,9 @@ export class Host extends Base {
   }
 
   get ipAddresses() {
-    return [...this.networkAddresses()].map(na => normalizeIPAddress(na.address));
+    return [...this.networkAddresses()].map(na =>
+      normalizeIPAddress(na.address)
+    );
   }
 
   get ipAddress() {
@@ -587,7 +533,6 @@ export class NetworkInterface extends Base {
     ];
   }
 }
-
 
 const _types = [Location, Network, Subnet, Host, Cluster, Service, DNSService];
 const _typesByName = Object.fromEntries(_types.map(t => [t.typeName, t]));

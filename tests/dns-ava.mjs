@@ -1,10 +1,11 @@
 import test from "ava";
-import { World } from "pmcf";
+import { Root } from "pmcf";
 
 test("DNS basics", async t => {
-  const world = new World(new URL("fixtures/world1", import.meta.url).pathname);
+  const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
+  await root.loadAll();
 
-  const l1 = await world.named("L1");
+  const l1 = await root.named("L1");
 
   const dnsServices = await Array.fromAsync(l1.dns.services());
 

@@ -1,16 +1,16 @@
-import { Location, Network, Host, World } from "pmcf";
+import { Location, Network, Host, Root } from "pmcf";
 
 /**
  *
- * @param {World} world
+ * @param {Root} root
  * @param {string|string[]} filter
  * @returns {Object}
  */
-export function world1(world, filter) {
-  const L1 = { instanceof: Location, owner: world, description: "somewhere" };
+export function root1(root, filter) {
+  const L1 = { instanceof: Location, owner: root, description: "somewhere" };
   const L2 = {
     instanceof: Location,
-    owner: world,
+    owner: root,
     description: "somewhere else"
   };
   const L1n1 = {
@@ -107,7 +107,7 @@ export function world1(world, filter) {
     "model/m1": {
       name: "model/m1",
       instanceof: Host,
-      owner: world,
+      owner: root,
       isModel: true,
       chassis: "server"
     }

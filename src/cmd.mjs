@@ -1,12 +1,12 @@
 import { parseArgs } from "node:util";
 import { argv, cwd, env } from "node:process";
-import { World } from "./model.mjs";
+import { Root } from "./model.mjs";
 
 export function prepare() {
   const { values, positionals } = parseArgs({
     args: argv.slice(2),
     options: {
-      world: {
+      root: {
         type: "string",
         short: "w",
         default: env.PMCF_WORLD || cwd()
@@ -20,7 +20,7 @@ export function prepare() {
     allowPositionals: true
   });
 
-  const world = new World(values.world);
+  const root = new Root(values.root);
 
-  return { world, options: values, args: positionals };
+  return { root, options: values, args: positionals };
 }

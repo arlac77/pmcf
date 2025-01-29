@@ -6,9 +6,11 @@ import { Location } from "pmcf";
 import { writeLines, sectionLines } from "../src/utils.mjs";
 import { prepare } from "../src/cmd.mjs";
 
-const { world, args, options } = prepare();
+const { root, args, options } = prepare();
 
-const location = await world.load(args[0], { type: Location });
+await root.loadAll();
+
+const location = await root.load(args[0], { type: Location });
 
 await generateLocationDefs(location, options.output);
 

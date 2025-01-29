@@ -9,9 +9,11 @@ import {
 } from "../src/utils.mjs";
 import { prepare } from "../src/cmd.mjs";
 
-const { world, args, options } = prepare();
+const { root, args, options } = prepare();
 
-const owner = await world.load(args[0]);
+await root.loadAll();
+
+const owner = await root.load(args[0]);
 const updates = [
   Math.ceil(Date.now() / 1000),
   36000,
@@ -42,7 +44,7 @@ async function generateNamedDefs(owner, targetDir) {
     const createRecord = (key, type, value) => {
       return {
         key,
-       /*type,
+        /*type,
         value,*/
         toString: () =>
           `${key.padEnd(maxKeyLength, " ")} ${ttl} IN ${type.padEnd(

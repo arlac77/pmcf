@@ -13,6 +13,7 @@ export class DNSService extends Base {
   constructor(owner, data) {
     super(owner, data);
     Object.assign(this, data);
+    owner.addObject(this);
   }
 
   async *services() {
@@ -21,7 +22,7 @@ export class DNSService extends Base {
     yield* this.owner.services(filter);
 
     for (const s of asArray(this.forwardsTo)) {
-      const owner = await this.owner.world.load(s);
+      const owner = await this.owner.root.load(s);
       yield* owner.services(filter);
     }
   }

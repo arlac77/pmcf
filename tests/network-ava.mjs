@@ -1,16 +1,16 @@
 import test from "ava";
-import { World, Network } from "pmcf";
+import { Root, Network } from "pmcf";
 import { assertObject } from "./util.mjs";
-import { world1 } from "./fixtures.mjs";
+import { root1 } from "./fixtures.mjs";
 
 test("Network basics", async t => {
-  const world = new World(new URL("fixtures/world1", import.meta.url).pathname);
-  world.execFinalize();
-  await assertObject(t, await world.named("L1/n1"), world1(world, "L1/n1"));
+  const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
+  await root.loadAll();
+  await assertObject(t, await root.named("L1/n1"), root1(root, "L1/n1"));
 });
 
 test("Network bridges", t => {
-  const owner = new World();
+  const owner = new Root();
 
   const n1 = new Network(owner, { name: "n1"  });
 

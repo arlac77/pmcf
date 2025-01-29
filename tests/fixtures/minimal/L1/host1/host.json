@@ -1,0 +1,11 @@
+{
+  "os": "linux",
+  "networkInterfaces": {
+    "eth0": {
+      "ipAddresses": "192.168.1.1"
+    }
+  },
+  "services": {
+    "dns": { "type": "dns", "alias": "dns" }
+  }
+}

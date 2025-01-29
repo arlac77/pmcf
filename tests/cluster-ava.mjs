@@ -1,12 +1,11 @@
 import test from "ava";
-import { World } from "pmcf";
+import { Root } from "pmcf";
 import { assertObject, assertObjects } from "./util.mjs";
-import { world1 } from "./fixtures.mjs";
+import { root1 } from "./fixtures.mjs";
 
 test("Cluster basics", async t => {
-  const world = new World(new URL("fixtures/world1", import.meta.url).pathname);
+  const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
+  await root.loadAll();
 
-  world.execFinalize();
-
-  await assertObject(t, await world.named("L1/C1"), world1(world, "L1/C1"));
+  await assertObject(t, await root.named("L1/C1"), root1(root, "L1/C1"));
 });

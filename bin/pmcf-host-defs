@@ -4,18 +4,18 @@ import { writeFile, mkdir, copyFile, glob, chmod } from "node:fs/promises";
 import { join } from "node:path";
 import { Host } from "pmcf";
 import { writeLines, sectionLines } from "../src/utils.mjs";
-import { prepare, } from "../src/cmd.mjs";
+import { prepare } from "../src/cmd.mjs";
 
-const { world, args, options } = prepare();
+const { root, args, options } = prepare();
 
 const hostName = args[0];
 
-const host = await world.load(hostName,{ type: Host });
+const host = await root.load(hostName, { type: Host });
 
 await generateNetworkDefs(host, options.output);
 await generateMachineInfo(host, options.output);
 await copySshKeys(host, options.output);
-await generateKnownHosts(world.hosts(), join(options.output, "root", ".ssh"));
+await generateKnownHosts(root.hosts(), join(options.output, "root", ".ssh"));
 
 console.log("provides", "host", ...host.provides);
 console.log("depends", `location-${host.location.name}`, ...host.depends);
@@ -153,7 +153,10 @@ async function copySshKeys(host, dir) {
   for await (const file of glob("ssh_host_*", { cwd: host.directory })) {
     const destinationFileName = join(sshDir, file);
     await copyFile(join(host.directory, file), destinationFileName);
-    await chmod(destinationFileName, destinationFileName.endsWith('.pub') ? 0o0644 : 0o0600);
+    await chmod(
+      destinationFileName,
+      destinationFileName.endsWith(".pub") ? 0o0644 : 0o0600
+    );
   }
 }
 

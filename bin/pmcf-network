@@ -2,9 +2,9 @@
 
 import { prepare } from "../src/cmd.mjs";
 
-const { world, args } = prepare();
+const { root, args } = prepare();
 
-const location = await world.load(args[0]);
+const location = await root.load(args[0]);
 
 function q(str) {
   return str.match(/^\w+$/) ? str : `"${str}"`;

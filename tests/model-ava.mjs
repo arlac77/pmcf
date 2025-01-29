@@ -1,9 +1,10 @@
 import test from "ava";
-import { World } from "pmcf";
+import { Root } from "pmcf";
 import { assertObject } from "./util.mjs";
-import { world1 } from "./fixtures.mjs";
+import { root1 } from "./fixtures.mjs";
 
 test("Model basics", async t => {
-  const world = new World(new URL("fixtures/world1", import.meta.url).pathname);
-  await assertObject(t, await world.named("model/m1"), world1(world, "model/m1"));
+  const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
+  await root.loadAll();
+  await assertObject(t, await root.named("model/m1"), root1(root, "model/m1"));
 });

@@ -1,13 +1,9 @@
 import { asArray, bridgeToJSON } from "./utils.mjs";
-
 import { Base } from "./base.mjs";
 import { DNSService } from "./dns.mjs";
 
 export class Owner extends Base {
-  #hosts = new Map();
-  #clusters = new Map();
-  #networks = new Map();
-  #subnets = new Map();
+  #membersByType = new Map();
   #bridges = new Set();
   #dns;
   #administratorEmail;
@@ -35,20 +31,16 @@ export class Owner extends Base {
       }
     }
     Object.assign(this, data);
+
+    owner?.addObject(this);
   }
 
   _traverse(...args) {
     if (super._traverse(...args)) {
-      for (const network of this.#networks.values()) {
-        network._traverse(...args);
-      }
-
-      for (const host of this.#hosts.values()) {
-        host._traverse(...args);
-      }
-
-      for (const cluster of this.#clusters.values()) {
-        cluster._traverse(...args);
+      for (const typeSlot of this.#membersByType.values()) {
+        for (const object of typeSlot.values()) {
+          object._traverse(...args);
+        }
       }
 
       return true;
@@ -61,24 +53,44 @@ export class Owner extends Base {
     return this.#dns;
   }
 
-  async *hosts() {
-    for (const host of this.#hosts.values()) {
-      yield host;
+  named(name) {
+    //console.log("NAMED", this.#membersByType.keys());
+    for (const slot of this.#membersByType.values()) {
+      const object = slot.get(name);
+      if (object) {
+        return object;
+      }
     }
   }
 
+  typeNamed(typeName, name) {
+    const typeSlot = this.#membersByType.get(typeName);
+    return typeSlot?.get(name);
+  }
+
+  *typeList(typeName) {
+    const typeSlot = this.#membersByType.get(typeName);
+    if (typeSlot) {
+      for (const object of typeSlot.values()) {
+        yield object;
+      }
+    }
+  }
+
+  _addObject(typeName, fullName, object) {
+    let typeSlot = this.#membersByType.get(typeName);
+    if (!typeSlot) {
+      typeSlot = new Map();
+      this.#membersByType.set(typeName, typeSlot);
+    }
+    typeSlot.set(fullName, object);
+
+    //console.log(this.toString(),"ADD", typeName, fullName, object.name, this.named(fullName)?.toString());
+  }
+
   addObject(object) {
-    this.world.addObject(object);
-  }
-
-  addHost(host) {
-    this.#hosts.set(host.name, host);
-    this.addObject(host);
-  }
-
-  addCluster(cluster) {
-    this.#clusters.set(cluster.name, cluster);
-    this.addObject(cluster);
+    this.owner?.addObject(object);
+    this._addObject(object.typeName, object.fullName, object);
   }
 
   async service(filter) {
@@ -100,19 +112,44 @@ export class Owner extends Base {
     }
   }
 
+  locationNamed(name) {
+    return this.typeNamed("location", name);
+  }
+
+  locations() {
+    return this.typeList("location");
+  }
+
+  hostNamed(name) {
+    return this.typeNamed("host", name);
+  }
+
+  hosts() {
+    return this.typeList("host");
+  }
+
   networkNamed(name) {
-    //console.log(this.toString(), name, this.#networks.keys());
-    return this.#networks.get(name);
+    return this.typeNamed("network", name);
   }
 
-  async *networks() {
-    for (const network of this.#networks.values()) {
-      yield network;
-    }
+  networks() {
+    return this.typeList("network");
   }
 
-  addNetwork(network) {
-    this.#networks.set(network.fullName, network);
+  subnetNamed(name) {
+    return this.typeNamed("subnet", name);
+  }
+
+  subnets() {
+    return this.typeList("subnet");
+  }
+
+  clusterNamed(name) {
+    return this.typeNamed("cluster", name);
+  }
+
+  clusters() {
+    return this.typeList("cluster");
   }
 
   addBridge(network, destinationNetworks) {
@@ -178,20 +215,14 @@ export class Owner extends Base {
     }
   }
 
-  addSubnet(subnet) {
-    this.#subnets.set(subnet.name, subnet);
-  }
-
-  subnet(name) {
-    return this.#subnets.get(name);
-  }
-
-  subnets() {
-    return this.#subnets.values();
-  }
-
   get administratorEmail() {
     return this.#administratorEmail || "admin@" + this.domain;
+  }
+
+  *domains() {
+    for (const location of this.locations()) {
+      yield location.domain;
+    }
   }
 
   get propertyNames() {
@@ -199,13 +230,13 @@ export class Owner extends Base {
   }
 
   toJSON() {
-    return {
-      ...super.toJSON(),
-      networks: [...this.#networks.keys()].sort(),
-      subnets: [...this.#subnets.keys()].sort(),
-      bridges: [...this.#bridges].map(b => bridgeToJSON(b)),
-      hosts: [...this.#hosts.keys()].sort()
-    };
+    const json = super.toJSON();
+
+    for (const [typeName, slot] of this.#membersByType) {
+      json[typeName] = [...slot.keys()].sort();
+    }
+
+    return json;
   }
 }
 
@@ -235,7 +266,7 @@ export class Network extends Owner {
     const subnetAddress = this.subnetAddress;
 
     if (subnetAddress) {
-      let subnet = owner.subnet(subnetAddress);
+      let subnet = owner.subnetNamed(subnetAddress);
       if (!subnet) {
         subnet = new Subnet(owner, { name: subnetAddress });
       }
@@ -244,7 +275,7 @@ export class Network extends Owner {
       subnet.networks.add(this);
     }
 
-    owner.addNetwork(this);
+    owner.addObject(this);
 
     this.bridge = owner.addBridge(this, bridge);
   }
@@ -289,7 +320,7 @@ export class Subnet extends Base {
 
     Object.assign(this, data);
 
-    owner.addSubnet(this);
+    owner.addObject(this);
   }
 
   get address() {

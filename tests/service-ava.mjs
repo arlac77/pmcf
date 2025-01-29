@@ -1,10 +1,10 @@
 import test from "ava";
-import { World, Location, Host, Service } from "pmcf";
+import { Root, Location, Host, Service } from "pmcf";
 
 test("Service basics", async t => {
-  const world = new World("/somwhere");
+  const root = new Root("/somwhere");
 
-  const l1 = new Location(world, { name: "l1" });
+  const l1 = new Location(root, { name: "l1" });
 
   const h1 = new Host(l1, {
     name: "h1",
@@ -58,9 +58,9 @@ test("Service basics", async t => {
 });
 
 test("Service without protocol", t => {
-  const world = new World("/somwhere");
+  const root = new Root("/somwhere");
 
-  const h1 = new Host(world, {
+  const h1 = new Host(root, {
     name: "h1",
     networkInterfaces: { eth0: { ipAddresses: "10.0.0.1" } }
   });
