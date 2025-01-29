@@ -9,9 +9,7 @@ import {
 } from "../src/utils.mjs";
 import { prepare } from "../src/cmd.mjs";
 
-const { root, args, options } = prepare();
-
-await root.loadAll();
+const { root, args, options } = await prepare();
 
 const owner = await root.load(args[0]);
 const updates = [

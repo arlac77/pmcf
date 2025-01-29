@@ -2,14 +2,14 @@ import { parseArgs } from "node:util";
 import { argv, cwd, env } from "node:process";
 import { Root } from "./model.mjs";
 
-export function prepare() {
+export async function prepare() {  
   const { values, positionals } = parseArgs({
     args: argv.slice(2),
     options: {
       root: {
         type: "string",
-        short: "w",
-        default: env.PMCF_WORLD || cwd()
+        short: "r",
+        default: env.PMCF_ROOT || cwd()
       },
       output: {
         type: "string",
@@ -22,5 +22,7 @@ export function prepare() {
 
   const root = new Root(values.root);
 
+  await root.loadAll();
+  
   return { root, options: values, args: positionals };
 }

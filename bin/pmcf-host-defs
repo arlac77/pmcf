@@ -6,7 +6,7 @@ import { Host } from "pmcf";
 import { writeLines, sectionLines } from "../src/utils.mjs";
 import { prepare } from "../src/cmd.mjs";
 
-const { root, args, options } = prepare();
+const { root, args, options } = await prepare();
 
 const hostName = args[0];
 

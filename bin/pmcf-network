@@ -2,7 +2,7 @@
 
 import { prepare } from "../src/cmd.mjs";
 
-const { root, args } = prepare();
+const { root, args } = await prepare();
 
 const location = await root.load(args[0]);
 

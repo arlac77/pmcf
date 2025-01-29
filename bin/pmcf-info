@@ -1,13 +1,11 @@
 #!/usr/bin/env node
 import { prepare } from "../src/cmd.mjs";
-const { root, args } = prepare();
-
-await root.loadAll();
+const { root, args } = await prepare();
 
 const objectName = args[0];
 
 if (objectName) {
-  const object = await root.named(objectName);
+  const object = root.named(objectName);
   console.log(object.toJSON());
 } else {
   for await (const location of root.locations()) {
