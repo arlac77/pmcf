@@ -26,17 +26,17 @@ test("normalizeName", t => {
   t.is(Base.normalizeName("abc/def.json"), "abc");
 });
 
-
 test("expand", t => {
   const root = new Root("/somewhere");
   const l1 = new Location(root, { name: "l1" });
   const h1 = new Location(l1, { name: "h1" });
 
-  t.is(l1.expand("${directory}"),"/somewhere/l1");
-  t.is(l1.expand("${owner.directory}"),"/somewhere");
-  t.is(l1.expand("${fullName}"),"l1");
-  t.is(h1.expand("${fullName}"),"l1/h1");
-  t.is(h1.expand("${owner.fullName}"),"l1");
+  t.is(l1.expand("${directory}"), "/somewhere/l1");
+  t.is(l1.expand("${owner.directory}"), "/somewhere");
+  t.is(l1.expand("${fullName}"), "l1");
+  t.is(h1.expand("${fullName}"), "l1/h1");
+  t.is(h1.expand("${owner.fullName}"), "l1");
+  t.is(h1.expand("${owner.domains}"), ""); // TODO empty array ?
 });
 
 test("directory & name", t => {
