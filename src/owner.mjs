@@ -280,6 +280,13 @@ export class Network extends Owner {
     this.bridge = owner.addBridge(this, bridge);
   }
 
+  networkNamed(name) {
+    if (this.fullName === name) {
+      return this;
+    }
+    return super.networkNamed(name);
+  }
+
   get netmask() {
     const m = this.ipv4?.match(/\/(\d+)$/);
     if (m) {

@@ -112,6 +112,14 @@ export class Location extends Owner {
   get location() {
     return this;
   }
+
+  locationNamed(name) {
+    if (this.fullName === name) {
+      return this;
+    }
+
+    return super.locationNamed(name);
+  }
 }
 
 export class Host extends Base {
@@ -529,5 +537,14 @@ export class NetworkInterface extends Base {
   }
 }
 
-const _types = [Location, Network, Subnet, Host, Cluster, Service, DNSService, NetworkInterface];
+const _types = [
+  Location,
+  Network,
+  Subnet,
+  Host,
+  Cluster,
+  Service,
+  DNSService,
+  NetworkInterface
+];
 const _typesByName = Object.fromEntries(_types.map(t => [t.typeName, t]));
