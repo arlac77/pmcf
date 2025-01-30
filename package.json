@@ -40,7 +40,7 @@
     "lint:typescript": "tsc --allowJs --checkJs --noEmit --resolveJsonModule --target es2024 --lib esnext -m esnext --module nodenext --moduleResolution nodenext ./src**/*.mjs"
   },
   "dependencies": {
-    "pacc": "^3.2.0"
+    "pacc": "^3.3.0"
   },
   "devDependencies": {
     "@types/node": "^22.12.0",
