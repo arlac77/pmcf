@@ -134,10 +134,6 @@ export class Host extends Base {
   }
 
   static async prepareData(root, data) {
-    if (data.location) {
-      data.location = await root.load(data.location, { type: Location });
-    }
-
     if (data.extends) {
       data.extends = await Promise.all(
         asArray(data.extends).map(e => root.load(e, { type: Host }))
@@ -362,7 +358,6 @@ export class Host extends Base {
       "distribution",
       "deployment",
       "master",
-      "location",
       "model",
       "replaces",
       "depends",
