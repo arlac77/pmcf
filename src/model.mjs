@@ -534,5 +534,5 @@ export class NetworkInterface extends Base {
   }
 }
 
-const _types = [Location, Network, Subnet, Host, Cluster, Service, DNSService];
+const _types = [Location, Network, Subnet, Host, Cluster, Service, DNSService, NetworkInterface];
 const _typesByName = Object.fromEntries(_types.map(t => [t.typeName, t]));
