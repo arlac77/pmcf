@@ -9,7 +9,7 @@ export class Base {
   static get typeName() {
     return "base";
   }
-  
+
   static get pluralTypeName() {
     return this.typeName + "s";
   }
@@ -112,7 +112,7 @@ export class Base {
           return new Set([...object].map(e => this.expand(e)));
         }
 
-      /*return Object.fromEntries(
+        /*return Object.fromEntries(
           Object.entries(object).map(([k, v]) => [k, this.expand(v)])
         );*/
     }
