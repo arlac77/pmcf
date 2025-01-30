@@ -191,7 +191,7 @@ export function extractFrom(object, propertyNames) {
 
     if (value !== undefined) {
       if (value instanceof Base && value.name !== undefined) {
-        json[p] = { name: value.name };
+        json[p] = { name: value.name, type: value.typeName };
       } else {
         json[p] = value;
       }
