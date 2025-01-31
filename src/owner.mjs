@@ -287,7 +287,7 @@ export class Network extends Owner {
     return super.networkNamed(name);
   }
 
-  get netmask() {
+  get prefixLength() {
     const m = this.ipv4?.match(/\/(\d+)$/);
     if (m) {
       return parseInt(m[1]);
@@ -307,7 +307,7 @@ export class Network extends Owner {
       ...super.propertyNames,
       "kind",
       "ipv4",
-      "netmask",
+      "prefixLength",
       "scope",
       "metric",
       "bridge"

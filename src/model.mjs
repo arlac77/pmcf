@@ -464,9 +464,9 @@ export class NetworkInterface extends Base {
     return this.#ipAddresses;
   }
 
-  get ipAddressesWithNetmask() {
+  get ipAddressesWithPrefixLength() {
     return this.#ipAddresses.map(a =>
-      isIPv4Address(a) ? `${a}/${this.network.netmask}` : a
+      isIPv4Address(a) ? `${a}/${this.network.prefixLength}` : a
     );
   }
 

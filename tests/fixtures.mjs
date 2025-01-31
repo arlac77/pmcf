@@ -22,7 +22,7 @@ export function root1(root, filter) {
     ssid: "ID2",
     description: "home wifi",
     ipv4: "192.168.1.0/24",
-    netmask: 24
+    prefixLength: 24
   };
   const L1n2 = {
     instanceof: Network,
@@ -31,7 +31,7 @@ export function root1(root, filter) {
     kind: "ethernet",
     metric: 1010,
     ipv4: "192.168.1.0/24",
-    netmask: 24
+    prefixLength: 24
   };
   L1.networks = [L1n1, L1n2];
 
@@ -81,7 +81,7 @@ export function root1(root, filter) {
           metric: 1010,
           ssid: "ID2",
           ipAddresses: ["192.168.1.2"],
-          ipAddressesWithNetmask: ["192.168.1.2/24"],
+          ipAddressesWithPrefixLength: ["192.168.1.2/24"],
           kind: "wifi"
         }
       }
@@ -96,7 +96,7 @@ export function root1(root, filter) {
           network: L1n1,
           metric: 1010,
           ipAddresses: ["192.168.1.1"],
-          ipAddressesWithNetmask: ["192.168.1.1/24"]
+          ipAddressesWithPrefixLength: ["192.168.1.1/24"]
         }
       },
       services: {
