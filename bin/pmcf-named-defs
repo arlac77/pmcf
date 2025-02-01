@@ -98,7 +98,7 @@ async function generateNamedDefs(owner, targetDir) {
       const host = networkInterface.host;
       zone.records.add(
         createRecord(
-          host.hostName,
+          host.domainName + ".",
           isIPv4Address(address) ? "A   " : "AAAA",
           normalizeIPAddress(address)
         )
