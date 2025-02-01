@@ -12,13 +12,6 @@ import { prepare } from "../src/cmd.mjs";
 const { root, args, options } = await prepare();
 
 const owner = await root.load(args[0]);
-const updates = [
-  Math.ceil(Date.now() / 1000),
-  36000,
-  72000,
-  600000,
-  60000
-].join(" ");
 
 await generateNamedDefs(owner, options.output);
 
@@ -29,6 +22,7 @@ console.log("description", `named defintions for ${owner.name}`);
 async function generateNamedDefs(owner, targetDir) {
   const dns = owner.dns;
   const ttl = dns.recordTTL;
+  const updates = [Math.ceil(Date.now() / 1000), ...dns.soaUpdates].join(" ");
 
   for (const domain of dns.domains) {
     const zones = [];
@@ -42,8 +36,6 @@ async function generateNamedDefs(owner, targetDir) {
     const createRecord = (key, type, value) => {
       return {
         key,
-        /*type,
-        value,*/
         toString: () =>
           `${key.padEnd(maxKeyLength, " ")} ${ttl} IN ${type.padEnd(
             5,
