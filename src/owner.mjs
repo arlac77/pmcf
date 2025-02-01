@@ -84,8 +84,6 @@ export class Owner extends Base {
       this.#membersByType.set(typeName, typeSlot);
     }
     typeSlot.set(fullName, object);
-
-    //console.log(this.toString(),"ADD", typeName, fullName, object.name, this.named(fullName)?.toString());
   }
 
   addObject(object) {
@@ -190,7 +188,7 @@ export class Owner extends Base {
 
   _resolveBridges() {
     for (const bridge of this.#bridges) {
-      this.info(bridgeToJSON(bridge));
+      //this.info(bridgeToJSON(bridge));
       for (const network of bridge) {
         if (typeof network === "string") {
           const other = this.networkNamed(network);

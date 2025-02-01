@@ -112,7 +112,7 @@ export class Base {
           return new Set([...object].map(e => this.expand(e)));
         }
 
-        /*return Object.fromEntries(
+      /*return Object.fromEntries(
           Object.entries(object).map(([k, v]) => [k, this.expand(v)])
         );*/
     }
@@ -189,12 +189,17 @@ export function extractFrom(object, propertyNames) {
   for (const p of propertyNames) {
     const value = object[p];
 
-    if (value !== undefined) {
-      if (value instanceof Base && value.name !== undefined) {
-        json[p] = { name: value.name, type: value.typeName };
-      } else {
+    switch (typeof value) {
+      case "undefined":
+        break;
+      case "object":
+        if (value instanceof Base && value.name !== undefined) {
+          json[p] = { name: value.name, type: value.typeName };
+        }
+
+        break;
+      default:
         json[p] = value;
-      }
     }
   }
   return json;
