@@ -10,6 +10,10 @@ export class Owner extends Base {
   domain;
   ntp = { servers: [] };
 
+  static get typeName() {
+    return "owner";
+  }
+
   constructor(owner, data) {
     super(owner, data);
 

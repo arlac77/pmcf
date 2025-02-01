@@ -538,6 +538,7 @@ export class NetworkInterface extends Base {
 }
 
 const _types = [
+  Owner,
   Location,
   Network,
   Subnet,
