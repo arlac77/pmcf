@@ -1,5 +1,15 @@
 import test from "ava";
-import { Root, Host, Location, Network, Service, Subnet, Base } from "pmcf";
+import {
+  extractFrom,
+  Root,
+  Host,
+  Location,
+  Network,
+  Service,
+  Subnet,
+  Base,
+  Owner
+} from "pmcf";
 
 test("types", t => {
   t.is(Root.types.location, Location);
@@ -7,6 +17,7 @@ test("types", t => {
   t.is(Root.types.subnet, Subnet);
   t.is(Root.types.service, Service);
   t.is(Root.types.host, Host);
+  t.is(Root.types.owner, Owner);
 });
 
 test("Root basics", async t => {
@@ -37,6 +48,21 @@ test("expand", t => {
   t.is(h1.expand("${fullName}"), "l1/h1");
   t.is(h1.expand("${owner.fullName}"), "l1");
   t.is(h1.expand("${owner.domains}"), ""); // TODO empty array ?
+});
+
+test("extract", t => {
+  const root = new Root("/somewhere");
+  const l1 = new Location(root, { name: "l1" });
+
+  t.deepEqual(extractFrom(l1), {
+    name: "l1",
+    owner: { type: "root" },
+    administratorEmail: "admin@undefined",
+    directory: "/somewhere/l1",
+    dns: {
+      type: "dns"
+    }
+  });
 });
 
 test("directory & name", t => {

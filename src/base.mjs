@@ -180,23 +180,30 @@ export class Base {
   }
 
   toJSON() {
-    return extractFrom(this, this.propertyNames);
+    return extractFrom(this);
   }
 }
 
-export function extractFrom(object, propertyNames) {
+export function extractFrom(object) {
   const json = {};
-  for (const p of propertyNames) {
+
+  for (const p of object?.propertyNames || Object.keys(object)) {
     const value = object[p];
 
     switch (typeof value) {
       case "undefined":
         break;
       case "object":
-        if (value instanceof Base && value.name !== undefined) {
-          json[p] = { name: value.name, type: value.typeName };
+        if (value instanceof Base) {
+          json[p] = { type: value.typeName };
+          if (value.name) {
+            json[p].name = value.name;
+          }
+        } else {
+          json[p] = Object.fromEntries(
+            Object.entries(value).map(([k, v]) => [k, extractFrom(v)])
+          );
         }
-
         break;
       default:
         json[p] = value;
