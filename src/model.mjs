@@ -305,7 +305,9 @@ export class Host extends Base {
   }
 
   get domainName() {
-    return this.hostName + "." + this.domain;
+    const domain = this.domain;
+    const hostName = this.hostName;
+    return domain ? hostName + "." + domain : hostName;
   }
 
   get host() {
