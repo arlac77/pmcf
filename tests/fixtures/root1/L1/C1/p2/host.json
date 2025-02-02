@@ -1,4 +1,6 @@
 {
+  "priority": 255,
+  "state": "BACKUP",
   "networkInterfaces": {
     "eth0": {
       "network": "L1/n1",

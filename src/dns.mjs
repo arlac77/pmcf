@@ -5,7 +5,8 @@ export class DNSService extends Base {
   allowedUpdates = [];
   recordTTL = "1W";
   soaUpdates = [36000, 72000, 600000, 60000];
-  srvRecords = true;
+  hasSVRRecords = true;
+  hasCatalog = true;
 
   forwardsTo = [];
 
@@ -35,7 +36,14 @@ export class DNSService extends Base {
   }
 
   get propertyNames() {
-    return ["recordTTL", "soaUpdates", "forwardsTo", "allowedUpdates"];
+    return [
+      "recordTTL",
+      "soaUpdates",
+      "hasSVRRecords",
+      "hasCatalog",
+      "forwardsTo",
+      "allowedUpdates"
+    ];
   }
 
   async resolvedConfig() {

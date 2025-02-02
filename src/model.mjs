@@ -468,7 +468,7 @@ export class NetworkInterface extends Base {
 
   get ipAddressesWithPrefixLength() {
     return this.#ipAddresses.map(a =>
-      isIPv4Address(a) ? `${a}/${this.network.prefixLength}` : a
+      isIPv4Address(a) ? `${a}/${this.prefixLength}` : a
     );
   }
 
@@ -478,6 +478,11 @@ export class NetworkInterface extends Base {
 
   get ipv6Addresses() {
     return this.#ipAddresses.filter(a => isIPv6Address(a));
+  }
+
+  get prefixLength()
+  {
+    return this.network?.prefixLength;
   }
 
   get network() {

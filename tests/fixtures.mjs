@@ -21,7 +21,7 @@ export function root1(root, filter) {
     metric: 1010,
     ssid: "ID2",
     description: "home wifi",
-    ipv4: "192.168.1.0/24",
+    ipAddresses: ["192.168.1.0/24"],
     prefixLength: 24
   };
   const L1n2 = {
@@ -30,7 +30,7 @@ export function root1(root, filter) {
     scope: "site",
     kind: "ethernet",
     metric: 1010,
-    ipv4: "192.168.1.0/24",
+    ipAddresses: ["192.168.1.0/24"],
     prefixLength: 24
   };
   L1.networks = [L1n1, L1n2];

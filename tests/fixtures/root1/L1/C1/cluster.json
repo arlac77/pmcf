@@ -1,2 +1,6 @@
 {
+  "authentication": {
+    "type": "PASS",
+    "password": "pass1234"
+  }
 }

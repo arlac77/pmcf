@@ -116,7 +116,7 @@ async function generateNamedDefs(owner, targetDir) {
             );
           }
 
-          if (dns.srvRecords && service.srvPrefix) {
+          if (dns.hasSVRRecords && service.srvPrefix) {
             zone.records.add(
               createRecord(
                 `${service.srvPrefix}.${host.domainName}.`,
@@ -147,7 +147,9 @@ async function generateNamedDefs(owner, targetDir) {
 
     const zoneConfig = [];
 
-    zones.push(catalogZone);
+    if (dns.hasCatalog) {
+      zones.push(catalogZone);
+    }
 
     for (const zone of zones) {
       if (zone !== catalogZone) {

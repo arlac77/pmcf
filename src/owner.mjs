@@ -1,4 +1,4 @@
-import { asArray, bridgeToJSON } from "./utils.mjs";
+import { asArray } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { DNSService } from "./dns.mjs";
 
@@ -14,18 +14,33 @@ export class Owner extends Base {
     return "owner";
   }
 
-  constructor(owner, data) {
+  constructor(owner, data={}) {
     super(owner, data);
 
     let dns;
-    if (data?.dns) {
+    if (data.dns) {
       dns = data.dns;
       delete data.dns;
     }
 
     this.#dns = new DNSService(this, dns);
 
-    if (data?.networks) {
+    if (data.administratorEmail) {
+      this.#administratorEmail = data.administratorEmail;
+      delete data.administratorEmail;
+    }
+
+    if (data.domain) {
+      this.domain = data.domain;
+      delete data.domain;
+    }
+
+    if (data.ntp) {
+      this.ntp = data.ntp;
+      delete data.ntp;
+    }
+
+    if (data.networks) {
       const networks = data.networks;
       delete data.networks;
 
@@ -34,7 +49,6 @@ export class Owner extends Base {
         new Network(this, data);
       }
     }
-    Object.assign(this, data);
 
     owner?.addObject(this);
   }
@@ -246,9 +260,9 @@ export class Network extends Owner {
   kind;
   scope;
   metric;
-  ipv4;
   subnet;
   bridge;
+  #ipAddresses = [];
 
   static get typeName() {
     return "network";
@@ -256,6 +270,11 @@ export class Network extends Owner {
 
   constructor(owner, data) {
     super(owner, data);
+
+    if (data.ipAddresses) {
+      this.#ipAddresses.push(...asArray(data.ipAddresses));
+      delete data.ipAddresses;
+    }
 
     let bridge;
     if (data.bridge) {
@@ -277,7 +296,7 @@ export class Network extends Owner {
       subnet.networks.add(this);
     }
 
-    owner.addObject(this);
+    //owner.addObject(this);
 
     this.bridge = owner.addBridge(this, bridge);
   }
@@ -289,18 +308,32 @@ export class Network extends Owner {
     return super.networkNamed(name);
   }
 
+  set ipAddresses(value) {
+    this.#ipAddresses = asArray(value);
+  }
+
+  get ipAddresses() {
+    return this.#ipAddresses;
+  }
+
   get prefixLength() {
-    const m = this.ipv4?.match(/\/(\d+)$/);
-    if (m) {
-      return parseInt(m[1]);
+    for (const a of this.#ipAddresses) {
+      const m = a.match(/\/(\d+)$/);
+      if (m) {
+        return parseInt(m[1]);
+      }
     }
+
+    this.error("no prefixLength",this.#ipAddresses);
   }
 
   get subnetAddress() {
-    if (this.ipv4) {
-      const [addr, bits] = this.ipv4.split(/\//);
-      const parts = addr.split(/\./);
-      return parts.slice(0, bits / 8).join(".");
+    for (const a of this.#ipAddresses) {
+      const [addr, bits] = a.split(/\//);
+      if (bits) {
+        const parts = addr.split(/\./);
+        return parts.slice(0, bits / 8).join(".");
+      }
     }
   }
 
@@ -308,7 +341,7 @@ export class Network extends Owner {
     return [
       ...super.propertyNames,
       "kind",
-      "ipv4",
+      "ipAddresses",
       "prefixLength",
       "scope",
       "metric",
