@@ -5,6 +5,7 @@ export class DNSService extends Base {
   allowedUpdates = [];
   recordTTL = "1W";
   soaUpdates = [36000, 72000, 600000, 60000];
+  srvRecords = true;
 
   forwardsTo = [];
 

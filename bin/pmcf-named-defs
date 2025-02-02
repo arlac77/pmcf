@@ -91,6 +91,8 @@ async function generateNamedDefs(owner, targetDir) {
       }
     }
 
+    const hosts = new Set();
+
     for await (const {
       address,
       networkInterface
@@ -104,25 +106,29 @@ async function generateNamedDefs(owner, targetDir) {
         )
       );
 
-      for (const service of host.services()) {
-        if (service.master && service.alias) {
-          zone.records.add(
-            createRecord(service.alias, "CNAME", `${host.domainName}.`)
-          );
-        }
+      if (!hosts.has(host)) {
+        hosts.add(host);
+        for (const service of host.services()) {
+          //console.log(service.name);
+          if (service.master && service.alias) {
+            zone.records.add(
+              createRecord(service.alias, "CNAME", `${host.domainName}.`)
+            );
+          }
 
-        if (service.srvPrefix) {
-          zone.records.add(
-            createRecord(
-              `${service.srvPrefix}.${host.domainName}.`,
-              "SRV",
-              `${String(service.priority).padStart(4)} ${String(
-                service.weight
-              ).padStart(3)} ${String(service.port).padStart(5)} ${
-                host.domainName
-              }.`
-            )
-          );
+          if (dns.srvRecords && service.srvPrefix) {
+            zone.records.add(
+              createRecord(
+                `${service.srvPrefix}.${host.domainName}.`,
+                "SRV",
+                `${String(service.priority).padStart(4)} ${String(
+                  service.weight
+                ).padStart(3)} ${String(service.port).padStart(5)} ${
+                  host.domainName
+                }.`
+              )
+            );
+          }
         }
       }
 
