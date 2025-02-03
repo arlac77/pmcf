@@ -82,6 +82,7 @@ export function root1(root, filter) {
           ssid: "ID2",
           ipAddresses: ["192.168.1.2"],
           ipAddressesWithPrefixLength: ["192.168.1.2/24"],
+          prefixLength: 24,
           kind: "wifi"
         }
       }
@@ -96,7 +97,8 @@ export function root1(root, filter) {
           network: L1n1,
           metric: 1010,
           ipAddresses: ["192.168.1.1"],
-          ipAddressesWithPrefixLength: ["192.168.1.1/24"]
+          ipAddressesWithPrefixLength: ["192.168.1.1/24"],
+          prefixLength: 24
         }
       },
       services: {
