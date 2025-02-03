@@ -1,4 +1,4 @@
-import { Location, Network, Host, Root } from "pmcf";
+import { Location, Network, Host, Subnet, Root } from "pmcf";
 
 /**
  *
@@ -13,6 +13,9 @@ export function root1(root, filter) {
     owner: root,
     description: "somewhere else"
   };
+
+  const s1 = { instanceof: Subnet, name: "192.168.1" };
+
   const L1n1 = {
     instanceof: Network,
     owner: L1,
@@ -22,6 +25,7 @@ export function root1(root, filter) {
     ssid: "ID2",
     description: "home wifi",
     ipAddresses: ["192.168.1.0/24"],
+    subnet: s1,
     prefixLength: 24
   };
   const L1n2 = {
@@ -31,6 +35,7 @@ export function root1(root, filter) {
     kind: "ethernet",
     metric: 1010,
     ipAddresses: ["192.168.1.0/24"],
+    subnet: s1,
     prefixLength: 24
   };
   L1.networks = [L1n1, L1n2];

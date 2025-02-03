@@ -14,7 +14,7 @@ export class Owner extends Base {
     return "owner";
   }
 
-  constructor(owner, data={}) {
+  constructor(owner, data = {}) {
     super(owner, data);
 
     let dns;
@@ -324,7 +324,7 @@ export class Network extends Owner {
       }
     }
 
-    this.error("no prefixLength",this.#ipAddresses);
+    this.error("no prefixLength", this.#ipAddresses);
   }
 
   get subnetAddress() {
@@ -342,6 +342,7 @@ export class Network extends Owner {
       ...super.propertyNames,
       "kind",
       "ipAddresses",
+      "subnet",
       "prefixLength",
       "scope",
       "metric",
@@ -367,5 +368,20 @@ export class Subnet extends Base {
 
   get address() {
     return this.name;
+  }
+
+  get propertyNames() {
+    return [...super.propertyNames, "networks"];
+  }
+
+  _traverse(...args) {
+    if (super._traverse(...args)) {
+      for (const network of this.networks) {
+        network._traverse(...args);
+      }
+      return true;
+    }
+
+    return false;
   }
 }
