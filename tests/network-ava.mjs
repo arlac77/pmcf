@@ -16,6 +16,8 @@ test("Network addresses", t => {
 
   t.is(n1.prefixLength, 16);
   t.deepEqual(n1.ipAddresses, ["10.0.0/16"]);
+  t.is(n1.subnet.address, "10.0");
+  t.true(n1.subnet.networks.has(n1));
 });
 
 test("Network bridges", t => {

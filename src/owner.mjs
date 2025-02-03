@@ -83,7 +83,7 @@ export class Owner extends Base {
 
   typeNamed(typeName, name) {
     const typeSlot = this.#membersByType.get(typeName);
-    return typeSlot?.get(name);
+    return typeSlot?.get(name) || this.owner?.typeNamed(typeName, name);
   }
 
   *typeList(typeName) {
@@ -295,8 +295,6 @@ export class Network extends Owner {
       this.subnet = subnet;
       subnet.networks.add(this);
     }
-
-    //owner.addObject(this);
 
     this.bridge = owner.addBridge(this, bridge);
   }

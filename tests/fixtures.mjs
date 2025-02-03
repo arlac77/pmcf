@@ -14,7 +14,7 @@ export function root1(root, filter) {
     description: "somewhere else"
   };
 
-  const s1 = { instanceof: Subnet, name: "192.168.1" };
+  const s1 = { instanceof: Subnet, name: "192.168.1", networks: [] };
 
   const L1n1 = {
     instanceof: Network,
@@ -38,13 +38,16 @@ export function root1(root, filter) {
     subnet: s1,
     prefixLength: 24
   };
+
   L1.networks = [L1n1, L1n2];
+  s1.networks.push(L1n1);
+  s1.networks.push(L1n2);
 
   const p1 = {
     name: "p1",
     networkInterfaces: {
       eth0: {
-        //    network: L1n1,
+        network: L1n1,
         ipAddresses: ["192.168.1.10"]
       }
     }
@@ -53,7 +56,7 @@ export function root1(root, filter) {
     name: "p2",
     networkInterfaces: {
       eth0: {
-        //    network: L1n1,
+        network: L1n1,
         ipAddresses: ["192.168.1.11"]
       }
     }
