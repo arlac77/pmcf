@@ -79,11 +79,10 @@ async function generateNamedDefs(owner, targetDir) {
 
     for (const subnet of owner.subnets()) {
       if (subnet.address) {
-        const reverse = reverseAddress(subnet.address);
         const reverseArpa = reverseArpaAddress(subnet.address);
         const zone = {
           id: reverseArpa,
-          file: `${reverse}.zone`,
+          file: `${reverseArpa}.zone`,
           records: new Set([SOARecord, NSRecord])
         };
         zones.push(zone);
@@ -98,15 +97,15 @@ async function generateNamedDefs(owner, targetDir) {
       networkInterface
     } of owner.networkAddresses()) {
       const host = networkInterface.host;
-      zone.records.add(
-        createRecord(
-          host.domainName + ".",
-          isIPv4Address(address) ? "A   " : "AAAA",
-          normalizeIPAddress(address)
-        )
-      );
 
       if (!hosts.has(host)) {
+        zone.records.add(
+          createRecord(
+            host.domainName + ".",
+            isIPv4Address(address) ? "A   " : "AAAA",
+            normalizeIPAddress(address)
+          )
+        );
         hosts.add(host);
         for (const service of host.services()) {
           //console.log(service.name);
