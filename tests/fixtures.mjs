@@ -14,7 +14,7 @@ export function root1(root, filter) {
     description: "somewhere else"
   };
 
-  const s1 = { instanceof: Subnet, name: "192.168.1", networks: [] };
+  const s1 = { instanceof: Subnet, name: "192.168.1/24", networks: [] };
 
   const L1n1 = {
     instanceof: Network,
@@ -24,9 +24,7 @@ export function root1(root, filter) {
     metric: 1010,
     ssid: "ID2",
     description: "home wifi",
-    ipAddresses: ["192.168.1.0/24"],
-    subnet: s1,
-    prefixLength: 24
+    subnets: [s1]
   };
   const L1n2 = {
     instanceof: Network,
@@ -34,9 +32,7 @@ export function root1(root, filter) {
     scope: "site",
     kind: "ethernet",
     metric: 1010,
-    ipAddresses: ["192.168.1.0/24"],
-    subnet: s1,
-    prefixLength: 24
+    subnets: [s1]
   };
 
   L1.networks = [L1n1, L1n2];
@@ -90,7 +86,6 @@ export function root1(root, filter) {
           ssid: "ID2",
           ipAddresses: ["192.168.1.2"],
           ipAddressesWithPrefixLength: ["192.168.1.2/24"],
-          prefixLength: 24,
           kind: "wifi"
         }
       }
@@ -105,8 +100,7 @@ export function root1(root, filter) {
           network: L1n1,
           metric: 1010,
           ipAddresses: ["192.168.1.1"],
-          ipAddressesWithPrefixLength: ["192.168.1.1/24"],
-          prefixLength: 24
+          ipAddressesWithPrefixLength: ["192.168.1.1/24"]
         }
       },
       services: {

@@ -52,3 +52,21 @@ export function normalizeIPAddress(address) {
   }
   return parts.map(s => s.padStart(4, "0")).join(":");
 }
+
+export function normalizeCIDR(address) {
+  let [prefix, prefixLength] = address.split(/\//);
+
+  if (prefixLength) {
+    if (isIPv4Address(prefix)) {
+      const parts = prefix.split(/\./);
+      prefix = parts.slice(0, prefixLength / 8).join(".");
+    } else {
+      prefix = normalizeIPAddress(prefix);
+    }
+  }
+  else {
+    return {};
+  }
+
+  return { prefix, prefixLength, cidr: `${prefix}/${prefixLength}` };
+}

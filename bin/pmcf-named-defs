@@ -78,8 +78,8 @@ async function generateNamedDefs(owner, targetDir) {
     zones.push(zone);
 
     for (const subnet of owner.subnets()) {
-      if (subnet.address) {
-        const reverseArpa = reverseArpaAddress(subnet.address);
+      if (subnet.prefix) {
+        const reverseArpa = reverseArpaAddress(subnet.prefix);
         const zone = {
           id: reverseArpa,
           file: `${reverseArpa}.zone`,

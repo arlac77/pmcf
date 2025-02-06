@@ -3,7 +3,7 @@ import { assertObject, assertObjects } from "./util.mjs";
 import { root1 } from "./fixtures.mjs";
 import { Root } from "pmcf";
 
-test.only("Location basics", async t => {
+test("Location basics", async t => {
   const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
   await root.loadAll();
   await assertObject(t, await root.named("L1"), root1(root, "L1"), ["L1"]);

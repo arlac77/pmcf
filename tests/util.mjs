@@ -1,54 +1,75 @@
+
+
 export async function assertObject(t, object, expected, path = []) {
+  const visited = new Set();
+  return _assertObject(t, visited, object, expected, path);
+}
+
+async function _assertObject(t, visited, object, expected, path = []) {
+
+  /*
+  if (path.length > 6) {
+    return;
+  }
+  //t.true(path.length < 7, path.join("."));
+*/
+
+  t.log(`${path.join("/")}: ${object} <> ${expected}`);
+
   switch (typeof expected) {
+    case "undefined":
     case "string":
     case "number":
     case "boolean":
-      t.is(object, expected, `${path.join("/")}: is`);
+      t.is(object, expected, `${path.join(".")}: is`);
       return;
-      break;
   }
 
-  t.truthy(object, `${path.join("/")}: present`);
+  if(visited.has(object)) {
+    return;
+  }
+
+  visited.add(object);
+
+  t.false(object === undefined, path.join("."));
+
+  if (Array.isArray(expected)) {
+    let i = 0;
+
+    object = [...object].sort((a, b) => a.name.localeCompare(b.name));
+
+    for (const o of object) {
+      t.log(`${path.join(".")}: ${o}`);
+      if(i >= expected.length) { break;}
+      t.true(i < expected.length, `iterate ${i} >= ${expected.length}: ${o}`);
+      await _assertObject(t, visited, o, expected[i], [...path, i]);
+      i++;
+    }
+    return;
+  }
 
   for (const [k, v] of Object.entries(expected)) {
     switch (k) {
       case "instanceof":
         t.true(
           object instanceof expected.instanceof,
-          `${[...path, k].join("/")}: ${expected.instanceof.name}`
+          `${[...path, k].join(".")}: ${expected.instanceof.name}`
         );
-        break;
+
       case "services":
         for (const [name, sd] of Object.entries(v)) {
           const service = [...object.services({ name })][0];
-          assertObject(t, service, sd, [...path, name]);
+          _assertObject(t, visited, service, sd, [...path, name]);
         }
         break;
-      default:
-        let value = object[k];
+      default: {
+        let o = object[k];
+        if (typeof o === "function") {
+          o = await object[k]();
+        }
 
-        if (typeof value === "function") {
-          value = (await Array.fromAsync(object[k]())).sort((a, b) =>
-            a.name.localeCompare(b.name)
-          );
-        }
-        if (Array.isArray(v)) {
-          let i = 0;
-          for (const vv of v.sort((a, b) => a.name.localeCompare(b.name))) {
-            await assertObject(t, value[i], vv, [...path, k, i]);
-            i++;
-          }
-        } else {
-          if (typeof v === "object") {
-            if (v.name) {
-              t.is(value.name, v.name, `${path.join("/")}: ${k}.name`);
-            } else {
-              assertObject(t, value, v, [...path, k]);
-            }
-          } else {
-            t.is(value, v, `${[...path, k].join("/")}:`);
-          }
-        }
+        await _assertObject(t, visited, o, v, [...path, k]);
+      }
     }
   }
 }
@@ -64,3 +85,31 @@ export async function assertObjects(t, iterator, expected, path = []) {
     await assertObject(t, objects.get(name), exp, [...path, name]);
   }
 }
+
+/*
+        let value = object[k];
+
+        if (typeof value === "function") {
+          value = (await Array.fromAsync(object[k]())).sort((a, b) =>
+            a.name.localeCompare(b.name)
+          );
+        }
+
+        if (Array.isArray(v)) {
+          let i = 0;
+          for (const vv of v.sort((a, b) => a.name.localeCompare(b.name))) {
+            t.truthy(value, "XXX" + [...path, k].join("/"));
+            await assertObject(t, value[i], vv, [...path, k, i]);
+            i++;
+          }
+        } else {
+          if (typeof v === "object") {
+            if (v.name) {
+              t.is(value.name, v.name, `${path.join("/")}: ${k}.name`);
+            } else {
+              assertObject(t, value, v, [...path, k]);
+            }
+          } else {
+            t.is(value, v, `${[...path, k].join("/")}:`);
+          }
+    }*/

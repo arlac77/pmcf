@@ -1,4 +1,4 @@
-import { asArray } from "./utils.mjs";
+import { asArray, normalizeCIDR } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { DNSService } from "./dns.mjs";
 
@@ -160,6 +160,32 @@ export class Owner extends Base {
     return this.typeList("subnet");
   }
 
+  subnetForAddress(address) {
+    for (const subnet of this.subnets()) {
+      if (subnet.matchesAddress(address)) {
+        return subnet;
+      }
+    }
+  }
+
+  createSubnet(address) {
+    if (address instanceof Subnet) {
+      return address;
+    }
+
+    const { cidr } = normalizeCIDR(address);
+
+    if (cidr) {
+      let subnet = this.subnetNamed(cidr);
+
+      if (!subnet) {
+        subnet = new Subnet(this, { name: cidr });
+      }
+
+      return subnet;
+    }
+  }
+
   clusterNamed(name) {
     return this.typeNamed("cluster", name);
   }
@@ -260,9 +286,8 @@ export class Network extends Owner {
   kind;
   scope;
   metric;
-  subnet;
   bridge;
-  #ipAddresses = [];
+  gateway;
 
   static get typeName() {
     return "network";
@@ -271,9 +296,9 @@ export class Network extends Owner {
   constructor(owner, data) {
     super(owner, data);
 
-    if (data.ipAddresses) {
-      this.#ipAddresses.push(...asArray(data.ipAddresses));
-      delete data.ipAddresses;
+    if (data.subnets) {
+      this.addSubnets(data.subnets);
+      delete data.subnets;
     }
 
     let bridge;
@@ -283,18 +308,6 @@ export class Network extends Owner {
     }
 
     Object.assign(this, data);
-
-    const subnetAddress = this.subnetAddress;
-
-    if (subnetAddress) {
-      let subnet = owner.subnetNamed(subnetAddress);
-      if (!subnet) {
-        subnet = new Subnet(owner, { name: subnetAddress });
-      }
-
-      this.subnet = subnet;
-      subnet.networks.add(this);
-    }
 
     this.bridge = owner.addBridge(this, bridge);
   }
@@ -306,32 +319,11 @@ export class Network extends Owner {
     return super.networkNamed(name);
   }
 
-  set ipAddresses(value) {
-    this.#ipAddresses = asArray(value);
-  }
-
-  get ipAddresses() {
-    return this.#ipAddresses;
-  }
-
-  get prefixLength() {
-    for (const a of this.#ipAddresses) {
-      const m = a.match(/\/(\d+)$/);
-      if (m) {
-        return parseInt(m[1]);
-      }
-    }
-
-    this.error("no prefixLength", this.#ipAddresses);
-  }
-
-  get subnetAddress() {
-    for (const a of this.#ipAddresses) {
-      const [addr, bits] = a.split(/\//);
-      if (bits) {
-        const parts = addr.split(/\./);
-        return parts.slice(0, bits / 8).join(".");
-      }
+  addSubnets(value) {
+    for (const address of asArray(value)) {
+      const subnet = this.owner.createSubnet(address);
+      this.addObject(subnet);
+      subnet.networks.add(this);
     }
   }
 
@@ -339,12 +331,10 @@ export class Network extends Owner {
     return [
       ...super.propertyNames,
       "kind",
-      "ipAddresses",
-      "subnet",
-      "prefixLength",
       "scope",
       "metric",
-      "bridge"
+      "bridge",
+      "gateway"
     ];
   }
 }
@@ -357,6 +347,16 @@ export class Subnet extends Base {
   }
 
   constructor(owner, data) {
+    const { cidr } = normalizeCIDR(data.name);
+
+    if(!cidr) {
+      const error = Error(`Invalid address`);
+      error.address = data.name;
+      throw error;
+    }
+
+    data.name = cidr;
+
     super(owner, data);
 
     Object.assign(this, data);
@@ -364,12 +364,28 @@ export class Subnet extends Base {
     owner.addObject(this);
   }
 
+  matchesAddress(address) {
+    return address.startsWith(this.prefix);
+  }
+
+  get prefix() {
+    const [prefix] = this.name.split("/");
+    return prefix;
+  }
+
+  get prefixLength() {
+    const m = this.name.match(/\/(\d+)$/);
+    if (m) {
+      return parseInt(m[1]);
+    }
+  }
+
   get address() {
     return this.name;
   }
 
   get propertyNames() {
-    return [...super.propertyNames, "networks"];
+    return [...super.propertyNames, "networks", "prefixLength"];
   }
 
   _traverse(...args) {

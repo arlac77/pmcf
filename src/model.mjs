@@ -342,15 +342,21 @@ export class Host extends Base {
   *networkAddresses() {
     for (const networkInterface of Object.values(this.networkInterfaces)) {
       for (const address of networkInterface.ipAddresses) {
-        yield { address, networkInterface };
+        yield {
+          networkInterface,
+          address,
+          addressWithPrefixLength:
+            networkInterface.addressWithPrefixLength(address)
+        };
       }
     }
   }
 
   get ipAddresses() {
-    return [...this.networkAddresses()].map(na =>
-      normalizeIPAddress(na.address)
-    );
+    return [...this.networkAddresses()].map(na => na.address);
+  }
+  get ipAddressesWithPrefixLength() {
+    return [...this.networkAddresses()].map(na => na.addressWithPrefixLength);
   }
 
   get ipAddress() {
@@ -391,7 +397,7 @@ export class NetworkInterface extends Base {
     return "network_interface";
   }
 
-  #ipAddresses = [];
+  #ipAddresses = new Map();
   #scope;
   #metric;
   #ssid;
@@ -403,21 +409,6 @@ export class NetworkInterface extends Base {
 
   constructor(owner, data) {
     super(owner, data);
-
-    if (data.ipv4) {
-      this.#ipAddresses.push(...asArray(data.ipv4));
-      delete data.ipv4;
-    }
-
-    if (data.ipv6) {
-      this.#ipAddresses.push(...asArray(data.ipv6));
-      delete data.ipv6;
-    }
-
-    if (data.ipAddresses) {
-      this.#ipAddresses.push(...asArray(data.ipAddresses));
-      delete data.ipAddresses;
-    }
 
     if (data.ssid) {
       this.#ssid = data.ssid;
@@ -462,26 +453,44 @@ export class NetworkInterface extends Base {
     //this.arpbridge = owner.addARPBridge(this, data.arpbridge);
   }
 
+  set ipAddresses(value) {
+    const networkOwner = this.owner.owner;
+    for (const address of asArray(value)) {
+      const subnet = networkOwner.createSubnet(address);
+      this.#ipAddresses.set(normalizeIPAddress(address), subnet);
+    }
+  }
+
+  subnetForAddress(address) {
+    return (
+      this.network?.subnetForAddress(address) ||
+      this.owner.owner.subnetForAddress(address)
+    );
+  }
+
+  addressWithPrefixLength(address) {
+    return `${address}/${this.subnetForAddress(address)?.prefixLength}`;
+  }
+
   get ipAddresses() {
-    return this.#ipAddresses;
+    return this.#ipAddresses.keys();
   }
 
   get ipAddressesWithPrefixLength() {
-    return this.#ipAddresses.map(a =>
-      isIPv4Address(a) ? `${a}/${this.prefixLength}` : a
+    return [...this.ipAddresses].map(address =>
+      this.addressWithPrefixLength(address)
     );
   }
 
   get ipv4Addresses() {
-    return this.#ipAddresses.filter(a => isIPv4Address(a));
+    return [...this.ipAddresses].filter(a => isIPv4Address(a));
   }
 
   get ipv6Addresses() {
-    return this.#ipAddresses.filter(a => isIPv6Address(a));
+    return [...this.ipAddresses].filter(a => isIPv6Address(a));
   }
 
-  get prefixLength()
-  {
+  get prefixLength() {
     return this.network?.prefixLength;
   }
 
@@ -538,8 +547,8 @@ export class NetworkInterface extends Base {
       "psk",
       "scope",
       "metric",
-      "ipAddresses",
-      "kind"
+      "kind",
+      "ipAddresses"
     ];
   }
 }
