@@ -40,6 +40,10 @@ export function isIPv6Address(address) {
   return address.indexOf(":") >= 0;
 }
 
+export function isLinkLocal(address) {
+  return address.startsWith("fe80");
+}
+
 export function normalizeIPAddress(address) {
   address = address.replace(/\/\d+$/, "");
   if (isIPv4Address(address)) {
@@ -56,16 +60,22 @@ export function normalizeIPAddress(address) {
 export function normalizeCIDR(address) {
   let [prefix, prefixLength] = address.split(/\//);
 
-  if (prefixLength) {
-    if (isIPv4Address(prefix)) {
-      const parts = prefix.split(/\./);
-      prefix = parts.slice(0, prefixLength / 8).join(".");
+  if (!prefixLength && isLinkLocal(address)) {
+    prefix = "fe80::";
+    prefixLength = 64;
+  } else {
+    if (prefixLength) {
+      if (isIPv4Address(prefix)) {
+        const parts = prefix.split(/\./);
+        prefix = parts.slice(0, prefixLength / 8).join(".");
+      } else {
+        prefix = normalizeIPAddress(prefix);
+        const parts = prefix.split(/\:/);
+        prefix = parts.slice(0, prefixLength / 16).join(":");
+      }
     } else {
-      prefix = normalizeIPAddress(prefix);
+      return {};
     }
-  }
-  else {
-    return {};
   }
 
   return { prefix, prefixLength, cidr: `${prefix}/${prefixLength}` };

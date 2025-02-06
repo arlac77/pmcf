@@ -45,8 +45,8 @@ test("Host addresses", t => {
   t.is(s1.name, "10.0/16");
   t.is(s1.prefixLength, 16);
 
-  const s2 = owner.subnetNamed("fe80:0000:0000:0000:1e57:3eff:fe22:9a8f/64");
-  t.is(s2.name, "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f/64");
+  const s2 = owner.subnetNamed("fe80:0000:0000:0000/64");
+  t.is(s2.name, "fe80:0000:0000:0000/64");
   t.is(s2.prefixLength, 64);
 
   t.deepEqual(h1.ipAddresses, [
@@ -81,8 +81,8 @@ test("Host addresses with network", t => {
   t.is(s1.name, "10.0/16");
   t.is(s1.prefixLength, 16);
 
-  const s2 = owner.subnetNamed("fe80:0000:0000:0000:1e57:3eff:fe22:9a8f/64");
-  t.is(s2.name, "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f/64");
+  const s2 = owner.subnetNamed("fe80:0000:0000:0000/64");
+  t.is(s2.name, "fe80:0000:0000:0000/64");
   t.is(s2.prefixLength, 64);
 
   t.deepEqual(h1.ipAddresses, [

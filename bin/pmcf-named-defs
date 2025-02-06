@@ -80,13 +80,13 @@ async function generateNamedDefs(owner, targetDir) {
     for (const subnet of owner.subnets()) {
       if (subnet.prefix) {
         const reverseArpa = reverseArpaAddress(subnet.prefix);
-        const zone = {
+        const reverseZone = {
           id: reverseArpa,
           file: `${reverseArpa}.zone`,
           records: new Set([SOARecord, NSRecord])
         };
-        zones.push(zone);
-        subnet.reverseZone = zone;
+        zones.push(reverseZone);
+        subnet.reverseZone = reverseZone;
       }
     }
 
