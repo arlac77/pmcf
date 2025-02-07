@@ -19,6 +19,10 @@ console.log("depends", "mf-named");
 console.log("replaces", "mf-named-zones");
 console.log("description", `named defintions for ${owner.name}`);
 
+function fullName(name) {
+  return name.endsWith(".") ? name : name + ".";
+}
+
 async function generateNamedDefs(owner, targetDir) {
   const dns = owner.dns;
   const ttl = dns.recordTTL;
@@ -33,20 +37,24 @@ async function generateNamedDefs(owner, targetDir) {
 
     let maxKeyLength;
 
-    const createRecord = (key, type, value) => {
+    const createRecord = (key, type, ...values) => {
+      values = values.map(v =>
+        typeof v === "number" ? String(v).padStart(3) : v
+      );
+
       return {
         key,
         toString: () =>
           `${key.padEnd(maxKeyLength, " ")} ${ttl} IN ${type.padEnd(
             5,
             " "
-          )} ${value}`
+          )} ${values.join(" ")}`
       };
     };
 
     for await (const mail of owner.services({ type: "smtp" })) {
       records.add(
-        createRecord("@", "MX", `${mail.priority} ${mail.owner.domainName}.`)
+        createRecord("@", "MX", mail.priority, fullName(mail.owner.domainName))
       );
     }
 
@@ -55,10 +63,12 @@ async function generateNamedDefs(owner, targetDir) {
     const SOARecord = createRecord(
       "@",
       "SOA",
-      `${nameserver?.domainName}. ${rname}. (${updates})`
+      fullName(nameserver?.domainName),
+      fullName(rname),
+      `(${updates})`
     );
 
-    const NSRecord = createRecord("@", "NS", `${nameserver?.ipAddress}.`);
+    const NSRecord = createRecord("@", "NS", fullName(nameserver?.ipAddress));
 
     const catalogZone = {
       id: `catalog.${domain}`,
@@ -66,7 +76,7 @@ async function generateNamedDefs(owner, targetDir) {
       records: new Set([
         SOARecord,
         NSRecord,
-        createRecord(`version.${domain}.`, "TXT", '"2"')
+        createRecord(fullName(`version.${domain}`), "TXT", '"2"')
       ])
     };
 
@@ -101,8 +111,8 @@ async function generateNamedDefs(owner, targetDir) {
       if (!hosts.has(host)) {
         zone.records.add(
           createRecord(
-            host.domainName + ".",
-            isIPv4Address(address) ? "A   " : "AAAA",
+            fullName(host.domainName),
+            isIPv4Address(address) ? "A" : "AAAA",
             normalizeIPAddress(address)
           )
         );
@@ -110,20 +120,19 @@ async function generateNamedDefs(owner, targetDir) {
         for (const service of host.services()) {
           if (service.master && service.alias) {
             zone.records.add(
-              createRecord(service.alias, "CNAME", `${host.domainName}.`)
+              createRecord(service.alias, "CNAME", fullName(host.domainName))
             );
           }
 
           if (dns.hasSVRRecords && service.srvPrefix) {
             zone.records.add(
               createRecord(
-                `${service.srvPrefix}.${host.domainName}.`,
+                fullName(`${service.srvPrefix}.${host.domainName}`),
                 "SRV",
-                `${String(service.priority).padStart(4)} ${String(
-                  service.weight
-                ).padStart(3)} ${String(service.port).padStart(5)} ${
-                  host.domainName
-                }.`
+                service.priority,
+                service.weight,
+                service.port,
+                fullName(host.domainName)
               )
             );
           }
@@ -135,9 +144,9 @@ async function generateNamedDefs(owner, targetDir) {
       if (reverseZone) {
         reverseZone.records.add(
           createRecord(
-            reverseArpaAddress(address) + ".",
+            fullName(reverseArpaAddress(address)),
             "PTR",
-            `${networkInterface.host.domainName}.`
+            fullName(networkInterface.host.domainName)
           )
         );
       }
