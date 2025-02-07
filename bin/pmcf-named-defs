@@ -78,7 +78,7 @@ async function generateNamedDefs(owner, targetDir) {
     zones.push(zone);
 
     for (const subnet of owner.subnets()) {
-      if (subnet.prefix) {
+      if (!subnet.isLinkLocal && subnet.prefix) {
         const reverseArpa = reverseArpaAddress(subnet.prefix);
         const reverseZone = {
           id: reverseArpa,
@@ -108,7 +108,6 @@ async function generateNamedDefs(owner, targetDir) {
         );
         hosts.add(host);
         for (const service of host.services()) {
-          //console.log(service.name);
           if (service.master && service.alias) {
             zone.records.add(
               createRecord(service.alias, "CNAME", `${host.domainName}.`)
@@ -133,7 +132,7 @@ async function generateNamedDefs(owner, targetDir) {
 
       const reverseZone = networkInterface.network.subnet?.reverseZone;
 
-      if (reverseZone && isIPv4Address(address)) {
+      if (reverseZone) {
         reverseZone.records.add(
           createRecord(
             reverseArpaAddress(address) + ".",

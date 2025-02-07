@@ -1,7 +1,5 @@
 import test from "ava";
-import { Root, Network, Subnet } from "pmcf";
-import { assertObject } from "./util.mjs";
-import { root1 } from "./fixtures.mjs";
+import { Root, Subnet } from "pmcf";
 
 test("Subnet ipv4", t => {
   const owner = new Root();
@@ -14,6 +12,8 @@ test("Subnet ipv4", t => {
 
   t.true(s1.matchesAddress("10.0.0.77"));
   t.false(s1.matchesAddress("10.2.0.77"));
+
+  t.false(s1.isLinkLocal);
 });
 
 test("Subnet ipv6", t => {
@@ -27,6 +27,7 @@ test("Subnet ipv6", t => {
 
   t.true(s1.matchesAddress("fe80:0000:0000:0000:1e57:3eff:fe22:9a8f"));
   t.false(s1.matchesAddress("fe81:0000:0000:0000:1e57:3eff:fe22:9a8f"));
- // t.false(s1.matchesAddress("fe80:0000:0000:0000:1e57:3eff:fe22:9a8e"));
-});
+  // t.false(s1.matchesAddress("fe80:0000:0000:0000:1e57:3eff:fe22:9a8e"));
 
+  t.true(s1.isLinkLocal);
+});

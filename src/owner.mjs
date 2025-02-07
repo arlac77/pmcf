@@ -1,4 +1,4 @@
-import { asArray, normalizeCIDR } from "./utils.mjs";
+import { asArray, normalizeCIDR, isLinkLocal } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { DNSService } from "./dns.mjs";
 
@@ -366,6 +366,11 @@ export class Subnet extends Base {
 
   matchesAddress(address) {
     return address.startsWith(this.prefix);
+  }
+
+  get isLinkLocal()
+  {
+    return isLinkLocal(this.address);
   }
 
   get prefix() {
