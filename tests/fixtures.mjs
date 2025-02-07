@@ -1,4 +1,4 @@
-import { Location, Network, Host, Subnet, Root } from "pmcf";
+import { Location, Network, Subnet, Host, Cluster, Root } from "pmcf";
 
 /**
  *
@@ -60,6 +60,8 @@ export function root1(root, filter) {
 
   const L1C1 = {
     name: "C1",
+    instanceof: Cluster,
+
     hosts: [p1, p2]
   };
 
