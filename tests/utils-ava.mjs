@@ -12,6 +12,7 @@ nt.title = (providedTitle = "normalizeCIDR", address, cidr) =>
 test(nt, "1.2.3.4", undefined);
 test(nt, "1.2.3.4/24", "1.2.3/24");
 test(nt, "1.2.3.4/16", "1.2/16");
+test(nt, "10.0/16", "10.0/16");
 test(nt, "1.2.3.4/8", "1/8");
 test(nt, "192.168.1.62/30", "192.168.1.60/30");
 

@@ -58,11 +58,17 @@ export function normalizeIPAddress(address) {
 }
 
 function encodeIPv4(address) {
-  const octets = address.split(/\./).map(p => parseInt(p));
+  const octets = [0, 0, 0, 0];
+
+  let i = 0;
+  for (const a of address.split(/\./)) {
+    octets[i++] = parseInt(a);
+  }
+
   return (octets[0] << 24) + (octets[1] << 16) + (octets[2] << 8) + octets[3];
 }
 
-function decodeIPv4(address) {
+function decodeIPv4(address, length = 32) {
   const octets = [
     (address >> 24) & 0xff,
     (address >> 16) & 0xff,
@@ -70,7 +76,9 @@ function decodeIPv4(address) {
     address & 0xff
   ];
 
-  return octets.filter(o => o != 0).join(".");
+  octets.length = Math.ceil(length / 8);
+
+  return octets.join(".");
 }
 
 export function normalizeCIDR(address) {
@@ -84,7 +92,7 @@ export function normalizeCIDR(address) {
       if (isIPv4Address(prefix)) {
         let n = encodeIPv4(prefix);
         n = n & (0xffffffff << (32 - prefixLength));
-        prefix = decodeIPv4(n);
+        prefix = decodeIPv4(n, prefixLength);
       } else {
         prefix = normalizeIPAddress(prefix);
         const parts = prefix.split(/\:/);
