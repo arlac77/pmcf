@@ -87,11 +87,14 @@ export class Base {
   }
 
   get directory() {
-    return this.#directory || (this.owner ? join(this.owner.directory, this.name) : this.name);
+    return (
+      this.#directory ||
+      (this.owner ? join(this.owner.directory, this.name) : this.name)
+    );
   }
 
   get fullName() {
-    return this.owner && this.name
+    return this.owner?.fullName && this.name
       ? join(this.owner.fullName, this.name)
       : this.name;
   }
@@ -200,9 +203,13 @@ export function extractFrom(object) {
             json[p].name = value.name;
           }
         } else {
-          json[p] = Object.fromEntries(
-            Object.entries(value).map(([k, v]) => [k, extractFrom(v)])
-          );
+          if (Array.isArray(value)) {
+            json[p] = value;
+          } else {
+            json[p] = Object.fromEntries(
+              Object.entries(value).map(([k, v]) => [k, extractFrom(v)])
+            );
+          }
         }
         break;
       default:
