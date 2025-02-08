@@ -27,6 +27,11 @@ export class Root extends Owner {
     this.addObject(this);
   }
 
+  get types()
+  {
+    return this.constructor.types;
+  }
+
   get fullName() {
     return "";
   }
@@ -123,10 +128,10 @@ export class Location extends Owner {
 }
 
 export class Host extends Base {
-  networkInterfaces = {};
   postinstall = [];
   #services = [];
   #extends = [];
+  #networkInterfaces = new Map();
   #provides = new Set();
   #replaces = new Set();
   #depends = new Set();
@@ -203,25 +208,32 @@ export class Host extends Base {
       delete data.services;
     }
 
+    if (data.networkInterfaces) {
+      for (const [name, iface] of Object.entries(data.networkInterfaces)) {
+        iface.name = name;
+        new NetworkInterface(this, iface);
+      }
+      delete data.networkInterfaces;
+    }
+
     for (const host of this.extends) {
       for (const service of host.services()) {
-        service.withOwner(this);
+        service.forOwner(this);
       }
+
+      /*for (const ni of host.networkInterfaces.values()) {
+        ni.forOwner(this);
+      }*/
     }
 
     Object.assign(this, data);
-
-    for (const [name, iface] of Object.entries(this.networkInterfaces)) {
-      iface.name = name;
-      new NetworkInterface(this, iface);
-    }
 
     owner.addObject(this);
   }
 
   _traverse(...args) {
     if (super._traverse(...args)) {
-      for (const ni of Object.values(this.networkInterfaces)) {
+      for (const ni of this.networkInterfaces.values()) {
         ni._traverse(...args);
       }
       for (const service of this.services()) {
@@ -331,8 +343,16 @@ export class Host extends Base {
     }
   }
 
+  get networkInterfaces() {
+    return this.#networkInterfaces;
+  }
+
+  networkInterfacesNamed(name) {
+    return this.#networkInterfaces.get(name);
+  }
+
   addNetworkInterface(networkInterface) {
-    this.networkInterfaces[networkInterface.name] = networkInterface;
+    this.#networkInterfaces.set(networkInterface.name, networkInterface);
 
     if (networkInterface.network) {
       networkInterface.network.addObject(this);
@@ -340,7 +360,7 @@ export class Host extends Base {
   }
 
   *networkAddresses() {
-    for (const networkInterface of Object.values(this.networkInterfaces)) {
+    for (const networkInterface of this.networkInterfaces.values()) {
       for (const address of networkInterface.ipAddresses) {
         yield {
           networkInterface,
@@ -355,6 +375,7 @@ export class Host extends Base {
   get ipAddresses() {
     return [...this.networkAddresses()].map(na => na.address);
   }
+
   get ipAddressesWithPrefixLength() {
     return [...this.networkAddresses()].map(na => na.addressWithPrefixLength);
   }
@@ -385,6 +406,9 @@ export class Host extends Base {
     return {
       ...super.toJSON(),
       extends: this.extends.map(host => host.name),
+      networkInterfaces: Object.fromEntries(
+        [...this.networkInterfaces.values()].map(ni => [ni.name, ni.toJSON()])
+      ),
       services: Object.fromEntries(
         [...this.services()].map(s => [s.name, s.toJSON()])
       )
@@ -472,6 +496,19 @@ export class NetworkInterface extends Base {
     return `${address}/${this.subnetForAddress(address)?.prefixLength}`;
   }
 
+  get gateway() {
+    return this.network?.gateway;
+  }
+
+  get gatewayAddress() {
+    console.log(typeof this.gateway);
+    for (const a of this.gateway.networkAddresses()) {
+      if (a.networkInterface.network === this.network) {
+        return a.address;
+      }
+    }
+  }
+
   get ipAddresses() {
     return this.#ipAddresses.keys();
   }
@@ -543,6 +580,7 @@ export class NetworkInterface extends Base {
       "arpbridge",
       "hwaddr",
       "network",
+      "gateway",
       "ssid",
       "psk",
       "scope",

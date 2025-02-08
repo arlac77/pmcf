@@ -37,7 +37,7 @@ test("Service basics", async t => {
     networkInterfaces: { eth0: { ipAddresses: "10.0.0.2" } }
   });
 
-  const s2 = s1.withOwner(h2);
+  const s2 = s1.forOwner(h2);
 
   t.is(s2.name, "dns");
   t.is(s2.type, "dns");

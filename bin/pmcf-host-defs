@@ -44,7 +44,7 @@ async function generateMachineInfo(host, dir) {
 async function generateNetworkDefs(host, dir) {
   const networkDir = join(dir, "etc/systemd/network");
 
-  for (const ni of Object.values(host.networkInterfaces)) {
+  for (const ni of host.networkInterfaces.values()) {
     if (ni.name !== "eth0" && ni.hwaddr) {
       await writeLines(networkDir, `${ni.name}.link`, [
         sectionLines("Match", { MACAddress: ni.hwaddr }),
@@ -69,7 +69,7 @@ async function generateNetworkDefs(host, dir) {
       case "wifi":
         const routeSectionExtra = ni.destination
           ? { Destination: ni.destination }
-          : { Gateway: host.location.gateway_ipv4 };
+          : { Gateway: ni.gatewayAddress };
 
         const networkSectionExtra = ni.arpbridge
           ? {

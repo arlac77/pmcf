@@ -1,19 +1,9 @@
-
-
 export async function assertObject(t, object, expected, path = []) {
   const visited = new Set();
   return _assertObject(t, visited, object, expected, path);
 }
 
 async function _assertObject(t, visited, object, expected, path = []) {
-
-  /*
-  if (path.length > 6) {
-    return;
-  }
-  //t.true(path.length < 7, path.join("."));
-*/
-
   t.log(`${path.join("/")}: ${object} <> ${expected}`);
 
   switch (typeof expected) {
@@ -25,7 +15,7 @@ async function _assertObject(t, visited, object, expected, path = []) {
       return;
   }
 
-  if(visited.has(object)) {
+  if (visited.has(object)) {
     return;
   }
 
@@ -40,7 +30,9 @@ async function _assertObject(t, visited, object, expected, path = []) {
 
     for (const o of object) {
       t.log(`${path.join(".")}: ${o}`);
-      if(i >= expected.length) { break;}
+      if (i >= expected.length) {
+        break;
+      }
       t.true(i < expected.length, `iterate ${i} >= ${expected.length}: ${o}`);
       await _assertObject(t, visited, o, expected[i], [...path, i]);
       i++;
@@ -63,11 +55,15 @@ async function _assertObject(t, visited, object, expected, path = []) {
         }
         break;
       default: {
-        let o = object[k];
-        if (typeof o === "function") {
-          o = await object[k]();
+        let o;
+        if (object instanceof Map) {
+          o = object.get(k);
+        } else {
+          o = object[k];
+          if (typeof o === "function") {
+            o = await object[k]();
+          }
         }
-
         await _assertObject(t, visited, o, v, [...path, k]);
       }
     }

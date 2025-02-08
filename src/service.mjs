@@ -53,7 +53,7 @@ export class Service extends Base {
     owner.addService(this);
   }
 
-  withOwner(owner) {
+  forOwner(owner) {
     if (this.owner !== owner) {
       const data = { name: this.name };
       if (this.alias) {

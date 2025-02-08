@@ -47,10 +47,10 @@ export class Base {
     }
   }
 
-  withOwner(owner) {
+  forOwner(owner) {
     if (this.owner !== owner) {
       // @ts-ignore
-      return new this.constructor(owner, this);
+      return new this.constructor(owner, this.toJSON());
     }
 
     return this;
@@ -87,7 +87,7 @@ export class Base {
   }
 
   get directory() {
-    return this.#directory || join(this.owner.directory, this.name);
+    return this.#directory || (this.owner ? join(this.owner.directory, this.name) : this.name);
   }
 
   get fullName() {
