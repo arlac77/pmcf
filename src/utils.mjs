@@ -81,6 +81,25 @@ function decodeIPv4(address, length = 32) {
   return octets.join(".");
 }
 
+export function encodeIPv6(address) {
+  const words = [0, 0, 0, 0, 0, 0, 0, 0];
+
+  let i = 0;
+  for (const a of normalizeIPAddress(address).split(/\:/)) {
+    words[i++] = parseInt(a,16);
+  }
+
+  let res = 0n;
+  let shift = 128n;
+
+  for(const word of words) {
+    shift -= 16n;
+    res += BigInt(word) << shift;
+  }
+
+  return res;
+}
+
 export function normalizeCIDR(address) {
   let [prefix, prefixLength] = address.split(/\//);
 
