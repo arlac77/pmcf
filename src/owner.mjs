@@ -166,10 +166,18 @@ export class Owner extends Base {
   }
 
   subnetNamed(name) {
+    if (this !== this.location) {
+      return this.location.subnetNamed(name);
+    }
+
     return this.typeNamed("subnet", name);
   }
 
   subnets() {
+    if (this !== this.location) {
+      return this.location.subnets();
+    }
+
     return this.typeList("subnet");
   }
 
@@ -181,18 +189,28 @@ export class Owner extends Base {
     }
   }
 
-  createSubnet(address) {
+  addSubnet(address) {
+    if (this !== this.location) {
+      return this.location.addSubnet(address);
+    }
+
     if (address instanceof Subnet) {
       return address;
     }
 
     const { cidr } = normalizeCIDR(address);
 
+    //console.log("ADD SUBNET", this.toString(), address, cidr);
+
     if (cidr) {
       let subnet = this.subnetNamed(cidr);
 
       if (!subnet) {
         subnet = new Subnet(this, { name: cidr });
+
+        /*if(this.owner) {
+          this.owner.addSubnet(subnet);
+        }*/
       }
 
       return subnet;
@@ -331,6 +349,10 @@ export class Network extends Owner {
     this.bridge = owner.addBridge(this, bridge);
   }
 
+  get network() {
+    return this;
+  }
+
   networkNamed(name) {
     if (this.fullName === name) {
       return this;
@@ -340,8 +362,7 @@ export class Network extends Owner {
 
   addSubnets(value) {
     for (const address of asArray(value)) {
-      const subnet = this.owner.createSubnet(address);
-      this.addObject(subnet);
+      const subnet = this.addSubnet(address);
       subnet.networks.add(this);
     }
   }

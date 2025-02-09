@@ -12,7 +12,29 @@ import { Service } from "./service.mjs";
 import { Cluster } from "./cluster.mjs";
 import { DNSService } from "./dns.mjs";
 
-export class Root extends Owner {
+export class Location extends Owner {
+  static get typeName() {
+    return "location";
+  }
+
+  get location() {
+    return this;
+  }
+
+  locationNamed(name) {
+    if (this.fullName === name) {
+      return this;
+    }
+
+    return super.locationNamed(name);
+  }
+
+  get network() {
+    return [...this.typeList("network")][0] || super.network;
+  }
+}
+
+export class Root extends Location {
   static get types() {
     return _typesByName;
   }
@@ -27,8 +49,7 @@ export class Root extends Owner {
     this.addObject(this);
   }
 
-  get types()
-  {
+  get types() {
     return this.constructor.types;
   }
 
@@ -106,24 +127,6 @@ export class Root extends Owner {
     }
 
     this.execFinalize();
-  }
-}
-
-export class Location extends Owner {
-  static get typeName() {
-    return "location";
-  }
-
-  get location() {
-    return this;
-  }
-
-  locationNamed(name) {
-    if (this.fullName === name) {
-      return this;
-    }
-
-    return super.locationNamed(name);
   }
 }
 
@@ -326,6 +329,10 @@ export class Host extends Base {
     return this;
   }
 
+  get network() {
+    return this.owner.network;
+  }
+
   addService(service) {
     this.#services.push(service);
   }
@@ -347,7 +354,7 @@ export class Host extends Base {
     return this.#networkInterfaces;
   }
 
-  networkInterfacesNamed(name) {
+  networkInterfaceNamed(name) {
     return this.#networkInterfaces.get(name);
   }
 
@@ -477,11 +484,20 @@ export class NetworkInterface extends Base {
     //this.arpbridge = owner.addARPBridge(this, data.arpbridge);
   }
 
+  addSubnet(address) {
+    if (!this.network) {
+      this.error("Missing network", address);
+    } else {
+      return this.network.addSubnet(address);
+    }
+  }
+
   set ipAddresses(value) {
-    const networkOwner = this.owner.owner;
     for (const address of asArray(value)) {
-      const subnet = networkOwner.createSubnet(address);
-      this.#ipAddresses.set(normalizeIPAddress(address), subnet);
+      this.#ipAddresses.set(
+        normalizeIPAddress(address),
+        this.addSubnet(address)
+      );
     }
   }
 
@@ -501,7 +517,6 @@ export class NetworkInterface extends Base {
   }
 
   get gatewayAddress() {
-    console.log(typeof this.gateway);
     for (const a of this.gateway.networkAddresses()) {
       if (a.networkInterface.network === this.network) {
         return a.address;
@@ -510,7 +525,7 @@ export class NetworkInterface extends Base {
   }
 
   get ipAddresses() {
-    return this.#ipAddresses.keys();
+    return [...this.#ipAddresses.keys()];
   }
 
   get ipAddressesWithPrefixLength() {
@@ -531,13 +546,17 @@ export class NetworkInterface extends Base {
     return this.network?.prefixLength;
   }
 
+  get host() {
+    return this.owner;
+  }
+
   get network() {
-    return this.#network;
+    return this.#network || this.host.network;
   }
 
   set network(networkOrName) {
     if (!(networkOrName instanceof Network)) {
-      let network = this.owner.owner.networkNamed(networkOrName);
+      let network = this.host.owner.networkNamed(networkOrName);
 
       if (network) {
         this.#network = network;
@@ -548,10 +567,6 @@ export class NetworkInterface extends Base {
     }
 
     this.#network = networkOrName;
-  }
-
-  get host() {
-    return this.owner;
   }
 
   get scope() {

@@ -1,10 +1,13 @@
 import test from "ava";
 import { Root, Location, Host, Service } from "pmcf";
 
-test("Service basics", async t => {
+test.only("Service basics", async t => {
   const root = new Root("/somwhere");
 
-  const l1 = new Location(root, { name: "l1" });
+  const l1 = new Location(root, {
+    name: "l1",
+    networks: { ethernet: { subnets: "10.0/16" } }
+  });
 
   const h1 = new Host(l1, {
     name: "h1",

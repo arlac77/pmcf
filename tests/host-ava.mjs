@@ -29,10 +29,11 @@ test("Host all", async t => {
   );
 });
 
-test("Host addresses", t => {
+test.only("Host addresses", t => {
   const owner = new Root();
+  const n1 = new Network(owner, { name: "n1" });
 
-  const h1 = new Host(owner, {
+  const h1 = new Host(n1, {
     name: "h1",
     networkInterfaces: {
       eth0: {
@@ -41,7 +42,28 @@ test("Host addresses", t => {
     }
   });
 
-  t.is(h1.networkInterfacesNamed("eth0").name, "eth0");
+  const eth0 = h1.networkInterfaceNamed("eth0");
+
+  t.is(eth0.name, "eth0");
+  t.is(eth0.network, n1);
+  t.is(h1.network, n1);
+  t.is(n1.network, n1);
+
+  t.deepEqual(eth0.toJSON(), {
+    directory: "n1/h1/eth0",
+    name: "eth0",
+    metric: 1004,
+    scope: "global",
+    owner: {
+      name: "h1",
+      type: "host"
+    },
+    network: {
+      name: "n1",
+      type: "network"
+    },
+    ipAddresses: ["10.0.0.2", "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f"]
+  });
 
   const s1 = owner.subnetNamed("10.0/16");
   t.is(s1.name, "10.0/16");
