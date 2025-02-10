@@ -1,6 +1,6 @@
 import test from "ava";
 import { Root } from "pmcf";
-import { assertObject, assertObjects } from "./util.mjs";
+import { assertObject } from "./util.mjs";
 import { root1 } from "./fixtures.mjs";
 
 test("Cluster basics", async t => {
