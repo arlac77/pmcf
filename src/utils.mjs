@@ -82,17 +82,12 @@ function decodeIPv4(address, length = 32) {
 }
 
 export function encodeIPv6(address) {
-  const words = [0, 0, 0, 0, 0, 0, 0, 0];
-
-  let i = 0;
-  for (const a of normalizeIPAddress(address).split(/\:/)) {
-    words[i++] = parseInt(a,16);
-  }
-
   let res = 0n;
   let shift = 128n;
 
-  for(const word of words) {
+  for (const word of normalizeIPAddress(address)
+    .split(/\:/)
+    .map(a => parseInt(a, 16))) {
     shift -= 16n;
     res += BigInt(word) << shift;
   }
@@ -101,13 +96,12 @@ export function encodeIPv6(address) {
 }
 
 export function decodeIPv6(address, length = 128) {
-
   let words = [];
   let shift = 128n;
 
-  for(let i = 0; i < length / 16; i++) {
+  for (let i = 0; i < length / 16; i++) {
     shift -= 16n;
-    words[i] = ((address >> shift) & 0xffffn).toString(16).padStart(4,'0');
+    words.push(((address >> shift) & 0xffffn).toString(16).padStart(4, "0"));
   }
 
   return words.join(":");
@@ -127,7 +121,10 @@ export function normalizeCIDR(address) {
         prefix = decodeIPv4(n, prefixLength);
       } else {
         let n = encodeIPv6(prefix);
-        n = n & (0xffffffffffffffffffffffffffffffffn << (128n - BigInt(prefixLength)));
+        n =
+          n &
+          (0xffffffffffffffffffffffffffffffffn <<
+            (128n - BigInt(prefixLength)));
         prefix = decodeIPv6(n, prefixLength);
       }
     } else {
