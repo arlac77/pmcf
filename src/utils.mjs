@@ -100,6 +100,19 @@ export function encodeIPv6(address) {
   return res;
 }
 
+export function decodeIPv6(address, length = 128) {
+
+  let words = [];
+  let shift = 128n;
+
+  for(let i = 0; i < length / 16; i++) {
+    shift -= 16n;
+    words[i] = ((address >> shift) & 0xffffn).toString(16).padStart(4,'0');
+  }
+
+  return words.join(":");
+}
+
 export function normalizeCIDR(address) {
   let [prefix, prefixLength] = address.split(/\//);
 
@@ -113,9 +126,9 @@ export function normalizeCIDR(address) {
         n = n & (0xffffffff << (32 - prefixLength));
         prefix = decodeIPv4(n, prefixLength);
       } else {
-        prefix = normalizeIPAddress(prefix);
-        const parts = prefix.split(/\:/);
-        prefix = parts.slice(0, prefixLength / 16).join(":");
+        let n = encodeIPv6(prefix);
+        n = n & (0xffffffffffffffffffffffffffffffffn << (128n - BigInt(prefixLength)));
+        prefix = decodeIPv6(n, prefixLength);
       }
     } else {
       return {};
