@@ -81,31 +81,3 @@ export async function assertObjects(t, iterator, expected, path = []) {
     await assertObject(t, objects.get(name), exp, [...path, name]);
   }
 }
-
-/*
-        let value = object[k];
-
-        if (typeof value === "function") {
-          value = (await Array.fromAsync(object[k]())).sort((a, b) =>
-            a.name.localeCompare(b.name)
-          );
-        }
-
-        if (Array.isArray(v)) {
-          let i = 0;
-          for (const vv of v.sort((a, b) => a.name.localeCompare(b.name))) {
-            t.truthy(value, "XXX" + [...path, k].join("/"));
-            await assertObject(t, value[i], vv, [...path, k, i]);
-            i++;
-          }
-        } else {
-          if (typeof v === "object") {
-            if (v.name) {
-              t.is(value.name, v.name, `${path.join("/")}: ${k}.name`);
-            } else {
-              assertObject(t, value, v, [...path, k]);
-            }
-          } else {
-            t.is(value, v, `${[...path, k].join("/")}:`);
-          }
-    }*/
