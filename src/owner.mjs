@@ -14,19 +14,6 @@ export class Owner extends Base {
     return "owner";
   }
 
-  /*static async prepareData(root, data) {
-    if (data.networks) {
-      for (const [name, networkData] of Object.entries(data.networks)) {
-        if(networkData.gateway) {
-          networkData.gateway = await root.load(networkData.gateway, { type: root.types.host });
-          console.log("GATEWAY", networkData.gateway);
-        }
-      }
-    }
-
-    return this;
-  }*/
-
   constructor(owner, data = {}) {
     super(owner, data);
 
@@ -341,9 +328,7 @@ export class Network extends Owner {
     Object.assign(this, data);
 
     if (typeof this.gateway === "string") {
-      this.finalize(() => {
-        this.gateway = this.owner.hostNamed(this.gateway);
-      });
+      this.finalize(() => (this.gateway = this.owner.hostNamed(this.gateway)));
     }
 
     this.bridge = owner.addBridge(this, bridge);
