@@ -77,7 +77,7 @@ const ipv6 = {
 };
 
 function _decode(definition, address, length = definition.length) {
-  let words = [];
+  const words = [];
   let shift = definition.length;
 
   for (let i = 0; i < length / definition.segmentLength; i++) {
