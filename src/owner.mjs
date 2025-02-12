@@ -86,13 +86,13 @@ export class Owner extends Base {
     return typeSlot?.get(name) || this.owner?.typeNamed(typeName, name);
   }
 
-  *typeList(typeName) {
+  typeList(typeName) {
     const typeSlot = this.#membersByType.get(typeName);
     if (typeSlot) {
-      for (const object of typeSlot.values()) {
-        yield object;
-      }
+      return typeSlot.values();
     }
+
+    return [];
   }
 
   _addObject(typeName, fullName, object) {
@@ -153,11 +153,15 @@ export class Owner extends Base {
   }
 
   subnetNamed(name) {
-    if (this !== this.location) {
-      return this.location.subnetNamed(name);
-    }
+    return this.typeNamed("subnet", name) || this.owner?.subnetNamed(name);
+  }
 
-    return this.typeNamed("subnet", name);
+  *_subnets() {
+    if (this.owner) {
+      yield* this.owner.subnets();
+    } else {
+      yield* this.typeList("subnet");
+    }
   }
 
   subnets() {
@@ -168,21 +172,13 @@ export class Owner extends Base {
     return this.typeList("subnet");
   }
 
-  subnetForAddress(address) {
-    for (const subnet of this.subnets()) {
-      if (subnet.matchesAddress(address)) {
-        return subnet;
-      }
-    }
-  }
-
   addSubnet(address) {
-    if (this !== this.location) {
-      return this.location.addSubnet(address);
-    }
-
     if (address instanceof Subnet) {
       return address;
+    }
+
+    if (this !== this.location) {
+      return this.location.addSubnet(address);
     }
 
     const { cidr } = normalizeCIDR(address);
@@ -195,6 +191,14 @@ export class Owner extends Base {
       }
 
       return subnet;
+    }
+  }
+
+  subnetForAddress(address) {
+    for (const subnet of this.subnets()) {
+      if (subnet.matchesAddress(address)) {
+        return subnet;
+      }
     }
   }
 

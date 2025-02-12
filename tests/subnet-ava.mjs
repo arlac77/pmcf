@@ -1,9 +1,33 @@
 import test from "ava";
-import { Root, Subnet } from "pmcf";
+import { Root, Network, Subnet } from "pmcf";
+
+test("Subnet owner", t => {
+  const root = new Root();
+
+  const s1 = new Subnet(root, {
+    name: "10.0.0.77/16"
+  });
+
+  const n1 = new Network(root, { name: "n1" });
+
+  const s2 = new Subnet(n1, {
+    name: "192.168.1/24"
+  });
+
+  t.deepEqual(
+    [...root.subnets()].map(s => s.name),
+    ["10.0/16", "192.168.1/24"]
+  );
+  t.deepEqual(
+    [...n1.subnets()].map(s => s.name),
+    ["10.0/16", "192.168.1/24"]
+  );
+});
 
 test("Subnet ipv4", t => {
-  const owner = new Root();
-  const s1 = new Subnet(owner, {
+  const root = new Root();
+
+  const s1 = new Subnet(root, {
     name: "10.0.0.77/16"
   });
 
@@ -17,8 +41,8 @@ test("Subnet ipv4", t => {
 });
 
 test("Subnet ipv6", t => {
-  const owner = new Root();
-  const s1 = new Subnet(owner, {
+  const root = new Root();
+  const s1 = new Subnet(root, {
     name: "fe80::1e57:3eff:fe22:9a8f/64"
   });
 
