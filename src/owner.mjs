@@ -187,17 +187,11 @@ export class Owner extends Base {
 
     const { cidr } = normalizeCIDR(address);
 
-    //console.log("ADD SUBNET", this.toString(), address, cidr);
-
     if (cidr) {
       let subnet = this.subnetNamed(cidr);
 
       if (!subnet) {
         subnet = new Subnet(this, { name: cidr });
-
-        /*if(this.owner) {
-          this.owner.addSubnet(subnet);
-        }*/
       }
 
       return subnet;

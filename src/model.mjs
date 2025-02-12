@@ -112,8 +112,6 @@ export class Root extends Location {
 
     this._addObject(type.typeName, fullName, object);
 
-    //console.log("FINISH LOAD", object.fullName);
-
     return object;
   }
 
