@@ -105,7 +105,6 @@ export class Owner extends Base {
   }
 
   addObject(object) {
-    this.owner?.addObject(object);
     this._addObject(object.typeName, object.fullName, object);
   }
 
@@ -153,34 +152,17 @@ export class Owner extends Base {
   }
 
   subnetNamed(name) {
-    return this.typeNamed("subnet", name) || this.owner?.subnetNamed(name);
+    return this.typeNamed("subnet", name);
   }
 
-  *_subnets() {
+  *subnets() {
     if (this.owner) {
       yield* this.owner.subnets();
-    } else {
-      yield* this.typeList("subnet");
     }
-  }
-
-  subnets() {
-    if (this !== this.location) {
-      return this.location.subnets();
-    }
-
-    return this.typeList("subnet");
+    yield* this.typeList("subnet");
   }
 
   addSubnet(address) {
-    if (address instanceof Subnet) {
-      return address;
-    }
-
-    if (this !== this.location) {
-      return this.location.addSubnet(address);
-    }
-
     const { cidr } = normalizeCIDR(address);
 
     if (cidr) {
@@ -385,6 +367,10 @@ export class Subnet extends Base {
     Object.assign(this, data);
 
     owner.addObject(this);
+  }
+
+  get fullName() {
+    return this.name;
   }
 
   matchesAddress(address) {

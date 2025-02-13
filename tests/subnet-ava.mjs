@@ -9,15 +9,28 @@ test("Subnet owner", t => {
   });
 
   const n1 = new Network(root, { name: "n1" });
+  const n2 = new Network(root, { name: "n2" });
+
+  t.is(root.subnetNamed("10.0/16"), s1);
+  t.is(n1.subnetNamed("10.0/16"), s1);
 
   const s2 = new Subnet(n1, {
     name: "192.168.1/24"
   });
 
+  t.is(root.subnetNamed("192.168.1/24"), undefined);
+  t.is(n1.subnetNamed("192.168.1/24"), s2);
+  t.is(n2.subnetNamed("192.168.1/24"), undefined);
+
   t.deepEqual(
     [...root.subnets()].map(s => s.name),
-    ["10.0/16", "192.168.1/24"]
+    ["10.0/16"]
   );
+  t.deepEqual(
+    [...n2.subnets()].map(s => s.name),
+    ["10.0/16"]
+  );
+
   t.deepEqual(
     [...n1.subnets()].map(s => s.name),
     ["10.0/16", "192.168.1/24"]

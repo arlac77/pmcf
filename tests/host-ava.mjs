@@ -29,7 +29,7 @@ test("Host all", async t => {
   );
 });
 
-test.only("Host addresses", t => {
+test("Host addresses", t => {
   const owner = new Root();
   const n1 = new Network(owner, { name: "n1" });
 
@@ -65,11 +65,11 @@ test.only("Host addresses", t => {
     ipAddresses: ["10.0.0.2", "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f"]
   });
 
-  const s1 = owner.subnetNamed("10.0/16");
+  const s1 = n1.subnetNamed("10.0/16");
   t.is(s1.name, "10.0/16");
   t.is(s1.prefixLength, 16);
 
-  const s2 = owner.subnetNamed("fe80:0000:0000:0000/64");
+  const s2 = n1.subnetNamed("fe80:0000:0000:0000/64");
   t.is(s2.name, "fe80:0000:0000:0000/64");
   t.is(s2.prefixLength, 64);
 
@@ -83,7 +83,7 @@ test.only("Host addresses", t => {
   ]);
 });
 
-test("Host addresses with network", t => {
+test.only("Host addresses with network", t => {
   const owner = new Root();
 
   const n1 = new Network(owner, {
@@ -101,11 +101,11 @@ test("Host addresses with network", t => {
     }
   });
 
-  const s1 = owner.subnetNamed("10.0/16");
+  const s1 = n1.subnetNamed("10.0/16");
   t.is(s1.name, "10.0/16");
   t.is(s1.prefixLength, 16);
 
-  const s2 = owner.subnetNamed("fe80:0000:0000:0000/64");
+  const s2 = n1.subnetNamed("fe80:0000:0000:0000/64");
   t.is(s2.name, "fe80:0000:0000:0000/64");
   t.is(s2.prefixLength, 64);
 

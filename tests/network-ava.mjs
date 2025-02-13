@@ -17,12 +17,12 @@ test("Network addresses", t => {
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
   });
 
-  const s1 = owner.subnetNamed("10.0/16");
+  const s1 = n1.subnetNamed("10.0/16");
   t.is(s1.name, "10.0/16");
   t.is(s1.prefixLength, 16);
   t.true(s1.networks.has(n1));
 
-  const s2 = owner.subnetNamed("fe80:0000:0000:0000/64");
+  const s2 = n1.subnetNamed("fe80:0000:0000:0000/64");
   t.is(s2.name, "fe80:0000:0000:0000/64");
   t.is(s2.prefixLength, 64);
   t.true(s2.networks.has(n1));
