@@ -58,7 +58,13 @@ async function generateNamedDefs(owner, targetDir) {
       );
     }
 
-    console.log(owner.name, domain, nameserver?.hostName, rname);
+    console.log(
+      owner.fullName,
+      domain,
+      nameserver?.hostName,
+      rname,
+      [...owner.subnets()].map(s => s.name)
+    );
 
     const SOARecord = createRecord(
       "@",
