@@ -1,7 +1,7 @@
 import { asArray, normalizeCIDR } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { Subnet } from "./subnet.mjs";
-import { addType, typesByName } from "./types.mjs";
+import { addType } from "./types.mjs";
 
 export class Owner extends Base {
   #membersByType = new Map();
@@ -18,9 +18,12 @@ export class Owner extends Base {
     return "owner";
   }
 
-  static get ownedTypes() {
+  static get typeDefinition() {
     return {
       networks: { type: "network", collection: true },
+      hosts: { type: "host", collection: true },
+      clusters: { type: "cluster", collection: true },
+      /*  subnets: { type: "subnet", collection: true },*/
       dns: { type: "dns", collection: false }
     };
   }
@@ -43,22 +46,7 @@ export class Owner extends Base {
       delete data.ntp;
     }
 
-    for (const [slotName, typeDef] of Object.entries(
-      this.constructor.ownedTypes
-    )) {
-      const slot = data[slotName];
-      if (slot) {
-        delete data[slotName];
-        if (typeDef.collection) {
-          for (const [objectName, objectData] of Object.entries(slot)) {
-            objectData.name = objectName;
-            new typesByName[typeDef.type](this, objectData);
-          }
-        } else {
-          this[typeDef.type] = new typesByName[typeDef.type](this, slot);
-        }
-      }
-    }
+    this.read(data);
 
     owner?.addObject(this);
   }

@@ -1,6 +1,5 @@
 import { Base } from "./base.mjs";
 import { Network } from "./network.mjs";
-import { Service } from "./service.mjs";
 import {
   asArray,
   isIPv4Address,
@@ -30,6 +29,13 @@ export class Host extends Base {
 
   static get typeName() {
     return "host";
+  }
+
+  static get typeDefinition() {
+    return {
+      networkInterfaces: { type: "network_interface", collection: true },
+      services: { type: "service", collection: true }
+    };
   }
 
   static async prepareData(root, data) {
@@ -86,31 +92,13 @@ export class Host extends Base {
       delete data.provides;
     }
 
-    if (data.services) {
-      for (const [name, sd] of Object.entries(data.services)) {
-        sd.name = name;
-        new Service(this, sd);
-      }
-      delete data.services;
-    }
-
-    if (data.networkInterfaces) {
-      for (const [name, iface] of Object.entries(data.networkInterfaces)) {
-        iface.name = name;
-        new NetworkInterface(this, iface);
-      }
-      delete data.networkInterfaces;
-    }
-
     for (const host of this.extends) {
       for (const service of host.services()) {
         service.forOwner(this);
       }
-
-      /*for (const ni of host.networkInterfaces.values()) {
-        ni.forOwner(this);
-      }*/
     }
+
+    this.read(data);
 
     Object.assign(this, data);
 

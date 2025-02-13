@@ -1,5 +1,6 @@
 import { join } from "node:path";
 import { getAttribute } from "pacc";
+import { typesByName } from "./types.mjs";
 
 export class Base {
   owner;
@@ -8,6 +9,12 @@ export class Base {
 
   static get typeName() {
     return "base";
+  }
+
+  static get typeDefinition() {
+    return {
+      //      name: { type: "string", collection: false }
+    };
   }
 
   static get pluralTypeName() {
@@ -43,6 +50,25 @@ export class Base {
       this.name = data.name;
       if (data.description) {
         this.description = data.description;
+      }
+    }
+  }
+
+  read(data) {
+    for (const [slotName, typeDef] of Object.entries(
+      this.constructor.typeDefinition
+    )) {
+      const slot = data[slotName];
+      if (slot) {
+        delete data[slotName];
+        if (typeDef.collection) {
+          for (const [objectName, objectData] of Object.entries(slot)) {
+            objectData.name = objectName;
+            new typesByName[typeDef.type](this, objectData);
+          }
+        } else {
+          this[typeDef.type] = new typesByName[typeDef.type](this, slot);
+        }
       }
     }
   }
