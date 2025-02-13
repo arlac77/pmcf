@@ -1,6 +1,8 @@
-import { asArray, normalizeCIDR, isLinkLocal } from "./utils.mjs";
+import { asArray, normalizeCIDR } from "./utils.mjs";
 import { Base } from "./base.mjs";
+import { Subnet } from "./subnet.mjs";
 import { DNSService } from "./dns.mjs";
+import { addType, typesByName } from "./types.mjs";
 
 export class Owner extends Base {
   #membersByType = new Map();
@@ -9,6 +11,10 @@ export class Owner extends Base {
   #administratorEmail;
   domain;
   ntp = { servers: [] };
+
+  static {
+    addType(this);
+  }
 
   static get typeName() {
     return "owner";
@@ -46,7 +52,7 @@ export class Owner extends Base {
 
       for (const [name, data] of Object.entries(networks)) {
         data.name = name;
-        new Network(this, data);
+        new typesByName.network(this, data);
       }
     }
 
@@ -277,169 +283,5 @@ export class Owner extends Base {
     }
 
     return json;
-  }
-}
-
-export class Network extends Owner {
-  kind;
-  scope;
-  metric;
-  gateway;
-  #bridge;
-
-  static get typeName() {
-    return "network";
-  }
-
-  constructor(owner, data) {
-    super(owner, data);
-
-    if (data.subnets) {
-      this.addSubnets(data.subnets);
-      delete data.subnets;
-    }
-
-    if (data.bridge) {
-      this.bridge = owner.addBridge(this, data.bridge);
-      delete data.bridge;
-    }
-
-    Object.assign(this, data);
-
-    if (typeof this.gateway === "string") {
-      this.finalize(() => (this.gateway = this.owner.hostNamed(this.gateway)));
-    }
-  }
-
-  get network() {
-    return this;
-  }
-
-  networkNamed(name) {
-    if (this.fullName === name) {
-      return this;
-    }
-    return super.networkNamed(name);
-  }
-
-  addSubnets(value) {
-    for (const address of asArray(value)) {
-      const subnet = this.addSubnet(address);
-      subnet.networks.add(this);
-    }
-  }
-
-  get bridge() {
-    return this.#bridge;
-  }
-
-  set bridge(bridge) {
-    for (const network of bridge) {
-      if (network instanceof Network && network !== this) {
-        for (const subnet of this.subnets()) {
-          for (const otherSubnet of network.subnets()) {
-            if (
-              subnet !== otherSubnet &&
-              subnet.address === otherSubnet.address
-            ) {
-              /*console.log(
-                "SHARE SUBNETS",
-                subnet.owner.toString(),
-                otherSubnet.owner.toString()
-              );*/
-
-              otherSubnet.owner.addObject(subnet);
-              for (const n of otherSubnet.networks) {
-                subnet.networks.add(n);
-              }
-
-              //console.log(subnet.toString(),[...subnet.networks].map(n=>n.toString()));
-            }
-          }
-        }
-      }
-    }
-
-    this.#bridge = bridge;
-  }
-
-  get propertyNames() {
-    return [
-      ...super.propertyNames,
-      "kind",
-      "scope",
-      "metric",
-      "bridge",
-      "gateway"
-    ];
-  }
-}
-
-export class Subnet extends Base {
-  networks = new Set();
-
-  static get typeName() {
-    return "subnet";
-  }
-
-  constructor(owner, data) {
-    const { cidr } = normalizeCIDR(data.name);
-
-    if (!cidr) {
-      const error = Error(`Invalid address`);
-      error.address = data.name;
-      throw error;
-    }
-
-    data.name = cidr;
-
-    super(owner, data);
-
-    Object.assign(this, data);
-
-    owner.addObject(this);
-  }
-
-  get fullName() {
-    return this.name;
-  }
-
-  matchesAddress(address) {
-    return address.startsWith(this.prefix);
-  }
-
-  get isLinkLocal() {
-    return isLinkLocal(this.address);
-  }
-
-  get prefix() {
-    const [prefix] = this.name.split("/");
-    return prefix;
-  }
-
-  get prefixLength() {
-    const m = this.name.match(/\/(\d+)$/);
-    if (m) {
-      return parseInt(m[1]);
-    }
-  }
-
-  get address() {
-    return this.name;
-  }
-
-  get propertyNames() {
-    return [...super.propertyNames, "networks", "prefixLength"];
-  }
-
-  _traverse(...args) {
-    if (super._traverse(...args)) {
-      for (const network of this.networks) {
-        network._traverse(...args);
-      }
-      return true;
-    }
-
-    return false;
   }
 }

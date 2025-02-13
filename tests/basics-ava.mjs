@@ -1,24 +1,5 @@
 import test from "ava";
-import {
-  extractFrom,
-  Root,
-  Host,
-  Location,
-  Network,
-  Service,
-  Subnet,
-  Base,
-  Owner
-} from "pmcf";
-
-test("types", t => {
-  t.is(Root.types.location, Location);
-  t.is(Root.types.network, Network);
-  t.is(Root.types.subnet, Subnet);
-  t.is(Root.types.service, Service);
-  t.is(Root.types.host, Host);
-  t.is(Root.types.owner, Owner);
-});
+import { extractFrom, Root, Location, Base } from "pmcf";
 
 test("Root basics", async t => {
   const root = new Root("/somewhere");

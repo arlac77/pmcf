@@ -1,6 +1,6 @@
 import { parseArgs } from "node:util";
 import { argv, cwd, env } from "node:process";
-import { Root } from "./model.mjs";
+import { Root } from "./module.mjs";
 
 export async function prepare() {  
   const { values, positionals } = parseArgs({

@@ -1,5 +1,6 @@
 import { Base } from "./base.mjs";
 import { asArray } from "./utils.mjs";
+import { addType } from "./types.mjs";
 
 export class DNSService extends Base {
   allowedUpdates = [];
@@ -9,6 +10,10 @@ export class DNSService extends Base {
   hasCatalog = true;
 
   forwardsTo = [];
+
+  static {
+    addType(this);
+  }
 
   static get typeName() {
     return "dns";

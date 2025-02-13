@@ -1,4 +1,5 @@
 import { Base } from "./base.mjs";
+import { addType } from "./types.mjs";
 
 const ServiceTypes = {
   dns: { protocol: "udp", port: 53 },
@@ -20,6 +21,10 @@ export class Service extends Base {
   #type;
   #port;
   #ipAddresses;
+
+  static {
+    addType(this);
+  }
 
   static get typeName() {
     return "service";
