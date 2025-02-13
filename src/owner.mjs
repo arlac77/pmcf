@@ -106,9 +106,9 @@ export class Owner extends Base {
     this._addObject(object.typeName, object.fullName, object);
   }
 
-  async service(filter) {
+  service(filter) {
     let best;
-    for await (const service of this.services(filter)) {
+    for (const service of this.services(filter)) {
       if (!best || service.priority < best.priority) {
         best = service;
       }
@@ -117,9 +117,9 @@ export class Owner extends Base {
     return best;
   }
 
-  async *services(filter) {
-    for await (const host of this.hosts()) {
-      for await (const service of host.services(filter)) {
+  *services(filter) {
+    for (const host of this.hosts()) {
+      for (const service of host.services(filter)) {
         yield service;
       }
     }
@@ -245,8 +245,8 @@ export class Owner extends Base {
     }
   }
 
-  async *networkAddresses() {
-    for await (const host of this.hosts()) {
+  *networkAddresses() {
+    for (const host of this.hosts()) {
       for (const networkAddresses of host.networkAddresses()) {
         yield networkAddresses;
       }
