@@ -284,8 +284,8 @@ export class Network extends Owner {
   kind;
   scope;
   metric;
-  bridge;
   gateway;
+  #bridge;
 
   static get typeName() {
     return "network";
@@ -299,9 +299,8 @@ export class Network extends Owner {
       delete data.subnets;
     }
 
-    let bridge;
     if (data.bridge) {
-      bridge = data.bridge;
+      this.bridge = owner.addBridge(this, data.bridge);
       delete data.bridge;
     }
 
@@ -310,8 +309,6 @@ export class Network extends Owner {
     if (typeof this.gateway === "string") {
       this.finalize(() => (this.gateway = this.owner.hostNamed(this.gateway)));
     }
-
-    this.bridge = owner.addBridge(this, bridge);
   }
 
   get network() {
@@ -330,6 +327,40 @@ export class Network extends Owner {
       const subnet = this.addSubnet(address);
       subnet.networks.add(this);
     }
+  }
+
+  get bridge() {
+    return this.#bridge;
+  }
+
+  set bridge(bridge) {
+    for (const network of bridge) {
+      if (network instanceof Network && network !== this) {
+        for (const subnet of this.subnets()) {
+          for (const otherSubnet of network.subnets()) {
+            if (
+              subnet !== otherSubnet &&
+              subnet.address === otherSubnet.address
+            ) {
+              /*console.log(
+                "SHARE SUBNETS",
+                subnet.owner.toString(),
+                otherSubnet.owner.toString()
+              );*/
+
+              otherSubnet.owner.addObject(subnet);
+              for (const n of otherSubnet.networks) {
+                subnet.networks.add(n);
+              }
+
+              //console.log(subnet.toString(),[...subnet.networks].map(n=>n.toString()));
+            }
+          }
+        }
+      }
+    }
+
+    this.#bridge = bridge;
   }
 
   get propertyNames() {

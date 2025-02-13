@@ -58,12 +58,16 @@ async function generateNamedDefs(owner, targetDir) {
       );
     }
 
+    const subnets = [
+      ...new Set([...owner.networks()].map(n => [...n.subnets()]).flat())
+    ];
+
     console.log(
       owner.fullName,
       domain,
       nameserver?.hostName,
       rname,
-      [...owner.subnets()].map(s => s.name)
+      subnets.map(s => `${s.owner.name}/${s.name}`)
     );
 
     const SOARecord = createRecord(
@@ -93,7 +97,7 @@ async function generateNamedDefs(owner, targetDir) {
     };
     zones.push(zone);
 
-    for (const subnet of owner.subnets()) {
+    for (const subnet of subnets) {
       if (!subnet.isLinkLocal && subnet.prefix) {
         const reverseArpa = reverseArpaAddress(subnet.prefix);
         const reverseZone = {

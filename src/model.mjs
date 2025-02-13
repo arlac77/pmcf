@@ -32,6 +32,17 @@ export class Location extends Owner {
   get network() {
     return [...this.typeList("network")][0] || super.network;
   }
+
+  /*
+  *subnets() {
+   // yield* super.subnets();
+    
+    for(const network of this.networks()) {
+     // console.log(network.toString());
+      yield* network.typeList("subnet");
+    }
+  }
+  */
 }
 
 export class Root extends Location {
