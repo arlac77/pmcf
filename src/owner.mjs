@@ -1,13 +1,11 @@
 import { asArray, normalizeCIDR } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { Subnet } from "./subnet.mjs";
-import { DNSService } from "./dns.mjs";
 import { addType, typesByName } from "./types.mjs";
 
 export class Owner extends Base {
   #membersByType = new Map();
   #bridges = new Set();
-  #dns;
   #administratorEmail;
   domain;
   ntp = { servers: [] };
@@ -20,16 +18,15 @@ export class Owner extends Base {
     return "owner";
   }
 
+  static get ownedTypes() {
+    return {
+      networks: { type: "network", collection: true },
+      dns: { type: "dns", collection: false }
+    };
+  }
+
   constructor(owner, data = {}) {
     super(owner, data);
-
-    let dns;
-    if (data.dns) {
-      dns = data.dns;
-      delete data.dns;
-    }
-
-    this.#dns = new DNSService(this, dns);
 
     if (data.administratorEmail) {
       this.#administratorEmail = data.administratorEmail;
@@ -46,13 +43,20 @@ export class Owner extends Base {
       delete data.ntp;
     }
 
-    if (data.networks) {
-      const networks = data.networks;
-      delete data.networks;
-
-      for (const [name, data] of Object.entries(networks)) {
-        data.name = name;
-        new typesByName.network(this, data);
+    for (const [slotName, typeDef] of Object.entries(
+      this.constructor.ownedTypes
+    )) {
+      const slot = data[slotName];
+      if (slot) {
+        delete data[slotName];
+        if (typeDef.collection) {
+          for (const [objectName, objectData] of Object.entries(slot)) {
+            objectData.name = objectName;
+            new typesByName[typeDef.type](this, objectData);
+          }
+        } else {
+          this[typeDef.type] = new typesByName[typeDef.type](this, slot);
+        }
       }
     }
 
@@ -73,10 +77,6 @@ export class Owner extends Base {
     return false;
   }
 
-  get dns() {
-    return this.#dns;
-  }
-
   named(name) {
     //console.log("NAMED", this.#membersByType.keys());
     for (const slot of this.#membersByType.values()) {
@@ -90,6 +90,10 @@ export class Owner extends Base {
   typeNamed(typeName, name) {
     const typeSlot = this.#membersByType.get(typeName);
     return typeSlot?.get(name) || this.owner?.typeNamed(typeName, name);
+  }
+
+  typeObject(typeName) {
+    return this.#membersByType.get(typeName);
   }
 
   typeList(typeName) {

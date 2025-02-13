@@ -39,10 +39,7 @@ test("extract", t => {
     name: "l1",
     owner: { type: "root" },
     administratorEmail: "admin@undefined",
-    directory: "/somewhere/l1",
-    dns: {
-      type: "dns"
-    }
+    directory: "/somewhere/l1"
   });
 });
 
