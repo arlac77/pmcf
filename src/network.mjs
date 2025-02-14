@@ -55,24 +55,6 @@ export class Network extends Owner {
   }
 
   set bridge(bridge) {
-    for (const network of bridge) {
-      if (network instanceof Network && network !== this) {
-        for (const subnet of this.subnets()) {
-          for (const otherSubnet of network.subnets()) {
-            if (
-              subnet !== otherSubnet &&
-              subnet.address === otherSubnet.address
-            ) {
-              otherSubnet.owner.addObject(subnet);
-              for (const n of otherSubnet.networks) {
-                subnet.networks.add(n);
-              }
-            }
-          }
-        }
-      }
-    }
-
     this.#bridge = bridge;
   }
 

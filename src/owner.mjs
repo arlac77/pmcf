@@ -222,7 +222,10 @@ export class Owner extends Base {
   _resolveBridges() {
     for (const bridge of this.#bridges) {
       //this.info(bridgeToJSON(bridge));
-      for (const network of bridge) {
+
+      const subnets = new Map();
+
+      for (let network of bridge) {
         if (typeof network === "string") {
           const other = this.networkNamed(network);
 
@@ -230,8 +233,23 @@ export class Owner extends Base {
             bridge.delete(network);
             bridge.add(other);
             other.bridge = bridge;
+            network = other;
           } else {
             this.error(`Unresolvabale bridge network`, network);
+          }
+        }
+
+        // enshure only one subnet address in the bridge
+        for (const subnet of network.subnets()) {
+          const present = subnets.get(subnet.address);
+          if (present) {
+            subnet.owner.addObject(present);
+
+            for (const n of subnet.networks) {
+              present.networks.add(n);
+            }
+          } else {
+            subnets.set(subnet.address, subnet);
           }
         }
       }
