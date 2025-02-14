@@ -16,9 +16,10 @@ export class Base {
     return {
       name: "base",
       properties: {
+        type: { type: "string", writeable: false },
         name: { type: "string" },
         description: { type: "string" },
-        directory: { type: "string" },
+        directory: { type: "string", writeable: false },
         owner: {}
       }
     };
@@ -109,7 +110,7 @@ export class Base {
 
   get typeName() {
     // @ts-ignore
-    return this.constructor.typeName;
+    return this.constructor.typeDefinition.name;
   }
 
   get root() {
@@ -277,7 +278,10 @@ export function extractFrom(object, typeDefinition) {
               json[name] = value;
             } else {
               json[name] = Object.fromEntries(
-                Object.entries(value).map(([k, v]) => [k, extractFrom(v)])
+                Object.entries(value).map(([k, v]) => [
+                  k,
+                  extractFrom(v, typesByName[def.type])
+                ])
               );
             }
           }

@@ -303,7 +303,7 @@ export class NetworkInterface extends Base {
         ssid: { type: "string" },
         psk: { type: "string" },
         metric: { type: "number" },
-        ipAddresses: { type: "string", isCollection: true },
+        ipAddresses: { type: "string", collection: true },
         network: {},
         gateway: {},
         arpbridge: {}

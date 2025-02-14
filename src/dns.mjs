@@ -8,7 +8,6 @@ export class DNSService extends Base {
   soaUpdates = [36000, 72000, 600000, 60000];
   hasSVRRecords = true;
   hasCatalog = true;
-
   forwardsTo = [];
 
   static {
@@ -21,10 +20,10 @@ export class DNSService extends Base {
       properties: {
         hasSVRRecords: { type: "boolean" },
         hasCatalog: { type: "boolean" },
-        recordTTL: { type: "string" }
-        /*soaUpdates: {},
-        forwardsTo: {},
-        allowedUpdates: {}*/
+        recordTTL: { type: "string" },
+        soaUpdates: { type: "number", collection: true },
+        forwardsTo: { type: "host", collection: true },
+        allowedUpdates: { type: "string", collection: true }
       }
     };
   }
