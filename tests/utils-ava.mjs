@@ -14,6 +14,7 @@ function nt(t, address, expected) {
 nt.title = (providedTitle = "normalizeCIDR", address, cidr) =>
   `${providedTitle} ${address} => ${cidr}`.trim();
 
+test(nt, "127.0.0.1", "127/8");
 test(nt, "1.2.3.4", undefined);
 test(nt, "1.2.3.4/24", "1.2.3/24");
 test(nt, "1.2.3.4/16", "1.2/16");

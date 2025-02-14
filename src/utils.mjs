@@ -137,15 +137,23 @@ export function normalizeCIDR(address) {
     prefix = "fe80::";
     prefixLength = 64;
   } else {
+    const definition = isIPv4Address(prefix) ? ipv4 : ipv6;
+    let n = _encode(definition, prefix);
+
     if (prefixLength) {
-      const definition = isIPv4Address(prefix) ? ipv4 : ipv6;
-      let n = _encode(definition, prefix);
       n = n & (definition.mask << BigInt(definition.length - prefixLength));
       prefix = _decode(definition, n, prefixLength);
     } else {
-      return {};
+      if (n === IPV4_LOCALHOST) {
+        prefixLength = 8;
+        prefix = _decode(definition, n, prefixLength);
+      } else {
+        return {};
+      }
     }
   }
 
   return { prefix, prefixLength, cidr: `${prefix}/${prefixLength}` };
 }
+
+const IPV4_LOCALHOST = _encode(ipv4,'127.0.0.1')
