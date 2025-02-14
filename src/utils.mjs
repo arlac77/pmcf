@@ -147,6 +147,9 @@ export function normalizeCIDR(address) {
       if (n === IPV4_LOCALHOST) {
         prefixLength = 8;
         prefix = _decode(definition, n, prefixLength);
+      } else if (n === IPV6_LOCALHOST) {
+        prefixLength = 127;
+        prefix = _decode(definition, n, prefixLength);
       } else {
         return {};
       }
@@ -156,4 +159,5 @@ export function normalizeCIDR(address) {
   return { prefix, prefixLength, cidr: `${prefix}/${prefixLength}` };
 }
 
-const IPV4_LOCALHOST = _encode(ipv4,'127.0.0.1')
+const IPV4_LOCALHOST = _encode(ipv4, "127.0.0.1");
+const IPV6_LOCALHOST = _encode(ipv6, "::1");
