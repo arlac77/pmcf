@@ -5,7 +5,6 @@ import { Location } from "./location.mjs";
 import { addType, types } from "./types.mjs";
 
 export class Root extends Location {
-
   static {
     addType(this);
   }
@@ -13,9 +12,8 @@ export class Root extends Location {
   static get typeDefinition() {
     return {
       name: "root",
-      extends: "location",
-      properties: {
-      }
+      extends: Location,
+      properties: {}
     };
   }
 

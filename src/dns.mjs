@@ -14,15 +14,15 @@ export class DNSService extends Base {
   static {
     addType(this);
   }
-  
+
   static get typeDefinition() {
     return {
       name: "dns",
       properties: {
-        /*recordTTL: {},
-        soaUpdates: {},
-        hasSVRRecords: {},
-        hasCatalog: {},
+        hasSVRRecords: { type: "boolean" },
+        hasCatalog: { type: "boolean" },
+        recordTTL: { type: "string" }
+        /*soaUpdates: {},
         forwardsTo: {},
         allowedUpdates: {}*/
       }
@@ -48,17 +48,6 @@ export class DNSService extends Base {
 
   get domains() {
     return [this.owner.domain];
-  }
-
-  get propertyNames() {
-    return [
-      "recordTTL",
-      "soaUpdates",
-      "hasSVRRecords",
-      "hasCatalog",
-      "forwardsTo",
-      "allowedUpdates"
-    ];
   }
 
   async resolvedConfig() {

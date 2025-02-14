@@ -16,10 +16,10 @@ export class Base {
     return {
       name: "base",
       properties: {
-        /*   name: { type: "string" },
+        name: { type: "string" },
         description: { type: "string" },
         directory: { type: "string" },
-        owner: {}*/
+        owner: {}
       }
     };
   }
@@ -81,9 +81,18 @@ export class Base {
             }
           }
         } else {
-         // if (typeDef.type) {
-            this[typeDef.type] = new typesByName[typeDef.type](this, slot);
-         // }
+          switch (typeDef.type) {
+            case "undefined":
+              break;
+            case "boolean":
+            case "string":
+            case "number":
+              this[slotName] = slot;
+              break;
+
+            default:
+              this[slotName] = new typesByName[typeDef.type](this, slot);
+          }
         }
       }
     }
@@ -220,43 +229,68 @@ export class Base {
     return `${this.fullName}(${this.typeName})`;
   }
 
-  get propertyNames() {
-    return ["name", "description", "directory", "owner"];
-  }
-
   toJSON() {
-    return extractFrom(this);
+    return extractFrom(this, this.constructor.typeDefinition);
   }
 }
 
-export function extractFrom(object) {
+export function extractFrom(object, typeDefinition) {
+  if (!typeDefinition || object === undefined) {
+    return object;
+  }
+
   const json = {};
 
-  for (const p of object?.propertyNames || Object.keys(object)) {
-    const value = object[p];
+  do {
+    for (const [name, def] of Object.entries(typeDefinition.properties)) {
+      let value = object[name];
 
-    switch (typeof value) {
-      case "undefined":
-        break;
-      case "object":
-        if (value instanceof Base) {
-          json[p] = { type: value.typeName };
-          if (value.name) {
-            json[p].name = value.name;
+      switch (typeof value) {
+        case "function":
+          {
+            value = object[name]();
+
+            if (Array.isArray(value)) {
+              if (value.length > 0) {
+                json[name] = value;
+              }
+            } else {
+              if (typeof value?.next === "function") {
+                value = [...value];
+                if (value.length > 0) {
+                  json[name] = value;
+                }
+              } else {
+                json[name] = value;
+              }
+            }
           }
-        } else {
-          if (Array.isArray(value)) {
-            json[p] = value;
+          break;
+        case "object":
+          if (value instanceof Base) {
+            json[name] = { type: value.typeName };
+            if (value.name) {
+              json[name].name = value.name;
+            }
           } else {
-            json[p] = Object.fromEntries(
-              Object.entries(value).map(([k, v]) => [k, extractFrom(v)])
-            );
+            if (Array.isArray(value)) {
+              json[name] = value;
+            } else {
+              json[name] = Object.fromEntries(
+                Object.entries(value).map(([k, v]) => [k, extractFrom(v)])
+              );
+            }
           }
-        }
-        break;
-      default:
-        json[p] = value;
+          break;
+        case "undefined":
+          break;
+
+        default:
+          json[name] = value;
+      }
     }
-  }
+    typeDefinition = typeDefinition?.extends?.typeDefinition;
+  } while (typeDefinition);
+
   return json;
 }

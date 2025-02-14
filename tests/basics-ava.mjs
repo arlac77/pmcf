@@ -1,5 +1,5 @@
 import test from "ava";
-import { extractFrom, Root, Location, Base } from "pmcf";
+import { extractFrom, Root, Location, Owner, Base } from "pmcf";
 
 test("Root basics", async t => {
   const root = new Root("/somewhere");
@@ -33,9 +33,9 @@ test("expand", t => {
 
 test("extract", t => {
   const root = new Root("/somewhere");
-  const l1 = new Location(root, { name: "l1" });
+  const l1 = new Owner(root, { name: "l1" });
 
-  t.deepEqual(extractFrom(l1), {
+  t.deepEqual(extractFrom(l1, Owner.typeDefinition), {
     name: "l1",
     owner: { type: "root" },
     administratorEmail: "admin@undefined",

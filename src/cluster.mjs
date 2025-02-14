@@ -9,7 +9,7 @@ export class Cluster extends Owner {
   static get typeDefinition() {
     return {
       name: "cluster",
-      extends: "owner",
+      extends: Owner,
       properties: {}
     };
   }

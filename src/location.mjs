@@ -9,7 +9,7 @@ export class Location extends Owner {
   static get typeDefinition() {
     return {
       name: "location",
-      extends: "owner",
+      extends: Owner,
       properties: {
         networks: { type: "network", collection: true },
         hosts: { type: "host", collection: true },
@@ -35,15 +35,4 @@ export class Location extends Owner {
   get network() {
     return [...this.typeList("network")][0] || super.network;
   }
-
-  /*
-  *subnets() {
-   // yield* super.subnets();
-    
-    for(const network of this.networks()) {
-     // console.log(network.toString());
-      yield* network.typeList("subnet");
-    }
-  }
-  */
 }

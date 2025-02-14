@@ -29,17 +29,17 @@ export class Service extends Base {
   static get typeDefinition() {
     return {
       name: "service",
-      extends: "base",
+      extends: Base,
       properties: {
-        /*ipAddresses: {},
+        ipAddresses: {},
         addresses: {},
-        port: {},
-        protocol: {},
-        alias: {},
-        type: {},
-        master: {},
-        priority: {},
-        weight: {}*/
+        port: { type: "number" },
+        protocol: { type: "string" },
+        alias: { type: "string" },
+        type: { type: "string" },
+        master: { type: "boolean" },
+        priority: { type: "number" },
+        weight: { type: "number" }
       }
     };
   }
@@ -134,20 +134,5 @@ export class Service extends Base {
 
   get type() {
     return this.#type || this.name;
-  }
-
-  get propertyNames() {
-    return [
-      ...super.propertyNames,
-      "ipAddresses",
-      "addresses",
-      "port",
-      "protocol",
-      "alias",
-      "type",
-      "master",
-      "priority",
-      "weight"
-    ];
   }
 }

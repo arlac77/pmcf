@@ -16,18 +16,18 @@ export class Network extends Owner {
   static get typeDefinition() {
     return {
       name: "network",
-      extends: "owner",
+      extends: Owner,
       properties: {
         networks: { type: "network", collection: true },
         hosts: { type: "host", collection: true },
         clusters: { type: "cluster", collection: true },
         subnets: { type: "subnet", collection: true },
-        dns: { type: "dns", collection: false }
+        dns: { type: "dns", collection: false },
+        //metric: { type: "number" }
 
-        /* kind: {},
-        scope: {},
-        metric: {},
-        bridge: {},
+        /*kind: { type: "string" },
+        scope: { type: "string" },
+        /*bridge: {},
         gateway: {}*/
       }
     };
@@ -40,6 +40,8 @@ export class Network extends Owner {
       this.bridge = owner.addBridge(this, data.bridge);
       delete data.bridge;
     }
+
+    //this.read(data);
 
     Object.assign(this, data);
 
@@ -72,16 +74,5 @@ export class Network extends Owner {
 
   set bridge(bridge) {
     this.#bridge = bridge;
-  }
-
-  get propertyNames() {
-    return [
-      ...super.propertyNames,
-      "kind",
-      "scope",
-      "metric",
-      "bridge",
-      "gateway"
-    ];
   }
 }

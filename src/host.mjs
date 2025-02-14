@@ -30,17 +30,17 @@ export class Host extends Base {
   static get typeDefinition() {
     return {
       name: "host",
-      extends: "base",
+      extends: Base,
       properties: {
         networkInterfaces: { type: "network_interface", collection: true },
-        services: { type: "service", collection: true }
-        /*os: {},
-        distribution: {},
-        deployment: {},
-        master: { },
-        model: {},
-        replaces: { },
-        depends: {  }*/
+        services: { type: "service", collection: true },
+        os: { type: "string" },
+        distribution: { type: "string" },
+        deployment: { type: "string" },
+        master: { type: "boolean" },
+        model: { type: "string" },
+        replaces: { type: "string" },
+        depends: { type: "string" }
       }
     };
   }
@@ -273,20 +273,6 @@ export class Host extends Base {
     return readFile(join(this.directory, `ssh_host_${type}_key.pub`), "utf8");
   }
 
-  get propertyNames() {
-    return [
-      ...super.propertyNames,
-      "os",
-      "distribution",
-      "deployment",
-      "master",
-      "model",
-      "replaces",
-      "depends",
-      "networkInterfaces"
-    ];
-  }
-
   toJSON() {
     return {
       ...super.toJSON(),
@@ -309,19 +295,18 @@ export class NetworkInterface extends Base {
   static get typeDefinition() {
     return {
       name: "network_interface",
-      extends: "base",
+      extends: Base,
       properties: {
-        /*
-        arpbridge: {},
-        hwaddr: {},
+        hwaddr: { type: "string" },
+        scope: { type: "string" },
+        kind: { type: "string" },
+        ssid: { type: "string" },
+        psk: { type: "string" },
+        metric: { type: "number" },
+        ipAddresses: { type: "string", isCollection: true },
         network: {},
         gateway: {},
-        ssid: {},
-        psk: {},
-        scope: {},
-        metric: {},
-        kind: {},
-        ipAddresses: {}*/
+        arpbridge: {}
       }
     };
   }
@@ -481,21 +466,5 @@ export class NetworkInterface extends Base {
 
   get kind() {
     return this.#kind || this.network?.kind;
-  }
-
-  get propertyNames() {
-    return [
-      ...super.propertyNames,
-      "arpbridge",
-      "hwaddr",
-      "network",
-      "gateway",
-      "ssid",
-      "psk",
-      "scope",
-      "metric",
-      "kind",
-      "ipAddresses"
-    ];
   }
 }

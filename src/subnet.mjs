@@ -12,13 +12,10 @@ export class Subnet extends Base {
   static get typeDefinition() {
     return {
       name: "subnet",
-      extends: "base",
       properties: {
-        /*
-        address: {},
-        networks: { type: "network", collection true },
+        address: { type: "string" },
+        networks: { type: "network", collection: true },
         prefixLength: { type: "number", writeable: false }
-        */
       }
     };
   }
@@ -63,10 +60,6 @@ export class Subnet extends Base {
 
   get address() {
     return this.name;
-  }
-
-  get propertyNames() {
-    return [...super.propertyNames, "networks", "prefixLength"];
   }
 
   _traverse(...args) {

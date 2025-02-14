@@ -17,13 +17,15 @@ export class Owner extends Base {
   static get typeDefinition() {
     return {
       name: "owner",
-      extends: "base",
+      extends: Base,
       properties: {
         networks: { type: "network", collection: true },
         hosts: { type: "host", collection: true },
         clusters: { type: "cluster", collection: true },
         subnets: { type: "subnet", collection: true },
-        dns: { type: "dns", collection: false }
+        dns: { type: "dns", collection: false },
+        domain: { type: "string" },
+        administratorEmail: { type: "string" }
       }
     };
   }
@@ -282,10 +284,6 @@ export class Owner extends Base {
     for (const location of this.locations()) {
       yield location.domain;
     }
-  }
-
-  get propertyNames() {
-    return [...super.propertyNames, "domain", "administratorEmail", "dns"];
   }
 
   toJSON() {
