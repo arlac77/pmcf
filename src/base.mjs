@@ -9,17 +9,19 @@ export class Base {
   description;
 
   static get typeName() {
-    return "base";
+    return this.typeDefinition.name;
   }
 
   static get typeDefinition() {
     return {
-      //      name: { type: "string", collection: false }
+      name: "base",
+      properties: {
+        /*   name: { type: "string" },
+        description: { type: "string" },
+        directory: { type: "string" },
+        owner: {}*/
+      }
     };
-  }
-
-  static get pluralTypeName() {
-    return this.typeName + "s";
   }
 
   static get nameLookupName() {
@@ -62,7 +64,7 @@ export class Base {
 
   read(data) {
     for (const [slotName, typeDef] of Object.entries(
-      this.constructor.typeDefinition
+      this.constructor.typeDefinition.properties
     )) {
       const slot = data[slotName];
       if (slot) {
@@ -79,7 +81,9 @@ export class Base {
             }
           }
         } else {
-          this[typeDef.type] = new typesByName[typeDef.type](this, slot);
+         // if (typeDef.type) {
+            this[typeDef.type] = new typesByName[typeDef.type](this, slot);
+         // }
         }
       }
     }

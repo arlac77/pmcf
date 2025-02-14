@@ -6,8 +6,18 @@ export class Location extends Owner {
     addType(this);
   }
 
-  static get typeName() {
-    return "location";
+  static get typeDefinition() {
+    return {
+      name: "location",
+      extends: "owner",
+      properties: {
+        networks: { type: "network", collection: true },
+        hosts: { type: "host", collection: true },
+        clusters: { type: "cluster", collection: true },
+        subnets: { type: "subnet", collection: true },
+        dns: { type: "dns", collection: false }
+      }
+    };
   }
 
   get location() {

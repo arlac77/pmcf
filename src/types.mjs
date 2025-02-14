@@ -1,6 +1,10 @@
 export function addType(clazz) {
   types.push(clazz);
-  typesByName[clazz.typeName] = clazz;
+
+  const typeDefinition = clazz.typeDefinition;
+  typeDefinition.clazz = clazz;
+
+  typesByName[typeDefinition.name] = clazz;
 }
 
 export const types = [];

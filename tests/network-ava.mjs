@@ -9,14 +9,13 @@ test("Network basics", async t => {
   await assertObject(t, await root.named("L1/n1"), root1(root, "L1/n1"));
 });
 
-test.only("Network addresses", t => {
+test("Network addresses", t => {
   const owner = new Root();
 
   const n1 = new Network(owner, {
     name: "n1",
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
   });
-
   const s1 = n1.subnetNamed("10.0/16");
   t.is(s1.name, "10.0/16");
   t.is(s1.prefixLength, 16);

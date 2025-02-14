@@ -27,14 +27,21 @@ export class Host extends Base {
     addType(this);
   }
 
-  static get typeName() {
-    return "host";
-  }
-
   static get typeDefinition() {
     return {
-      networkInterfaces: { type: "network_interface", collection: true },
-      services: { type: "service", collection: true }
+      name: "host",
+      extends: "base",
+      properties: {
+        networkInterfaces: { type: "network_interface", collection: true },
+        services: { type: "service", collection: true }
+        /*os: {},
+        distribution: {},
+        deployment: {},
+        master: { },
+        model: {},
+        replaces: { },
+        depends: {  }*/
+      }
     };
   }
 
@@ -299,8 +306,24 @@ export class NetworkInterface extends Base {
     addType(this);
   }
 
-  static get typeName() {
-    return "network_interface";
+  static get typeDefinition() {
+    return {
+      name: "network_interface",
+      extends: "base",
+      properties: {
+        /*
+        arpbridge: {},
+        hwaddr: {},
+        network: {},
+        gateway: {},
+        ssid: {},
+        psk: {},
+        scope: {},
+        metric: {},
+        kind: {},
+        ipAddresses: {}*/
+      }
+    };
   }
 
   #ipAddresses = new Map();

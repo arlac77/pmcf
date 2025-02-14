@@ -26,8 +26,22 @@ export class Service extends Base {
     addType(this);
   }
 
-  static get typeName() {
-    return "service";
+  static get typeDefinition() {
+    return {
+      name: "service",
+      extends: "base",
+      properties: {
+        /*ipAddresses: {},
+        addresses: {},
+        port: {},
+        protocol: {},
+        alias: {},
+        type: {},
+        master: {},
+        priority: {},
+        weight: {}*/
+      }
+    };
   }
 
   constructor(owner, data) {

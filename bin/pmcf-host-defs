@@ -15,7 +15,7 @@ const host = await root.load(hostName, { type: Host });
 await generateNetworkDefs(host, options.output);
 await generateMachineInfo(host, options.output);
 await copySshKeys(host, options.output);
-await generateKnownHosts(root.hosts(), join(options.output, "root", ".ssh"));
+await generateKnownHosts(host.owner.hosts(), join(options.output, "root", ".ssh"));
 
 console.log("provides", "host", ...host.provides);
 console.log("depends", `location-${host.location.name}`, ...host.depends);

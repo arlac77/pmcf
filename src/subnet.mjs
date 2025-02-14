@@ -9,8 +9,14 @@ export class Subnet extends Base {
     addType(this);
   }
 
-  static get typeName() {
-    return "subnet";
+  static get typeDefinition() {
+    return {
+      name: "subnet",
+      extends: "base",
+      properties: {
+        //  address: {}
+      }
+    };
   }
 
   constructor(owner, address) {

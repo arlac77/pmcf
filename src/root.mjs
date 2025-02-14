@@ -10,8 +10,13 @@ export class Root extends Location {
     addType(this);
   }
 
-  static get typeName() {
-    return "root";
+  static get typeDefinition() {
+    return {
+      name: "root",
+      extends: "location",
+      properties: {
+      }
+    };
   }
 
   constructor(directory) {

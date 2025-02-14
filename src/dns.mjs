@@ -14,9 +14,19 @@ export class DNSService extends Base {
   static {
     addType(this);
   }
-
-  static get typeName() {
-    return "dns";
+  
+  static get typeDefinition() {
+    return {
+      name: "dns",
+      properties: {
+        /*recordTTL: {},
+        soaUpdates: {},
+        hasSVRRecords: {},
+        hasCatalog: {},
+        forwardsTo: {},
+        allowedUpdates: {}*/
+      }
+    };
   }
 
   constructor(owner, data) {

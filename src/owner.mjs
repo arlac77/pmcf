@@ -14,17 +14,17 @@ export class Owner extends Base {
     addType(this);
   }
 
-  static get typeName() {
-    return "owner";
-  }
-
   static get typeDefinition() {
     return {
-      networks: { type: "network", collection: true },
-      hosts: { type: "host", collection: true },
-      clusters: { type: "cluster", collection: true },
-      subnets: { type: "subnet", collection: true },
-      dns: { type: "dns", collection: false }
+      name: "owner",
+      extends: "base",
+      properties: {
+        networks: { type: "network", collection: true },
+        hosts: { type: "host", collection: true },
+        clusters: { type: "cluster", collection: true },
+        subnets: { type: "subnet", collection: true },
+        dns: { type: "dns", collection: false }
+      }
     };
   }
 

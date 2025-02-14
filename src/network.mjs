@@ -13,8 +13,24 @@ export class Network extends Owner {
     addType(this);
   }
 
-  static get typeName() {
-    return "network";
+  static get typeDefinition() {
+    return {
+      name: "network",
+      extends: "owner",
+      properties: {
+        networks: { type: "network", collection: true },
+        hosts: { type: "host", collection: true },
+        clusters: { type: "cluster", collection: true },
+        subnets: { type: "subnet", collection: true },
+        dns: { type: "dns", collection: false }
+
+        /* kind: {},
+        scope: {},
+        metric: {},
+        bridge: {},
+        gateway: {}*/
+      }
+    };
   }
 
   constructor(owner, data) {

@@ -6,8 +6,12 @@ export class Cluster extends Owner {
     addType(this);
   }
 
-  static get typeName() {
-    return "cluster";
+  static get typeDefinition() {
+    return {
+      name: "cluster",
+      extends: "owner",
+      properties: {}
+    };
   }
 
   constructor(owner, data) {

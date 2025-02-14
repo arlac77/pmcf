@@ -11,7 +11,6 @@ function testOwner(t, owner) {
 
     t.is(object.owner, owner);
     t.deepEqual([...owner.typeList(factory.typeName)], [object]);
-    t.deepEqual([...owner[factory.pluralTypeName]()], [object]);
     t.is(owner.named(name), object);
     t.is(owner[factory.nameLookupName](name), object);
     t.is(owner.typeNamed(factory.typeName, name), object);
