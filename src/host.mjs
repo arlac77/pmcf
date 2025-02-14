@@ -402,7 +402,7 @@ export class NetworkInterface extends Base {
   subnetForAddress(address) {
     return (
       this.network?.subnetForAddress(address) ||
-      this.owner.owner.subnetForAddress(address)
+      this.host.owner.subnetForAddress(address)
     );
   }
 
@@ -427,8 +427,8 @@ export class NetworkInterface extends Base {
   }
 
   get ipAddressesWithPrefixLength() {
-    return [...this.ipAddresses].map(address =>
-      this.addressWithPrefixLength(address)
+    return [...this.#ipAddresses].map(
+      ([address, subnet]) => `${address}/${subnet?.prefixLength}`
     );
   }
 
@@ -438,10 +438,6 @@ export class NetworkInterface extends Base {
 
   get ipv6Addresses() {
     return [...this.ipAddresses].filter(a => isIPv6Address(a));
-  }
-
-  get prefixLength() {
-    return this.network?.prefixLength;
   }
 
   get host() {

@@ -14,7 +14,11 @@ export class Subnet extends Base {
       name: "subnet",
       extends: "base",
       properties: {
-        //  address: {}
+        /*
+        address: {},
+        networks: { type: "network", collection true },
+        prefixLength: { type: "number", writeable: false }
+        */
       }
     };
   }

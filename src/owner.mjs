@@ -165,6 +165,16 @@ export class Owner extends Base {
     if (cidr) {
       return this.subnetNamed(cidr) || new Subnet(this, cidr);
     }
+
+    const subnets = [...this.subnets()];
+    if (subnets.length === 1) {
+      return subnets[0];
+    }
+
+    this.error(
+      `Address without subnet ${address}`,
+      [...this.subnets()].map(s => s.address)
+    );
   }
 
   subnetForAddress(address) {
