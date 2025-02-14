@@ -9,7 +9,7 @@ test("Network basics", async t => {
   await assertObject(t, await root.named("L1/n1"), root1(root, "L1/n1"));
 });
 
-test("Network addresses", t => {
+test.only("Network addresses", t => {
   const owner = new Root();
 
   const n1 = new Network(owner, {

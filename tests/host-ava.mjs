@@ -83,7 +83,7 @@ test("Host addresses", t => {
   ]);
 });
 
-test.only("Host addresses with network", t => {
+test("Host addresses with network", t => {
   const owner = new Root();
 
   const n1 = new Network(owner, {

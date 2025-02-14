@@ -13,20 +13,16 @@ export class Subnet extends Base {
     return "subnet";
   }
 
-  constructor(owner, data) {
-    const { cidr } = normalizeCIDR(data.name);
+  constructor(owner, address) {
+    const { cidr } = normalizeCIDR(address);
 
     if (!cidr) {
       const error = Error(`Invalid address`);
-      error.address = data.name;
+      error.address = address;
       throw error;
     }
 
-    data.name = cidr;
-
-    super(owner, data);
-
-    Object.assign(this, data);
+    super(owner, cidr);
 
     owner.addObject(this);
   }

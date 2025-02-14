@@ -1,6 +1,7 @@
 import { join } from "node:path";
 import { getAttribute } from "pacc";
 import { typesByName } from "./types.mjs";
+import { asArray } from "./utils.mjs";
 
 export class Base {
   owner;
@@ -46,10 +47,15 @@ export class Base {
   constructor(owner, data) {
     this.owner = owner;
 
-    if (data) {
-      this.name = data.name;
-      if (data.description) {
-        this.description = data.description;
+    switch (typeof data) {
+      case "string":
+        this.name = data;
+        break;
+      case "object": {
+        this.name = data.name;
+        if (data.description) {
+          this.description = data.description;
+        }
       }
     }
   }
@@ -62,9 +68,15 @@ export class Base {
       if (slot) {
         delete data[slotName];
         if (typeDef.collection) {
-          for (const [objectName, objectData] of Object.entries(slot)) {
-            objectData.name = objectName;
-            new typesByName[typeDef.type](this, objectData);
+          if (Array.isArray(slot) || typeof slot === "string") {
+            for (const item of asArray(slot)) {
+              new typesByName[typeDef.type](this, item);
+            }
+          } else {
+            for (const [objectName, objectData] of Object.entries(slot)) {
+              objectData.name = objectName;
+              new typesByName[typeDef.type](this, objectData);
+            }
           }
         } else {
           this[typeDef.type] = new typesByName[typeDef.type](this, slot);

@@ -23,7 +23,7 @@ export class Owner extends Base {
       networks: { type: "network", collection: true },
       hosts: { type: "host", collection: true },
       clusters: { type: "cluster", collection: true },
-      /*  subnets: { type: "subnet", collection: true },*/
+      subnets: { type: "subnet", collection: true },
       dns: { type: "dns", collection: false }
     };
   }
@@ -66,7 +66,6 @@ export class Owner extends Base {
   }
 
   named(name) {
-    //console.log("NAMED", this.#membersByType.keys());
     for (const slot of this.#membersByType.values()) {
       const object = slot.get(name);
       if (object) {
@@ -164,13 +163,7 @@ export class Owner extends Base {
     const { cidr } = normalizeCIDR(address);
 
     if (cidr) {
-      let subnet = this.subnetNamed(cidr);
-
-      if (!subnet) {
-        subnet = new Subnet(this, { name: cidr });
-      }
-
-      return subnet;
+      return this.subnetNamed(cidr) || new Subnet(this, cidr);
     }
   }
 

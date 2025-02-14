@@ -1,5 +1,5 @@
 import { Owner } from "./owner.mjs";
-import { asArray } from "./utils.mjs";
+import { Subnet } from "./subnet.mjs";
 import { addType } from "./types.mjs";
 
 export class Network extends Owner {
@@ -19,11 +19,6 @@ export class Network extends Owner {
 
   constructor(owner, data) {
     super(owner, data);
-
-    if (data.subnets) {
-      this.addSubnets(data.subnets);
-      delete data.subnets;
-    }
 
     if (data.bridge) {
       this.bridge = owner.addBridge(this, data.bridge);
@@ -48,10 +43,10 @@ export class Network extends Owner {
     return super.networkNamed(name);
   }
 
-  addSubnets(value) {
-    for (const address of asArray(value)) {
-      const subnet = this.addSubnet(address);
-      subnet.networks.add(this);
+  addObject(object) {
+    super.addObject(object);
+    if (object instanceof Subnet) {
+      object.networks.add(this);
     }
   }
 
@@ -68,18 +63,10 @@ export class Network extends Owner {
               subnet !== otherSubnet &&
               subnet.address === otherSubnet.address
             ) {
-              /*console.log(
-                "SHARE SUBNETS",
-                subnet.owner.toString(),
-                otherSubnet.owner.toString()
-              );*/
-
               otherSubnet.owner.addObject(subnet);
               for (const n of otherSubnet.networks) {
                 subnet.networks.add(n);
               }
-
-              //console.log(subnet.toString(),[...subnet.networks].map(n=>n.toString()));
             }
           }
         }
