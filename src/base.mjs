@@ -67,16 +67,24 @@ export class Base {
     for (const [slotName, typeDef] of Object.entries(
       this.constructor.typeDefinition.properties
     )) {
-      const slot = data[slotName];
+      let slot = data[slotName];
       if (slot) {
         delete data[slotName];
 
-        const type = typeof typeDef.type === "string" ? typesByName[typeDef.type] : typeDef.type;
+        const type =
+          typeof typeDef.type === "string"
+            ? typesByName[typeDef.type]
+            : typeDef.type;
 
         if (typeDef.collection) {
           if (Array.isArray(slot) || typeof slot === "string") {
-            for (const item of asArray(slot)) {
-              new type(this, item);
+            slot = asArray(slot);
+            if (type) {
+              for (const item of slot) {
+                new type(this, item);
+              }
+            } else {
+              this[slotName] = slot;
             }
           } else {
             for (const [objectName, objectData] of Object.entries(slot)) {
