@@ -376,12 +376,10 @@ export class NetworkInterface extends Base {
   }
 
   addSubnet(address) {
-    if(hasWellKnownSubnet(address)) {
-      return;
-    }
-
     if (!this.network) {
-      this.error("Missing network", address);
+      if (!hasWellKnownSubnet(address)) {
+        this.error("Missing network", address);
+      }
     } else {
       return this.network.addSubnet(address);
     }
