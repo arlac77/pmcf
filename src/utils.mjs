@@ -153,7 +153,7 @@ export function normalizeCIDR(address) {
         prefixLength = 8;
         prefix = _decode(definition, n, prefixLength);
       } else if (n === IPV6_LOCALHOST) {
-        prefixLength = 127;
+        prefixLength = 128;
         prefix = _decode(definition, n, prefixLength);
       } else {
         return {};
