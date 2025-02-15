@@ -29,19 +29,25 @@ test("Host all", async t => {
   );
 });
 
-test("Host addresses", t => {
+test.only("Host addresses", t => {
   const owner = new Root();
   const n1 = new Network(owner, { name: "n1" });
 
   const h1 = new Host(n1, {
     name: "h1",
     networkInterfaces: {
+      lo: {
+        ipAddresses: ["127.0.0.1", "::1"]
+      },
       eth0: {
         ipAddresses: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
       }
     }
   });
 
+  console.log([...n1.networkAddresses()]);
+
+  const lo = h1.networkInterfaceNamed("lo");
   const eth0 = h1.networkInterfaceNamed("eth0");
 
   t.is(eth0.name, "eth0");
@@ -62,7 +68,10 @@ test("Host addresses", t => {
       name: "n1",
       type: "network"
     },
-    cidrAddresses: ["10.0.0.2/16", "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f/64"],
+    cidrAddresses: [
+      "10.0.0.2/16",
+      "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f/64"
+    ],
     rawAddresses: ["10.0.0.2", "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f"]
   });
 
@@ -75,10 +84,14 @@ test("Host addresses", t => {
   t.is(s2.prefixLength, 64);
 
   t.deepEqual(h1.rawAddresses, [
+    "127.0.0.1",
+    "0000:0000:0000:0000:0000:0000:0000:0001",
     "10.0.0.2",
     "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f"
   ]);
   t.deepEqual(h1.cidrAddresses, [
+    "127.0.0.1/8",
+    "0000:0000:0000:0000:0000:0000:0000:0001/128",
     "10.0.0.2/16",
     "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f/64"
   ]);

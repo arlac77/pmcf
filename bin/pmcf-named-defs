@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { createHmac } from "node:crypto";
 import {
   writeLines,
-  isIPv4Address,
+  isIPv6Address,
   normalizeIPAddress
 } from "../src/utils.mjs";
 import { prepare } from "../src/cmd.mjs";
@@ -100,18 +100,11 @@ async function generateNamedDefs(owner, targetDir) {
 
       if (!addresses.has(address)) {
         addresses.add(address);
-
-        /*console.log(
-          address,
-          host.name,
-          networkInterface?.network?.name,
-          subnet?.address
-        );*/
   
         zone.records.add(
           createRecord(
             fullName(host.domainName),
-            isIPv4Address(address) ? "A" : "AAAA",
+            isIPv6Address(address) ? "AAAA" : "A",
             normalizeIPAddress(address)
           )
         );
@@ -210,20 +203,20 @@ async function generateNamedDefs(owner, targetDir) {
 }
 
 export function reverseAddress(address) {
-  if (isIPv4Address(address)) {
-    return address.split(".").reverse().join(".");
-  }
-
-  return normalizeIPAddress(address)
+  if (isIPv6Address(address)) {
+    return normalizeIPAddress(address)
     .replaceAll(":", "")
     .split("")
     .reverse()
     .join(".");
+  }
+
+    return address.split(".").reverse().join(".");
 }
 
 export function reverseArpaAddress(address) {
   return (
     reverseAddress(address) +
-    (isIPv4Address(address) ? ".in-addr.arpa" : ".ip6.arpa")
+    (isIPv6Address(address) ?  ".ip6.arpa" : ".in-addr.arpa")
   );
 }

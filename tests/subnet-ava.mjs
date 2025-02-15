@@ -33,6 +33,18 @@ test("Subnet owner", t => {
   );
 });
 
+test("Subnet localhost", t => {
+  const root = new Root();
+
+  const s1 = new Subnet(root, "127/8");
+
+  t.is(s1.name, "127/8");
+  t.is(s1.prefixLength, 8);
+
+  t.true(s1.matchesAddress("127.0.01"));
+  t.false(s1.matchesAddress("10.2.0.77"));
+});
+
 test("Subnet ipv4", t => {
   const root = new Root();
 

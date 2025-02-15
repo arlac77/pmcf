@@ -142,7 +142,7 @@ export function normalizeCIDR(address) {
     prefix = "fe80::";
     prefixLength = 64;
   } else {
-    const definition = isIPv4Address(prefix) ? ipv4 : ipv6;
+    const definition = isIPv6Address(prefix) ? ipv6 : ipv4;
     let n = _encode(definition, prefix);
 
     if (prefixLength) {

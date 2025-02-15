@@ -16,6 +16,7 @@ nt.title = (providedTitle = "normalizeCIDR", address, cidr) =>
   `${providedTitle} ${address} => ${cidr}`.trim();
 
 test(nt, "127.0.0.1", "127/8");
+test(nt, "127/8", "127/8");
 test(nt, "::1", "0000:0000:0000:0000:0000:0000:0000:0001/128");
 test(nt, "1.2.3.4", undefined);
 test(nt, "1.2.3.4/24", "1.2.3/24");
