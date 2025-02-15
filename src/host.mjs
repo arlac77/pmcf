@@ -4,7 +4,8 @@ import {
   asArray,
   isIPv4Address,
   isIPv6Address,
-  normalizeIPAddress
+  normalizeIPAddress,
+  formatCIDR
 } from "./utils.mjs";
 import { addType } from "./types.mjs";
 
@@ -246,27 +247,28 @@ export class Host extends Base {
 
   *networkAddresses() {
     for (const networkInterface of this.networkInterfaces.values()) {
-      for (const address of networkInterface.ipAddresses) {
+      for (const [address, subnet] of networkInterface.ipAddresses) {
         yield {
           networkInterface,
           address,
-          addressWithPrefixLength:
-            networkInterface.addressWithPrefixLength(address)
+          subnet
         };
       }
     }
   }
 
-  get ipAddresses() {
+  get rawAddress() {
+    return this.rawAddresses[0];
+  }
+
+  get rawAddresses() {
     return [...this.networkAddresses()].map(na => na.address);
   }
 
-  get ipAddressesWithPrefixLength() {
-    return [...this.networkAddresses()].map(na => na.addressWithPrefixLength);
-  }
-
-  get ipAddress() {
-    return this.ipAddresses[0];
+  get cidrAddresses() {
+    return [...this.networkAddresses()].map(({ address, subnet }) =>
+      formatCIDR(address, subnet)
+    );
   }
 
   async publicKey(type = "ed25519") {
@@ -303,7 +305,8 @@ export class NetworkInterface extends Base {
         ssid: { type: "string" },
         psk: { type: "string" },
         metric: { type: "number" },
-        ipAddresses: { type: "string", collection: true },
+        cidrAddresses: { type: "string", collection: true },
+        rawAddress: { type: "string"},
         network: {},
         gateway: {},
         arpbridge: {}
@@ -375,6 +378,10 @@ export class NetworkInterface extends Base {
     }
   }
 
+  get ipAddresses() {
+    return this.#ipAddresses;
+  }
+
   set ipAddresses(value) {
     for (const address of asArray(value)) {
       this.#ipAddresses.set(
@@ -384,15 +391,33 @@ export class NetworkInterface extends Base {
     }
   }
 
+  get rawAddresses() {
+    return [...this.#ipAddresses].map(([address, subnet]) => address);
+  }
+
+  get cidrAddresses() {
+    return [...this.#ipAddresses].map(([address, subnet]) =>
+      formatCIDR(address, subnet)
+    );
+  }
+
+  get rawIPv4Addresses() {
+    return [...this.ipAddresses]
+      .filter(([address, subnet]) => isIPv4Address(address))
+      .map(([address, subnet]) => address);
+  }
+
+  get rawIPv6Addresses() {
+    return [...this.ipAddresses]
+      .filter(([address, subnet]) => isIPv6Address(address))
+      .map(([address, subnet]) => address);
+  }
+
   subnetForAddress(address) {
     return (
       this.network?.subnetForAddress(address) ||
       this.host.owner.subnetForAddress(address)
     );
-  }
-
-  addressWithPrefixLength(address) {
-    return `${address}/${this.subnetForAddress(address)?.prefixLength}`;
   }
 
   get gateway() {
@@ -405,24 +430,6 @@ export class NetworkInterface extends Base {
         return a.address;
       }
     }
-  }
-
-  get ipAddresses() {
-    return [...this.#ipAddresses.keys()];
-  }
-
-  get ipAddressesWithPrefixLength() {
-    return [...this.#ipAddresses].map(
-      ([address, subnet]) => `${address}/${subnet?.prefixLength}`
-    );
-  }
-
-  get ipv4Addresses() {
-    return [...this.ipAddresses].filter(a => isIPv4Address(a));
-  }
-
-  get ipv6Addresses() {
-    return [...this.ipAddresses].filter(a => isIPv6Address(a));
   }
 
   get host() {

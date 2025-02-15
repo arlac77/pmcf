@@ -15,7 +15,8 @@ export class Location extends Owner {
         hosts: { type: "host", collection: true },
         clusters: { type: "cluster", collection: true },
         subnets: { type: "subnet", collection: true },
-        dns: { type: "dns", collection: false }
+        dns: { type: "dns", collection: false },
+        country: { type: "string" }
       }
     };
   }

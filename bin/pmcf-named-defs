@@ -78,7 +78,7 @@ async function generateNamedDefs(owner, targetDir) {
       `(${updates})`
     );
 
-    const NSRecord = createRecord("@", "NS", fullName(nameserver?.ipAddress));
+    const NSRecord = createRecord("@", "NS", fullName(nameserver?.rawAddress));
 
     const catalogZone = {
       id: `catalog.${domain}`,
@@ -97,23 +97,11 @@ async function generateNamedDefs(owner, targetDir) {
     };
     zones.push(zone);
 
-    for (const subnet of subnets) {
-      if (!subnet.isLinkLocal && subnet.prefix) {
-        const reverseArpa = reverseArpaAddress(subnet.prefix);
-        const reverseZone = {
-          id: reverseArpa,
-          file: `${reverseArpa}.zone`,
-          records: new Set([SOARecord, NSRecord])
-        };
-        zones.push(reverseZone);
-        subnet.reverseZone = reverseZone;
-      }
-    }
-
     const hosts = new Set();
 
     for await (const {
       address,
+      subnet,
       networkInterface
     } of owner.networkAddresses()) {
       const host = networkInterface.host;
@@ -149,8 +137,18 @@ async function generateNamedDefs(owner, targetDir) {
         }
       }
 
-      const reverseZone = networkInterface.network.subnet?.reverseZone;
+      let reverseZone = subnet?.reverseZone;
 
+      if (subnet && !reverseZone) {
+        const reverseArpa = reverseArpaAddress(subnet.prefix);
+        reverseZone = {
+          id: reverseArpa,
+          file: `${reverseArpa}.zone`,
+          records: new Set([SOARecord, NSRecord])
+        };
+        zones.push(reverseZone);
+        subnet.reverseZone = reverseZone;
+      }
       if (reverseZone) {
         reverseZone.records.add(
           createRecord(

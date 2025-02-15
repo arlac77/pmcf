@@ -109,7 +109,7 @@ export class Service extends Base {
   }
 
   get ipAddresses() {
-    return this.#ipAddresses || this.owner.ipAddresses;
+    return this.#ipAddresses || this.owner.rawAddresses;
   }
 
   get addresses() {

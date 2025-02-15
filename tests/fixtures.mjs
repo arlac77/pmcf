@@ -7,7 +7,7 @@ import { Location, Network, Subnet, Host, Cluster, Root } from "pmcf";
  * @returns {Object}
  */
 export function root1(root, filter) {
-  const L1 = { instanceof: Location, owner: root, description: "somewhere" };
+  const L1 = { instanceof: Location, owner: root, description: "somewhere", "country": "DE" };
   const L2 = {
     instanceof: Location,
     owner: root,
@@ -44,7 +44,7 @@ export function root1(root, filter) {
     networkInterfaces: {
       eth0: {
         network: L1n1,
-        ipAddresses: ["192.168.1.10"]
+        rawAddresses: ["192.168.1.10"]
       }
     }
   };
@@ -53,7 +53,7 @@ export function root1(root, filter) {
     networkInterfaces: {
       eth0: {
         network: L1n1,
-        ipAddresses: ["192.168.1.11"]
+        rawAddresses: ["192.168.1.11"]
       }
     }
   };
@@ -86,8 +86,8 @@ export function root1(root, filter) {
           network: L1n1,
           metric: 1010,
           ssid: "ID2",
-          ipAddresses: ["192.168.1.2"],
-          ipAddressesWithPrefixLength: ["192.168.1.2/24"],
+          rawAddresses: ["192.168.1.2"],
+          cidrAddresses: ["192.168.1.2/24"],
           kind: "wifi"
         }
       }
@@ -101,8 +101,8 @@ export function root1(root, filter) {
         eth0: {
           network: L1n1,
           metric: 1010,
-          ipAddresses: ["192.168.1.1"],
-          ipAddressesWithPrefixLength: ["192.168.1.1/24"]
+          rawAddresses: ["192.168.1.1"],
+          cidrAddresses: ["192.168.1.1/24"]
         }
       },
       services: {

@@ -62,7 +62,7 @@ test("Host addresses", t => {
       name: "n1",
       type: "network"
     },
-    ipAddresses: ["10.0.0.2", "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f"]
+    cidrAddresses: ["10.0.0.2/16", "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f/64"]
   });
 
   const s1 = n1.subnetNamed("10.0/16");
@@ -73,11 +73,11 @@ test("Host addresses", t => {
   t.is(s2.name, "fe80:0000:0000:0000/64");
   t.is(s2.prefixLength, 64);
 
-  t.deepEqual(h1.ipAddresses, [
+  t.deepEqual(h1.rawAddresses, [
     "10.0.0.2",
     "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f"
   ]);
-  t.deepEqual(h1.ipAddressesWithPrefixLength, [
+  t.deepEqual(h1.cidrAddresses, [
     "10.0.0.2/16",
     "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f/64"
   ]);
@@ -109,11 +109,11 @@ test("Host addresses with network", t => {
   t.is(s2.name, "fe80:0000:0000:0000/64");
   t.is(s2.prefixLength, 64);
 
-  t.deepEqual(h1.ipAddresses, [
+  t.deepEqual(h1.rawAddresses, [
     "10.0.0.2",
     "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f"
   ]);
-  t.deepEqual(h1.ipAddressesWithPrefixLength, [
+  t.deepEqual(h1.cidrAddresses, [
     "10.0.0.2/16",
     "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f/64"
   ]);

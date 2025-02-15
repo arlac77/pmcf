@@ -55,7 +55,7 @@ async function generateNetworkDefs(host, dir) {
 
     const networkSections = [sectionLines("Match", { Name: ni.name })];
 
-    for (const Address of ni.ipAddressesWithPrefixLength) {
+    for (const Address of ni.cidrAddresses) {
       networkSections.push(
         "",
         sectionLines("Address", {

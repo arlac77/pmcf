@@ -130,6 +130,11 @@ export function encodeIP(address) {
   return _encode(isIPv4Address(address) ? ipv4 : ipv6, address);
 }
 
+export function formatCIDR(address,subnet)
+{
+  return subnet ? `${address}/${subnet.prefixLength}`: address;
+}
+
 export function normalizeCIDR(address) {
   let [prefix, prefixLength] = address.split(/\//);
 

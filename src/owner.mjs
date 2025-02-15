@@ -169,9 +169,15 @@ export class Owner extends Base {
     }
 
     const subnets = [...this.subnets()];
+
+    const subnet = subnets.find(s =>s.matchesAddress(address));
+    if(subnet) {
+      return subnet;
+    }
+    /*
     if (subnets.length === 1) {
       return subnets[0];
-    }
+    }*/
 
     this.error(
       `Address without subnet ${address}`,
