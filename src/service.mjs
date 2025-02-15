@@ -31,8 +31,8 @@ export class Service extends Base {
       name: "service",
       extends: Base,
       properties: {
-        ipAddresses: {},
-        addresses: {},
+        ipAddresses: { type: "string", collection: true },
+        addresses: { type: "string", collection: true },
         port: { type: "number" },
         protocol: { type: "string" },
         alias: { type: "string" },

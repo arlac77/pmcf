@@ -1,5 +1,6 @@
 import { Base } from "./base.mjs";
 import { Network } from "./network.mjs";
+import { Service } from "./service.mjs";
 import {
   asArray,
   isIPv4Address,
@@ -34,14 +35,17 @@ export class Host extends Base {
       extends: Base,
       properties: {
         networkInterfaces: { type: "network_interface", collection: true },
-        services: { type: "service", collection: true },
+        services: { type: Service, collection: true },
         os: { type: "string" },
         distribution: { type: "string" },
         deployment: { type: "string" },
         master: { type: "boolean" },
         model: { type: "string" },
         replaces: { type: "string" },
-        depends: { type: "string" }
+        depends: { type: "string" },
+        cidrAddresses: { type: "string", collection: true, writeable: false },
+        rawAddresses: { type: "string", collection: true, writeable: false },
+        rawAddress: { type: "string", writeable: false }
       }
     };
   }
@@ -305,9 +309,9 @@ export class NetworkInterface extends Base {
         ssid: { type: "string" },
         psk: { type: "string" },
         metric: { type: "number" },
-        cidrAddresses: { type: "string", collection: true },
-        rawAddress: { type: "string"},
-        network: {},
+        cidrAddresses: { type: "string", collection: true, writeable: false },
+        rawAddresses: { type: "string", collection: true, writeable: false },
+        network: { type: "network" },
         gateway: {},
         arpbridge: {}
       }

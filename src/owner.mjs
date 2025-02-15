@@ -2,6 +2,7 @@ import { asArray, normalizeCIDR } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { Subnet } from "./subnet.mjs";
 import { addType } from "./types.mjs";
+import { DNSService } from "./dns.mjs";
 
 export class Owner extends Base {
   #membersByType = new Map();
@@ -22,8 +23,8 @@ export class Owner extends Base {
         networks: { type: "network", collection: true },
         hosts: { type: "host", collection: true },
         clusters: { type: "cluster", collection: true },
-        subnets: { type: "subnet", collection: true },
-        dns: { type: "dns", collection: false },
+        subnets: { type: Subnet, collection: true },
+        dns: { type: DNSService, collection: false },
         domain: { type: "string" },
         administratorEmail: { type: "string" }
       }

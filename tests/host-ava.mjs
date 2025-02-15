@@ -62,7 +62,8 @@ test("Host addresses", t => {
       name: "n1",
       type: "network"
     },
-    cidrAddresses: ["10.0.0.2/16", "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f/64"]
+    cidrAddresses: ["10.0.0.2/16", "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f/64"],
+    rawAddresses: ["10.0.0.2", "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f"]
   });
 
   const s1 = n1.subnetNamed("10.0/16");

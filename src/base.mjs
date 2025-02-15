@@ -70,15 +70,18 @@ export class Base {
       const slot = data[slotName];
       if (slot) {
         delete data[slotName];
+
+        const type = typeof typeDef.type === "string" ? typesByName[typeDef.type] : typeDef.type;
+
         if (typeDef.collection) {
           if (Array.isArray(slot) || typeof slot === "string") {
             for (const item of asArray(slot)) {
-              new typesByName[typeDef.type](this, item);
+              new type(this, item);
             }
           } else {
             for (const [objectName, objectData] of Object.entries(slot)) {
               objectData.name = objectName;
-              new typesByName[typeDef.type](this, objectData);
+              new type(this, objectData);
             }
           }
         } else {
@@ -92,7 +95,7 @@ export class Base {
               break;
 
             default:
-              this[slotName] = new typesByName[typeDef.type](this, slot);
+              this[slotName] = new type(this, slot);
           }
         }
       }

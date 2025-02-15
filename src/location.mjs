@@ -1,4 +1,9 @@
 import { Owner } from "./owner.mjs";
+import { Network } from "./network.mjs";
+import { Subnet } from "./subnet.mjs";
+import { Host } from "./host.mjs";
+import { DNSService } from "./dns.mjs";
+import { Cluster } from "./cluster.mjs";
 import { addType } from "./types.mjs";
 
 export class Location extends Owner {
@@ -11,11 +16,11 @@ export class Location extends Owner {
       name: "location",
       extends: Owner,
       properties: {
-        networks: { type: "network", collection: true },
-        hosts: { type: "host", collection: true },
-        clusters: { type: "cluster", collection: true },
-        subnets: { type: "subnet", collection: true },
-        dns: { type: "dns", collection: false },
+        networks: { type: Network, collection: true },
+        hosts: { type: Host, collection: true },
+        clusters: { type: Cluster, collection: true },
+        subnets: { type: Subnet, collection: true },
+        dns: { type: DNSService },
         country: { type: "string" }
       }
     };
