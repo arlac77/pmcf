@@ -310,7 +310,7 @@ export class NetworkInterface extends Base {
         ssid: { type: "string" },
         psk: { type: "string" },
         metric: { type: "number" },
-        mtu: { type: "number" },
+        MTU: { type: "number" },
         cidrAddresses: { type: "string", collection: true, writeable: false },
         rawAddresses: { type: "string", collection: true, writeable: false },
         network: { type: "network" },
