@@ -3,7 +3,8 @@ import {
   normalizeCIDR,
   isLinkLocal,
   encodeIPv6,
-  decodeIPv6
+  decodeIPv6,
+  hasWellKnownSubnet
 } from "../src/utils.mjs";
 
 function nt(t, address, expected) {
@@ -52,4 +53,10 @@ test("decode ipv6", t => {
     decodeIPv6(0xf000e000d000c000b000an),
     "0000:0000:000f:000e:000d:000c:000b:000a"
   );
+});
+
+test("wellKnownSubnet", t => {
+  t.true(hasWellKnownSubnet('::1'));
+  t.true(hasWellKnownSubnet('127.0.0.1'));
+  t.false(hasWellKnownSubnet('1.2.3.4'));
 });

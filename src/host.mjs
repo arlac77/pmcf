@@ -6,7 +6,8 @@ import {
   isIPv4Address,
   isIPv6Address,
   normalizeIPAddress,
-  formatCIDR
+  formatCIDR,
+  hasWellKnownSubnet
 } from "./utils.mjs";
 import { addType } from "./types.mjs";
 
@@ -375,6 +376,10 @@ export class NetworkInterface extends Base {
   }
 
   addSubnet(address) {
+    if(hasWellKnownSubnet(address)) {
+      return;
+    }
+
     if (!this.network) {
       this.error("Missing network", address);
     } else {

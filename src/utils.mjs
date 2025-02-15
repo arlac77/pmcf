@@ -164,5 +164,11 @@ export function normalizeCIDR(address) {
   return { prefix, prefixLength, cidr: `${prefix}/${prefixLength}` };
 }
 
+export function hasWellKnownSubnet(address)
+{
+  const n = encodeIP(address);
+  return n === IPV4_LOCALHOST || n === IPV6_LOCALHOST;
+}
+
 const IPV4_LOCALHOST = _encode(ipv4, "127.0.0.1");
 const IPV6_LOCALHOST = _encode(ipv6, "::1");
