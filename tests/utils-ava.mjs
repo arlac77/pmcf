@@ -58,5 +58,6 @@ test("decode ipv6", t => {
 test("wellKnownSubnet", t => {
   t.true(hasWellKnownSubnet('::1'));
   t.true(hasWellKnownSubnet('127.0.0.1'));
+  t.true(hasWellKnownSubnet('fe80::1e57:3eff:fe22:9a8f'));
   t.false(hasWellKnownSubnet('1.2.3.4'));
 });

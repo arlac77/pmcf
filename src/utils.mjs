@@ -167,7 +167,7 @@ export function normalizeCIDR(address) {
 export function hasWellKnownSubnet(address)
 {
   const n = encodeIP(address);
-  return n === IPV4_LOCALHOST || n === IPV6_LOCALHOST;
+  return n === IPV4_LOCALHOST || n === IPV6_LOCALHOST || isLinkLocal(address);
 }
 
 const IPV4_LOCALHOST = _encode(ipv4, "127.0.0.1");
