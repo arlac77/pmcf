@@ -69,6 +69,7 @@ async function generateNamedDefs(owner, targetDir) {
       rname,
       subnets.map(s => `${s.owner.name}/${s.name}`)
     );
+    const reverseZones = new Map();
 
     const SOARecord = createRecord(
       "@",
@@ -135,28 +136,28 @@ async function generateNamedDefs(owner, targetDir) {
             );
           }
         }
-      }
 
-      let reverseZone = subnet?.reverseZone;
+        if (subnet) {
+          let reverseZone = reverseZones.get(subnet.address);
 
-      if (subnet && !reverseZone) {
-        const reverseArpa = reverseArpaAddress(subnet.prefix);
-        reverseZone = {
-          id: reverseArpa,
-          file: `${reverseArpa}.zone`,
-          records: new Set([SOARecord, NSRecord])
-        };
-        zones.push(reverseZone);
-        subnet.reverseZone = reverseZone;
-      }
-      if (reverseZone) {
-        reverseZone.records.add(
-          createRecord(
-            fullName(reverseArpaAddress(address)),
-            "PTR",
-            fullName(networkInterface.host.domainName)
-          )
-        );
+          if (!reverseZone) {
+            const reverseArpa = reverseArpaAddress(subnet.prefix);
+            reverseZone = {
+              id: reverseArpa,
+              file: `${reverseArpa}.zone`,
+              records: new Set([SOARecord, NSRecord])
+            };
+            zones.push(reverseZone);
+            reverseZones.set(subnet.address, reverseZone);
+          }
+          reverseZone.records.add(
+            createRecord(
+              fullName(reverseArpaAddress(address)),
+              "PTR",
+              fullName(host.domainName)
+            )
+          );
+        }
       }
     }
 
