@@ -171,14 +171,10 @@ export class Owner extends Base {
 
     const subnets = [...this.subnets()];
 
-    const subnet = subnets.find(s =>s.matchesAddress(address));
-    if(subnet) {
+    const subnet = subnets.find(s => s.matchesAddress(address));
+    if (subnet) {
       return subnet;
     }
-    /*
-    if (subnets.length === 1) {
-      return subnets[0];
-    }*/
 
     this.error(
       `Address without subnet ${address}`,
@@ -277,9 +273,7 @@ export class Owner extends Base {
 
   *networkAddresses() {
     for (const host of this.hosts()) {
-      for (const networkAddresses of host.networkAddresses()) {
-        yield networkAddresses;
-      }
+      yield* host.networkAddresses();
     }
   }
 
