@@ -5,6 +5,19 @@ export function addType(clazz) {
   typeDefinition.clazz = clazz;
 
   typesByName[typeDefinition.name] = clazz;
+
+  for (const type of types) {
+    for (const [name, property] of Object.entries(
+      type.typeDefinition.properties
+    )) {
+      if (typeof property.type === "string") {
+        const t = typesByName[property.type];
+        if (t) {
+          property.type = t;
+        }
+      }
+    }
+  }
 }
 
 export const types = [];

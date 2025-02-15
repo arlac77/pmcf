@@ -1,6 +1,7 @@
 import { Owner } from "./owner.mjs";
 import { Subnet } from "./subnet.mjs";
 import { Host } from "./host.mjs";
+import { DNSService } from "./dns.mjs";
 import { addType } from "./types.mjs";
 
 export class Network extends Owner {
@@ -23,7 +24,7 @@ export class Network extends Owner {
         hosts: { type: Host, collection: true },
         clusters: { type: "cluster", collection: true },
         subnets: { type: Subnet, collection: true },
-        dns: { type: "dns", collection: false },
+        dns: { type: DNSService, collection: false }
         //metric: { type: "number" }
         /*kind: { type: "string" },
         scope: { type: "string" },
