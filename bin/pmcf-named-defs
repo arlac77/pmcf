@@ -58,17 +58,7 @@ async function generateNamedDefs(owner, targetDir) {
       );
     }
 
-    const subnets = [
-      ...new Set([...owner.networks()].map(n => [...n.subnets()]).flat())
-    ];
-
-    console.log(
-      owner.fullName,
-      domain,
-      nameserver?.hostName,
-      rname,
-      subnets.map(s => `${s.owner.name}/${s.name}`)
-    );
+    console.log(owner.fullName, domain, nameserver?.hostName, rname);
     const reverseZones = new Map();
 
     const SOARecord = createRecord(
@@ -99,6 +89,7 @@ async function generateNamedDefs(owner, targetDir) {
     zones.push(zone);
 
     const hosts = new Set();
+    const addresses = new Set();
 
     for await (const {
       address,
@@ -107,7 +98,16 @@ async function generateNamedDefs(owner, targetDir) {
     } of owner.networkAddresses()) {
       const host = networkInterface.host;
 
-      if (!hosts.has(host)) {
+      if (!addresses.has(address)) {
+        addresses.add(address);
+
+        /*console.log(
+          address,
+          host.name,
+          networkInterface?.network?.name,
+          subnet?.address
+        );*/
+  
         zone.records.add(
           createRecord(
             fullName(host.domainName),
@@ -115,6 +115,9 @@ async function generateNamedDefs(owner, targetDir) {
             normalizeIPAddress(address)
           )
         );
+      }
+
+      if (!hosts.has(host)) {
         hosts.add(host);
         for (const service of host.services()) {
           if (service.master && service.alias) {
