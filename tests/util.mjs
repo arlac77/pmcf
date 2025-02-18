@@ -45,7 +45,7 @@ async function _assertObject(t, visited, object, expected, path = []) {
       case "instanceof":
         t.true(
           object instanceof expected.instanceof,
-          `${[...path, k].join(".")}: ${expected.instanceof.name}`
+          `${[...path, k].join(".")}: ${expected.instanceof.name} (${object?.constructor.name})`
         );
 
       case "services":
