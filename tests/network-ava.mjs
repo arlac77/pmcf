@@ -14,8 +14,14 @@ test("Network addresses", t => {
 
   const n1 = new Network(owner, {
     name: "n1",
-    subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
+    subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"],
+    kind: "ethernet",
+    scope: "global"
   });
+
+  t.is(n1.kind, "ethernet");
+  t.is(n1.scope, "global");
+
   const s1 = n1.subnetNamed("10.0/16");
   t.is(s1.name, "10.0/16");
   t.is(s1.prefixLength, 16);
