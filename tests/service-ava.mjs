@@ -1,7 +1,7 @@
 import test from "ava";
 import { Root, Location, Host, Service } from "pmcf";
 
-test.only("Service basics", async t => {
+test("Service basics", async t => {
   const root = new Root("/somwhere");
 
   const l1 = new Location(root, {
