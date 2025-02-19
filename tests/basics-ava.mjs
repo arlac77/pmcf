@@ -43,7 +43,7 @@ test("extract", t => {
   });
 });
 
-test("directory & name", t => {
+test("directory & name & owner", t => {
   const root = new Root("/somewhere");
 
   const l1 = new Location(root, { name: "l1" });
