@@ -1,5 +1,5 @@
 import test from "ava";
-import { extractFrom, Root, Location, Owner, Base } from "pmcf";
+import { extractFrom, Root, Host, Location, Owner, Base } from "pmcf";
 
 test("Root basics", async t => {
   const root = new Root("/somewhere");
@@ -51,16 +51,23 @@ test("directory & name", t => {
   t.is(l1.name, "l1");
   t.is(l1.fullName, "l1");
   t.is(l1.root, root);
+  t.is(l1.owner, root);
 
-  const h1 = new Location(l1, { name: "h1" });
+  t.is(root.locationNamed("l1"), l1);
+
+  const h1 = new Host(l1, { name: "h1" });
   t.is(h1.directory, "/somewhere/l1/h1");
   t.is(h1.name, "h1");
   t.is(h1.fullName, "l1/h1");
   t.is(h1.root, root);
+  t.is(h1.owner, l1);
+  t.is(l1.hostNamed("l1/h1"), h1);
 
-  const h2 = new Location(l1, { name: "l2/h2" });
+  const h2 = new Host(l1, { name: "l2/h2" });
   t.is(h2.directory, "/somewhere/l1/l2/h2");
   t.is(h2.name, "l2/h2");
   t.is(h2.fullName, "l1/l2/h2");
   t.is(h2.root, root);
+  t.is(h2.owner, l1);
+  t.is(l1.hostNamed("l1/l2/h2"), h2);
 });
