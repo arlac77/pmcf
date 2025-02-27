@@ -1,8 +1,19 @@
 import { Owner } from "./owner.mjs";
 import { Subnet } from "./subnet.mjs";
-import { Host } from "./host.mjs";
-import { DNSService } from "./dns.mjs";
 import { addType } from "./types.mjs";
+import { networkProperties } from "./network-support.mjs";
+
+const NetworkTypeDefinition = {
+  name: "network",
+  owners: ["location", "cluster", "owner", "root"],
+  priority: 0.8,
+  extends: Owner.typeDefinition,
+  properties: {
+    ...networkProperties,
+    bridge: { type: "network", collection: true, writeable: true },
+    gateway: { type: "host", collection: false, writeable: true }
+  }
+};
 
 export class Network extends Owner {
   kind;
@@ -16,39 +27,12 @@ export class Network extends Owner {
   }
 
   static get typeDefinition() {
-    return {
-      name: "network",
-      extends: Owner,
-      properties: {
-        networks: { type: "network", collection: true },
-        hosts: { type: Host, collection: true },
-        clusters: { type: "cluster", collection: true },
-        subnets: { type: Subnet, collection: true },
-        dns: { type: DNSService, collection: false }
-        //metric: { type: "number" }
-        /*kind: { type: "string" },
-        scope: { type: "string" },
-        /*bridge: {},
-        gateway: {}*/
-      }
-    };
+    return NetworkTypeDefinition;
   }
 
   constructor(owner, data) {
     super(owner, data);
-
-    if (data.bridge) {
-      this.bridge = owner.addBridge(this, data.bridge);
-      delete data.bridge;
-    }
-
-    //this.read(data);
-
-    Object.assign(this, data);
-
-    if (typeof this.gateway === "string") {
-      this.finalize(() => (this.gateway = this.owner.hostNamed(this.gateway)));
-    }
+    this.read(data, NetworkTypeDefinition);
   }
 
   get network() {
@@ -56,7 +40,7 @@ export class Network extends Owner {
   }
 
   networkNamed(name) {
-    if (this.fullName === name) {
+    if (this.isNamed(name)) {
       return this;
     }
     return super.networkNamed(name);
@@ -73,7 +57,8 @@ export class Network extends Owner {
     return this.#bridge;
   }
 
-  set bridge(bridge) {
-    this.#bridge = bridge;
+  set bridge(network) {
+    this.#bridge = this.owner.addBridge(this, network);
+    network.bridge = this.bridge; // TODO should happen in addBridge
   }
 }

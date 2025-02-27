@@ -6,11 +6,11 @@ import { root1 } from "./fixtures.mjs";
 test("Network basics", async t => {
   const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
   await root.loadAll();
-  await assertObject(t, await root.named("L1/n1"), root1(root, "L1/n1"));
+  await assertObject(t, await root.named("/L1/n1"), root1(root, "/L1/n1"));
 });
 
 test("Network addresses", t => {
-  const owner = new Root();
+  const owner = new Root("/");
 
   const n1 = new Network(owner, {
     name: "n1",
@@ -34,16 +34,16 @@ test("Network addresses", t => {
 });
 
 test("Network bridges", t => {
-  const owner = new Root();
-
-  //const n1 = new Network(owner, { name: "n1" });
+  const owner = new Root("/");
 
   /*
+  const n1 = new Network(owner, { name: "n1" });
   const n2 = new Network(owner, { name: "n2", bridge: "n1" });
   t.true(n2.bridge.has(n1));
   t.true(n1.bridge.has(n2));
-*/
-  const n3 = new Network(owner, { name: "n3", bridge: "n4" });
+  */
+
+  const n3 = new Network(owner, { name: "n3", bridge: "/n4" });
   const n4 = new Network(owner, { name: "n4" });
 
   owner.execFinalize();

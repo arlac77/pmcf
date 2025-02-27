@@ -1,8 +1,15 @@
 import { readFile, glob } from "node:fs/promises";
 import { join } from "node:path";
-import { Base } from "./base.mjs";
 import { Location } from "./location.mjs";
-import { addType, types } from "./types.mjs";
+import { addType, types, resolveTypeLinks } from "./types.mjs";
+
+const RootTypeDefinition = {
+  name: "root",
+  owners: [],
+  priority: 1000,
+  extends: Location.typeDefinition,
+  properties: {}
+};
 
 export class Root extends Location {
   static {
@@ -10,15 +17,12 @@ export class Root extends Location {
   }
 
   static get typeDefinition() {
-    return {
-      name: "root",
-      extends: Location,
-      properties: {}
-    };
+    return RootTypeDefinition;
   }
 
   constructor(directory) {
-    super(undefined, { name: "" });
+    resolveTypeLinks();
+    super(undefined, "");
     this.directory = directory;
     this.addObject(this);
   }
@@ -31,63 +35,53 @@ export class Root extends Location {
     return this;
   }
 
+  async _load(name, type) {
+    const data = JSON.parse(
+      await readFile(
+        join(this.directory, name, type.clazz.typeFileName),
+        "utf8"
+      )
+    );
+
+    const parentName = name.replace(/\/[^\/]+$/, "");
+    const owner = name === parentName ? this.root : await this.load(parentName);
+
+    const fullName = this.fullName + "/" + name;
+    data.name = fullName.substring(owner.fullName.length + 1);
+
+    const object = new type.clazz(owner, data);
+
+    this.addTypeObject(type.clazz.typeName, name, object);
+    return object;
+  }
+
   async load(name, options) {
-    const fullName = Base.normalizeName(name);
-    let object = this.named(fullName);
+    name = name.replace(/\/([^\/]+\.json)?$/, "");
+
+    const object = this.named(name);
     if (object) {
       return object;
     }
 
-    //console.log("LOAD", fullName);
-
-    let path = fullName.split("/");
-    path.pop();
-
-    let data;
-    let type = options?.type;
-    if (type) {
-      data = JSON.parse(
-        await readFile(
-          join(this.directory, fullName, type.typeFileName),
-          "utf8"
-        )
-      );
+    if (options?.type) {
+      return this._load(name, options.type);
     } else {
-      for (type of types) {
+      for (const type of Object.values(types)) {
         try {
-          data = JSON.parse(
-            await readFile(
-              join(this.directory, fullName, type.typeFileName),
-              "utf8"
-            )
-          );
-          break;
+          return await this._load(name, type);
         } catch {}
-      }
-
-      if (!data) {
-        return this.load(path.join("/"), options);
       }
     }
 
-    const owner = await this.load(path.join("/"));
-
-    const length = owner.fullName.length;
-    const n = fullName[length] === "/" ? length + 1 : length;
-    data.name = fullName.substring(n);
-
-    type = await type.prepareData(this, data);
-
-    object = new type(owner, data);
-
-    this._addObject(type.typeName, fullName, object);
-
-    return object;
+    const parentName = name.replace(/\/[^\/]$/, "");
+    return name === parentName ? this.root : this.load(parentName, options);
   }
 
   async loadAll() {
-    for (let type of types) {
-      for await (const name of glob(type.fileNameGlob, {
+    for (const type of Object.values(types).sort(
+      (a, b) => b.priority - a.priority
+    )) {
+      for await (const name of glob(type.clazz.fileNameGlob, {
         cwd: this.directory
       })) {
         await this.load(name, { type });

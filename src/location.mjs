@@ -1,10 +1,16 @@
 import { Owner } from "./owner.mjs";
-import { Network } from "./network.mjs";
-import { Subnet } from "./subnet.mjs";
-import { Host } from "./host.mjs";
-import { DNSService } from "./dns.mjs";
-import { Cluster } from "./cluster.mjs";
 import { addType } from "./types.mjs";
+
+const LocationTypeDefinition = {
+  name: "location",
+  owners: [Owner.typeDefinition, "location", "root"],
+  priority: 1.0,
+  extends: Owner.typeDefinition,
+  properties: {
+    country: { type: "string", writeable: true },
+    locales: { type: "string", collection: true, writeable: true }
+  }
+};
 
 export class Location extends Owner {
   static {
@@ -12,27 +18,21 @@ export class Location extends Owner {
   }
 
   static get typeDefinition() {
-    return {
-      name: "location",
-      extends: Owner,
-      properties: {
-        networks: { type: Network, collection: true },
-        hosts: { type: Host, collection: true },
-        clusters: { type: Cluster, collection: true },
-        subnets: { type: Subnet, collection: true },
-        dns: { type: DNSService },
-        country: { type: "string" },
-        locales: { type: "string", collection: true }
-      }
-    };
+    return LocationTypeDefinition;
+  }
+
+  constructor(owner, data) {
+    super(owner, data);
+    this.read(data, LocationTypeDefinition);
   }
 
   get location() {
     return this;
   }
 
+
   locationNamed(name) {
-    if (this.fullName === name) {
+    if (this.isNamed(name)) {
       return this;
     }
 

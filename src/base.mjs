@@ -1,32 +1,39 @@
 import { join } from "node:path";
 import { getAttribute } from "pacc";
-import { typesByName } from "./types.mjs";
-import { asArray } from "./utils.mjs";
+import { addType, primitives } from "./types.mjs";
+
+const BaseTypeDefinition = {
+  name: "base",
+  owners: [],
+  properties: {
+    owner: { type: "base", collection: false, writeable: false },
+    type: { type: "string", collection: false, writeable: false },
+    name: {
+      type: "string",
+      collection: false,
+      identifier: true,
+      writeable: true
+    },
+    description: { type: "string", collection: false, writeable: true },
+    directory: { type: "string", collection: false, writeable: false }
+  }
+};
 
 export class Base {
   owner;
-  name;
   description;
+  name;
+
+  static {
+    addType(this);
+  }
 
   static get typeName() {
     return this.typeDefinition.name;
   }
 
   static get typeDefinition() {
-    return {
-      name: "base",
-      properties: {
-        type: { type: "string", writeable: false },
-        name: { type: "string" },
-        description: { type: "string" },
-        directory: { type: "string", writeable: false },
-        owner: {}
-      }
-    };
-  }
-
-  static get nameLookupName() {
-    return this.typeName + "Named";
+    return BaseTypeDefinition;
   }
 
   static get typeFileName() {
@@ -37,16 +44,6 @@ export class Base {
     return "**/" + this.typeFileName;
   }
 
-  static async prepareData(root, data) {
-    return this;
-  }
-
-  static normalizeName(name) {
-    if (name !== undefined) {
-      return name.replace(/\/\w+\.json$/, "");
-    }
-  }
-
   constructor(owner, data) {
     this.owner = owner;
 
@@ -54,60 +51,149 @@ export class Base {
       case "string":
         this.name = data;
         break;
-      case "object": {
-        this.name = data.name;
-        if (data.description) {
-          this.description = data.description;
+      case "object":
+        this.read(data, BaseTypeDefinition);
+    }
+
+    if (this.name === undefined) {
+      this.error("Missing name", this.owner?.toString(), data);
+    }
+  }
+
+  ownerFor(property, data) {
+    for (const type of property.type.owners) {
+      if (this.typeName === type?.name) {
+        return this;
+      }
+    }
+    for (const type of property.type.owners) {
+      const owner = this[type?.name];
+      if (owner) {
+        return owner;
+      }
+    }
+
+    return this;
+  }
+
+  read(data, type) {
+    const assign = (property, value) => {
+      if (value !== undefined) {
+        if (property.collection) {
+          const current = this[property.name];
+
+          switch (typeof current) {
+            case "undefined":
+              this[property.name] = value;
+              break;
+            case "object":
+              if (Array.isArray(current)) {
+                current.push(value);
+              } else {
+                if (current instanceof Map || current instanceof Set) {
+                  // TODO
+                  this[property.name] = value;
+                } else {
+                  this.error("Unknown collection type", property.name, current);
+                }
+              }
+              break;
+            case "function":
+              if (value instanceof Base) {
+                this.addObject(value);
+              } else {
+                this.error("Unknown collection type", property.name, current);
+              }
+              break;
+          }
+        } else {
+          this[property.name] = value;
         }
+      }
+    };
+
+    const instantiateAndAssign = (property, value) => {
+      if (primitives.has(property.type)) {
+        assign(property, value);
+        return;
+      }
+
+      switch (typeof value) {
+        case "undefined":
+          return;
+        case "function":
+          this.error("Invalid value", property.name, value);
+          break;
+
+        case "boolean":
+        case "bigint":
+        case "number":
+        case "string":
+          {
+            value = this.expand(value);
+            const object = this.typeNamed(property.type.name, value);
+
+            if (object) {
+              assign(property, object);
+            } else {
+              if (property.type.constructWithIdentifierOnly) {
+                new property.type.clazz(this.ownerFor(property, value), value);
+              } else {
+                this.finalize(() => {
+                  value = this.expand(value);
+                  const object =
+                    this.typeNamed(property.type.name, value) ||
+                    this.owner.typeNamed(property.type.name, value) ||
+                    this.root.typeNamed(property.type.name, value); // TODO
+
+                  assign(property, object);
+                });
+              }
+            }
+          }
+          break;
+        case "object":
+          if (value instanceof property.type.clazz) {
+            assign(property, value);
+          } else {
+            assign(
+              property,
+              new property.type.clazz(this.ownerFor(property, value), value)
+            );
+          }
+          break;
+      }
+    };
+
+    for (const property of Object.values(type.properties)) {
+      if (property.writeable) {
+        const value = data[property.name];
+        if (property.collection) {
+          if (typeof value === "object") {
+            if (Array.isArray(value)) {
+              for (const v of value) {
+                instantiateAndAssign(property, v);
+              }
+            } else {
+              for (const [objectName, objectData] of Object.entries(value)) {
+                objectData[type.identifier.name] = objectName;
+                instantiateAndAssign(property, objectData);
+              }
+            }
+            continue;
+          }
+        }
+        instantiateAndAssign(property, value);
       }
     }
   }
 
-  read(data) {
-    for (const [slotName, typeDef] of Object.entries(
-      this.constructor.typeDefinition.properties
-    )) {
-      let slot = data[slotName];
-      if (slot) {
-        delete data[slotName];
+  typeNamed(typeName, name) {
+    return this.owner.typeNamed(typeName, name);
+  }
 
-        const type =
-          typeof typeDef.type === "string"
-            ? typesByName[typeDef.type]
-            : typeDef.type;
-
-        if (typeDef.collection) {
-          if (Array.isArray(slot) || typeof slot === "string") {
-            slot = asArray(slot);
-            if (type) {
-              for (const item of slot) {
-                new type(this, item);
-              }
-            } else {
-              this[slotName] = slot;
-            }
-          } else {
-            for (const [objectName, objectData] of Object.entries(slot)) {
-              objectData.name = objectName;
-              new type(this, objectData);
-            }
-          }
-        } else {
-          switch (typeDef.type) {
-            case "undefined":
-              break;
-            case "boolean":
-            case "string":
-            case "number":
-              this[slotName] = slot;
-              break;
-
-            default:
-              this[slotName] = new type(this, slot);
-          }
-        }
-      }
-    }
+  addObject(object) {
+    return this.owner.addObject(object);
   }
 
   forOwner(owner) {
@@ -117,6 +203,16 @@ export class Base {
     }
 
     return this;
+  }
+
+  isNamed(name) {
+    return name[0] === "/" ? this.fullName === name : this.name === name;
+  }
+
+  relativeName(name) {
+    return name?.[0] === "/"
+      ? name.substring(this.owner.fullName.length + 1)
+      : name;
   }
 
   get typeName() {
@@ -150,16 +246,13 @@ export class Base {
   }
 
   get directory() {
-    return (
-      this.#directory ||
-      (this.owner ? join(this.owner.directory, this.name) : this.name)
-    );
+    return this.#directory || join(this.owner.directory, this.name);
   }
 
   get fullName() {
-    return this.owner?.fullName && this.name
-      ? join(this.owner.fullName, this.name)
-      : this.name;
+    return this.name
+      ? join(this.owner.fullName, "/", this.name)
+      : this.owner.fullName;
   }
 
   expand(object) {
@@ -246,7 +339,29 @@ export class Base {
   }
 }
 
-export function extractFrom(object, typeDefinition) {
+export function extractFrom(
+  object,
+  typeDefinition = object?.constructor?.typeDefinition
+) {
+  if (Array.isArray(object)) {
+    if (object.length === 0) {
+      return undefined;
+    }
+
+    if (typeDefinition?.identifier) {
+      return Object.fromEntries(
+        object.map(o => {
+          o = extractFrom(o);
+          const name = o[typeDefinition.identifier.name];
+          delete o[typeDefinition.identifier.name];
+          return [name, o];
+        })
+      );
+    }
+
+    return object.map(o => extractFrom(o));
+  }
+
   if (!typeDefinition || object === undefined) {
     return object;
   }
@@ -262,19 +377,13 @@ export function extractFrom(object, typeDefinition) {
           {
             value = object[name]();
 
-            if (Array.isArray(value)) {
-              if (value.length > 0) {
-                json[name] = value;
-              }
-            } else {
-              if (typeof value?.next === "function") {
-                value = [...value];
-                if (value.length > 0) {
-                  json[name] = value;
-                }
-              } else {
-                json[name] = value;
-              }
+            if (typeof value?.next === "function") {
+              value = [...value];
+            }
+
+            value = extractFrom(value, def.type);
+            if (value !== undefined) {
+              json[name] = value;
             }
           }
           break;
@@ -286,14 +395,17 @@ export function extractFrom(object, typeDefinition) {
             }
           } else {
             if (Array.isArray(value)) {
-              json[name] = value;
+              json[name] = extractFrom(value);
             } else {
-              json[name] = Object.fromEntries(
+              const resultObject = Object.fromEntries(
                 Object.entries(value).map(([k, v]) => [
                   k,
-                  extractFrom(v, typesByName[def.type])
+                  v // extractFrom(v, def.type)
                 ])
               );
+              if (Object.keys(resultObject).length > 0) {
+                json[name] = resultObject;
+              }
             }
           }
           break;
@@ -304,7 +416,7 @@ export function extractFrom(object, typeDefinition) {
           json[name] = value;
       }
     }
-    typeDefinition = typeDefinition?.extends?.typeDefinition;
+    typeDefinition = typeDefinition?.extends;
   } while (typeDefinition);
 
   return json;

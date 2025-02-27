@@ -14,6 +14,24 @@ const ServiceTypes = {
   dhcp: {}
 };
 
+const ServiceTypeDefinition = {
+  name: "service",
+  owners: ["host"],
+  priority: 0.4,
+  extends: Base.typeDefinition,
+  properties: {
+    ipAddresses: { type: "string", collection: true, writeable: true },
+    addresses: { type: "string", collection: true, writeable: true },
+    port: { type: "number", collection: false, writeable: true },
+    protocol: { type: "string", collection: false, writeable: true },
+    alias: { type: "string", collection: false, writeable: true },
+    type: { type: "string", collection: false, writeable: true },
+    master: { type: "boolean", collection: false, writeable: true },
+    priority: { type: "number", collection: false, writeable: true },
+    weight: { type: "number", collection: false, writeable: true }
+  }
+};
+
 export class Service extends Base {
   alias;
   #weight;
@@ -27,49 +45,13 @@ export class Service extends Base {
   }
 
   static get typeDefinition() {
-    return {
-      name: "service",
-      extends: Base,
-      properties: {
-        ipAddresses: { type: "string", collection: true },
-        addresses: { type: "string", collection: true },
-        port: { type: "number" },
-        protocol: { type: "string" },
-        alias: { type: "string" },
-        type: { type: "string" },
-        master: { type: "boolean" },
-        priority: { type: "number" },
-        weight: { type: "number" }
-      }
-    };
+    return ServiceTypeDefinition;
   }
 
   constructor(owner, data) {
     super(owner, data);
-    if (data.weight !== undefined) {
-      this.#weight = data.weight;
-      delete data.weight;
-    }
-    if (data.priority !== undefined) {
-      this.#priority = data.priority;
-      delete data.priority;
-    }
-    if (data.type) {
-      this.#type = data.type;
-      delete data.type;
-    }
-    if (data.port !== undefined) {
-      this.#port = data.port;
-      delete data.port;
-    }
-    if (data.ipAddresses) {
-      this.#ipAddresses = data.ipAddresses;
-      delete data.ipAddresses;
-    }
-
-    Object.assign(this, data);
-
-    owner.addService(this);
+    this.read(data, ServiceTypeDefinition);
+  // owner.addService(this);
   }
 
   forOwner(owner) {
@@ -90,11 +72,60 @@ export class Service extends Base {
       if (this.#ipAddresses) {
         data.ipAddresses = this.#ipAddresses;
       }
+
       // @ts-ignore
       return new this.constructor(owner, data);
     }
 
     return this;
+  }
+
+  set ipAddresses(value) {
+    this.#ipAddresses = value;
+  }
+
+  get ipAddresses() {
+    return this.#ipAddresses || this.owner.rawAddresses;
+  }
+
+  get addresses() {
+    return this.ipAddresses.map(a => `${a}:${this.port}`);
+  }
+
+  set port(value) {
+    this.#port = value;
+  }
+
+  get port() {
+    return this.#port || ServiceTypes[this.type]?.port;
+  }
+
+  set priority(value) {
+    this.#priority = value;
+  }
+
+  get priority() {
+    return this.#priority || this.owner.priority || 99;
+  }
+
+  set weight(value) {
+    this.#weight = value;
+  }
+
+  get weight() {
+    return this.#weight || this.owner.weight || 0;
+  }
+
+  set type(value) {
+    this.#type = value;
+  }
+
+  get type() {
+    return this.#type || this.name;
+  }
+
+  get master() {
+    return this.owner.master;
   }
 
   get protocol() {
@@ -106,33 +137,5 @@ export class Service extends Base {
     if (st?.protocol) {
       return `_${this.type}._${st.protocol}`;
     }
-  }
-
-  get ipAddresses() {
-    return this.#ipAddresses || this.owner.rawAddresses;
-  }
-
-  get addresses() {
-    return this.ipAddresses.map(a => `${a}:${this.port}`);
-  }
-
-  get port() {
-    return this.#port || ServiceTypes[this.type]?.port;
-  }
-
-  get priority() {
-    return this.#priority || this.owner.priority || 99;
-  }
-
-  get weight() {
-    return this.#weight || this.owner.weight || 0;
-  }
-
-  get master() {
-    return this.owner.master;
-  }
-
-  get type() {
-    return this.#type || this.name;
   }
 }

@@ -2,7 +2,7 @@ import test from "ava";
 import { Root, Network, Subnet } from "pmcf";
 
 test("Subnet owner", t => {
-  const root = new Root();
+  const root = new Root("/");
 
   const s1 = new Subnet(root, "10.0.0.77/16");
 
@@ -34,7 +34,7 @@ test("Subnet owner", t => {
 });
 
 test("Subnet localhost", t => {
-  const root = new Root();
+  const root = new Root("/");
 
   const s1 = new Subnet(root, "127/8");
 
@@ -46,7 +46,7 @@ test("Subnet localhost", t => {
 });
 
 test("Subnet ipv4", t => {
-  const root = new Root();
+  const root = new Root("/");
 
   const s1 = new Subnet(root, "10.0.0.77/16");
 
@@ -60,7 +60,7 @@ test("Subnet ipv4", t => {
 });
 
 test("Subnet ipv6", t => {
-  const root = new Root();
+  const root = new Root("/");
   const s1 = new Subnet(root, "fe80::1e57:3eff:fe22:9a8f/64");
 
   t.is(s1.name, "fe80:0000:0000:0000/64");

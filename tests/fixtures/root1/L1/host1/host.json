@@ -1,9 +1,12 @@
 {
   "os": "linux",
-  "extends": "model/m1",
+  "depends": ["d1", "d2"],
+  "replaces": ["r1", "r2"],
+  "provides": ["p1", "p2"],
+  "extends": ["/model/m1", "/model/${os}"],
   "networkInterfaces": {
     "eth0": {
-      "network": "L1/n1",
+      "network": "/L1/n1",
       "ipAddresses": "192.168.1.1"
     }
   },

@@ -1,3 +1,9 @@
 {
-  "chassis": "server"
+  "chassis": "server",
+  "depends": ["d1", "d3"],
+  "replaces": ["r1", "r3"],
+  "provides": ["p1", "p3"],
+  "services": {
+    "smb": {}
+  }
 }

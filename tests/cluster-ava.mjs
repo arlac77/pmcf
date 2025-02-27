@@ -7,5 +7,5 @@ test("Cluster basics", async t => {
   const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
   await root.loadAll();
 
-  await assertObject(t, await root.named("L1/C1"), root1(root, "L1/C1"));
+  await assertObject(t, await root.named("/L1/C1"), root1(root, "/L1/C1"));
 });

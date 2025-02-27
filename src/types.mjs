@@ -1,24 +1,50 @@
+export const types = {};
+
 export function addType(clazz) {
-  types.push(clazz);
+  const type = clazz.typeDefinition;
 
-  const typeDefinition = clazz.typeDefinition;
-  typeDefinition.clazz = clazz;
+  types[type.name] = type;
 
-  typesByName[typeDefinition.name] = clazz;
+  type.clazz = clazz;
+}
 
-  for (const type of types) {
-    for (const [name, property] of Object.entries(
-      type.typeDefinition.properties
-    )) {
+export const primitives = new Set(["string", "number", "boolean"]);
+
+export function resolveTypeLinks() {
+  for (const type of Object.values(types)) {
+    type.owners = type.owners.map(owner =>
+      typeof owner === "string" ? types[owner] : owner
+    );
+
+    for (const [name, property] of Object.entries(type.properties)) {
+      property.name = name;
+      if (property.identifier) {
+        type.identifier = property;
+      }
+
       if (typeof property.type === "string") {
-        const t = typesByName[property.type];
-        if (t) {
-          property.type = t;
+        if (!primitives.has(property.type)) {
+          const type = types[property.type];
+          if (type) {
+            property.type = type;
+          } else {
+            console.error(
+              "Unknown type",
+              property.type,
+              type.name,
+              property.name
+            );
+          }
         }
       }
     }
   }
-}
 
-export const types = [];
-export const typesByName = {};
+  for (const type of Object.values(types)) {
+    if (!type.identifier) {
+      if (type.extends?.identifier) {
+        type.identifier = type.extends.identifier;
+      }
+    }
+  }
+}

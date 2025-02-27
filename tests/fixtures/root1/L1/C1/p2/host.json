@@ -3,7 +3,7 @@
   "state": "BACKUP",
   "networkInterfaces": {
     "eth0": {
-      "network": "L1/n1",
+      "network": "/L1/n1",
       "ipAddresses": "192.168.1.11"
     }
   }

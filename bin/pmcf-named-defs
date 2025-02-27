@@ -52,7 +52,7 @@ async function generateNamedDefs(owner, targetDir) {
       };
     };
 
-    for await (const mail of owner.services({ type: "smtp" })) {
+    for await (const mail of owner.findServices({ type: "smtp" })) {
       records.add(
         createRecord("@", "MX", mail.priority, fullName(mail.owner.domainName))
       );
@@ -112,7 +112,7 @@ async function generateNamedDefs(owner, targetDir) {
 
       if (!hosts.has(host)) {
         hosts.add(host);
-        for (const service of host.services()) {
+        for (const service of host.findServices()) {
           if (service.master && service.alias) {
             zone.records.add(
               createRecord(service.alias, "CNAME", fullName(host.domainName))

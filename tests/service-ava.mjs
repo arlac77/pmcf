@@ -21,6 +21,8 @@ test("Service basics", async t => {
     alias: "primary-dns"
   });
 
+  h1.services = s1;
+
   t.is(s1.name, "dns");
   t.is(s1.type, "dns");
   t.is(s1.alias, "primary-dns");
@@ -32,7 +34,7 @@ test("Service basics", async t => {
   t.deepEqual(s1.ipAddresses, ["10.0.0.1"]);
   t.deepEqual(s1.addresses, ["10.0.0.1:53"]);
 
-  t.is([...h1.services({ type: "dns" })][0], s1);
+  t.is([...h1.findServices({ type: "dns" })][0], s1);
 
   const h2 = new Host(l1, {
     name: "h2",
@@ -41,7 +43,7 @@ test("Service basics", async t => {
   });
 
   const s2 = s1.forOwner(h2);
-
+  h2.services = s2;
   t.is(s2.name, "dns");
   t.is(s2.type, "dns");
   t.is(s2.priority, 19);
@@ -51,13 +53,13 @@ test("Service basics", async t => {
   t.is(s2.srvPrefix, "_dns._udp");
   t.deepEqual(s2.ipAddresses, ["10.0.0.2"]);
   t.deepEqual(s2.addresses, ["10.0.0.2:53"]);
-  t.is([...h2.services({ type: "dns" })][0], s2);
+  t.is([...h2.findServices({ type: "dns" })][0], s2);
 
-  const services = await Array.fromAsync(l1.services({ type: "dns" }));
+  const services = await Array.fromAsync(l1.findServices({ type: "dns" }));
 
   t.deepEqual(services, [s1, s2]);
 
-  t.is(s1, await l1.service({ type: "dns" }));
+  t.is(s1, await l1.findService({ type: "dns" }));
 });
 
 test("Service without protocol", t => {
@@ -69,4 +71,18 @@ test("Service without protocol", t => {
   });
   const s1 = new Service(h1, { name: "dhcp", weight: 5, priority: 3 });
   t.is(s1.srvPrefix, undefined);
+});
+
+test("Service load", t => {
+  const root = new Root("/somwhere");
+
+  const h1 = new Host(root, {
+    name: "h1",
+    networkInterfaces: { eth0: { ipAddresses: "10.0.0.1" } },
+    services: {
+      dns: {}
+    }
+  });
+
+  t.is(h1.services[0].name, "dns");
 });

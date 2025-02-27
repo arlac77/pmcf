@@ -2,13 +2,13 @@
 
 import { mkdir, copyFile } from "node:fs/promises";
 import { join } from "node:path";
-import { Location } from "pmcf";
+import { types } from "pmcf";
 import { writeLines, sectionLines } from "../src/utils.mjs";
 import { prepare } from "../src/cmd.mjs";
 
 const { root, args, options } = await prepare();
 
-const location = await root.load(args[0], { type: Location });
+const location = await root.load(args[0], { type: types.location });
 
 await generateLocationDefs(location, options.output);
 

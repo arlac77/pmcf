@@ -2,6 +2,23 @@ import { normalizeCIDR, isLinkLocal } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
 
+const SubnetTypeDefinition = {
+  name: "subnet",
+  owners: ["location", "owner", "network", "root"],
+  priority: 0.6,
+  constructWithIdentifierOnly: true,
+  properties: {
+    address: {
+      type: "string",
+      collection: false,
+      writeable: false,
+      identifier: true
+    },
+    networks: { type: "network", collection: true, writeable: true },
+    prefixLength: { type: "number", collection: false, writeable: false }
+  }
+};
+
 export class Subnet extends Base {
   networks = new Set();
 
@@ -10,27 +27,12 @@ export class Subnet extends Base {
   }
 
   static get typeDefinition() {
-    return {
-      name: "subnet",
-      properties: {
-        address: { type: "string", writeable: false },
-        networks: { type: "network", collection: true },
-        prefixLength: { type: "number", writeable: false }
-      }
-    };
+    return SubnetTypeDefinition;
   }
 
   constructor(owner, address) {
     const { cidr } = normalizeCIDR(address);
-
-    if (!cidr) {
-      const error = Error(`Invalid address`);
-      error.address = address;
-      throw error;
-    }
-
     super(owner, cidr);
-
     owner.addObject(this);
   }
 

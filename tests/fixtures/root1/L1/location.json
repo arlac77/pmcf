@@ -3,7 +3,7 @@
   "country": "DE",
   "subnets": "192.168.1/24",
   "dns": {
-    "forwardsTo": "GLOBAL",
+    "forwardsTo": "/GLOBAL",
     "allowedUpdates": ["trusted"],
     "recordTTL": "1W"
   }

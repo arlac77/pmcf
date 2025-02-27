@@ -1,6 +1,19 @@
 import { Base } from "./base.mjs";
-import { asArray } from "./utils.mjs";
 import { addType } from "./types.mjs";
+
+const DNSServiceTypeDefinition = {
+  name: "dns",
+  owners: ["location", "owner", "network", "cluster", "root"],
+  priority: 0.1,
+  properties: {
+    hasSVRRecords: { type: "boolean", collection: false, writeable: true },
+    hasCatalog: { type: "boolean", collection: false, writeable: true },
+    recordTTL: { type: "string", collection: false, writeable: true },
+    soaUpdates: { type: "number", collection: true, writeable: true },
+    forwardsTo: { type: "network", collection: true, writeable: true },
+    allowedUpdates: { type: "string", collection: true, writeable: true }
+  }
+};
 
 export class DNSService extends Base {
   allowedUpdates = [];
@@ -8,40 +21,39 @@ export class DNSService extends Base {
   soaUpdates = [36000, 72000, 600000, 60000];
   hasSVRRecords = true;
   hasCatalog = true;
-  forwardsTo = [];
+  #forwardsTo = [];
 
   static {
     addType(this);
   }
 
   static get typeDefinition() {
-    return {
-      name: "dns",
-      properties: {
-        hasSVRRecords: { type: "boolean" },
-        hasCatalog: { type: "boolean" },
-        recordTTL: { type: "string" },
-        soaUpdates: { type: "number", collection: true },
-        forwardsTo: { type: "host", collection: true },
-        allowedUpdates: { type: "string", collection: true }
-      }
-    };
+    return DNSServiceTypeDefinition;
   }
 
   constructor(owner, data) {
+    if (!data.name) {
+      data.name = DNSServiceTypeDefinition.name; // TODO
+    }
     super(owner, data);
-    Object.assign(this, data);
-    owner.addObject(this);
+    this.read(data, DNSServiceTypeDefinition);
   }
 
-  async *services() {
-    const filter = { type: "dns" };
+  set forwardsTo(value) {
+    this.#forwardsTo.push(value);
+  }
 
-    yield* this.owner.services(filter);
+  get forwardsTo() {
+    return this.#forwardsTo;
+  }
 
-    for (const s of asArray(this.forwardsTo)) {
-      const owner = await this.owner.root.load(s);
-      yield* owner.services(filter);
+  async *findServices() {
+    const filter = { type: DNSServiceTypeDefinition.name };
+
+    yield* this.owner.findServices(filter);
+
+    for (const s of this.forwardsTo) {
+      yield* s.findServices(filter);
     }
   }
 
@@ -50,7 +62,7 @@ export class DNSService extends Base {
   }
 
   async resolvedConfig() {
-    const dnsServices = (await Array.fromAsync(this.services())).sort(
+    const dnsServices = (await Array.fromAsync(this.findServices())).sort(
       (a, b) => a.priority - b.priority
     );
 

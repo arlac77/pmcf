@@ -7,8 +7,8 @@ test("Host minimal", async t => {
   const root = new Root(new URL("fixtures/minimal", import.meta.url).pathname);
   await root.loadAll();
 
-  const host1 = root.named("L1/host1");
-
+  const host1 = root.named("/L1/host1");
+  t.is(host1.fullName, "/L1/host1");
   t.is(host1.name, "host1");
 });
 
@@ -16,7 +16,11 @@ test("Host basics", async t => {
   const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
   await root.loadAll();
 
-  await assertObject(t, await root.named("L1/host1"), root1(root, "L1/host1"));
+  const host1 = await root.named("/L1/host1");
+  const eth0 = host1.networkInterfaceNamed("eth0");
+  t.is(eth0.network, root.named("/L1/n1"));
+
+  await assertObject(t, host1, root1(root, "/L1/host1"));
 });
 
 test("Host all", async t => {
@@ -25,29 +29,34 @@ test("Host all", async t => {
   await assertObjects(
     t,
     root.hosts(),
-    root1(root, ["L1/n1/host2", "L1/host1"])
+    root1(root, ["/L1/n1/host2", "/L1/host1"])
   );
 });
 
-test.only("Host addresses", t => {
-  const owner = new Root();
+test("Host addresses", t => {
+  const owner = new Root("/");
   const n1 = new Network(owner, { name: "n1" });
 
   const h1 = new Host(n1, {
     name: "h1",
     networkInterfaces: {
       lo: {
+        kind: "loopback",
+        scope: "local",
         ipAddresses: ["127.0.0.1", "::1"]
       },
       eth0: {
+        kind: "ethernet",
+        scope: "global",
         ipAddresses: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
       }
     }
   });
 
-  console.log([...n1.networkAddresses()]);
-
   const lo = h1.networkInterfaceNamed("lo");
+
+  t.is(lo.name, "lo");
+
   const eth0 = h1.networkInterfaceNamed("eth0");
 
   t.is(eth0.name, "eth0");
@@ -56,9 +65,10 @@ test.only("Host addresses", t => {
   t.is(n1.network, n1);
 
   t.deepEqual(eth0.toJSON(), {
-    directory: "n1/h1/eth0",
+    directory: "/n1/h1/eth0",
     name: "eth0",
     metric: 1004,
+    kind: "ethernet",
     scope: "global",
     owner: {
       name: "h1",
@@ -98,7 +108,7 @@ test.only("Host addresses", t => {
 });
 
 test("Host addresses with network", t => {
-  const owner = new Root();
+  const owner = new Root("/");
 
   const n1 = new Network(owner, {
     name: "n1",
@@ -134,7 +144,7 @@ test("Host addresses with network", t => {
 });
 
 test.skip("clone NetworkInterface", t => {
-  const owner = new Root();
+  const owner = new Root("/");
 
   const n1 = new Network(owner, {
     name: "n1",

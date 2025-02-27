@@ -4,53 +4,47 @@ import { Subnet } from "./subnet.mjs";
 import { addType } from "./types.mjs";
 import { DNSService } from "./dns.mjs";
 
+const OwnerTypeDefinition = {
+  name: "owner",
+  owners: ["owner", "root"],
+  priority: 0.9,
+  extends: Base.typeDefinition,
+  properties: {
+    networks: { type: "network", collection: true, writeable: true },
+    hosts: { type: "host", collection: true, writeable: true },
+    clusters: { type: "cluster", collection: true, writeable: true },
+    subnets: { type: Subnet.typeDefinition, collection: true, writeable: true },
+    dns: {
+      type: DNSService.typeDefinition,
+      collection: false,
+      writeable: true
+    },
+    ntp: { type: "string", collection: false, writeable: true },
+    domain: { type: "string", collection: false, writeable: true },
+    administratorEmail: { type: "string", collection: false, writeable: true }
+  }
+};
+
+const EMPTY = new Map();
+
 export class Owner extends Base {
   #membersByType = new Map();
   #bridges = new Set();
   #administratorEmail;
   domain;
-  ntp = { servers: [] };
+  ntp;
 
   static {
     addType(this);
   }
 
   static get typeDefinition() {
-    return {
-      name: "owner",
-      extends: Base,
-      properties: {
-        networks: { type: "network", collection: true },
-        hosts: { type: "host", collection: true },
-        clusters: { type: "cluster", collection: true },
-        subnets: { type: Subnet, collection: true },
-        dns: { type: DNSService, collection: false },
-        domain: { type: "string" },
-        administratorEmail: { type: "string" }
-      }
-    };
+    return OwnerTypeDefinition;
   }
 
-  constructor(owner, data = {}) {
+  constructor(owner, data) {
     super(owner, data);
-
-    if (data.administratorEmail) {
-      this.#administratorEmail = data.administratorEmail;
-      delete data.administratorEmail;
-    }
-
-    if (data.domain) {
-      this.domain = data.domain;
-      delete data.domain;
-    }
-
-    if (data.ntp) {
-      this.ntp = data.ntp;
-      delete data.ntp;
-    }
-
-    this.read(data);
-
+    this.read(data, OwnerTypeDefinition);
     owner?.addObject(this);
   }
 
@@ -62,6 +56,8 @@ export class Owner extends Base {
         }
       }
 
+      this.dns?._traverse(...args);
+
       return true;
     }
 
@@ -69,6 +65,10 @@ export class Owner extends Base {
   }
 
   named(name) {
+    if (name[0] === "/") {
+      name = name.substring(this.fullName.length + 1);
+    }
+
     for (const slot of this.#membersByType.values()) {
       const object = slot.get(name);
       if (object) {
@@ -78,6 +78,10 @@ export class Owner extends Base {
   }
 
   typeNamed(typeName, name) {
+    if (name[0] === "/") {
+      name = name.substring(this.fullName.length + 1);
+    }
+
     const typeSlot = this.#membersByType.get(typeName);
     return typeSlot?.get(name) || this.owner?.typeNamed(typeName, name);
   }
@@ -88,29 +92,26 @@ export class Owner extends Base {
 
   typeList(typeName) {
     const typeSlot = this.#membersByType.get(typeName);
-    if (typeSlot) {
-      return typeSlot.values();
-    }
-
-    return [];
+    return (typeSlot || EMPTY).values();
   }
 
-  _addObject(typeName, fullName, object) {
+  addTypeObject(typeName, name, object) {
     let typeSlot = this.#membersByType.get(typeName);
     if (!typeSlot) {
       typeSlot = new Map();
       this.#membersByType.set(typeName, typeSlot);
     }
-    typeSlot.set(fullName, object);
+
+    typeSlot.set(name, object);
   }
 
   addObject(object) {
-    this._addObject(object.typeName, object.fullName, object);
+    this.addTypeObject(object.typeName, object.name, object);
   }
 
-  service(filter) {
+  findService(filter) {
     let best;
-    for (const service of this.services(filter)) {
+    for (const service of this.findServices(filter)) {
       if (!best || service.priority < best.priority) {
         best = service;
       }
@@ -119,9 +120,9 @@ export class Owner extends Base {
     return best;
   }
 
-  *services(filter) {
+  *findServices(filter) {
     for (const host of this.hosts()) {
-      for (const service of host.services(filter)) {
+      for (const service of host.findServices(filter)) {
         yield service;
       }
     }
@@ -169,17 +170,14 @@ export class Owner extends Base {
       return this.subnetNamed(cidr) || new Subnet(this, cidr);
     }
 
-    const subnets = [...this.subnets()];
-
-    const subnet = subnets.find(s => s.matchesAddress(address));
-    if (subnet) {
-      return subnet;
+    const subnet = this.subnetForAddress(address);
+    if (!subnet) {
+      this.error(
+        `Address without subnet ${address}`,
+        [...this.subnets()].map(s => s.address)
+      );
     }
-
-    this.error(
-      `Address without subnet ${address}`,
-      [...this.subnets()].map(s => s.address)
-    );
+    return subnet;
   }
 
   subnetForAddress(address) {
@@ -236,8 +234,6 @@ export class Owner extends Base {
 
   _resolveBridges() {
     for (const bridge of this.#bridges) {
-      //this.info(bridgeToJSON(bridge));
-
       const subnets = new Map();
 
       for (let network of bridge) {
@@ -253,7 +249,6 @@ export class Owner extends Base {
             this.error(`Unresolvabale bridge network`, network);
           }
         }
-
         // enshure only one subnet address in the bridge
         for (const subnet of network.subnets()) {
           const present = subnets.get(subnet.address);
@@ -277,23 +272,25 @@ export class Owner extends Base {
     }
   }
 
+  set administratorEmail(value) {
+    this.#administratorEmail = value;
+  }
+
   get administratorEmail() {
-    return this.#administratorEmail || "admin@" + this.domain;
+    if (this.#administratorEmail) {
+      return this.#administratorEmail;
+    }
+
+    if (this.owner) {
+      return this.owner.administratorEmail;
+    }
+
+    return "admin@" + this.domain;
   }
 
   *domains() {
     for (const location of this.locations()) {
       yield location.domain;
     }
-  }
-
-  toJSON() {
-    const json = super.toJSON();
-
-    for (const [typeName, slot] of this.#membersByType) {
-      json[typeName] = [...slot.keys()].sort();
-    }
-
-    return json;
   }
 }

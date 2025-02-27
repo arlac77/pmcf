@@ -7,7 +7,12 @@ import { Location, Network, Subnet, Host, Cluster, Root } from "pmcf";
  * @returns {Object}
  */
 export function root1(root, filter) {
-  const L1 = { instanceof: Location, owner: root, description: "somewhere", "country": "DE" };
+  const L1 = {
+    instanceof: Location,
+    owner: root,
+    description: "somewhere",
+    country: "DE"
+  };
   const L2 = {
     instanceof: Location,
     owner: root,
@@ -69,13 +74,13 @@ export function root1(root, filter) {
   p2.owner = L1C1;
 
   const all = {
-    L1,
-    "L1/C1": L1C1,
-    "L1/C1/p1": p1,
-    "L1/C1/p2": p2,
-    "L1/n1": L1n1,
-    "L1/n2": L1n2,
-    "L1/n1/host2": {
+    "/L1": L1,
+    "/L1/C1": L1C1,
+    "/L1/C1/p1": p1,
+    "/L1/C1/p2": p2,
+    "/L1/n1": L1n1,
+    "/L1/n2": L1n2,
+    "/L1/n1/host2": {
       name: "host2",
       instanceof: Host,
       owner: L1n1,
@@ -90,13 +95,21 @@ export function root1(root, filter) {
           cidrAddresses: ["192.168.1.2/24"],
           kind: "wifi"
         }
+      },
+      services: {
+        dns: { type: "dns", alias: "dns", priority: 7 },
+        smb: { type: "smb" }
       }
     },
-    "L1/host1": {
+    "/L1/host1": {
+      name: "host1",
       instanceof: Host,
       owner: L1,
       location: L1,
       os: "linux",
+      depends: ["d1", "d2", "d3"],
+      replaces: ["r1", "r2", "r3"],
+      provides: ["p1", "p2", "p3", "p4"],
       networkInterfaces: {
         eth0: {
           network: L1n1,
@@ -106,16 +119,20 @@ export function root1(root, filter) {
         }
       },
       services: {
-        dns: { type: "dns", alias: "dns" }
+        dns: { type: "dns", alias: "dns" },
+        smb: { type: "smb" }
       }
     },
-    L2,
-    "model/m1": {
+    "/L2": L2,
+    "/model/m1": {
       name: "model/m1",
       instanceof: Host,
       owner: root,
       isModel: true,
-      chassis: "server"
+      chassis: "server",
+      services: {
+        smb: { type: "smb" }
+      }
     }
   };
 

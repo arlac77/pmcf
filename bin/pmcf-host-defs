@@ -2,7 +2,7 @@
 
 import { writeFile, mkdir, copyFile, glob, chmod } from "node:fs/promises";
 import { join } from "node:path";
-import { Host } from "pmcf";
+import { types } from "pmcf";
 import { writeLines, sectionLines } from "../src/utils.mjs";
 import { prepare } from "../src/cmd.mjs";
 
@@ -10,7 +10,7 @@ const { root, args, options } = await prepare();
 
 const hostName = args[0];
 
-const host = await root.load(hostName, { type: Host });
+const host = await root.load(hostName, { type: types.host });
 
 await generateNetworkDefs(host, options.output);
 await generateMachineInfo(host, options.output);
@@ -105,7 +105,7 @@ async function generateNetworkDefs(host, dir) {
           })
         );
 
-        if (ni.arpbridge) {
+        if (ni.arpbridge.length) {
           networkSections.push(
             "",
             sectionLines("Link", { Promiscuous: "yes" })
