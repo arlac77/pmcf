@@ -17,7 +17,7 @@ test("Host basics", async t => {
   await root.loadAll();
 
   const host1 = await root.named("/L1/host1");
-  const eth0 = host1.networkInterfaceNamed("eth0");
+  const eth0 = host1.typeNamed("network_interface", "eth0");
   t.is(eth0.network, root.named("/L1/n1"));
 
   await assertObject(t, host1, root1(root, "/L1/host1"));
@@ -53,11 +53,11 @@ test("Host addresses", t => {
     }
   });
 
-  const lo = h1.networkInterfaceNamed("lo");
+  const lo = h1.typeNamed("network_interface", "lo");
 
   t.is(lo.name, "lo");
 
-  const eth0 = h1.networkInterfaceNamed("eth0");
+  const eth0 = h1.typeNamed("network_interface", "eth0");
 
   t.is(eth0.name, "eth0");
   t.is(eth0.network, n1);
@@ -163,8 +163,8 @@ test.skip("clone NetworkInterface", t => {
 
   const h2 = new Host(owner, { name: "h2" });
 
-  const ni = h1.networkInterfaceNamed("eth0").forOwner(h2);
+  const ni = h1.typeNamed("network_interface", "eth0").forOwner(h2);
 
-  t.is(n1.owner, h2);
-  t.is(n1.name, "eth0");
+  t.is(ni.owner, h2);
+  t.is(ni.name, "eth0");
 });

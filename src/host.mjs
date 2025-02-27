@@ -140,7 +140,6 @@ export class Host extends Base {
 
   get extends() {
     return this.#extends;
-    //  return this.#extends.map(e => this.expand(e));
   }
 
   set provides(value) {
@@ -247,20 +246,24 @@ export class Host extends Base {
     }
   }
 
+  typeNamed(typeName, name) {
+    if (typeName === NetworkInterfaceTypeDefinition.name) {
+      const ni = this.#networkInterfaces.get(name);
+      if (ni) {
+        return ni;
+      }
+    }
+
+    return super.typeNamed(typeName, name);
+  }
+
   get networkInterfaces() {
     return this.#networkInterfaces;
   }
 
   set networkInterfaces(networkInterface) {
     this.#networkInterfaces.set(networkInterface.name, networkInterface);
-
-    if (networkInterface.network) {
-      networkInterface.network.addObject(this);
-    }
-  }
-
-  networkInterfaceNamed(name) {
-    return this.#networkInterfaces.get(name);
+    networkInterface.network?.addObject(this);
   }
 
   *networkAddresses() {
@@ -306,8 +309,8 @@ const NetworkInterfaceTypeDefinition = {
     cidrAddresses: { type: "string", collection: true, writeable: false },
     rawAddresses: { type: "string", collection: true, writeable: false },
     network: { type: "network", collection: false, writeable: true },
-    destination: { type: "host", collection: false, writeable: true },
-    arpbridge: { type: "host", collection: true, writeable: true }
+    destination: { type: "string", collection: false, writeable: true },
+    arpbridge: { type: "network_interface", collection: true, writeable: true }
   }
 };
 
@@ -333,7 +336,6 @@ export class NetworkInterface extends Base {
   constructor(owner, data) {
     super(owner, data);
     this.read(data, NetworkInterfaceTypeDefinition);
-    //owner.addNetworkInterface(this);
   }
 
   addSubnet(address) {
@@ -402,6 +404,10 @@ export class NetworkInterface extends Base {
 
   get host() {
     return this.owner;
+  }
+
+  get network_interface() {
+    return this;
   }
 
   get network() {
