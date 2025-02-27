@@ -105,7 +105,7 @@ async function generateNetworkDefs(host, dir) {
           })
         );
 
-        if (ni.arpbridge.length) {
+        if (ni.arpbridge) {
           networkSections.push(
             "",
             sectionLines("Link", { Promiscuous: "yes" })
