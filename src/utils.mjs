@@ -5,7 +5,7 @@ export async function writeLines(dir, name, lines) {
   await mkdir(dir, { recursive: true });
   return writeFile(
     join(dir, name),
-    [...lines]
+    [...asArray(lines)]
       .flat()
       .filter(line => line !== undefined)
       .map(l => l + "\n")

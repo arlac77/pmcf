@@ -37,8 +37,8 @@ async function generateMachineInfo(host, dir) {
     }).map(([k, v]) => `${k}=${v}`)
   );
 
-  await writeLines(etcDir, "machine-id", [host["machine-id"]]);
-  await writeLines(etcDir, "hostname", [host.hostName]);
+  await writeLines(etcDir, "machine-id", host["machine-id"]);
+  await writeLines(etcDir, "hostname", host.hostName);
 }
 
 async function generateNetworkDefs(host, dir) {
