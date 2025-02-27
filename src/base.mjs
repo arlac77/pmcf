@@ -146,7 +146,11 @@ export class Base {
                     this.owner.typeNamed(property.type.name, value) ||
                     this.root.typeNamed(property.type.name, value); // TODO
 
-                  assign(property, object);
+                  if (object) {
+                    assign(property, object);
+                  } else {
+                    this.error("Not found", property.name, property.type.name, value);
+                  }
                 });
               }
             }
