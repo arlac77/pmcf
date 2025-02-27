@@ -71,7 +71,9 @@ export function root1(root, filter) {
     name: "C1",
     instanceof: Cluster,
 
-    hosts: [p1, p2]
+    hosts: [p1, p2],
+    masters: [p1],
+    backups: [p2]
   };
 
   p1.owner = L1C1;

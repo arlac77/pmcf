@@ -1,4 +1,6 @@
 {
+  "masters": "/L1/C1/p1",
+  "backups": "/L1/C1/p1",
   "authentication": {
     "type": "PASS",
     "password": "pass1234"
