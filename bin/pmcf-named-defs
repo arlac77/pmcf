@@ -32,7 +32,7 @@ async function generateNamedDefs(owner, targetDir) {
     const zones = [];
     const records = new Set();
 
-    const nameserver = (await owner.service({ type: "dns" }))?.owner;
+    const nameserver = (await owner.findService({ type: "dns" }))?.owner;
     const rname = dns.administratorEmail.replace(/@/, ".");
 
     let maxKeyLength;
