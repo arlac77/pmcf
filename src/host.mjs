@@ -23,14 +23,13 @@ const HostTypeDefinition = {
     },
     services: { type: "service", collection: true, writeable: true },
     os: { type: "string", collection: false, writeable: true },
+    "machine-id": { type: "string", collection: false, writeable: true },
     distribution: { type: "string", collection: false, writeable: true },
     deployment: { type: "string", collection: false, writeable: true },
     master: { type: "boolean", collection: false, writeable: true },
-    model: { type: "string", collection: false, writeable: false },
     serial: { type: "string", collection: false, writeable: true },
     vendor: { type: "string", collection: false, writeable: true },
     chassis: { type: "string", collection: false, writeable: true },
-    isModel: { type: "boolean", collection: false, writeable: false },
     priority: { type: "number", collection: false, writeable: true },
     replaces: { type: "string", collection: true, writeable: true },
     depends: { type: "string", collection: true, writeable: true },
@@ -38,7 +37,9 @@ const HostTypeDefinition = {
     extends: { type: "host", collection: true, writeable: true },
     cidrAddresses: { type: "string", collection: true, writeable: false },
     rawAddresses: { type: "string", collection: true, writeable: false },
-    rawAddress: { type: "string", collection: false, writeable: false }
+    rawAddress: { type: "string", collection: false, writeable: false },
+    model: { type: "string", collection: false, writeable: false },
+    isModel: { type: "boolean", collection: false, writeable: false }
   }
 };
 
