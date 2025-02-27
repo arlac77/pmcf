@@ -13,7 +13,9 @@ export function root1(root, filter) {
     description: "somewhere",
     domain: "mydomain.com",
     country: "DE",
-   // administratorEmail: "admin@mydomain.com"
+    "locales": ["C.UTF-8", "de_DE.UTF-8", "en_US.UTF-8"],
+    timezone: "Europe/Berlin"
+    // administratorEmail: "admin@mydomain.com"
   };
   const L2 = {
     instanceof: Location,

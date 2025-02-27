@@ -20,7 +20,10 @@ const OwnerTypeDefinition = {
       writeable: true
     },
     ntp: { type: "string", collection: false, writeable: true },
+    country: { type: "string", collection: false, writeable: true },
     domain: { type: "string", collection: false, writeable: true },
+    timezone: { type: "string", collection: false, writeable: true },
+    locales: { type: "string", collection: true, writeable: true },
     administratorEmail: { type: "string", collection: false, writeable: true }
   }
 };
@@ -30,7 +33,6 @@ const EMPTY = new Map();
 export class Owner extends Base {
   #membersByType = new Map();
   #bridges = new Set();
-  #administratorEmail;
   ntp;
 
   static {
@@ -270,6 +272,45 @@ export class Owner extends Base {
       yield* host.networkAddresses();
     }
   }
+
+  #country;
+
+  set country(value) {
+    this.#country = value;
+  }
+
+  get country() {
+    return this.#country || this.owner?.country;
+  }
+
+  #locales = new Set();
+
+  set locales(value) {
+    if (value instanceof Set) {
+      this.#locales = this.#locales.union(value);
+    } else {
+      this.#locales.add(value);
+    }
+  }
+
+  get locales() {
+    if(this.owner) {
+      return this.owner.locales.union(this.#locales);
+    }
+    return this.#locales;
+  }
+
+  #timezone;
+
+  set timezone(value) {
+    this.#timezone = value;
+  }
+
+  get timezone() {
+    return this.#timezone || this.owner?.timezone;
+  }
+
+  #administratorEmail;
 
   set administratorEmail(value) {
     this.#administratorEmail = value;

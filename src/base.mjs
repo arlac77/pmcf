@@ -248,6 +248,18 @@ export class Base {
     return this.owner?.administratorEmail;
   }
 
+  get locales() {
+    return this.owner?.locales;
+  }
+
+  get country() {
+    return this.owner?.country;
+  }
+
+  get timezone() {
+    return this.owner?.timezone;
+  }
+
   #directory;
   set directory(directory) {
     this.#directory = directory;
