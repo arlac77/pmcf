@@ -3,9 +3,10 @@ import { join } from "node:path";
 
 export async function writeLines(dir, name, lines) {
   await mkdir(dir, { recursive: true });
+  if (typeof lines === "string") lines = [lines];
   return writeFile(
     join(dir, name),
-    [...asArray(lines)]
+    [...lines]
       .flat()
       .filter(line => line !== undefined)
       .map(l => l + "\n")
@@ -130,9 +131,8 @@ export function encodeIP(address) {
   return _encode(isIPv4Address(address) ? ipv4 : ipv6, address);
 }
 
-export function formatCIDR(address,subnet)
-{
-  return subnet ? `${address}/${subnet.prefixLength}`: address;
+export function formatCIDR(address, subnet) {
+  return subnet ? `${address}/${subnet.prefixLength}` : address;
 }
 
 export function normalizeCIDR(address) {
@@ -164,8 +164,7 @@ export function normalizeCIDR(address) {
   return { prefix, prefixLength, cidr: `${prefix}/${prefixLength}` };
 }
 
-export function hasWellKnownSubnet(address)
-{
+export function hasWellKnownSubnet(address) {
   const n = encodeIP(address);
   return n === IPV4_LOCALHOST || n === IPV6_LOCALHOST || isLinkLocal(address);
 }
