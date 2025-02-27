@@ -294,7 +294,7 @@ export class Owner extends Base {
   }
 
   get locales() {
-    if(this.owner) {
+    if (this.owner) {
       return this.owner.locales.union(this.#locales);
     }
     return this.#locales;
@@ -321,11 +321,10 @@ export class Owner extends Base {
       return this.#administratorEmail;
     }
 
-    if (this.owner) {
+    if (this.owner && !this.#domain) {
       return this.owner.administratorEmail;
     }
 
-    //console.log("administratorEmail", this.domain, this.toString());
     return "admin@" + this.domain;
   }
 

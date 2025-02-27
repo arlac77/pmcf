@@ -149,7 +149,12 @@ export class Base {
                   if (object) {
                     assign(property, object);
                   } else {
-                    this.error("Not found", property.name, property.type.name, value);
+                    this.error(
+                      "Not found",
+                      property.name,
+                      property.type.name,
+                      value
+                    );
                   }
                 });
               }
