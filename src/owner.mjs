@@ -31,7 +31,6 @@ export class Owner extends Base {
   #membersByType = new Map();
   #bridges = new Set();
   #administratorEmail;
-  domain;
   ntp;
 
   static {
@@ -285,7 +284,18 @@ export class Owner extends Base {
       return this.owner.administratorEmail;
     }
 
+    //console.log("administratorEmail", this.domain, this.toString());
     return "admin@" + this.domain;
+  }
+
+  #domain;
+
+  set domain(value) {
+    this.#domain = value;
+  }
+
+  get domain() {
+    return this.#domain || this.owner?.domain;
   }
 
   *domains() {

@@ -240,6 +240,10 @@ export class Base {
     return this.owner?.network;
   }
 
+  get domain() {
+    return this.owner?.domain;
+  }
+
   get administratorEmail() {
     return this.owner?.administratorEmail;
   }

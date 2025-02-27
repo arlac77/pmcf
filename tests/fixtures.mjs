@@ -11,7 +11,9 @@ export function root1(root, filter) {
     instanceof: Location,
     owner: root,
     description: "somewhere",
-    country: "DE"
+    domain: "mydomain.com",
+    country: "DE",
+   // administratorEmail: "admin@mydomain.com"
   };
   const L2 = {
     instanceof: Location,
@@ -82,6 +84,7 @@ export function root1(root, filter) {
     "/L1/n2": L1n2,
     "/L1/n1/host2": {
       name: "host2",
+      domain: "mydomain.com",
       instanceof: Host,
       owner: L1n1,
       location: L1,

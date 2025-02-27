@@ -18,7 +18,7 @@ test("DNS basics", async t => {
     DNS: "192.168.1.1",
     FallbackDNS:
       "1.1.1.1 2606:4700:4700:0000:0000:0000:0000:1111 8.8.8.8 2001:4860:4860:0000:0000:0000:0000:8888",
-    Domains: "",
+    Domains: "mydomain.com",
     DNSSEC: "no",
     MulticastDNS: "yes",
     LLMNR: "no"
