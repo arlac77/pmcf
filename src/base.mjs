@@ -131,13 +131,17 @@ export class Base {
         case "string":
           {
             value = this.expand(value);
-            const object = this.typeNamed(property.type.name, value);
+            let object = this.typeNamed(property.type.name, value);
 
             if (object) {
               assign(property, object);
             } else {
               if (property.type.constructWithIdentifierOnly) {
-                new property.type.clazz(this.ownerFor(property, value), value);
+                object = new property.type.clazz(
+                  this.ownerFor(property, value),
+                  value
+                );
+                this.addObject(object);
               } else {
                 this.finalize(() => {
                   value = this.expand(value);

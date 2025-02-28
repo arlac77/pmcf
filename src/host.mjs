@@ -79,14 +79,19 @@ export class Host extends Base {
     if (data.extends) {
       this.finalize(() => {
         for (const host of this.extends) {
+          host.execFinalize();
           this.depends = host.depends;
           this.provides = host.provides;
           this.replaces = host.replaces;
 
-          for (const service of host.findServices()) {
+          for (const service of host.services) {
             this.services = service.forOwner(this);
           }
         }
+
+        this.#depends = this.expand(this.depends);
+        this.#provides = this.expand(this.provides);
+        this.#replaces = this.expand(this.replaces);
       });
     }
   }
@@ -258,6 +263,12 @@ export class Host extends Base {
       const ni = this.#networkInterfaces.get(name);
       if (ni) {
         return ni;
+      }
+    }
+    if (typeName === "service") {
+      const service = this.services.find(s => s.name === name);
+      if (service) {
+        return service;
       }
     }
 

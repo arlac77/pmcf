@@ -114,9 +114,9 @@ export function root1(root, filter) {
       owner: L1,
       location: L1,
       os: "linux",
-      depends: ["d1", "d2", "d3"],
-      replaces: ["r1", "r2", "r3"],
-      provides: ["p1", "p2", "p3", "p4"],
+      depends: ["d1", "d2-linux", "d3"],
+      replaces: ["r1", "r2-linux", "r3"],
+      provides: ["p1", "p2-linux", "p3", "p4"],
       networkInterfaces: {
         eth0: {
           network: L1n1,

@@ -8,11 +8,13 @@ test("Service basics", async t => {
     name: "l1",
     networks: { ethernet: { subnets: "10.0/16" } }
   });
+  root.addObject(l1);
 
   const h1 = new Host(l1, {
     name: "h1",
     networkInterfaces: { eth0: { ipAddresses: "10.0.0.1/16" } }
   });
+  h1.addObject(h1);
 
   const s1 = new Service(h1, {
     name: "dns",
@@ -69,6 +71,8 @@ test("Service without protocol", t => {
     name: "h1",
     networkInterfaces: { eth0: { ipAddresses: "10.0.0.1" } }
   });
+  root.addObject(h1);
+
   const s1 = new Service(h1, { name: "dhcp", weight: 5, priority: 3 });
   t.is(s1.srvPrefix, undefined);
 });
@@ -83,6 +87,9 @@ test("Service load", t => {
       dns: {}
     }
   });
+  root.addObject(h1);
 
   t.is(h1.services[0].name, "dns");
+
+  t.is(h1.typeNamed("service", "dns"), h1.services[0]);
 });

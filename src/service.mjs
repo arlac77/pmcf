@@ -51,7 +51,6 @@ export class Service extends Base {
   constructor(owner, data) {
     super(owner, data);
     this.read(data, ServiceTypeDefinition);
-  // owner.addService(this);
   }
 
   forOwner(owner) {
