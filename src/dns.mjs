@@ -9,7 +9,10 @@ const DNSServiceTypeDefinition = {
     hasSVRRecords: { type: "boolean", collection: false, writeable: true },
     hasCatalog: { type: "boolean", collection: false, writeable: true },
     recordTTL: { type: "string", collection: false, writeable: true },
-    soaUpdates: { type: "number", collection: true, writeable: true },
+    refresh: { type: "string", collection: false, writeable: true },
+    retry: { type: "string", collection: false, writeable: true },
+    expire: { type: "string", collection: false, writeable: true },
+    minimum: { type: "string", collection: false, writeable: true },
     forwardsTo: { type: "network", collection: true, writeable: true },
     allowedUpdates: { type: "string", collection: true, writeable: true }
   }
@@ -18,10 +21,14 @@ const DNSServiceTypeDefinition = {
 export class DNSService extends Base {
   allowedUpdates = [];
   recordTTL = "1W";
-  soaUpdates = [36000, 72000, 600000, 60000];
   hasSVRRecords = true;
   hasCatalog = true;
   #forwardsTo = [];
+
+  refresh = 36000;
+  retry = 72000;
+  expire = 600000;
+  minimum = 60000;
 
   static {
     addType(this);
@@ -37,6 +44,10 @@ export class DNSService extends Base {
     }
     super(owner, data);
     this.read(data, DNSServiceTypeDefinition);
+  }
+
+  get soaUpdates() {
+    return [this.refresh, this.retry, this.expire, this.minimum];
   }
 
   set forwardsTo(value) {
