@@ -8,6 +8,7 @@ const DNSServiceTypeDefinition = {
   properties: {
     hasSVRRecords: { type: "boolean", collection: false, writeable: true },
     hasCatalog: { type: "boolean", collection: false, writeable: true },
+    notify: { type: "boolean", collection: false, writeable: true },
     recordTTL: { type: "string", collection: false, writeable: true },
     refresh: { type: "string", collection: false, writeable: true },
     retry: { type: "string", collection: false, writeable: true },
@@ -23,6 +24,7 @@ export class DNSService extends Base {
   recordTTL = "1W";
   hasSVRRecords = true;
   hasCatalog = true;
+  notify = true;
   #forwardsTo = [];
 
   refresh = 36000;

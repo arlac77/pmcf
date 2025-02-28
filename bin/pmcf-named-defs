@@ -180,7 +180,7 @@ async function generateNamedDefs(owner, targetDir) {
           dns.allowedUpdates.length ? dns.allowedUpdates.join(";") : "none"
         }; };`
       );
-      zoneConfig.push(`  notify yes;`);
+      zoneConfig.push(`  notify ${dns.notify ? "yes" : "no"};`);
       zoneConfig.push(`};`);
       zoneConfig.push("");
 
