@@ -100,7 +100,7 @@ async function generateNamedDefs(owner, targetDir) {
 
       if (!addresses.has(address)) {
         addresses.add(address);
-  
+
         zone.records.add(
           createRecord(
             fullName(host.domainName),
@@ -108,6 +108,28 @@ async function generateNamedDefs(owner, targetDir) {
             normalizeIPAddress(address)
           )
         );
+
+        if (subnet) {
+          let reverseZone = reverseZones.get(subnet.address);
+
+          if (!reverseZone) {
+            const reverseArpa = reverseArpaAddress(subnet.prefix);
+            reverseZone = {
+              id: reverseArpa,
+              file: `${reverseArpa}.zone`,
+              records: new Set([SOARecord, NSRecord])
+            };
+            zones.push(reverseZone);
+            reverseZones.set(subnet.address, reverseZone);
+          }
+          reverseZone.records.add(
+            createRecord(
+              fullName(reverseArpaAddress(address)),
+              "PTR",
+              fullName(host.domainName)
+            )
+          );
+        }
       }
 
       if (!hosts.has(host)) {
@@ -131,28 +153,6 @@ async function generateNamedDefs(owner, targetDir) {
               )
             );
           }
-        }
-
-        if (subnet) {
-          let reverseZone = reverseZones.get(subnet.address);
-
-          if (!reverseZone) {
-            const reverseArpa = reverseArpaAddress(subnet.prefix);
-            reverseZone = {
-              id: reverseArpa,
-              file: `${reverseArpa}.zone`,
-              records: new Set([SOARecord, NSRecord])
-            };
-            zones.push(reverseZone);
-            reverseZones.set(subnet.address, reverseZone);
-          }
-          reverseZone.records.add(
-            createRecord(
-              fullName(reverseArpaAddress(address)),
-              "PTR",
-              fullName(host.domainName)
-            )
-          );
         }
       }
     }
@@ -205,18 +205,18 @@ async function generateNamedDefs(owner, targetDir) {
 export function reverseAddress(address) {
   if (isIPv6Address(address)) {
     return normalizeIPAddress(address)
-    .replaceAll(":", "")
-    .split("")
-    .reverse()
-    .join(".");
+      .replaceAll(":", "")
+      .split("")
+      .reverse()
+      .join(".");
   }
 
-    return address.split(".").reverse().join(".");
+  return address.split(".").reverse().join(".");
 }
 
 export function reverseArpaAddress(address) {
   return (
     reverseAddress(address) +
-    (isIPv6Address(address) ?  ".ip6.arpa" : ".in-addr.arpa")
+    (isIPv6Address(address) ? ".ip6.arpa" : ".in-addr.arpa")
   );
 }
