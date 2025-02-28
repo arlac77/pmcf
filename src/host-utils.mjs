@@ -1,0 +1,157 @@
+import { writeFile, mkdir, copyFile, glob, chmod } from "node:fs/promises";
+import { join } from "node:path";
+import { writeLines, sectionLines } from "../src/utils.mjs";
+
+export async function generateMachineInfo(host, dir) {
+  const etcDir = join(dir, "etc");
+  await writeLines(
+    etcDir,
+    "machine-info",
+    Object.entries({
+      CHASSIS: host.chassis,
+      DEPLOYMENT: host.deployment,
+      LOCATION: host.location.name,
+      HARDWARE_VENDOR: host.vendor,
+      HARDWARE_MODEL: host.modelName
+    }).map(([k, v]) => `${k}=${v}`)
+  );
+
+  await writeLines(etcDir, "machine-id", host["machine-id"]);
+  await writeLines(etcDir, "hostname", host.hostName);
+}
+
+export async function generateNetworkDefs(host, dir) {
+  const networkDir = join(dir, "etc/systemd/network");
+
+  for (const ni of host.networkInterfaces.values()) {
+    if (ni.name !== "eth0" && ni.hwaddr) {
+      await writeLines(networkDir, `${ni.name}.link`, [
+        sectionLines("Match", { MACAddress: ni.hwaddr }),
+        "",
+        sectionLines("Link", { Name: ni.name })
+      ]);
+    }
+
+    const networkSections = [sectionLines("Match", { Name: ni.name })];
+
+    for (const Address of ni.cidrAddresses) {
+      networkSections.push(
+        "",
+        sectionLines("Address", {
+          Address
+        })
+      );
+    }
+
+    switch (ni.kind) {
+      case "ethernet":
+      case "wifi":
+        const routeSectionExtra = ni.destination
+          ? { Destination: ni.destination }
+          : { Gateway: ni.gatewayAddress };
+
+        const networkSectionExtra = ni.arpbridge
+          ? {
+              IPForward: "yes",
+              IPv4ProxyARP: "yes"
+            }
+          : {};
+
+        networkSections.push(
+          "",
+          sectionLines("Network", {
+            ...networkSectionExtra,
+            DHCP: "no",
+            DHCPServer: "no",
+            MulticastDNS: "yes",
+            LinkLocalAddressing: "ipv6",
+            IPv6LinkLocalAddressGenerationMode: "stable-privacy"
+          }),
+          "",
+          sectionLines("Route", {
+            ...routeSectionExtra,
+            Scope: ni.scope,
+            Metric: ni.metric,
+            InitialCongestionWindow: 20,
+            InitialAdvertisedReceiveWindow: 20
+          }),
+          "",
+          sectionLines("IPv6AcceptRA", {
+            UseAutonomousPrefix: "true",
+            UseOnLinkPrefix: "true",
+            DHCPv6Client: "false",
+            Token: "eui64"
+          })
+        );
+
+        if (ni.arpbridge) {
+          networkSections.push(
+            "",
+            sectionLines("Link", { Promiscuous: "yes" })
+          );
+        }
+    }
+
+    await writeLines(networkDir, `${ni.name}.network`, networkSections);
+
+    switch (ni?.kind) {
+      case "wireguard":
+        {
+        }
+        break;
+      case "wifi": {
+        const d = join(dir, "etc/wpa_supplicant");
+        await mkdir(d, { recursive: true });
+        writeFile(
+          join(d, `wpa_supplicant-${ni.name}.conf`),
+          `country=${host.location.country}
+ctrl_interface=DIR=/run/wpa_supplicant GROUP=netdev
+update_config=1
+p2p_disabled=1
+network={
+  ssid="${ni.ssid}"
+  psk=${ni.psk}
+  scan_ssid=1
+}`,
+          "utf8"
+        );
+
+        host.postinstall.push(
+          `systemctl enable wpa_supplicant@${ni.name}.service`
+        );
+      }
+    }
+  }
+}
+
+export async function copySshKeys(host, dir) {
+  const sshDir = join(dir, "etc", "ssh");
+
+  await mkdir(sshDir, { recursive: true });
+
+  for await (const file of glob("ssh_host_*", { cwd: host.directory })) {
+    const destinationFileName = join(sshDir, file);
+    await copyFile(join(host.directory, file), destinationFileName);
+    await chmod(
+      destinationFileName,
+      destinationFileName.endsWith(".pub") ? 0o0644 : 0o0600
+    );
+  }
+}
+
+export async function generateKnownHosts(hosts, dir) {
+  const keys = [];
+  for await (const host of hosts) {
+    try {
+      const [alg, key, desc] = (await host.publicKey("ed25519")).split(/\s+/);
+
+      keys.push(`${host.domainName} ${alg} ${key}`);
+
+      for await (const addr of host.networkAddresses()) {
+        keys.push(`${addr.address} ${alg} ${key}`);
+      }
+    } catch {}
+  }
+
+  await writeLines(dir, "known_hosts", keys);
+}
