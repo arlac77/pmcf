@@ -129,6 +129,10 @@ export class Host extends Base {
     return this.#vendor || this.extends.find(e => e.vendor)?.vendor;
   }
 
+  get isTemplate() {
+    return this.isModel || this.name.match(/services\//); // TODO
+  }
+
   get isModel() {
     return this.#vendor || this.#chassis ? true : false;
   }
@@ -266,7 +270,10 @@ export class Host extends Base {
 
   set networkInterfaces(networkInterface) {
     this.#networkInterfaces.set(networkInterface.name, networkInterface);
-    networkInterface.network?.addObject(this);
+
+    if (!this.isTemplate) {
+      networkInterface.network?.addObject(this);
+    }
   }
 
   *networkAddresses() {
