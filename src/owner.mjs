@@ -46,7 +46,6 @@ export class Owner extends Base {
   constructor(owner, data) {
     super(owner, data);
     this.read(data, OwnerTypeDefinition);
-    owner?.addObject(this);
   }
 
   _traverse(...args) {

@@ -7,6 +7,8 @@ function to(t, owner) {
   for (let [name, factory] of Object.entries(types)) {
     t.log(`${factory.typeName} factory`);
     const object = new factory(owner, { name });
+    owner.addObject(object);
+
     name = object.fullName;
 
     t.is(object.owner, owner);
@@ -24,6 +26,8 @@ test(to, new Owner(new Root("/tmp"), { name: "o1" }));
 test("Owner ownerFor", t => {
   const root = new Root("/");
   const o1 = new Owner(root, { name: "o1" });
+  root.addObject(o1);
+
   t.is(
     o1.ownerFor(Owner.typeDefinition.properties.networks, { name: "n1" }),
     o1
@@ -39,6 +43,8 @@ test("Owner read write", t => {
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"],
     networks: { n1: { kind: "ethernet" } }
   });
+  root.addObject(o1);
+
   t.is(o1.administratorEmail, "master@somewhere");
   t.is(o1.subnetNamed("10.0/16").name, "10.0/16");
   t.is(o1.subnetNamed("fe80:0000:0000:0000/64").name, "fe80:0000:0000:0000/64");

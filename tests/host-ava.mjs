@@ -36,6 +36,7 @@ test("Host all", async t => {
 test("Host addresses", t => {
   const owner = new Root("/");
   const n1 = new Network(owner, { name: "n1" });
+  owner.addObject(n1);
 
   const h1 = new Host(n1, {
     name: "h1",
@@ -52,6 +53,7 @@ test("Host addresses", t => {
       }
     }
   });
+  n1.addObject(h1);
 
   const lo = h1.typeNamed("network_interface", "lo");
 
@@ -114,6 +116,7 @@ test("Host addresses with network", t => {
     name: "n1",
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
   });
+  owner.addObject(n1);
 
   const h1 = new Host(owner, {
     name: "h1",
@@ -124,6 +127,7 @@ test("Host addresses with network", t => {
       }
     }
   });
+  owner.addObject(h1);
 
   const s1 = n1.subnetNamed("10.0/16");
   t.is(s1.name, "10.0/16");
@@ -150,6 +154,7 @@ test.skip("clone NetworkInterface", t => {
     name: "n1",
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
   });
+  owner.addObject(n1);
 
   const h1 = new Host(owner, {
     name: "h1",
@@ -160,6 +165,7 @@ test.skip("clone NetworkInterface", t => {
       }
     }
   });
+  owner.addObject(h1);
 
   const h2 = new Host(owner, { name: "h2" });
 

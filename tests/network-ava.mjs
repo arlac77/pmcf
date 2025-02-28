@@ -18,6 +18,7 @@ test("Network addresses", t => {
     kind: "ethernet",
     scope: "global"
   });
+  owner.addObject(n1);
 
   t.is(n1.kind, "ethernet");
   t.is(n1.scope, "global");
@@ -44,7 +45,10 @@ test("Network bridges", t => {
   */
 
   const n3 = new Network(owner, { name: "n3", bridge: "/n4" });
+  owner.addObject(n3);
+
   const n4 = new Network(owner, { name: "n4" });
+  owner.addObject(n4);
 
   owner.execFinalize();
 
