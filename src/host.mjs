@@ -89,9 +89,11 @@ export class Host extends Base {
           }
         }
 
-        this.#depends = this.expand(this.depends);
-        this.#provides = this.expand(this.provides);
-        this.#replaces = this.expand(this.replaces);
+        if (!this.isTemplate) {
+          this.#depends = this.expand(this.depends);
+          this.#provides = this.expand(this.provides);
+          this.#replaces = this.expand(this.replaces);
+        }
       });
     }
   }
