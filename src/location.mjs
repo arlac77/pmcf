@@ -1,5 +1,8 @@
+import { mkdir, copyFile } from "node:fs/promises";
+import { join } from "node:path";
 import { Owner } from "./owner.mjs";
 import { addType } from "./types.mjs";
+import { writeLines, sectionLines } from "./utils.mjs";
 
 const LocationTypeDefinition = {
   name: "location",
@@ -30,7 +33,6 @@ export class Location extends Owner {
     return this;
   }
 
-
   locationNamed(name) {
     if (this.isNamed(name)) {
       return this;
@@ -41,5 +43,53 @@ export class Location extends Owner {
 
   get network() {
     return [...this.typeList("network")][0] || super.network;
+  }
+
+  async preparePackage(stagingDir) {
+    const { properties } = await super.preparePackage(stagingDir);
+
+    await writeLines(
+      join(stagingDir, "etc/systemd/resolved.conf.d"),
+      `${this.name}.conf`,
+      sectionLines("Resolve", await this.dns.resolvedConfig())
+    );
+
+    await writeLines(
+      join(stagingDir, "etc/systemd/journald.conf.d"),
+      `${this.name}.conf`,
+      sectionLines("Journal", {
+        Compress: "yes",
+        SystemMaxUse: "500M",
+        SyncIntervalSec: "15m"
+      })
+    );
+
+    await writeLines(
+      join(stagingDir, "etc/systemd/timesyncd.conf.d"),
+      `${this.name}.conf`,
+      sectionLines("Time", {
+        NTP: this.ntp.servers.join(" "),
+        PollIntervalMinSec: 60,
+        SaveIntervalSec: 3600
+      })
+    );
+
+    const locationDir = join(stagingDir, "etc", "location");
+
+    await mkdir(locationDir, { recursive: true });
+
+    await copyFile(
+      join(this.directory, "location.json"),
+      join(locationDir, "location.json")
+    );
+
+    properties.provides = [
+      "location",
+      "mf-location",
+      `mf-location-${this.name}`
+    ];
+    properties.replaces = [`mf-location-${this.name}`];
+
+    return { properties };
   }
 }

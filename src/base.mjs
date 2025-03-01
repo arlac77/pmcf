@@ -284,6 +284,19 @@ export class Base {
       : this.owner.fullName;
   }
 
+  get packageName() {
+    return `${this.constructor.typeDefinition.name}-${this.name}`;
+  }
+
+  async preparePackage(stagingDir) {
+    return {
+      properties: {
+        name: this.packageName,
+        description: `${this.constructor.typeDefinition.name} definitions for ${this.fullName}`
+      }
+    };
+  }
+
   expand(object) {
     switch (typeof object) {
       case "string":

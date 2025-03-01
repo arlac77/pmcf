@@ -24,3 +24,13 @@ test("DNS basics", async t => {
     LLMNR: "no"
   });
 });
+
+
+test("DNS named", async t => {
+  const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
+  await root.loadAll();
+
+  const dns = await root.named("/L1/dns");
+
+  t.is(dns.fullName, "/L1/dns");
+});

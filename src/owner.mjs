@@ -75,6 +75,18 @@ export class Owner extends Base {
         return object;
       }
     }
+
+    // TODO cascade
+    const parts = name.split(/\//);
+
+    if (parts.length >= 2) {
+      const last = parts.pop();
+
+      const next = this.named(parts.join("/"));
+      if (next) {
+        return next.named(last);
+      }
+    }
   }
 
   typeNamed(typeName, name) {

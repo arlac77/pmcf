@@ -22,10 +22,8 @@
   ],
   "license": "0BSD",
   "bin": {
-    "pmcf-host-defs": "./bin/pmcf-host-defs",
+    "pmcf-package": "./bin/pmcf-package",
     "pmcf-info": "./bin/pmcf-info",
-    "pmcf-location-defs": "./bin/pmcf-location-defs",
-    "pmcf-named-defs": "./bin/pmcf-named-defs",
     "pmcf-network": "./bin/pmcf-network"
   },
   "scripts": {

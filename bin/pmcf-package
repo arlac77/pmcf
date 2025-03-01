@@ -1,0 +1,37 @@
+#!/usr/bin/env node
+
+import {
+  FileContentProvider,
+  createPublishingDetails,
+  ARCH
+} from "npm-pkgbuild";
+import { prepare } from "../src/cmd.mjs";
+
+const { root, args, options } = await prepare();
+
+const objectName = args[0];
+const object = await root.load(objectName);
+
+console.log(object);
+const publishingDetails = createPublishingDetails(["somewhere"]);
+
+const { properties } = await object.preparePackage(options.output);
+
+properties.version = "0.0.0";
+
+console.log(properties);
+
+const sources = [options.output].map(base =>
+  new FileContentProvider({
+    base
+  })[Symbol.asyncIterator]()
+);
+
+const output = new ARCH(properties);
+
+const fileName = await output.create(sources, [], {}, publishingDetails, {
+  destination: "dist",
+  verbose: true
+});
+
+console.log(fileName);

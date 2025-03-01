@@ -11,6 +11,12 @@ import {
   hasWellKnownSubnet
 } from "./utils.mjs";
 import { addType } from "./types.mjs";
+import {
+  generateNetworkDefs,
+  generateMachineInfo,
+  copySshKeys,
+  generateKnownHosts
+} from "./host-utils.mjs";
 
 const HostTypeDefinition = {
   name: "host",
@@ -317,6 +323,24 @@ export class Host extends Base {
 
   async publicKey(type = "ed25519") {
     return readFile(join(this.directory, `ssh_host_${type}_key.pub`), "utf8");
+  }
+
+  async preparePackage(stagingDir) {
+    const { properties } = await super.preparePackage(stagingDir);
+    await generateNetworkDefs(this, stagingDir);
+    await generateMachineInfo(this, stagingDir);
+    await copySshKeys(this, stagingDir);
+    await generateKnownHosts(
+      this.owner.hosts(),
+      join(stagingDir, "root", ".ssh")
+    );
+
+    properties.provides = [...this.provides];
+    properties.depends = [this.location.packageName, ...this.depends];
+    properties.replaces = [`mf-${this.hostName}`, ...this.replaces];
+    properties.backup = "root/.ssh/known_hosts";
+
+    return { properties };
   }
 }
 
