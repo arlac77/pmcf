@@ -292,7 +292,8 @@ export class Base {
     return {
       properties: {
         name: this.packageName,
-        description: `${this.constructor.typeDefinition.name} definitions for ${this.fullName}`
+        description: `${this.constructor.typeDefinition.name} definitions for ${this.fullName}`,
+        access: "private"
       }
     };
   }
