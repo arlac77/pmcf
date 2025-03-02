@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 
+import { join } from "node:path";
+import { readFile } from "node:fs/promises";
+import { packageDirectory } from "pkg-dir";
+
 import {
   FileContentProvider,
   createPublishingDetails,
@@ -12,12 +16,17 @@ const { root, args, options } = await prepare();
 const objectName = args[0];
 const object = await root.load(objectName);
 
+const pkgDir = await packageDirectory({ cwd: options.root });
+
+const pkg = JSON.parse(await readFile(join(pkgDir,'package.json'), "utf8"));
+
+
 console.log(object);
 const publishingDetails = createPublishingDetails(["somewhere"]);
 
 const { properties } = await object.preparePackage(options.output);
 
-properties.version = "0.0.0";
+properties.version = pkg.version;
 
 console.log(properties);
 
@@ -30,8 +39,8 @@ const sources = [options.output].map(base =>
 const output = new ARCH(properties);
 
 const fileName = await output.create(sources, [], publishingDetails, {
-  destination: "dist",
-  verbose: true
+  ...options,
+  destination: "dist"
 });
 
 console.log(fileName);
