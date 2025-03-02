@@ -3,7 +3,6 @@
 import { join } from "node:path";
 import { readFile } from "node:fs/promises";
 import { packageDirectory } from "pkg-dir";
-
 import {
   FileContentProvider,
   createPublishingDetails,
@@ -14,20 +13,18 @@ import { prepare } from "../src/cmd.mjs";
 const { root, args, options } = await prepare();
 
 const objectName = args[0];
-const object = await root.load(objectName);
 
 const pkgDir = await packageDirectory({ cwd: options.root });
-
 const pkg = JSON.parse(await readFile(join(pkgDir,'package.json'), "utf8"));
 
-
-console.log(object);
 const publishingDetails = createPublishingDetails(["somewhere"]);
+
+const object = await root.load(objectName);
 
 const { properties } = await object.preparePackage(options.output);
 
 properties.version = pkg.version;
-
+properties.license = pkg.license;
 console.log(properties);
 
 const sources = [options.output].map(base =>
