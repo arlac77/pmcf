@@ -12,32 +12,27 @@ import { prepare } from "../src/cmd.mjs";
 
 const { root, args, options } = await prepare();
 
-const objectName = args[0];
-
 const pkgDir = await packageDirectory({ cwd: options.root });
-const pkg = JSON.parse(await readFile(join(pkgDir,'package.json'), "utf8"));
+const pkg = JSON.parse(await readFile(join(pkgDir, "package.json"), "utf8"));
 
 const publishingDetails = createPublishingDetails(["somewhere"]);
 
-const object = await root.load(objectName);
+for (const name of args) {
+  const object = await root.load(name);
+  const stagingDir = join(options.output, object.fullName);
+  const { properties } = await object.preparePackage(stagingDir);
 
-const { properties } = await object.preparePackage(options.output);
+  properties.version = pkg.version;
+  properties.license = pkg.license;
+  console.log(properties);
 
-properties.version = pkg.version;
-properties.license = pkg.license;
-console.log(properties);
+  const output = new ARCH(properties);
+  const sources = new FileContentProvider({ base: stagingDir})[Symbol.asyncIterator]();
 
-const sources = [options.output].map(base =>
-  new FileContentProvider({
-    base
-  })[Symbol.asyncIterator]()
-);
+  const fileName = await output.create(sources, [], publishingDetails, {
+    ...options,
+    destination: "dist"
+  });
 
-const output = new ARCH(properties);
-
-const fileName = await output.create(sources, [], publishingDetails, {
-  ...options,
-  destination: "dist"
-});
-
-console.log(fileName);
+  console.log(fileName);
+}
