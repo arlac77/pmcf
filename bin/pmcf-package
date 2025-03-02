@@ -29,7 +29,7 @@ const sources = [options.output].map(base =>
 
 const output = new ARCH(properties);
 
-const fileName = await output.create(sources, [], {}, publishingDetails, {
+const fileName = await output.create(sources, [], publishingDetails, {
   destination: "dist",
   verbose: true
 });
