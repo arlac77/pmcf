@@ -108,7 +108,7 @@ export class DNSService extends Base {
 
     await generateNamedDefs(this, stagingDir);
 
-    properties.depends = ["mf-named"];
+    properties.dependencies = ["mf-named"];
     properties.replaces = ["mf-named-zones"];
 
     return { properties };

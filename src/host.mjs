@@ -335,8 +335,8 @@ export class Host extends Base {
       join(stagingDir, "root", ".ssh")
     );
 
+    properties.dependencies = [this.location.packageName, ...this.depends];
     properties.provides = [...this.provides];
-    properties.depends = [this.location.packageName, ...this.depends];
     properties.replaces = [`mf-${this.hostName}`, ...this.replaces];
     properties.backup = "root/.ssh/known_hosts";
 
