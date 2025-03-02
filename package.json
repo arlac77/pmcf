@@ -22,9 +22,9 @@
   ],
   "license": "0BSD",
   "bin": {
-    "pmcf-package": "./bin/pmcf-package",
     "pmcf-info": "./bin/pmcf-info",
-    "pmcf-network": "./bin/pmcf-network"
+    "pmcf-network": "./bin/pmcf-network",
+    "pmcf-package": "./bin/pmcf-package"
   },
   "scripts": {
     "prepare": "node --run prepare:typescript",
