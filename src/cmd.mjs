@@ -6,6 +6,11 @@ export async function prepare() {
   const { values, positionals } = parseArgs({
     args: argv.slice(2),
     options: {
+      verbose: {
+        type: "boolean",
+        short: "v",
+        default: false
+      },
       root: {
         type: "string",
         short: "r",
@@ -14,7 +19,7 @@ export async function prepare() {
       output: {
         type: "string",
         short: "o",
-        default: cwd()
+       // default: cwd()
       }
     },
     allowPositionals: true

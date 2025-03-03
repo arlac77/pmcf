@@ -2,6 +2,7 @@
 
 import { join } from "node:path";
 import { readFile, mkdtemp } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { packageDirectory } from "pkg-dir";
 import {
   FileContentProvider,
@@ -11,6 +12,10 @@ import {
 import { prepare } from "../src/cmd.mjs";
 
 const { root, args, options } = await prepare();
+
+if (!options.output) {
+  options.output = await mkdtemp(tmpdir());
+}
 
 const pkgDir = await packageDirectory({ cwd: options.root });
 const pkg = JSON.parse(await readFile(join(pkgDir, "package.json"), "utf8"));
@@ -22,6 +27,7 @@ for (const name of args) {
   const stagingDir = join(options.output, object.fullName);
   const { properties } = await object.preparePackage(stagingDir);
 
+  //properties.verbose = true;
   properties.version = pkg.version;
   properties.license = pkg.license;
   console.log(properties);
@@ -31,7 +37,9 @@ for (const name of args) {
     Symbol.asyncIterator
   ]();
 
-  const destination = await mkdtemp(output.constructor.name);
+  const destination = await mkdtemp(
+    join(options.output, output.constructor.name)
+  );
   console.log(destination);
 
   const artifact = await output.create(sources, [], publishingDetails, {
@@ -41,9 +49,11 @@ for (const name of args) {
 
   console.log(artifact);
 
+  /*
   await Promise.all(
     publishingDetails.map(publishDetail =>
       output.publish(artifact, publishDetail, output.properties)
     )
   );
+  */
 }
