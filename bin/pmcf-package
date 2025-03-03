@@ -14,7 +14,7 @@ import { prepare } from "../src/cmd.mjs";
 const { root, args, options } = await prepare();
 
 if (!options.output) {
-  options.output = await mkdtemp(tmpdir());
+  options.output = await mkdtemp(join(tmpdir(), "pmcf"));
 }
 
 const pkgDir = await packageDirectory({ cwd: options.root });
@@ -27,33 +27,24 @@ for (const name of args) {
   const stagingDir = join(options.output, object.fullName);
   const { properties } = await object.preparePackage(stagingDir);
 
-  //properties.verbose = true;
   properties.version = pkg.version;
   properties.license = pkg.license;
-  console.log(properties);
+
+  if (properties.verbose) {
+    console.log(properties);
+  }
 
   const output = new ARCH(properties);
-  const sources = new FileContentProvider({ base: stagingDir })[
-    Symbol.asyncIterator
-  ]();
+  const sources = [new FileContentProvider(stagingDir)[Symbol.asyncIterator]()];
+  const artifact = await output.create(sources, [], publishingDetails, options);
 
-  const destination = await mkdtemp(
-    join(options.output, output.constructor.name)
-  );
-  console.log(destination);
+  if (properties.verbose) {
+    console.log(artifact);
+  }
 
-  const artifact = await output.create(sources, [], publishingDetails, {
-    ...options,
-    destination
-  });
-
-  console.log(artifact);
-
-  /*
   await Promise.all(
     publishingDetails.map(publishDetail =>
-      output.publish(artifact, publishDetail, output.properties)
+      output.publish(artifact, publishDetail)
     )
   );
-  */
 }
