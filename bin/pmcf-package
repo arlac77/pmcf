@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { join } from "node:path";
-import { readFile } from "node:fs/promises";
+import { readFile, mkdtemp } from "node:fs/promises";
 import { packageDirectory } from "pkg-dir";
 import {
   FileContentProvider,
@@ -15,9 +15,7 @@ const { root, args, options } = await prepare();
 const pkgDir = await packageDirectory({ cwd: options.root });
 const pkg = JSON.parse(await readFile(join(pkgDir, "package.json"), "utf8"));
 
-const publishingDetails = createPublishingDetails(options.publish, {
-  ...process.env
-});
+const publishingDetails = createPublishingDetails(options.publish, process.env);
 
 for (const name of args) {
   const object = await root.load(name);
@@ -29,18 +27,23 @@ for (const name of args) {
   console.log(properties);
 
   const output = new ARCH(properties);
-  const sources = new FileContentProvider({ base: stagingDir})[Symbol.asyncIterator]();
+  const sources = new FileContentProvider({ base: stagingDir })[
+    Symbol.asyncIterator
+  ]();
+
+  const destination = await mkdtemp(output.constructor.name);
+  console.log(destination);
 
   const artifact = await output.create(sources, [], publishingDetails, {
     ...options,
-    destination: "dist"
+    destination
   });
+
+  console.log(artifact);
 
   await Promise.all(
     publishingDetails.map(publishDetail =>
       output.publish(artifact, publishDetail, output.properties)
     )
   );
-
-  console.log(artifact);
 }
