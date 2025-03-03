@@ -35,7 +35,9 @@ for (const name of args) {
   }
 
   const output = new ARCH(properties);
-  const sources = [new FileContentProvider(stagingDir)[Symbol.asyncIterator]()];
+  const sources = [
+    new FileContentProvider(stagingDir + "/")[Symbol.asyncIterator]()
+  ];
   const artifact = await output.create(sources, [], publishingDetails, options);
 
   if (properties.verbose) {
