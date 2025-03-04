@@ -15,7 +15,6 @@ if (!options.output) {
 
 const pkgDir = await packageDirectory({ cwd: options.root });
 const pkg = JSON.parse(await readFile(join(pkgDir, "package.json"), "utf8"));
-
 const publishingDetails = createPublishingDetails(options.publish, process.env);
 
 for (const name of args) {
@@ -26,6 +25,9 @@ for (const name of args) {
   for (const outputFactory of outputs) {
     properties.version = pkg.version;
     properties.license = pkg.license;
+    properties.maintainer = pkg.contributors.map(
+      c => c.name + (c.email ? ` <${c.email}>` : "")
+    );
 
     if (properties.verbose) {
       console.log(properties);
