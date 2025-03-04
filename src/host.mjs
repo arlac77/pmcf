@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { allOutputs } from "npm-pkgbuild";
 import { Base } from "./base.mjs";
 import { networkProperties } from "./network-support.mjs";
 import {
@@ -17,6 +18,7 @@ import {
   copySshKeys,
   generateKnownHosts
 } from "./host-utils.mjs";
+import { OutputFileType } from "typescript";
 
 const HostTypeDefinition = {
   name: "host",
@@ -335,8 +337,14 @@ export class Host extends Base {
     return readFile(join(this.directory, `ssh_host_${type}_key.pub`), "utf8");
   }
 
+  get outputs()
+  {
+    return new Set(allOutputs.filter(o=>o.name === this.packaging));
+  }
+
   async preparePackage(stagingDir) {
-    const { properties } = await super.preparePackage(stagingDir);
+
+    const { properties, outputs } = await super.preparePackage(stagingDir);
     await generateNetworkDefs(this, stagingDir);
     await generateMachineInfo(this, stagingDir);
     await copySshKeys(this, stagingDir);
@@ -350,7 +358,7 @@ export class Host extends Base {
     properties.replaces = [`mf-${this.hostName}`, ...this.replaces];
     properties.backup = "root/.ssh/known_hosts";
 
-    return { properties };
+    return { properties, outputs };
   }
 }
 

@@ -4,11 +4,7 @@ import { join } from "node:path";
 import { readFile, mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { packageDirectory } from "pkg-dir";
-import {
-  FileContentProvider,
-  createPublishingDetails,
-  ARCH
-} from "npm-pkgbuild";
+import { FileContentProvider, createPublishingDetails } from "npm-pkgbuild";
 import { prepare } from "../src/cmd.mjs";
 
 const { root, args, options } = await prepare();
@@ -25,28 +21,37 @@ const publishingDetails = createPublishingDetails(options.publish, process.env);
 for (const name of args) {
   const object = await root.load(name);
   const stagingDir = join(options.output, object.fullName);
-  const { properties } = await object.preparePackage(stagingDir);
+  const { properties, outputs } = await object.preparePackage(stagingDir);
 
-  properties.version = pkg.version;
-  properties.license = pkg.license;
+  for (const outputFactory of outputs) {
+    properties.version = pkg.version;
+    properties.license = pkg.license;
 
-  if (properties.verbose) {
-    console.log(properties);
+    if (properties.verbose) {
+      console.log(properties);
+    }
+
+    const sources = [
+      new FileContentProvider(stagingDir + "/")[Symbol.asyncIterator]()
+    ];
+
+    const output = new outputFactory(properties);
+
+    const artifact = await output.create(
+      sources,
+      [],
+      publishingDetails,
+      options
+    );
+
+    if (properties.verbose) {
+      console.log(artifact);
+    }
+
+    await Promise.all(
+      publishingDetails.map(publishDetail =>
+        output.publish(artifact, publishDetail)
+      )
+    );
   }
-
-  const output = new ARCH(properties);
-  const sources = [
-    new FileContentProvider(stagingDir + "/")[Symbol.asyncIterator]()
-  ];
-  const artifact = await output.create(sources, [], publishingDetails, options);
-
-  if (properties.verbose) {
-    console.log(artifact);
-  }
-
-  await Promise.all(
-    publishingDetails.map(publishDetail =>
-      output.publish(artifact, publishDetail)
-    )
-  );
 }

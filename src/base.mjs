@@ -288,8 +288,13 @@ export class Base {
     return `${this.constructor.typeDefinition.name}-${this.name}`;
   }
 
+  get outputs() {
+    return new Set();
+  }
+
   async preparePackage(stagingDir) {
     return {
+      outputs: this.outputs,
       properties: {
         name: this.packageName,
         description: `${this.constructor.typeDefinition.name} definitions for ${this.fullName}`,

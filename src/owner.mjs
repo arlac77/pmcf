@@ -278,6 +278,15 @@ export class Owner extends Base {
     }
   }
 
+  get outputs() {
+    let all = new Set();
+    for (const host of this.hosts()) {
+      all = all.union(host.outputs);
+    }
+
+    return all;
+  }
+
   *networkAddresses() {
     for (const host of this.hosts()) {
       yield* host.networkAddresses();
