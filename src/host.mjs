@@ -38,6 +38,7 @@ const HostTypeDefinition = {
     serial: { type: "string", collection: false, writeable: true },
     vendor: { type: "string", collection: false, writeable: true },
     chassis: { type: "string", collection: false, writeable: true },
+    packaging: { type: "string", collection: false, writeable: true },
     priority: { type: "number", collection: false, writeable: true },
     replaces: { type: "string", collection: true, writeable: true },
     depends: { type: "string", collection: true, writeable: true },
@@ -66,6 +67,7 @@ export class Host extends Base {
   #deployment;
   #chassis;
   #vendor;
+  #packaging;
 
   static {
     addType(this);
@@ -140,6 +142,14 @@ export class Host extends Base {
 
   get vendor() {
     return this.#vendor || this.extends.find(e => e.vendor)?.vendor;
+  }
+
+  set packaging(value) {
+    this.#packaging = value;
+  }
+
+  get packaging() {
+    return this.#packaging || this.extends.find(e => e.packaging)?.packaging;
   }
 
   get isTemplate() {

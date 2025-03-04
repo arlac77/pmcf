@@ -93,6 +93,7 @@ export function root1(root, filter) {
       owner: L1n1,
       location: L1,
       os: "linux",
+      packaging: "arch",
       networkInterfaces: {
         wlan0: {
           network: L1n1,

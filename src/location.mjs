@@ -91,6 +91,10 @@ export class Location extends Owner {
     properties.replaces = [`mf-location-${this.name}`];
 
     const install = "location.install";
+
+	  console.log(
+      new URL(install, import.meta.url));
+
     await copyFile(
       new URL(install, import.meta.url),
       join(stagingDir, install)
