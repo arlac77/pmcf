@@ -90,6 +90,12 @@ export class Location extends Owner {
     ];
     properties.replaces = [`mf-location-${this.name}`];
 
+    await copyFile(
+      new URL("location.install",import.url),
+      join(stagingDir,"location.install));
+
+    properties.install = "location.install";
+    
     return { properties };
   }
 }

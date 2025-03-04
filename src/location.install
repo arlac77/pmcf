@@ -1,0 +1,20 @@
+config_locales()
+{
+    jq -r .locales[] /etc/location/location.json|while read locale
+    do
+        sed -i -e "s/^#$locale/$locale/" /etc/locale.gen
+    done
+
+    locale-gen
+    localectl set-locale LANG=$(jq -r .locales[0] /etc/location/location.json)
+}
+
+post_install()
+{
+    config_locales
+}
+
+post_upgrade()
+{
+    config_locales
+}
