@@ -104,14 +104,14 @@ export class DNSService extends Base {
   }
 
   async preparePackage(stagingDir) {
-    const { properties } = await super.preparePackage(stagingDir);
+    const result = await super.preparePackage(stagingDir);
 
     await generateNamedDefs(this, stagingDir);
 
-    properties.dependencies = ["mf-named"];
-    properties.replaces = ["mf-named-zones"];
+    result.properties.dependencies = ["mf-named"];
+    result.properties.replaces = ["mf-named-zones"];
 
-    return { properties };
+    return result;
   }
 }
 

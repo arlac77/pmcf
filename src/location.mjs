@@ -46,7 +46,7 @@ export class Location extends Owner {
   }
 
   async preparePackage(stagingDir) {
-    const { properties, outputs } = await super.preparePackage(stagingDir);
+    const result = await super.preparePackage(stagingDir);
 
     await writeLines(
       join(stagingDir, "etc/systemd/resolved.conf.d"),
@@ -83,12 +83,12 @@ export class Location extends Owner {
       join(locationDir, "location.json")
     );
 
-    properties.provides = [
+    result.properties.provides = [
       "location",
       "mf-location",
       `mf-location-${this.name}`
     ];
-    properties.replaces = [`mf-location-${this.name}`];
+    result.properties.replaces = [`mf-location-${this.name}`];
 
     /*
     const install = "location.install";
@@ -100,9 +100,9 @@ export class Location extends Owner {
       join(stagingDir, install)
     );
 
-    properties.install = install;
+    result.properties.install = install;
     */
    
-    return { properties, outputs };
+    return result;
   }
 }

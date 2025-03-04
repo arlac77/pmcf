@@ -343,8 +343,7 @@ export class Host extends Base {
   }
 
   async preparePackage(stagingDir) {
-
-    const { properties, outputs } = await super.preparePackage(stagingDir);
+    const result = await super.preparePackage(stagingDir);
     await generateNetworkDefs(this, stagingDir);
     await generateMachineInfo(this, stagingDir);
     await copySshKeys(this, stagingDir);
@@ -353,12 +352,12 @@ export class Host extends Base {
       join(stagingDir, "root", ".ssh")
     );
 
-    properties.dependencies = [this.location.packageName, ...this.depends];
-    properties.provides = [...this.provides];
-    properties.replaces = [`mf-${this.hostName}`, ...this.replaces];
-    properties.backup = "root/.ssh/known_hosts";
+    result.properties.dependencies = [this.location.packageName, ...this.depends];
+    result.properties.provides = [...this.provides];
+    result.properties.replaces = [`mf-${this.hostName}`, ...this.replaces];
+    result.properties.backup = "root/.ssh/known_hosts";
 
-    return { properties, outputs };
+    return result;
   }
 }
 
