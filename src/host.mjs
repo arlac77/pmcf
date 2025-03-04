@@ -18,7 +18,6 @@ import {
   copySshKeys,
   generateKnownHosts
 } from "./host-utils.mjs";
-import { OutputFileType } from "typescript";
 
 const HostTypeDefinition = {
   name: "host",
