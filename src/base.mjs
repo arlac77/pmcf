@@ -289,7 +289,7 @@ export class Base {
   }
 
   get outputs() {
-    return new Set();
+    return this.owner ? this.owner.outputs : new Set();
   }
 
   async preparePackage(stagingDir) {

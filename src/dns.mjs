@@ -103,6 +103,10 @@ export class DNSService extends Base {
     };
   }
 
+  get packageName() {
+    return `named-${this.owner.name}`;
+  }
+
   async preparePackage(stagingDir) {
     const result = await super.preparePackage(stagingDir);
 
