@@ -290,10 +290,10 @@ async function generateNamedDefs(dns, targetDir) {
         }
       }
 
-      writeLines(join(targetDir, "var/lib/named"), zone.file, zone.records);
+      await writeLines(join(targetDir, "var/lib/named"), zone.file, zone.records);
     }
 
-    writeLines(
+    await writeLines(
       join(targetDir, "etc/named.d/zones"),
       `${domain}.zone.conf`,
       zoneConfig
