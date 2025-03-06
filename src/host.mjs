@@ -329,6 +329,10 @@ export class Host extends Base {
     return readFile(join(this.directory, `ssh_host_${type}_key.pub`), "utf8");
   }
 
+  get packageName() {
+    return `${this.constructor.typeDefinition.name}-${this.owner.name}-${this.name}`;
+  }
+
   async preparePackage(stagingDir) {
     const result = await super.preparePackage(stagingDir);
     await generateNetworkDefs(this, stagingDir);
