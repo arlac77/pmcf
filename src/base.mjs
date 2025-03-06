@@ -271,6 +271,23 @@ export class Base {
     return this.owner?.timezone;
   }
 
+  findService(filter) {
+    let best;
+    for (const service of this.findServices(filter)) {
+      if (!best || service.priority < best.priority) {
+        best = service;
+      }
+    }
+
+    return best;
+  }
+
+  *findServices(filter) {
+    if (this.owner) {
+      yield* this.owner?.findServices(filter);
+    }
+  }
+
   #directory;
   set directory(directory) {
     this.#directory = directory;

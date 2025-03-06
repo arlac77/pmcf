@@ -121,17 +121,6 @@ export class Owner extends Base {
     this.addTypeObject(object.typeName, object.name, object);
   }
 
-  findService(filter) {
-    let best;
-    for (const service of this.findServices(filter)) {
-      if (!best || service.priority < best.priority) {
-        best = service;
-      }
-    }
-
-    return best;
-  }
-
   *findServices(filter) {
     for (const host of this.hosts()) {
       for (const service of host.findServices(filter)) {
