@@ -1,4 +1,5 @@
 import { join } from "node:path";
+import { allOutputs } from "npm-pkgbuild";
 import { getAttribute } from "pacc";
 import { addType, primitives } from "./types.mjs";
 
@@ -15,7 +16,8 @@ const BaseTypeDefinition = {
       writeable: true
     },
     description: { type: "string", collection: false, writeable: true },
-    directory: { type: "string", collection: false, writeable: false }
+    directory: { type: "string", collection: false, writeable: false },
+    packaging: { type: "string", collection: false, writeable: true }
   }
 };
 
@@ -288,8 +290,28 @@ export class Base {
     return `${this.constructor.typeDefinition.name}-${this.name}`;
   }
 
+  #packaging = new Set();
+
+  set packaging(value) {
+    this.#packaging.add(value);
+  }
+
+  get derivedPackaging() {
+    return this.owner?.packaging;
+  }
+
+  get packaging() {
+    const dp = this.derivedPackaging;
+
+    if (dp) {
+      return this.#packaging.union(dp);
+    }
+
+    return this.#packaging;
+  }
+
   get outputs() {
-    return this.owner ? this.owner.outputs : new Set();
+    return new Set(allOutputs.filter(o => this.packaging.has(o.name)));
   }
 
   async preparePackage(stagingDir) {

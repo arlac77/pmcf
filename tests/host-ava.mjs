@@ -17,6 +17,8 @@ test("Host basics", async t => {
   await root.loadAll();
 
   const host1 = await root.named("/L1/host1");
+  t.deepEqual(host1.packaging, new Set(["arch"]));
+
   const eth0 = host1.typeNamed("network_interface", "eth0");
   t.is(eth0.network, root.named("/L1/n1"));
 

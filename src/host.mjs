@@ -1,6 +1,5 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { allOutputs } from "npm-pkgbuild";
 import { Base } from "./base.mjs";
 import { networkProperties } from "./network-support.mjs";
 import {
@@ -39,7 +38,6 @@ const HostTypeDefinition = {
     serial: { type: "string", collection: false, writeable: true },
     vendor: { type: "string", collection: false, writeable: true },
     chassis: { type: "string", collection: false, writeable: true },
-    packaging: { type: "string", collection: false, writeable: true },
     priority: { type: "number", collection: false, writeable: true },
     replaces: { type: "string", collection: true, writeable: true },
     depends: { type: "string", collection: true, writeable: true },
@@ -68,7 +66,6 @@ export class Host extends Base {
   #deployment;
   #chassis;
   #vendor;
-  #packaging;
 
   static {
     addType(this);
@@ -145,12 +142,8 @@ export class Host extends Base {
     return this.#vendor || this.extends.find(e => e.vendor)?.vendor;
   }
 
-  set packaging(value) {
-    this.#packaging = value;
-  }
-
-  get packaging() {
-    return this.#packaging || this.extends.find(e => e.packaging)?.packaging;
+  get derivedPackaging() {
+    return this.extends.reduce((a, c) => a.union(c.packaging), new Set());
   }
 
   get isTemplate() {
@@ -336,11 +329,6 @@ export class Host extends Base {
     return readFile(join(this.directory, `ssh_host_${type}_key.pub`), "utf8");
   }
 
-  get outputs()
-  {
-    return new Set(allOutputs.filter(o=>o.name === this.packaging));
-  }
-
   async preparePackage(stagingDir) {
     const result = await super.preparePackage(stagingDir);
     await generateNetworkDefs(this, stagingDir);
@@ -351,7 +339,10 @@ export class Host extends Base {
       join(stagingDir, "root", ".ssh")
     );
 
-    result.properties.dependencies = [this.location.packageName, ...this.depends];
+    result.properties.dependencies = [
+      this.location.packageName,
+      ...this.depends
+    ];
     result.properties.provides = [...this.provides];
     result.properties.replaces = [`mf-${this.hostName}`, ...this.replaces];
     result.properties.backup = "root/.ssh/known_hosts";

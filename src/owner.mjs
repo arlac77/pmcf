@@ -278,10 +278,10 @@ export class Owner extends Base {
     }
   }
 
-  get outputs() {
+  get derivedPackaging() {
     let all = new Set();
     for (const host of this.hosts()) {
-      all = all.union(host.outputs);
+      all = all.union(host.packaging);
     }
 
     return all;

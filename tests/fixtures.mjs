@@ -93,7 +93,7 @@ export function root1(root, filter) {
       owner: L1n1,
       location: L1,
       os: "linux",
-      packaging: "arch",
+      packaging: new Set(["arch"]),
       networkInterfaces: {
         wlan0: {
           network: L1n1,
@@ -137,6 +137,8 @@ export function root1(root, filter) {
       instanceof: Host,
       owner: root,
       isModel: true,
+      isTemplate: true,
+      packaging: new Set(["arch"]),
       chassis: "server",
       services: {
         smb: { type: "smb" }
