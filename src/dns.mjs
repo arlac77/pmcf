@@ -22,6 +22,8 @@ const DNSServiceTypeDefinition = {
   }
 };
 
+const DNS_SERVICE_FILTER = { type: DNSServiceTypeDefinition.name };
+
 export class DNSService extends Base {
   allowedUpdates = [];
   recordTTL = "1W";
@@ -65,9 +67,7 @@ export class DNSService extends Base {
     return this.#forwardsTo;
   }
 
-  async *findServices() {
-    const filter = { type: DNSServiceTypeDefinition.name };
-
+  *findServices(filter) {
     yield* this.owner.findServices(filter);
 
     for (const s of this.forwardsTo) {
@@ -80,7 +80,7 @@ export class DNSService extends Base {
   }
 
   async resolvedConfig() {
-    const dnsServices = (await Array.fromAsync(this.findServices())).sort(
+    const dnsServices = Array.from(this.findServices(DNS_SERVICE_FILTER)).sort(
       (a, b) => a.priority - b.priority
     );
 
@@ -131,7 +131,7 @@ async function generateNamedDefs(dns, targetDir) {
     const zones = [];
     const records = new Set();
 
-    const nameserver = (await dns.owner.findService({ type: "dns" }))?.owner;
+    const nameService = dns.findService(DNS_SERVICE_FILTER);
     const rname = dns.administratorEmail.replace(/@/, ".");
 
     let maxKeyLength;
@@ -157,18 +157,18 @@ async function generateNamedDefs(dns, targetDir) {
       );
     }
 
-    console.log(dns.owner.fullName, domain, nameserver?.hostName, rname);
+    console.log(dns.owner.fullName, domain, nameService.domainName, rname);
     const reverseZones = new Map();
 
     const SOARecord = createRecord(
       "@",
       "SOA",
-      fullName(nameserver?.domainName),
+      fullName(nameService.domainName),
       fullName(rname),
       `(${updates})`
     );
 
-    const NSRecord = createRecord("@", "NS", fullName(nameserver?.rawAddress));
+    const NSRecord = createRecord("@", "NS", fullName(nameService.rawAddress));
 
     const catalogZone = {
       id: `catalog.${domain}`,
@@ -290,7 +290,11 @@ async function generateNamedDefs(dns, targetDir) {
         }
       }
 
-      await writeLines(join(targetDir, "var/lib/named"), zone.file, zone.records);
+      await writeLines(
+        join(targetDir, "var/lib/named"),
+        zone.file,
+        zone.records
+      );
     }
 
     await writeLines(

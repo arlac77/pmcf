@@ -79,6 +79,21 @@ export class Service extends Base {
     return this;
   }
 
+  get server()
+  {
+    return this.owner;
+  }
+
+  get domainName()
+  {
+    return this.server.domainName;
+  }
+
+  get rawAddress()
+  {
+    return this.server.rawAddress;
+  }
+
   set ipAddresses(value) {
     this.#ipAddresses = value;
   }
