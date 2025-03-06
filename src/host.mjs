@@ -109,7 +109,7 @@ export class Host extends Base {
       for (const ni of this.networkInterfaces.values()) {
         ni._traverse(...args);
       }
-      for (const service of this.findServices()) {
+      for (const service of this.#services) {
         service._traverse(...args);
       }
 
