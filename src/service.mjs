@@ -91,19 +91,19 @@ export class Service extends Base {
 
   get rawAddress()
   {
-    return this.server.rawAddress;
+    return this.#ipAddresses?.[0] || this.server.rawAddress;
   }
 
   set ipAddresses(value) {
     this.#ipAddresses = value;
   }
 
-  get ipAddresses() {
+  get rawAddresses() {
     return this.#ipAddresses || this.owner.rawAddresses;
   }
 
   get addresses() {
-    return this.ipAddresses.map(a => `${a}:${this.port}`);
+    return this.rawAddresses.map(a => `${a}:${this.port}`);
   }
 
   set port(value) {

@@ -7,10 +7,10 @@ test("DNS basics", async t => {
 
   const l1 = await root.named("L1");
 
-  const dnsServices = await Array.fromAsync(l1.dns.findServices());
+  const dnsServices = Array.from(l1.dns.findServices({ type: "dns" }));
 
   t.deepEqual(
-    dnsServices.map(s => s.ipAddresses[0]).sort(),
+    dnsServices.map(s => s.rawAddress).sort(),
     ["1.1.1.1", "192.168.1.1", "8.8.8.8"].sort()
   );
 
@@ -24,7 +24,6 @@ test("DNS basics", async t => {
     LLMNR: "no"
   });
 });
-
 
 test("DNS named", async t => {
   const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);

@@ -86,11 +86,11 @@ export class DNSService extends Base {
 
     const master = dnsServices
       .filter(s => s.priority < 10)
-      .map(s => s.ipAddresses)
+      .map(s => s.rawAddresses)
       .flat();
     const fallback = dnsServices
       .filter(s => s.priority >= 10)
-      .map(s => s.ipAddresses)
+      .map(s => s.rawAddresses)
       .flat();
 
     return {
