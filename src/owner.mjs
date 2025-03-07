@@ -223,15 +223,15 @@ export class Owner extends Base {
         this.#bridges.add(bridge);
       }
 
-      for (const name of asIterator(destinationNetworks)) {
-        const other = this.networkNamed(name);
+      for (const nameOrNetwork of asIterator(destinationNetworks)) {
+        const other = nameOrNetwork instanceof Owner ? nameOrNetwork : this.networkNamed(nameOrNetwork);
         if (other) {
           if (!bridge.has(other)) {
             bridge.add(other);
             other.bridge = bridge;
           }
         } else {
-          bridge.add(name);
+          bridge.add(nameOrNetwork);
           this.finalize(() => this._resolveBridges());
         }
       }
