@@ -57,7 +57,7 @@ test("Service basics", async t => {
   t.deepEqual(s2.addresses, ["10.0.0.2:53"]);
   t.is([...h2.findServices({ type: "dns" })][0], s2);
 
-  const services = await Array.fromAsync(l1.findServices({ type: "dns" }));
+  const services = Array.from(l1.findServices({ type: "dns" }));
 
   t.deepEqual(services, [s1, s2]);
 
