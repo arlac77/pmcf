@@ -63,6 +63,11 @@ test("Host addresses", t => {
 
   const eth0 = h1.typeNamed("network_interface", "eth0");
 
+  t.is(h1.named("eth0"), eth0);
+  t.is(h1.typeNamed("network_interface", "eth0"), eth0);
+  //t.is(n1.typeNamed("network_interface", "h1/eth0"), eth0);
+  t.is(owner.named("/n1/h1/eth0"), eth0);
+  t.is(n1.named("h1/eth0"), eth0);
   t.is(eth0.name, "eth0");
   t.is(eth0.network, n1);
   t.is(h1.network, n1);
