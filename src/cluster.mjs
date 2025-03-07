@@ -15,8 +15,8 @@ const ClusterTypeDefinition = {
 };
 
 export class Cluster extends Owner {
-  masters = new Set();
-  backups = new Set();
+  #masters = new Set();
+  #backups = new Set();
 
   static {
     addType(this);
@@ -29,6 +29,26 @@ export class Cluster extends Owner {
   constructor(owner, data) {
     super(owner, data);
     this.read(data, ClusterTypeDefinition);
+  }
+
+  set masters(value)
+  {
+    this.#masters.add(value);
+  }
+
+  get masters()
+  {
+    return this.#masters;
+  }
+
+  set backups(value)
+  {
+    this.#backups.add(value);
+  }
+
+  get backups()
+  {
+    return this.#backups;
   }
 
   get packageName() {
@@ -51,7 +71,7 @@ export class Cluster extends Owner {
           "    auth_pass pass1234",
           "  }",
           "  virtual_ipaddress {",
-          "    192.168.1.250",
+          `    ${ni.rawAddress}`,
           "  }",
           "}"
         ];

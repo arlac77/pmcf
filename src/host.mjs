@@ -431,6 +431,10 @@ export class NetworkInterface extends Base {
     }
   }
 
+  get rawAddress() {
+    return this.rawAddresses[0];
+  }
+
   get rawAddresses() {
     return [...this.#ipAddresses].map(([address]) => address);
   }
