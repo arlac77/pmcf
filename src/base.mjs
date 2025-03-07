@@ -203,8 +203,22 @@ export class Base {
     }
   }
 
+  named(name)
+  {
+  }
+
   typeNamed(typeName, name) {
-    return this.owner?.typeNamed(typeName, name);
+    if (this.owner) {
+      const object = this.owner.typeNamed(typeName, name); // TODO split
+      if(object) {
+        return object;
+      }
+    }
+
+    const object = this.named(name);
+    if(object?.typeName === typeName) {
+      return object;
+    }
   }
 
   addObject(object) {
