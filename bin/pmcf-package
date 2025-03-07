@@ -31,6 +31,7 @@ for (const name of args) {
         c => c.name + (c.email ? ` <${c.email}>` : "")
       );
 
+      console.log(properties.name);
       if (properties.verbose) {
         console.log(properties);
       }

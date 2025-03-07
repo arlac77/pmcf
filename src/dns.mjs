@@ -157,7 +157,7 @@ async function generateNamedDefs(dns, targetDir) {
       );
     }
 
-    console.log(dns.owner.fullName, domain, nameService.domainName, rname);
+    //console.log(dns.owner.fullName, domain, nameService.domainName, rname);
     const reverseZones = new Map();
 
     const SOARecord = createRecord(
