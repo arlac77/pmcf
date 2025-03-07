@@ -1,4 +1,4 @@
-import { asArray, normalizeCIDR } from "./utils.mjs";
+import { asIterator, normalizeCIDR } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { Subnet } from "./subnet.mjs";
 import { addType } from "./types.mjs";
@@ -90,17 +90,17 @@ export class Owner extends Base {
   }
 
   typeNamed(typeName, name) {
-    const localName = name[0] === "/" ? name.substring(this.fullName.length + 1) : name;
-
     const typeSlot = this.#membersByType.get(typeName);
     if (typeSlot) {
-      const object = typeSlot.get(localName);
+      const object = typeSlot.get(
+        name[0] === "/" ? name.substring(this.fullName.length + 1) : name
+      );
       if (object) {
         return object;
       }
     }
 
-    return super.typeNamed(typeName, localName); // TODO use name
+    return super.typeNamed(typeName, name);
   }
 
   typeObject(typeName) {
@@ -223,11 +223,13 @@ export class Owner extends Base {
         this.#bridges.add(bridge);
       }
 
-      for (const name of asArray(destinationNetworks)) {
+      for (const name of asIterator(destinationNetworks)) {
         const other = this.networkNamed(name);
         if (other) {
-          bridge.add(other);
-          other.bridge = bridge;
+          if (!bridge.has(other)) {
+            bridge.add(other);
+            other.bridge = bridge;
+          }
         } else {
           bridge.add(name);
           this.finalize(() => this._resolveBridges());

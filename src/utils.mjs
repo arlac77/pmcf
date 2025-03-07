@@ -33,6 +33,17 @@ export function asArray(value) {
   return Array.isArray(value) ? value : value === undefined ? [] : [value];
 }
 
+export function asIterator(value)
+{
+  if(value === undefined) { return []; }
+
+  if(typeof value[Symbol.iterator] === 'function') {
+    return value;
+  }
+
+  return asArray(value);
+}
+
 export function isIPv4Address(address) {
   return address.indexOf(".") >= 0;
 }
