@@ -107,15 +107,15 @@ export class DNSService extends Base {
     return `named-${this.owner.name}`;
   }
 
-  async preparePackage(stagingDir) {
-    const result = await super.preparePackage(stagingDir);
+  async *preparePackages(stagingDir) {
+    for await (const result of super.preparePackages(stagingDir)) {
+      await generateNamedDefs(this, stagingDir);
 
-    await generateNamedDefs(this, stagingDir);
+      result.properties.dependencies = ["mf-named"];
+      result.properties.replaces = ["mf-named-zones"];
 
-    result.properties.dependencies = ["mf-named"];
-    result.properties.replaces = ["mf-named-zones"];
-
-    return result;
+      yield result;
+    }
   }
 }
 

@@ -45,52 +45,51 @@ export class Location extends Owner {
     return [...this.typeList("network")][0] || super.network;
   }
 
-  async preparePackage(stagingDir) {
-    const result = await super.preparePackage(stagingDir);
+  async *preparePackages(stagingDir) {
+    for await (const result of super.preparePackages(stagingDir)) {
+      await writeLines(
+        join(stagingDir, "etc/systemd/resolved.conf.d"),
+        `${this.name}.conf`,
+        sectionLines("Resolve", await this.dns.resolvedConfig())
+      );
 
-    await writeLines(
-      join(stagingDir, "etc/systemd/resolved.conf.d"),
-      `${this.name}.conf`,
-      sectionLines("Resolve", await this.dns.resolvedConfig())
-    );
+      await writeLines(
+        join(stagingDir, "etc/systemd/journald.conf.d"),
+        `${this.name}.conf`,
+        sectionLines("Journal", {
+          Compress: "yes",
+          SystemMaxUse: "500M",
+          SyncIntervalSec: "15m"
+        })
+      );
 
-    await writeLines(
-      join(stagingDir, "etc/systemd/journald.conf.d"),
-      `${this.name}.conf`,
-      sectionLines("Journal", {
-        Compress: "yes",
-        SystemMaxUse: "500M",
-        SyncIntervalSec: "15m"
-      })
-    );
+      await writeLines(
+        join(stagingDir, "etc/systemd/timesyncd.conf.d"),
+        `${this.name}.conf`,
+        sectionLines("Time", {
+          NTP: this.ntp.servers.join(" "),
+          PollIntervalMinSec: 60,
+          SaveIntervalSec: 3600
+        })
+      );
 
-    await writeLines(
-      join(stagingDir, "etc/systemd/timesyncd.conf.d"),
-      `${this.name}.conf`,
-      sectionLines("Time", {
-        NTP: this.ntp.servers.join(" "),
-        PollIntervalMinSec: 60,
-        SaveIntervalSec: 3600
-      })
-    );
+      const locationDir = join(stagingDir, "etc", "location");
 
-    const locationDir = join(stagingDir, "etc", "location");
+      await mkdir(locationDir, { recursive: true });
 
-    await mkdir(locationDir, { recursive: true });
+      await copyFile(
+        join(this.directory, "location.json"),
+        join(locationDir, "location.json")
+      );
 
-    await copyFile(
-      join(this.directory, "location.json"),
-      join(locationDir, "location.json")
-    );
+      result.properties.provides = [
+        "location",
+        "mf-location",
+        `mf-location-${this.name}`
+      ];
+      result.properties.replaces = [`mf-location-${this.name}`];
 
-    result.properties.provides = [
-      "location",
-      "mf-location",
-      `mf-location-${this.name}`
-    ];
-    result.properties.replaces = [`mf-location-${this.name}`];
-
-    /*
+      /*
     const install = "location.install";
 
     console.log(new URL(install, import.meta.url));
@@ -102,7 +101,8 @@ export class Location extends Owner {
 
     result.properties.install = install;
     */
-   
-    return result;
+
+      yield result;
+    }
   }
 }

@@ -287,6 +287,17 @@ export class Host extends Base {
     return super.typeNamed(typeName, name);
   }
 
+  named(name) {
+    const ni = this.#networkInterfaces.get(name);
+    if (ni) {
+      return ni;
+    }
+    const service = this.services.find(s => s.name === name);
+    if (service) {
+      return service;
+    }
+  }
+
   get networkInterfaces() {
     return this.#networkInterfaces;
   }
@@ -333,25 +344,26 @@ export class Host extends Base {
     return `${this.constructor.typeDefinition.name}-${this.owner.name}-${this.name}`;
   }
 
-  async preparePackage(stagingDir) {
-    const result = await super.preparePackage(stagingDir);
-    await generateNetworkDefs(this, stagingDir);
-    await generateMachineInfo(this, stagingDir);
-    await copySshKeys(this, stagingDir);
-    await generateKnownHosts(
-      this.owner.hosts(),
-      join(stagingDir, "root", ".ssh")
-    );
+  async *preparePackages(stagingDir) {
+    for await (const result of super.preparePackages(stagingDir)) {
+      await generateNetworkDefs(this, stagingDir);
+      await generateMachineInfo(this, stagingDir);
+      await copySshKeys(this, stagingDir);
+      await generateKnownHosts(
+        this.owner.hosts(),
+        join(stagingDir, "root", ".ssh")
+      );
 
-    result.properties.dependencies = [
-      this.location.packageName,
-      ...this.depends
-    ];
-    result.properties.provides = [...this.provides];
-    result.properties.replaces = [`mf-${this.hostName}`, ...this.replaces];
-    result.properties.backup = "root/.ssh/known_hosts";
+      result.properties.dependencies = [
+        this.location.packageName,
+        ...this.depends
+      ];
+      result.properties.provides = [...this.provides];
+      result.properties.replaces = [`mf-${this.hostName}`, ...this.replaces];
+      result.properties.backup = "root/.ssh/known_hosts";
 
-    return result;
+      yield result;
+    }
   }
 }
 

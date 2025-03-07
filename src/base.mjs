@@ -204,7 +204,7 @@ export class Base {
   }
 
   typeNamed(typeName, name) {
-    return this.owner.typeNamed(typeName, name);
+    return this.owner?.typeNamed(typeName, name);
   }
 
   addObject(object) {
@@ -331,8 +331,8 @@ export class Base {
     return new Set(allOutputs.filter(o => this.packaging.has(o.name)));
   }
 
-  async preparePackage(stagingDir) {
-    return {
+  async *preparePackages(stagingDir) {
+    yield {
       outputs: this.outputs,
       properties: {
         name: this.packageName,

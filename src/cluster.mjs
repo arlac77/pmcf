@@ -1,14 +1,16 @@
+import { join } from "node:path";
 import { Owner } from "./owner.mjs";
 import { addType } from "./types.mjs";
+import { writeLines } from "./utils.mjs";
 
 const ClusterTypeDefinition = {
   name: "cluster",
-  owners: [Owner.typeDefinition, "network", "root"],
+  owners: [Owner.typeDefinition, "network", "location", "root"],
   priority: 0.7,
   extends: Owner.typeDefinition,
   properties: {
-    masters: { type: "host", collection: true, writeable: true },
-    backups: { type: "host", collection: true, writeable: true }
+    masters: { type: "network_interface", collection: true, writeable: true },
+    backups: { type: "network_interface", collection: true, writeable: true }
   }
 };
 
@@ -33,30 +35,38 @@ export class Cluster extends Owner {
     return `${this.constructor.typeDefinition.name}-${this.owner.name}-${this.name}`;
   }
 
-  async preparePackage(stagingDir) {
-    const result = await super.preparePackage(stagingDir);
+  async *preparePackages(stagingDir) {
+    for await (const result of super.preparePackages(stagingDir)) {
+      for (const ni of this.masters.union(this.backups)) {
 
-    const cfg = [
-      "vrrp_instance VI_1 {",
-      "  state MASTER",
-      "  interface end0",
-      "  virtual_router_id 101",
-      "  priority 255",
-      "  advert_int 1",
-      "  authentication {",
-      "    auth_type PASS",
-      "    auth_pass pass1234",
-      "  }",
-      "  virtual_ipaddress {",
-      "    192.168.1.250",
-      "  }",
-      "}"
-    ];
+        const cfg = [
+          `vrrp_instance ${this.name} {`,
+          `  state ${this.masters.has(ni) ? "MASTER" : "BACKUP"}`,
+          `  interface ${ni.name}`,
+          "  virtual_router_id 101",
+          "  priority 255",
+          "  advert_int 1",
+          "  authentication {",
+          "    auth_type PASS",
+          "    auth_pass pass1234",
+          "  }",
+          "  virtual_ipaddress {",
+          "    192.168.1.250",
+          "  }",
+          "}"
+        ];
 
-    await writeLines(join(targetDir, "etc/keepalived"), "keepalived.conf", cfg);
+        await writeLines(
+          join(stagingDir, "etc/keepalived"),
+          "keepalived.conf",
+          cfg
+        );
 
-    result.properties.dependencies = ["keepalived"];
+        result.properties.name = `${this.constructor.typeDefinition.name}-${this.owner.name}-${this.name}-${ni.host.name}`;
+        result.properties.dependencies = ["keepalived"];
 
-    return result;
+        yield result;
+      }
+    }
   }
 }

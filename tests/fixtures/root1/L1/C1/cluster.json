@@ -1,9 +1,8 @@
 {
-  "masters": "/L1/C1/p1",
-  "backups": "/L1/C1/p2",
+  "masters": "/L1/C1/p1/eth0",
+  "backups": "/L1/C1/p2/eth0",
   "authentication": {
     "type": "PASS",
     "password": "pass1234"
-  },
-  "packaging": "arch"
+  }
 }

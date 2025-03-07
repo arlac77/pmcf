@@ -20,40 +20,43 @@ const publishingDetails = createPublishingDetails(options.publish, process.env);
 for (const name of args) {
   const object = await root.load(name);
   const stagingDir = join(options.output, object.fullName);
-  const { properties, outputs } = await object.preparePackage(stagingDir);
 
-  for (const outputFactory of outputs) {
-    properties.version = pkg.version;
-    properties.license = pkg.license;
-    properties.maintainer = pkg.contributors.map(
-      c => c.name + (c.email ? ` <${c.email}>` : "")
-    );
+  for await (const { properties, outputs } of object.preparePackages(
+    stagingDir
+  )) {
+    for (const outputFactory of outputs) {
+      properties.version = pkg.version;
+      properties.license = pkg.license;
+      properties.maintainer = pkg.contributors.map(
+        c => c.name + (c.email ? ` <${c.email}>` : "")
+      );
 
-    if (properties.verbose) {
-      console.log(properties);
+      if (properties.verbose) {
+        console.log(properties);
+      }
+
+      const sources = [
+        new FileContentProvider(stagingDir + "/")[Symbol.asyncIterator]()
+      ];
+
+      const output = new outputFactory(properties);
+
+      const artifact = await output.create(
+        sources,
+        [],
+        publishingDetails,
+        options
+      );
+
+      if (properties.verbose) {
+        console.log(artifact);
+      }
+
+      await Promise.all(
+        publishingDetails.map(publishDetail =>
+          output.publish(artifact, publishDetail)
+        )
+      );
     }
-
-    const sources = [
-      new FileContentProvider(stagingDir + "/")[Symbol.asyncIterator]()
-    ];
-
-    const output = new outputFactory(properties);
-
-    const artifact = await output.create(
-      sources,
-      [],
-      publishingDetails,
-      options
-    );
-
-    if (properties.verbose) {
-      console.log(artifact);
-    }
-
-    await Promise.all(
-      publishingDetails.map(publishDetail =>
-        output.publish(artifact, publishDetail)
-      )
-    );
   }
 }

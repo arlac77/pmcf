@@ -90,12 +90,17 @@ export class Owner extends Base {
   }
 
   typeNamed(typeName, name) {
-    if (name[0] === "/") {
-      name = name.substring(this.fullName.length + 1);
-    }
+    const localName = name[0] === "/" ? name.substring(this.fullName.length + 1) : name;
 
     const typeSlot = this.#membersByType.get(typeName);
-    return typeSlot?.get(name) || this.owner?.typeNamed(typeName, name);
+    if (typeSlot) {
+      const object = typeSlot.get(localName);
+      if (object) {
+        return object;
+      }
+    }
+
+    return super.typeNamed(typeName, localName); // TODO use name
   }
 
   typeObject(typeName) {
