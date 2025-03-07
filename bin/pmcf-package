@@ -17,6 +17,7 @@ const pkgDir = await packageDirectory({ cwd: options.root });
 const pkg = JSON.parse(await readFile(join(pkgDir, "package.json"), "utf8"));
 const publishingDetails = createPublishingDetails(options.publish, process.env);
 
+console.log(publishingDetails);
 for (const name of args) {
   const object = await root.load(name);
   const stagingDir = join(options.output, object.fullName);
