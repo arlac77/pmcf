@@ -17,7 +17,10 @@ if (!options.output) {
 
 const pkgDir = await packageDirectory({ cwd: options.root });
 const pkg = JSON.parse(await readFile(join(pkgDir, "package.json"), "utf8"));
-const publishingDetails = createPublishingDetails(asArray(options.publish), env);
+const publishingDetails = createPublishingDetails(
+  asArray(options.publish),
+  env
+);
 
 for (const name of args) {
   const object = await root.load(name);
@@ -33,7 +36,6 @@ for (const name of args) {
         c => c.name + (c.email ? ` <${c.email}>` : "")
       );
 
-      console.log(properties.name);
       if (properties.verbose) {
         console.log(properties);
       }
@@ -50,10 +52,6 @@ for (const name of args) {
         publishingDetails,
         options
       );
-
-      if (properties.verbose) {
-        console.log(artifact);
-      }
 
       await Promise.all(
         publishingDetails.map(publishDetail =>
