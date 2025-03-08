@@ -96,18 +96,10 @@ export class Location extends Owner {
         new FileContentProvider(stagingDir + "/")[Symbol.asyncIterator]()
       );
 
-      /*
-    const install = "location.install";
-
-    console.log(new URL(install, import.meta.url));
-
-    await copyFile(
-      new URL(install, import.meta.url),
-      join(stagingDir, install)
-    );
-
-    result.properties.install = install;
-    */
+      result.properties.hooks = new URL(
+        "location.install",
+        import.meta.url
+      ).pathname;
 
       yield result;
     }

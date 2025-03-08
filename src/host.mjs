@@ -359,6 +359,10 @@ export class Host extends Base {
       result.properties.provides = [...this.provides];
       result.properties.replaces = [`mf-${this.hostName}`, ...this.replaces];
       result.properties.backup = "root/.ssh/known_hosts";
+      result.properties.hooks = new URL(
+        "host.install",
+        import.meta.url
+      ).pathname;
 
       result.sources.push(
         new FileContentProvider(stagingDir + "/")[Symbol.asyncIterator]()
