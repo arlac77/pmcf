@@ -1,5 +1,6 @@
 import { join } from "node:path";
 import { createHmac } from "node:crypto";
+import { FileContentProvider } from "npm-pkgbuild";
 import { writeLines, isIPv6Address, normalizeIPAddress } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
@@ -103,16 +104,17 @@ export class DNSService extends Base {
     };
   }
 
-  get packageName() {
-    return `named-${this.owner.name}`;
-  }
-
   async *preparePackages(stagingDir) {
     for await (const result of super.preparePackages(stagingDir)) {
       await generateNamedDefs(this, stagingDir);
 
+      result.properties.name = `named-${this.owner.name}`;
       result.properties.dependencies = ["mf-named"];
       result.properties.replaces = ["mf-named-zones"];
+
+      result.sources.push(
+        new FileContentProvider(stagingDir + "/")[Symbol.asyncIterator]()
+      );
 
       yield result;
     }

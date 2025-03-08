@@ -5,7 +5,7 @@ import { readFile, mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { env } from "node:process";
 import { packageDirectory } from "pkg-dir";
-import { FileContentProvider, createPublishingDetails } from "npm-pkgbuild";
+import { createPublishingDetails } from "npm-pkgbuild";
 import { prepare } from "../src/cmd.mjs";
 import { asArray } from "../src/utils.mjs";
 
@@ -26,7 +26,7 @@ for (const name of args) {
   const object = await root.load(name);
   const stagingDir = join(options.output, object.fullName);
 
-  for await (const { properties, outputs } of object.preparePackages(
+  for await (const { sources, outputs, properties } of object.preparePackages(
     stagingDir
   )) {
     for (const outputFactory of outputs) {
@@ -39,10 +39,6 @@ for (const name of args) {
       if (properties.verbose) {
         console.log(properties);
       }
-
-      const sources = [
-        new FileContentProvider(stagingDir + "/")[Symbol.asyncIterator]()
-      ];
 
       const output = new outputFactory(properties);
 

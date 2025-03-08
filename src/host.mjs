@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { FileContentProvider } from "npm-pkgbuild";
 import { Base } from "./base.mjs";
 import { networkProperties } from "./network-support.mjs";
 import {
@@ -340,10 +341,6 @@ export class Host extends Base {
     return readFile(join(this.directory, `ssh_host_${type}_key.pub`), "utf8");
   }
 
-  get packageName() {
-    return `${this.constructor.typeDefinition.name}-${this.owner.name}-${this.name}`;
-  }
-
   async *preparePackages(stagingDir) {
     for await (const result of super.preparePackages(stagingDir)) {
       await generateNetworkDefs(this, stagingDir);
@@ -354,13 +351,18 @@ export class Host extends Base {
         join(stagingDir, "root", ".ssh")
       );
 
+      result.properties.name = `${this.typeName}-${this.owner.name}-${this.name}`;
       result.properties.dependencies = [
-        this.location.packageName,
+        `${this.location.typeName}-${this.location.name}`,
         ...this.depends
       ];
       result.properties.provides = [...this.provides];
       result.properties.replaces = [`mf-${this.hostName}`, ...this.replaces];
       result.properties.backup = "root/.ssh/known_hosts";
+
+      result.sources.push(
+        new FileContentProvider(stagingDir + "/")[Symbol.asyncIterator]()
+      );
 
       yield result;
     }

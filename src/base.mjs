@@ -317,10 +317,6 @@ export class Base {
       : this.owner.fullName;
   }
 
-  get packageName() {
-    return `${this.constructor.typeDefinition.name}-${this.name}`;
-  }
-
   #packaging = new Set();
 
   set packaging(value) {
@@ -348,9 +344,9 @@ export class Base {
   async *preparePackages(stagingDir) {
     yield {
       outputs: this.outputs,
+      sources: [],
       properties: {
-        name: this.packageName,
-        description: `${this.constructor.typeDefinition.name} definitions for ${this.fullName}`,
+        description: `${this.typeName} definitions for ${this.fullName}`,
         access: "private"
       }
     };

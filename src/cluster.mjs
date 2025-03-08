@@ -1,4 +1,5 @@
 import { join } from "node:path";
+import { FileContentProvider } from "npm-pkgbuild";
 import { Owner } from "./owner.mjs";
 import { addType } from "./types.mjs";
 import { writeLines } from "./utils.mjs";
@@ -31,34 +32,27 @@ export class Cluster extends Owner {
     this.read(data, ClusterTypeDefinition);
   }
 
-  set masters(value)
-  {
+  set masters(value) {
     this.#masters.add(value);
   }
 
-  get masters()
-  {
+  get masters() {
     return this.#masters;
   }
 
-  set backups(value)
-  {
+  set backups(value) {
     this.#backups.add(value);
   }
 
-  get backups()
-  {
+  get backups() {
     return this.#backups;
-  }
-
-  get packageName() {
-    return `${this.constructor.typeDefinition.name}-${this.owner.name}-${this.name}`;
   }
 
   async *preparePackages(stagingDir) {
     for await (const result of super.preparePackages(stagingDir)) {
       for (const ni of this.masters.union(this.backups)) {
-
+        const name = `${this.typeName}-${this.owner.name}-${this.name}-${ni.host.name}`;
+        const packageStagingDir = join(stagingDir, name);
         const cfg = [
           `vrrp_instance ${this.name} {`,
           `  state ${this.masters.has(ni) ? "MASTER" : "BACKUP"}`,
@@ -77,13 +71,19 @@ export class Cluster extends Owner {
         ];
 
         await writeLines(
-          join(stagingDir, "etc/keepalived"),
+          join(packageStagingDir, "etc/keepalived"),
           "keepalived.conf",
           cfg
         );
 
-        result.properties.name = `${this.constructor.typeDefinition.name}-${this.owner.name}-${this.name}-${ni.host.name}`;
+        result.properties.name = name;
         result.properties.dependencies = ["keepalived"];
+
+        result.sources.push(
+          new FileContentProvider(packageStagingDir + "/")[
+            Symbol.asyncIterator
+          ]()
+        );
 
         yield result;
       }

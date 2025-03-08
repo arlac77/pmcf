@@ -1,5 +1,6 @@
 import { mkdir, copyFile } from "node:fs/promises";
 import { join } from "node:path";
+import { FileContentProvider } from "npm-pkgbuild";
 import { Owner } from "./owner.mjs";
 import { addType } from "./types.mjs";
 import { writeLines, sectionLines } from "./utils.mjs";
@@ -82,12 +83,18 @@ export class Location extends Owner {
         join(locationDir, "location.json")
       );
 
+      result.properties.name = `${this.typeName}-${this.name}`;
+
       result.properties.provides = [
         "location",
         "mf-location",
         `mf-location-${this.name}`
       ];
       result.properties.replaces = [`mf-location-${this.name}`];
+
+      result.sources.push(
+        new FileContentProvider(stagingDir + "/")[Symbol.asyncIterator]()
+      );
 
       /*
     const install = "location.install";
