@@ -343,8 +343,8 @@ export class Base {
 
   async *preparePackages(stagingDir) {
     yield {
-      outputs: this.outputs,
       sources: [],
+      outputs: this.outputs,
       properties: {
         description: `${this.typeName} definitions for ${this.fullName}`,
         access: "private"
