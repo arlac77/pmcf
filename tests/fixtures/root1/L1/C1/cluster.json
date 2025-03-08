@@ -1,8 +1,14 @@
 {
-  "masters": "/L1/C1/p1/eth0",
-  "backups": "/L1/C1/p2/eth0",
+  "masters": "/L1/host1/eth0",
+  "backups": "/L1/n1/host2/eth0",
   "authentication": {
     "type": "PASS",
     "password": "pass1234"
+  },
+  "networkInterfaces": {
+    "eth0": {
+      "network": "/L1/n1",
+      "ipAddresses": "192.168.1.11"
+    }
   }
 }

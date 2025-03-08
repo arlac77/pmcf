@@ -146,8 +146,9 @@ export class Owner extends Base {
     return this.typeNamed("host", name);
   }
 
-  hosts() {
-    return this.typeList("host");
+  * hosts() {
+    yield * this.typeList("host");
+    yield * this.typeList("cluster");
   }
 
   networkNamed(name) {

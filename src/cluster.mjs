@@ -1,6 +1,7 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { Owner } from "./owner.mjs";
+import { Host } from "./host.mjs";
 import { addType } from "./types.mjs";
 import { writeLines } from "./utils.mjs";
 
@@ -15,7 +16,7 @@ const ClusterTypeDefinition = {
   }
 };
 
-export class Cluster extends Owner {
+export class Cluster extends Host {
   #masters = new Set();
   #backups = new Set();
 
@@ -49,44 +50,49 @@ export class Cluster extends Owner {
   }
 
   async *preparePackages(stagingDir) {
-    for await (const result of super.preparePackages(stagingDir)) {
-      for (const ni of this.masters.union(this.backups)) {
-        const name = `${this.typeName}-${this.owner.name}-${this.name}-${ni.host.name}`;
-        const packageStagingDir = join(stagingDir, name);
-        const cfg = [
-          `vrrp_instance ${this.name} {`,
-          `  state ${this.masters.has(ni) ? "MASTER" : "BACKUP"}`,
-          `  interface ${ni.name}`,
-          "  virtual_router_id 101",
-          "  priority 255",
-          "  advert_int 1",
-          "  authentication {",
-          "    auth_type PASS",
-          "    auth_pass pass1234",
-          "  }",
-          "  virtual_ipaddress {",
-          `    ${ni.rawAddress}`,
-          "  }",
-          "}"
-        ];
-
-        await writeLines(
-          join(packageStagingDir, "etc/keepalived"),
-          "keepalived.conf",
-          cfg
-        );
-
-        result.properties.name = name;
-        result.properties.dependencies = ["keepalived"];
-
-        result.sources.push(
-          new FileContentProvider(packageStagingDir + "/")[
-            Symbol.asyncIterator
-          ]()
-        );
-
-        yield result;
+    const result = {
+      sources: [],
+      outputs: this.outputs,
+      properties: {
+        description: `${this.typeName} definitions for ${this.fullName}`,
+        access: "private"
       }
+    };
+
+    for (const ni of this.masters.union(this.backups)) {
+      const name = `${this.typeName}-${this.owner.name}-${this.name}-${ni.host.name}`;
+      const packageStagingDir = join(stagingDir, name);
+      const cfg = [
+        `vrrp_instance ${this.name} {`,
+        `  state ${this.masters.has(ni) ? "MASTER" : "BACKUP"}`,
+        `  interface ${ni.name}`,
+        "  virtual_router_id 101",
+        "  priority 255",
+        "  advert_int 1",
+        "  authentication {",
+        "    auth_type PASS",
+        "    auth_pass pass1234",
+        "  }",
+        "  virtual_ipaddress {",
+        `    ${this.rawAddress}`,
+        "  }",
+        "}"
+      ];
+
+      await writeLines(
+        join(packageStagingDir, "etc/keepalived"),
+        "keepalived.conf",
+        cfg
+      );
+
+      result.properties.name = name;
+      result.properties.dependencies = ["keepalived"];
+
+      result.sources.push(
+        new FileContentProvider(packageStagingDir + "/")[Symbol.asyncIterator]()
+      );
+
+      yield result;
     }
   }
 }
