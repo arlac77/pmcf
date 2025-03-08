@@ -11,6 +11,9 @@ export async function prepare() {
         short: "v",
         default: false
       },
+      publish: {
+        type: "string",
+      },
       root: {
         type: "string",
         short: "r",

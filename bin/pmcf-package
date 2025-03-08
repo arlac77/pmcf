@@ -3,9 +3,11 @@
 import { join } from "node:path";
 import { readFile, mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
+import { env } from "node:process";
 import { packageDirectory } from "pkg-dir";
 import { FileContentProvider, createPublishingDetails } from "npm-pkgbuild";
 import { prepare } from "../src/cmd.mjs";
+import { asArray } from "../src/utils.mjs";
 
 const { root, args, options } = await prepare();
 
@@ -15,8 +17,9 @@ if (!options.output) {
 
 const pkgDir = await packageDirectory({ cwd: options.root });
 const pkg = JSON.parse(await readFile(join(pkgDir, "package.json"), "utf8"));
-const publishingDetails = createPublishingDetails(options.publish, process.env);
+const publishingDetails = createPublishingDetails(asArray(options.publish), env);
 
+console.log(env);
 console.log(publishingDetails);
 for (const name of args) {
   const object = await root.load(name);
