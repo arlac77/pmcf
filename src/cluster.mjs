@@ -11,6 +11,7 @@ const ClusterTypeDefinition = {
   priority: 0.7,
   extends: Owner.typeDefinition,
   properties: {
+    routerId: { type: "number", collection: false, writeable: true },
     masters: { type: "network_interface", collection: true, writeable: true },
     backups: { type: "network_interface", collection: true, writeable: true }
   }
@@ -19,6 +20,7 @@ const ClusterTypeDefinition = {
 export class Cluster extends Host {
   #masters = new Set();
   #backups = new Set();
+  routerId = 100;
 
   static {
     addType(this);
@@ -79,7 +81,7 @@ export class Cluster extends Host {
         cfg.push("  virtual_ipaddress {");
         cfg.push(`    ${cluster.rawAddress}`);
         cfg.push("  }");
-        cfg.push("  virtual_router_id 101");
+        cfg.push(`  virtual_router_id ${this.routerId}`);
         cfg.push("  priority 255");
         cfg.push("  advert_int 1");
         cfg.push("  authentication {");

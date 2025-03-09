@@ -48,7 +48,6 @@ export function root1(root, filter) {
   s1.networks.push(L1n1);
   s1.networks.push(L1n2);
 
-
   const host1 = {
     name: "host1",
     instanceof: Host,
@@ -99,7 +98,7 @@ export function root1(root, filter) {
   const L1C1 = {
     name: "C1",
     instanceof: Cluster,
-
+    routerId: 77,
     masters: [host1.networkInterfaces.eth0],
     backups: [host2.networkInterfaces.wlan0]
   };
