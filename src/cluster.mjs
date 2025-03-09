@@ -97,7 +97,7 @@ export class Cluster extends Host {
         cfg
       );
 
-      result.pitputs = host.outputs,
+      result.outputs = host.outputs,
       result.properties.name = name;
       result.properties.dependencies = ["keepalived"];
 
