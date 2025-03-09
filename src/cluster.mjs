@@ -50,6 +50,7 @@ export class Cluster extends Host {
   }
 
   async *preparePackages(stagingDir) {
+    
     const result = {
       sources: [],
       outputs: this.outputs,
@@ -58,26 +59,36 @@ export class Cluster extends Host {
         access: "private"
       }
     };
+  
+    let interfaces = new Set();
 
-    for (const ni of this.masters.union(this.backups)) {
-      const name = `${this.typeName}-${this.owner.name}-${this.name}-${ni.host.name}`;
+    for(const cluster of this.owner.clusters()) {
+      interfaces = interfaces.union(cluster.masters.union(cluster.backups));
+    }
+
+    for (const ni of interfaces) {
+      const name = `keepalived-${ni.host.name}`;
       const packageStagingDir = join(stagingDir, name);
-      const cfg = [
-        `vrrp_instance ${this.name} {`,
-        `  state ${this.masters.has(ni) ? "MASTER" : "BACKUP"}`,
-        `  interface ${ni.name}`,
-        "  virtual_router_id 101",
-        "  priority 255",
-        "  advert_int 1",
-        "  authentication {",
-        "    auth_type PASS",
-        "    auth_pass pass1234",
-        "  }",
-        "  virtual_ipaddress {",
-        `    ${this.rawAddress}`,
-        "  }",
-        "}"
-      ];
+  
+      const cfg = [];
+
+      for(const cluster of this.owner.clusters()) {
+        cfg.push(`vrrp_instance ${cluster.name} {`);
+        cfg.push(`  state ${cluster.masters.has(ni) ? "MASTER" : "BACKUP"}`);
+        cfg.push(`  interface ${ni.name}`,);
+        cfg.push("  virtual_ipaddress {");
+        cfg.push(`    ${cluster.rawAddress}`);
+        cfg.push("  }");
+        cfg.push("  virtual_router_id 101");
+        cfg.push("  priority 255");
+        cfg.push("  advert_int 1");
+        cfg.push("  authentication {");
+        cfg.push("    auth_type PASS");
+        cfg.push("    auth_pass pass1234");
+        cfg.push("  }");
+        cfg.push("}");
+        cfg.push("");
+      }
 
       await writeLines(
         join(packageStagingDir, "etc/keepalived"),
@@ -87,6 +98,7 @@ export class Cluster extends Host {
 
       result.properties.name = name;
       result.properties.dependencies = ["keepalived"];
+      result.properties.replaces = [`${this.typeName}-${this.owner.name}-${this.name}-${ni.host.name}`];
 
       result.sources.push(
         new FileContentProvider(packageStagingDir + "/")[Symbol.asyncIterator]()
