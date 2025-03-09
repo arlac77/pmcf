@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { env } from "node:process";
 import { packageDirectory } from "pkg-dir";
 import { createPublishingDetails } from "npm-pkgbuild";
-import { prepare } from "../src/cmd.mjs";
+import { prepare } from "../src/cli.mjs";
 import { asArray } from "../src/utils.mjs";
 
 const { root, args, options } = await prepare();
@@ -49,11 +49,13 @@ for (const name of args) {
         options
       );
 
-      await Promise.all(
-        publishingDetails.map(publishDetail =>
-          output.publish(artifact, publishDetail)
-        )
-      );
+      if (!options.dry) {
+        await Promise.all(
+          publishingDetails.map(publishDetail =>
+            output.publish(artifact, publishDetail)
+          )
+        );
+      }
     }
   }
 }

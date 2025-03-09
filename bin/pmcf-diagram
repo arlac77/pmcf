@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { prepare } from "../src/cmd.mjs";
+import { prepare } from "../src/cli.mjs";
 
 const { root, args } = await prepare();
 

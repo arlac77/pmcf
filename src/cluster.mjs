@@ -100,7 +100,6 @@ export class Cluster extends Host {
 
       result.properties.name = name;
       result.properties.dependencies = ["keepalived"];
-      result.properties.replaces = [`${this.typeName}-${this.owner.name}-${this.name}-${ni.host.name}`];
 
       result.sources.push(
         new FileContentProvider(packageStagingDir + "/")[Symbol.asyncIterator]()

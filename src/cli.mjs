@@ -11,6 +11,10 @@ export async function prepare() {
         short: "v",
         default: false
       },
+      dry: {
+        type: "boolean",
+        default: false
+      },
       publish: {
         type: "string",
       },
@@ -21,8 +25,7 @@ export async function prepare() {
       },
       output: {
         type: "string",
-        short: "o",
-       // default: cwd()
+        short: "o"
       }
     },
     allowPositionals: true
