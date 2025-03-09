@@ -80,8 +80,8 @@ export class Cluster extends Host {
         cfg.push("  virtual_ipaddress {");
         cfg.push(`    ${cluster.rawAddress}`);
         cfg.push("  }");
-        cfg.push(`  virtual_router_id ${this.routerId}`);
-        cfg.push(`  priority ${this.priority}`);
+        cfg.push(`  virtual_router_id ${cluster.routerId}`);
+        cfg.push(`  priority ${host.priority}`);
         cfg.push("  advert_int 5");
         cfg.push("  authentication {");
         cfg.push("    auth_type PASS");
