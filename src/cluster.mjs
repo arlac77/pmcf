@@ -52,10 +52,8 @@ export class Cluster extends Host {
   }
 
   async *preparePackages(stagingDir) {
-    
     const result = {
       sources: [],
-      outputs: this.outputs,
       properties: {
         description: `${this.typeName} definitions for ${this.fullName}`,
         access: "private"
@@ -69,7 +67,8 @@ export class Cluster extends Host {
     }
 
     for (const ni of interfaces) {
-      const name = `keepalived-${ni.host.name}`;
+      const host = ni.host;
+      const name = `keepalived-${host.name}`;
       const packageStagingDir = join(stagingDir, name);
   
       const cfg = [];
@@ -98,6 +97,7 @@ export class Cluster extends Host {
         cfg
       );
 
+      result.pitputs = host.outputs,
       result.properties.name = name;
       result.properties.dependencies = ["keepalived"];
 
