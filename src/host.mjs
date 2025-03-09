@@ -53,8 +53,8 @@ const HostTypeDefinition = {
 };
 
 export class Host extends Base {
-  postinstall = [];
   serial;
+  priority = 1;
   #services = [];
   #extends = [];
   #networkInterfaces = new Map();

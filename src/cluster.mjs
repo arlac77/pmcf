@@ -81,7 +81,7 @@ export class Cluster extends Host {
         cfg.push(`    ${cluster.rawAddress}`);
         cfg.push("  }");
         cfg.push(`  virtual_router_id ${this.routerId}`);
-        cfg.push("  priority 255");
+        cfg.push(`  priority ${this.priority}`);
         cfg.push("  advert_int 5");
         cfg.push("  authentication {");
         cfg.push("    auth_type PASS");
