@@ -254,8 +254,12 @@ export class Host extends Base {
     return this.#services;
   }
 
-  set services(services) {
-    this.#services.push(services);
+  set services(service) {
+    const present = this.#services.find(s => s.name === service.name);
+
+    if (!present) {
+      this.#services.push(service);
+    }
   }
 
   *findServices(filter) {
