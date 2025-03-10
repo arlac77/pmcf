@@ -90,6 +90,7 @@ export class Location extends Owner {
         "mf-location",
         `mf-location-${this.name}`
       ];
+      result.properties.depends = ["jq"];
       result.properties.replaces = [`mf-location-${this.name}`];
 
       result.sources.push(
