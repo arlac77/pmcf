@@ -47,6 +47,11 @@ export class Location extends Owner {
   }
 
   async *preparePackages(stagingDir) {
+
+    await this.loadPackageHooks(
+      new URL("location.install", import.meta.url).pathname
+    );
+
     for await (const result of super.preparePackages(stagingDir)) {
       await writeLines(
         join(stagingDir, "etc/systemd/resolved.conf.d"),
@@ -97,10 +102,7 @@ export class Location extends Owner {
         new FileContentProvider(stagingDir + "/")[Symbol.asyncIterator]()
       );
 
-      result.properties.hooks = new URL(
-        "location.install",
-        import.meta.url
-      ).pathname;
+      result.properties.hooks = this.packageHooks;
 
       yield result;
     }

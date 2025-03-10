@@ -1,5 +1,6 @@
 import { join } from "node:path";
-import { allOutputs } from "npm-pkgbuild";
+import { createReadStream } from "node:fs";
+import { allOutputs, extractFunctions } from "npm-pkgbuild";
 import { getAttribute } from "pacc";
 import { addType, primitives } from "./types.mjs";
 
@@ -203,20 +204,18 @@ export class Base {
     }
   }
 
-  named(name)
-  {
-  }
+  named(name) {}
 
   typeNamed(typeName, name) {
     if (this.owner) {
       const object = this.owner.typeNamed(typeName, name); // TODO split
-      if(object) {
+      if (object) {
         return object;
       }
     }
 
     const object = this.named(name);
-    if(object?.typeName === typeName) {
+    if (object?.typeName === typeName) {
       return object;
     }
   }
@@ -337,18 +336,25 @@ export class Base {
     return this.#packaging;
   }
 
+  #packageHooks = {};
 
-  #packageHooks = new Map();
+  get packageHooks() {
+    return this.#packageHooks;
+  }
 
-  addPackageHook(name,content)
-  {
-    let hook = this.#packageHooks.get(name);
-    if(hook) {
-      content = hook + content;
+  async loadPackageHooks(file) {
+    for await (const f of extractFunctions(createReadStream(file, "utf8"))) {
+      this.addPackageHook(f.name, f.body);
+    }
+  }
+
+  addPackageHook(name, content) {
+    const hook = this.#packageHooks[name];
+    if (hook) {
+      content = hook + "\n" + content;
     }
 
-    this.#packageHooks.set(name, content);
-
+    this.#packageHooks[name] = content;
   }
 
   get outputs() {

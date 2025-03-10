@@ -346,6 +346,10 @@ export class Host extends Base {
   }
 
   async *preparePackages(stagingDir) {
+    await this.loadPackageHooks(
+      new URL("host.install", import.meta.url).pathname
+    );
+
     for await (const result of super.preparePackages(stagingDir)) {
       await generateNetworkDefs(this, stagingDir);
       await generateMachineInfo(this, stagingDir);
@@ -363,10 +367,7 @@ export class Host extends Base {
       result.properties.provides = [...this.provides];
       result.properties.replaces = [`mf-${this.hostName}`, ...this.replaces];
       result.properties.backup = "root/.ssh/known_hosts";
-      result.properties.hooks = new URL(
-        "host.install",
-        import.meta.url
-      ).pathname;
+      result.properties.hooks = this.packageHooks;
 
       result.sources.push(
         new FileContentProvider(stagingDir + "/")[Symbol.asyncIterator]()
