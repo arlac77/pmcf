@@ -59,10 +59,10 @@ export class Cluster extends Host {
         access: "private"
       }
     };
-  
+
     let interfaces = new Set();
 
-    for(const cluster of this.owner.clusters()) {
+    for (const cluster of this.owner.clusters()) {
       interfaces = interfaces.union(cluster.masters.union(cluster.backups));
     }
 
@@ -70,15 +70,19 @@ export class Cluster extends Host {
       const host = ni.host;
       const name = `keepalived-${host.name}`;
       const packageStagingDir = join(stagingDir, name);
-  
+
       const cfg = [];
 
-      for(const cluster of this.owner.clusters()) {
+      for (const cluster of [...this.owner.clusters()].sort((a, b) =>
+        a.name.localeCompare(b.name)
+      )) {
         cfg.push(`vrrp_instance ${cluster.name} {`);
         cfg.push(`  state ${cluster.masters.has(ni) ? "MASTER" : "BACKUP"}`);
-        cfg.push(`  interface ${ni.name}`,);
+        cfg.push(`  interface ${ni.name}`);
         cfg.push("  virtual_ipaddress {");
-        cfg.push(`    ${cluster.cidrAddress} dev ${ni.name}`);
+        cfg.push(
+          `    ${cluster.cidrAddress} dev ${ni.name} label ${cluster.name}`
+        );
         cfg.push("  }");
         cfg.push(`  virtual_router_id ${cluster.routerId}`);
         cfg.push(`  priority ${host.priority}`);
@@ -97,8 +101,7 @@ export class Cluster extends Host {
         cfg
       );
 
-      result.outputs = host.outputs,
-      result.properties.name = name;
+      (result.outputs = host.outputs), (result.properties.name = name);
       result.properties.dependencies = ["keepalived"];
 
       result.sources.push(
