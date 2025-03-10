@@ -116,7 +116,8 @@ network={
           "utf8"
         );
 
-        host.postinstall.push(
+        host.addPackageHook(
+          "post_install",
           `systemctl enable wpa_supplicant@${ni.name}.service`
         );
       }

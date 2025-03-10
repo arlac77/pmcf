@@ -337,6 +337,20 @@ export class Base {
     return this.#packaging;
   }
 
+
+  #packageHooks = new Map();
+
+  addPackageHook(name,content)
+  {
+    let hook = this.#packageHooks.get(name);
+    if(hook) {
+      content = hook + content;
+    }
+
+    this.#packageHooks.set(name, content);
+
+  }
+
   get outputs() {
     return new Set(allOutputs.filter(o => this.packaging.has(o.name)));
   }
