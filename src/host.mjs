@@ -331,6 +331,10 @@ export class Host extends Base {
     return [...this.networkAddresses()].map(na => na.address);
   }
 
+  get cidrAddress() {
+    return this.cidrAddresses[0];
+  }
+
   get cidrAddresses() {
     return [...this.networkAddresses()].map(({ address, subnet }) =>
       formatCIDR(address, subnet)
@@ -443,6 +447,10 @@ export class NetworkInterface extends Base {
 
   get rawAddresses() {
     return [...this.#ipAddresses].map(([address]) => address);
+  }
+
+  get cidrAddress() {
+    return this.cidrAddresses[0];
   }
 
   get cidrAddresses() {

@@ -78,7 +78,7 @@ export class Cluster extends Host {
         cfg.push(`  state ${cluster.masters.has(ni) ? "MASTER" : "BACKUP"}`);
         cfg.push(`  interface ${ni.name}`,);
         cfg.push("  virtual_ipaddress {");
-        cfg.push(`    ${cluster.rawAddress}`);
+        cfg.push(`    ${cluster.cidrAddress} dev ${ni.name}`);
         cfg.push("  }");
         cfg.push(`  virtual_router_id ${cluster.routerId}`);
         cfg.push(`  priority ${host.priority}`);
