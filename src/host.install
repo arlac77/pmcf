@@ -1,5 +1,4 @@
-
-config_resolv()
+post_install()
 {
     ls -l /etc/resolv.conf | grep -q /run/systemd/resolve/resolv.conf
     if [ $? = 1 ]
@@ -9,12 +8,12 @@ config_resolv()
     fi
 }
 
-post_install()
-{
-    config_resolv
-}
-
 post_upgrade()
 {
-    config_resolv
+    ls -l /etc/resolv.conf | grep -q /run/systemd/resolve/resolv.conf
+    if [ $? = 1 ]
+    then
+        mv /etc/resolv.conf /etc/resolv.conf.pre
+        ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
+    fi
 }
