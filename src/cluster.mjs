@@ -51,6 +51,10 @@ export class Cluster extends Host {
     return this.#backups;
   }
 
+  get members() {
+    return this.masters.union(this.backups);
+  }
+
   async *preparePackages(stagingDir) {
     const result = {
       sources: [],
@@ -93,6 +97,31 @@ export class Cluster extends Host {
         cfg.push("  }");
         cfg.push("}");
         cfg.push("");
+
+        for (const service of cluster.findServices({ type: "http" })) {
+          console.log("S",service.host.name,service.name);
+          cfg.push(`virtual_server ${cluster.rawAddress} ${service.port} {`);
+          cfg.push("  delay_loop 6");
+          cfg.push("  lb_algo wlc");
+          cfg.push("  persistence_timeout 600");
+          cfg.push(`  protocol ${service.protocol.toUpperCase()}`);
+
+          for (const member of this.members) {
+            cfg.push(`  real_server ${member.rawAddress} ${service.port} {`);
+            cfg.push("    weight 100");
+
+            if (service.protocol === "tcp") {
+              cfg.push(`    TCP_CHECK {`);
+              cfg.push("      connect_timeout 3");
+              cfg.push("    }");
+            }
+
+            cfg.push("  }");
+          }
+
+          cfg.push("}");
+          cfg.push("");
+        }
       }
 
       await writeLines(
