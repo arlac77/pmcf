@@ -75,7 +75,9 @@ export class Cluster extends Host {
       const name = `keepalived-${host.name}`;
       const packageStagingDir = join(stagingDir, name);
 
-      const cfg = [];
+      const cfg = ["global_defs {", "   notification_email {", "    " + this.administratorEmail, "  }",
+        "  smtp_server 192.168.1.1",
+        "}"];
 
       for (const cluster of [...this.owner.clusters()].sort((a, b) =>
         a.name.localeCompare(b.name)
@@ -99,7 +101,7 @@ export class Cluster extends Host {
         cfg.push("");
 
         for (const service of cluster.findServices({ type: "http" })) {
-          console.log("S",service.host.name,service.name);
+          console.log("S", service.host.name, service.name);
           cfg.push(`virtual_server ${cluster.rawAddress} ${service.port} {`);
           cfg.push("  delay_loop 6");
           cfg.push("  lb_algo wlc");
