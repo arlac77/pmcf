@@ -21,7 +21,6 @@ const ServiceTypeDefinition = {
   extends: Base.typeDefinition,
   properties: {
     ipAddresses: { type: "string", collection: true, writeable: true },
-    addresses: { type: "string", collection: true, writeable: true },
     port: { type: "number", collection: false, writeable: true },
     protocol: { type: "string", collection: false, writeable: true },
     alias: { type: "string", collection: false, writeable: true },
