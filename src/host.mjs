@@ -263,15 +263,18 @@ export class Host extends Base {
   }
 
   *findServices(filter) {
-    for (const service of this.#services) {
-      if (
-        !filter ||
-        filter.type === "*" ||
-        filter.type === service.type ||
-        filter.name === service.name
-      ) {
-        yield service;
+    if (filter) {
+      for (const service of this.#services) {
+        if (
+          filter.type === "*" ||
+          filter.type === service.type ||
+          filter.name === service.name
+        ) {
+          yield service;
+        }
       }
+    } else {
+      yield* this.#services;
     }
   }
 
