@@ -62,6 +62,15 @@ test("Service basics", async t => {
   t.deepEqual(services, [s1, s2]);
 
   t.is(s1, await l1.findService({ type: "dns" }));
+
+  const s3 = new Service(h1, {
+    name: "http",
+    weight: 0,
+    priority: 0,
+  });
+
+  t.is(s3.priority, 0);
+  t.is(s3.weight, 0);
 });
 
 test("Service without protocol", t => {

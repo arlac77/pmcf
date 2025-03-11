@@ -79,18 +79,15 @@ export class Service extends Base {
     return this;
   }
 
-  get server()
-  {
+  get server() {
     return this.owner;
   }
 
-  get domainName()
-  {
+  get domainName() {
     return this.server.domainName;
   }
 
-  get rawAddress()
-  {
+  get rawAddress() {
     return this.#ipAddresses?.[0] || this.server.rawAddress;
   }
 
@@ -119,7 +116,14 @@ export class Service extends Base {
   }
 
   get priority() {
-    return this.#priority || this.owner.priority || 99;
+    if (this.#priority !== undefined) {
+      return this.#priority;
+    }
+    if (this.owner.priority !== undefined) {
+      return this.owner.priority;
+    }
+
+    return 99;
   }
 
   set weight(value) {
