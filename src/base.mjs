@@ -284,6 +284,10 @@ export class Base {
     return this.owner?.timezone;
   }
 
+  get smtp() {
+    return this.findService({ type: "smtp" });
+  }
+
   findService(filter) {
     let best;
     for (const service of this.findServices(filter)) {
