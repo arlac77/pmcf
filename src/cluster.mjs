@@ -114,13 +114,19 @@ export class Cluster extends Host {
           cfg.push(`  protocol ${service.protocol.toUpperCase()}`);
 
           for (const member of this.members) {
-            cfg.push(`  real_server ${member.rawAddress} ${service.port} {`);
-            cfg.push("    weight 100");
+            const memberService = member.findService({ type: service.type });
 
-            if (service.protocol === "tcp") {
-              cfg.push(`    TCP_CHECK {`);
-              cfg.push("      connect_timeout 3");
-              cfg.push("    }");
+            cfg.push(
+              `  real_server ${member.rawAddress} ${memberService.port} {`
+            );
+            cfg.push(`    weight ${memberService.weight}`);
+
+            switch (service.protocol) {
+              case "tcp":
+                cfg.push(`    TCP_CHECK {`);
+                cfg.push("      connect_timeout 3");
+                cfg.push("    }");
+                break;
             }
 
             cfg.push("  }");
