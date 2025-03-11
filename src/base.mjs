@@ -297,7 +297,7 @@ export class Base {
 
   *findServices(filter) {
     if (this.owner) {
-      yield* this.owner?.findServices(filter);
+      yield* this.owner.findServices(filter);
     }
   }
 
