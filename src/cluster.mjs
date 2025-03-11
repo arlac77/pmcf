@@ -82,7 +82,9 @@ export class Cluster extends Host {
         "  }",
         `  smtp_server ${this.smtp.rawAddress}`,
         `  notification_email_from keepalived@${host.domainName}`,
-        "}"
+        `  lvs_id ${host.hostName}`,
+        "}",
+        ""
       ];
 
       for (const cluster of [...this.owner.clusters()].sort((a, b) =>
@@ -98,6 +100,7 @@ export class Cluster extends Host {
         cfg.push("  }");
         cfg.push(`  virtual_router_id ${cluster.routerId}`);
         cfg.push(`  priority ${host.priority}`);
+        cfg.push("  smtp_alert");
         cfg.push("  advert_int 5");
         cfg.push("  authentication {");
         cfg.push("    auth_type PASS");
