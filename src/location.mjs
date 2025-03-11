@@ -47,7 +47,6 @@ export class Location extends Owner {
   }
 
   async *preparePackages(stagingDir) {
-
     await this.loadPackageHooks(
       new URL("location.install", import.meta.url).pathname
     );
@@ -90,12 +89,8 @@ export class Location extends Owner {
 
       result.properties.name = `${this.typeName}-${this.name}`;
 
-      result.properties.provides = [
-        "location",
-        "mf-location",
-        `mf-location-${this.name}`
-      ];
-      result.properties.depends = {"jq":">=1.6"};
+      result.properties.provides = ["location", "mf-location"];
+      result.properties.depends = { jq: ">=1.6" };
       result.properties.replaces = [`mf-location-${this.name}`];
 
       result.sources.push(
