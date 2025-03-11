@@ -146,9 +146,9 @@ export class Owner extends Base {
     return this.typeNamed("host", name);
   }
 
-  * hosts() {
-    yield * this.typeList("host");
-    yield * this.typeList("cluster");
+  *hosts() {
+    yield* this.typeList("host");
+    yield* this.typeList("cluster");
   }
 
   networkNamed(name) {
@@ -225,7 +225,10 @@ export class Owner extends Base {
       }
 
       for (const nameOrNetwork of asIterator(destinationNetworks)) {
-        const other = nameOrNetwork instanceof Owner ? nameOrNetwork : this.networkNamed(nameOrNetwork);
+        const other =
+          nameOrNetwork instanceof Owner
+            ? nameOrNetwork
+            : this.networkNamed(nameOrNetwork);
         if (other) {
           if (!bridge.has(other)) {
             bridge.add(other);
@@ -360,4 +363,5 @@ export class Owner extends Base {
       yield location.domain;
     }
   }
+
 }
