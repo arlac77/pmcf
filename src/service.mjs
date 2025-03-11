@@ -131,7 +131,14 @@ export class Service extends Base {
   }
 
   get weight() {
-    return this.#weight || this.owner.weight || 0;
+    if (this.#weight !== undefined) {
+      return this.#weight;
+    }
+    if (this.owner.weight !== undefined) {
+      return this.owner.weight;
+    }
+
+    return 1;
   }
 
   set type(value) {
