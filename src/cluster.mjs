@@ -80,7 +80,7 @@ export class Cluster extends Host {
         "   notification_email {",
         "    " + this.administratorEmail,
         "  }",
-        "  smtp_server 192.168.1.1",
+        `  smtp_server ${this.smtp.rawAddress}`,
         `  notification_email_from keepalived@${host.domainName}`,
         "}"
       ];
