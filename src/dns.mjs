@@ -172,22 +172,33 @@ async function generateNamedDefs(dns, targetDir) {
 
     const NSRecord = createRecord("@", "NS", fullName(nameService.rawAddress));
 
-    const catalogZone = {
-      id: `catalog.${domain}`,
-      file: `catalog.${domain}.zone`,
-      records: new Set([
-        SOARecord,
-        NSRecord,
-        createRecord(fullName(`version.${domain}`), "TXT", '"2"')
-      ])
-    };
-
     const zone = {
       id: domain,
+      type: "plain",
       file: `${domain}.zone`,
       records: new Set([SOARecord, NSRecord, ...records])
     };
     zones.push(zone);
+
+    const catalogZone = {
+      id: `catalog.${domain}`,
+      type: "catalog",
+      file: `catalog.${domain}.zone`,
+      records: new Set([
+        SOARecord,
+        NSRecord,
+        createRecord(fullName(`version.${domain}`), "TXT", '"1"')
+      ])
+    };
+
+    const configs = {
+      plain: { name: `${domain}.zone.conf`, content: [] }
+    };
+
+    if (dns.hasCatalog) {
+      zones.push(catalogZone);
+      configs.catalog = { name: `catalog.${domain}.zone.conf`, content: [] };
+    }
 
     const hosts = new Set();
     const addresses = new Set();
@@ -217,6 +228,7 @@ async function generateNamedDefs(dns, targetDir) {
             const reverseArpa = reverseArpaAddress(subnet.prefix);
             reverseZone = {
               id: reverseArpa,
+              type: "plain",
               file: `${reverseArpa}.zone`,
               records: new Set([SOARecord, NSRecord])
             };
@@ -258,32 +270,28 @@ async function generateNamedDefs(dns, targetDir) {
       }
     }
 
-    const zoneConfig = [];
-
-    if (dns.hasCatalog) {
-      zones.push(catalogZone);
-    }
-
     for (const zone of zones) {
-      if (zone !== catalogZone) {
+      const content = configs[zone.type].content;
+
+      if (zone.type !== "catalog") {
         const hash = createHmac("md5", zone.id).digest("hex");
         catalogZone.records.add(
-          createRecord(`${hash}.zones.${domain}.`, "PTR", `${zone.id}.`)
+          createRecord(`${hash}.zones.${domain}.`, "PTR", fullName(zone.id))
         );
       }
 
-      zoneConfig.push(`zone \"${zone.id}\" {`);
-      zoneConfig.push(`  type master;`);
-      zoneConfig.push(`  file \"${zone.file}\";`);
+      content.push(`zone \"${zone.id}\" {`);
+      content.push(`  type master;`);
+      content.push(`  file \"${zone.file}\";`);
 
-      zoneConfig.push(
+      content.push(
         `  allow-update { ${
           dns.allowedUpdates.length ? dns.allowedUpdates.join(";") : "none"
         }; };`
       );
-      zoneConfig.push(`  notify ${dns.notify ? "yes" : "no"};`);
-      zoneConfig.push(`};`);
-      zoneConfig.push("");
+      content.push(`  notify ${dns.notify ? "yes" : "no"};`);
+      content.push(`};`);
+      content.push("");
 
       maxKeyLength = 0;
       for (const r of zone.records) {
@@ -299,11 +307,13 @@ async function generateNamedDefs(dns, targetDir) {
       );
     }
 
-    await writeLines(
-      join(targetDir, "etc/named.d/zones"),
-      `${domain}.zone.conf`,
-      zoneConfig
-    );
+    for (const cfg of Object.values(configs)) {
+      await writeLines(
+        join(targetDir, "etc/named.d/zones"),
+        cfg.name,
+        cfg.content
+      );
+    }
   }
 }
 
