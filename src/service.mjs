@@ -16,7 +16,7 @@ const ServiceTypes = {
 
 const ServiceTypeDefinition = {
   name: "service",
-  owners: ["host"],
+  owners: ["host", "cluster"],
   priority: 0.4,
   extends: Base.typeDefinition,
   properties: {
