@@ -1,7 +1,11 @@
 import { writeFile, mkdir } from "node:fs/promises";
-import { join } from "node:path";
+import { join, dirname, basename } from "node:path";
 
 export async function writeLines(dir, name, lines) {
+  const full = join(dir, name);
+  dir = dirname(full);
+  name = basename(full);
+
   await mkdir(dir, { recursive: true });
   if (typeof lines === "string") lines = [lines];
   return writeFile(
@@ -33,11 +37,12 @@ export function asArray(value) {
   return Array.isArray(value) ? value : value === undefined ? [] : [value];
 }
 
-export function asIterator(value)
-{
-  if(value === undefined) { return []; }
+export function asIterator(value) {
+  if (value === undefined) {
+    return [];
+  }
 
-  if(typeof value[Symbol.iterator] === 'function') {
+  if (typeof value[Symbol.iterator] === "function") {
     return value;
   }
 
@@ -182,5 +187,5 @@ export function hasWellKnownSubnet(address) {
 
 export const IPV4_LOCALHOST = _encode(ipv4, "127.0.0.1");
 export const IPV6_LOCALHOST = _encode(ipv6, "::1");
-export const IPV6_LINK_LOCAL_BROADCAST = _encode(ipv6,"ff02::1");
-export const IPV6_ROUTER_BROADCAST = _encode(ipv6,"ff02::2");
+export const IPV6_LINK_LOCAL_BROADCAST = _encode(ipv6, "ff02::1");
+export const IPV6_ROUTER_BROADCAST = _encode(ipv6, "ff02::2");
