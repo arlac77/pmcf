@@ -187,7 +187,7 @@ async function generateNamedDefs(dns, targetDir) {
       records: new Set([
         SOARecord,
         NSRecord,
-        createRecord(fullName(`version.${domain}`), "TXT", '"1"')
+        createRecord(fullName(`version.catalog.${domain}`), "TXT", '"1"')
       ])
     };
 
