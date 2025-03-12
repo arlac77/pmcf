@@ -278,7 +278,7 @@ async function generateNamedDefs(dns, targetDir) {
       if (zone.type !== "catalog") {
         const hash = createHmac("md5", zone.id).digest("hex");
         catalogZone.records.add(
-          createRecord(`${hash}.zones.${domain}.`, "PTR", fullName(zone.id))
+          createRecord(`${hash}.zones.catalog.${domain}.`, "PTR", fullName(zone.id))
         );
       }
 
