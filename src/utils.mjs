@@ -180,7 +180,7 @@ export function hasWellKnownSubnet(address) {
   return n === IPV4_LOCALHOST || n === IPV6_LOCALHOST || isLinkLocal(address);
 }
 
-const IPV4_LOCALHOST = _encode(ipv4, "127.0.0.1");
-const IPV6_LOCALHOST = _encode(ipv6, "::1");
-const IPV6_LINK_LOCAL_BROADCAST = _encode(ipv6,"ff02::1");
-const IPV6_ROUTER_BROADCAST = _encode(ipv6,"ff02::2");
+export const IPV4_LOCALHOST = _encode(ipv4, "127.0.0.1");
+export const IPV6_LOCALHOST = _encode(ipv6, "::1");
+export const IPV6_LINK_LOCAL_BROADCAST = _encode(ipv6,"ff02::1");
+export const IPV6_ROUTER_BROADCAST = _encode(ipv6,"ff02::2");
