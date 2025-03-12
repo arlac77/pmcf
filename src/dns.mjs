@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import { createHmac } from "node:crypto";
 import { FileContentProvider } from "npm-pkgbuild";
-import { writeLines, isIPv6Address, normalizeIPAddress } from "./utils.mjs";
+import { writeLines, isIPv6Address, normalizeIPAddress, isLinkLocal } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
 
@@ -12,6 +12,7 @@ const DNSServiceTypeDefinition = {
   properties: {
     hasSVRRecords: { type: "boolean", collection: false, writeable: true },
     hasCatalog: { type: "boolean", collection: false, writeable: true },
+    hasLinkLocalAdresses: { type: "boolean", collection: false, writeable: true },
     notify: { type: "boolean", collection: false, writeable: true },
     recordTTL: { type: "string", collection: false, writeable: true },
     refresh: { type: "string", collection: false, writeable: true },
@@ -30,6 +31,7 @@ export class DNSService extends Base {
   recordTTL = "1W";
   hasSVRRecords = true;
   hasCatalog = true;
+  hasLinkLocalAdresses = true;
   notify = true;
   #forwardsTo = [];
 
@@ -210,7 +212,7 @@ async function generateNamedDefs(dns, targetDir) {
     } of dns.owner.networkAddresses()) {
       const host = networkInterface.host;
 
-      if (!addresses.has(address)) {
+      if (!addresses.has(address) && (dns.hasLinkLocalAdresses || !isLinkLocal(address))) {
         addresses.add(address);
 
         zone.records.add(
