@@ -175,7 +175,7 @@ async function generateNamedDefs(dns, targetDir) {
     const zone = {
       id: domain,
       type: "plain",
-      file: `${domain}.zone`,
+      file: `${dns.owner.name}/${domain}.zone`,
       records: new Set([SOARecord, NSRecord, ...records])
     };
     zones.push(zone);
@@ -183,7 +183,7 @@ async function generateNamedDefs(dns, targetDir) {
     const catalogZone = {
       id: `catalog.${domain}`,
       type: "catalog",
-      file: `catalog.${domain}.zone`,
+      file: `${dns.owner.name}/catalog.${domain}.zone`,
       records: new Set([
         SOARecord,
         NSRecord,
@@ -229,7 +229,7 @@ async function generateNamedDefs(dns, targetDir) {
             reverseZone = {
               id: reverseArpa,
               type: "plain",
-              file: `${reverseArpa}.zone`,
+              file: `${dns.owner.name}/${reverseArpa}.zone`,
               records: new Set([SOARecord, NSRecord])
             };
             zones.push(reverseZone);
