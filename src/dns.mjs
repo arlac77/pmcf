@@ -211,7 +211,7 @@ async function generateZoneDefs(dns, targetDir) {
       };
     };
 
-    for await (const mail of dns.owner.findServices({ type: "smtp" })) {
+    for (const mail of dns.owner.findServices({ type: "smtp" })) {
       records.add(
         createRecord("@", "MX", mail.priority, fullName(mail.owner.domainName))
       );
@@ -228,7 +228,7 @@ async function generateZoneDefs(dns, targetDir) {
       `(${updates})`
     );
 
-    const NSRecord = createRecord("@", "NS", fullName(nameService.rawAddress));
+    const NSRecord = createRecord("@", "NS", fullName(nameService.rawAddress||nameService.domainName));
 
     const zone = {
       id: domain,
