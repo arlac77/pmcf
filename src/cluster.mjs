@@ -56,24 +56,27 @@ export class Cluster extends Host {
   }
 
   async *preparePackages(stagingDir) {
-    const result = {
-      sources: [],
-      properties: {
-        description: `${this.typeName} definitions for ${this.fullName}`,
-        access: "private"
-      }
-    };
-
-    let interfaces = new Set();
-
-    for (const cluster of this.owner.clusters()) {
-      interfaces = interfaces.union(cluster.masters.union(cluster.backups));
-    }
-
-    for (const ni of interfaces) {
+    for (const ni of [...this.owner.clusters()].reduce(
+      (all, cluster) => all.union(cluster.members),
+      new Set()
+    )) {
       const host = ni.host;
       const name = `keepalived-${host.name}`;
       const packageStagingDir = join(stagingDir, name);
+      const result = {
+        sources: [
+          new FileContentProvider(packageStagingDir + "/")[
+            Symbol.asyncIterator
+          ]()
+        ],
+        outputs: host.outputs,
+        properties: {
+          name,
+          description: `${this.typeName} definitions for ${this.fullName}`,
+          access: "private",
+          dependencies: ["keepalived"]
+        }
+      };
 
       const cfg = [
         "global_defs {",
@@ -144,13 +147,6 @@ export class Cluster extends Host {
         join(packageStagingDir, "etc/keepalived"),
         "keepalived.conf",
         cfg
-      );
-
-      (result.outputs = host.outputs), (result.properties.name = name);
-      result.properties.dependencies = ["keepalived"];
-
-      result.sources.push(
-        new FileContentProvider(packageStagingDir + "/")[Symbol.asyncIterator]()
       );
 
       yield result;
