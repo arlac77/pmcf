@@ -1,5 +1,6 @@
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
+import { asArray } from "./utils.mjs";
 
 const ServiceTypes = {
   dns: { protocol: "udp", port: 53 },
@@ -166,3 +167,16 @@ export class Service extends Base {
 }
 
 export const sortByPriority = (a, b) => a.priority - b.priority;
+
+export function serviceAddresses(
+  sources,
+  filter,
+  addressType = "rawAddresses"
+) {
+  return asArray(sources)
+    .map(ft => Array.from(ft.findServices(filter)))
+    .flat()
+    .sort(sortByPriority)
+    .map(s => s[addressType])
+    .flat();
+}

@@ -9,7 +9,7 @@ import {
 } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
-import { sortByPriority } from "./service.mjs";
+import { serviceAddresses } from "./service.mjs";
 import { subnets } from "./subnet.mjs";
 
 const DNSServiceTypeDefinition = {
@@ -91,15 +91,6 @@ export class DNSService extends Base {
     return this.#forwardsTo;
   }
 
-  get forwardsToAdresses() {
-    return this.forwardsTo
-      .map(ft => Array.from(ft.findServices(DNS_SERVICE_FILTER)))
-      .flat()
-      .sort(sortByPriority)
-      .map(s => s.rawAddresses)
-      .flat();
-  }
-
   *findServices(filter) {
     yield* this.owner.findServices(filter);
 
@@ -113,22 +104,15 @@ export class DNSService extends Base {
   }
 
   async resolvedConfig() {
-    const dnsServices = Array.from(this.findServices(DNS_SERVICE_FILTER)).sort(
-      sortByPriority
-    );
-
-    const master = dnsServices
-      .filter(s => s.priority < 10)
-      .map(s => s.rawAddresses)
-      .flat();
-    const fallback = dnsServices
-      .filter(s => s.priority >= 10)
-      .map(s => s.rawAddresses)
-      .flat();
-
     return {
-      DNS: master.join(" "),
-      FallbackDNS: fallback.join(" "),
+      DNS: serviceAddresses(this, {
+        ...DNS_SERVICE_FILTER,
+        priority: "<10"
+      }).join(" "),
+      FallbackDNS: serviceAddresses(this, {
+        ...DNS_SERVICE_FILTER,
+        priority: ">=10"
+      }).join(" "),
       Domains: this.domains.join(" "),
       DNSSEC: "no",
       MulticastDNS: "yes",
@@ -152,7 +136,9 @@ export class DNSService extends Base {
 
     const options = [
       "forwarders {",
-      ...this.forwardsToAdresses.map(a => `  ${a};`),
+      ...serviceAddresses(this.forwardsTo, DNS_SERVICE_FILTER).map(
+        a => `  ${a};`
+      ),
       "};"
     ];
     await writeLines(join(p1, "etc/named.d/options"), `${name}.conf`, options);
