@@ -11,8 +11,8 @@ import {
   formatCIDR,
   hasWellKnownSubnet
 } from "./utils.mjs";
-import { serviceFilter } from "./service.mjs";
-import { addType } from "./types.mjs";
+import { objectFilter } from "./filter.mjs";
+import { addType, types } from "./types.mjs";
 import {
   generateNetworkDefs,
   generateMachineInfo,
@@ -264,7 +264,7 @@ export class Host extends Base {
   }
 
   *findServices(filter) {
-    yield* serviceFilter(this.#services, filter);
+    yield* objectFilter(types.service, this.#services, filter);
   }
 
   typeNamed(typeName, name) {

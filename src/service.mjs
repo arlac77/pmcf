@@ -27,7 +27,8 @@ const ServiceTypeDefinition = {
     type: { type: "string", collection: false, writeable: true },
     master: { type: "boolean", collection: false, writeable: true },
     priority: { type: "number", collection: false, writeable: true },
-    weight: { type: "number", collection: false, writeable: true }
+    weight: { type: "number", collection: false, writeable: true },
+    srvPrefix: { type: "string", collection: false, writeable: false }
   }
 };
 
@@ -165,67 +166,3 @@ export class Service extends Base {
 }
 
 export const sortByPriority = (a, b) => a.priority - b.priority;
-
-export function* serviceFilter(services, filter) {
-  if (filter) {
-    for (const service of services) {
-      const filterString = key => {
-        if (filter[key] === undefined) {
-          return true;
-        }
-        if (filter[key] === service[key]) {
-          return true;
-        }
-
-        for(const value of filter[key].split('|')) {
-          if(service[key] === value) { return true; }
-        }
-
-        return false;
-      };
-
-      const filterNumber = key => {
-        switch (typeof filter[key]) {
-          case "undefined":
-            return true;
-          case "number":
-            return filter[key] === service[key];
-          case "string":
-            const m = filter[key].match(/^([=><!]+)(\d+)/);
-            if (m) {
-              const value = parseInt(m[2]);
-              switch (m[1]) {
-                case "=":
-                  return service[key] === value;
-                case "!=":
-                  return service[key] !== value;
-                case "<":
-                  return service[key] < value;
-                case "<=":
-                  return service[key] <= value;
-                case ">":
-                  return service[key] > value;
-                case ">=":
-                  return service[key] >= value;
-              }
-            }
-        }
-        return false;
-      };
-
-      if (
-        filterString("type") &&
-        filterString("name") &&
-        filterString("protocol") &&
-        filterString("alias") &&
-        filterNumber("priority") &&
-        filterNumber("weight") &&
-        filterNumber("port")
-      ) {
-        yield service;
-      }
-    }
-  } else {
-    yield* services;
-  }
-}
