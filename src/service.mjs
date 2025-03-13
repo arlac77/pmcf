@@ -1,6 +1,7 @@
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
 import { asArray } from "./utils.mjs";
+import { networkAddressProperties } from "./network-support.mjs";
 
 const ServiceTypes = {
   dns: { protocol: "udp", port: 53, tls: false },
@@ -22,6 +23,7 @@ const ServiceTypeDefinition = {
   priority: 0.4,
   extends: Base.typeDefinition,
   properties: {
+    ...networkAddressProperties,
     ipAddresses: { type: "string", collection: true, writeable: true },
     port: { type: "number", collection: false, writeable: true },
     protocol: { type: "string", collection: false, writeable: true },
@@ -90,16 +92,16 @@ export class Service extends Base {
     return this.server.domainName;
   }
 
+  get rawAddresses() {
+    return this.#ipAddresses || this.owner.rawAddresses;
+  }
+
   get rawAddress() {
     return this.#ipAddresses?.[0] || this.server.rawAddress;
   }
 
   set ipAddresses(value) {
     this.#ipAddresses = value;
-  }
-
-  get rawAddresses() {
-    return this.#ipAddresses || this.owner.rawAddresses;
   }
 
   get addresses() {

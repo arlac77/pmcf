@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { Base } from "./base.mjs";
-import { networkProperties } from "./network-support.mjs";
+import { networkProperties, networkAddressProperties } from "./network-support.mjs";
 import {
   asArray,
   isIPv4Address,
@@ -381,10 +381,10 @@ const NetworkInterfaceTypeDefinition = {
   extends: Base.typeDefinition,
   properties: {
     ...networkProperties,
-    hwaddr: { type: "string", collection: false, writeable: true },
+    ...networkAddressProperties,
     ipAddresses: { type: "string", collection: true, writeable: true },
-    cidrAddresses: { type: "string", collection: true, writeable: false },
-    rawAddresses: { type: "string", collection: true, writeable: false },
+
+    hwaddr: { type: "string", collection: false, writeable: true },
     network: { type: "network", collection: false, writeable: true },
     destination: { type: "string", collection: false, writeable: true },
     arpbridge: { type: "network_interface", collection: true, writeable: true }
