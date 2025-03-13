@@ -213,7 +213,7 @@ async function generateZoneDefs(dns, targetDir) {
 
     for (const mail of dns.owner.findServices({ type: "smtp" })) {
       records.add(
-        createRecord("@", "MX", mail.priority, fullName(mail.ipAddressOrDomainName))
+        createRecord("@", "MX", mail.priority, fullName(mail.domainName))
       );
     }
 
