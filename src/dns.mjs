@@ -167,7 +167,7 @@ export class DNSService extends Base {
       name: `named-zones-${name}`,
       description: `zone definitions for ${this.fullName}`,
       dependencies: ["mf-named"],
-      replaces: ["mf-named-zones", `named-${name}`],
+      replaces: ["mf-named-zones"],
       access: "private"
     };
 
