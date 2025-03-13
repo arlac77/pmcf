@@ -9,6 +9,7 @@ import {
 } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
+import { sortByPriority } from "./service.mjs";
 
 const DNSServiceTypeDefinition = {
   name: "dns",
@@ -79,6 +80,15 @@ export class DNSService extends Base {
     return this.#forwardsTo;
   }
 
+  get forwardsToAdresses() {
+    return this.forwardsTo
+      .map(ft => Array.from(ft.findServices(DNS_SERVICE_FILTER)))
+      .flat()
+      .sort(sortByPriority)
+      .map(s => s.rawAddresses)
+      .flat();
+  }
+
   *findServices(filter) {
     yield* this.owner.findServices(filter);
 
@@ -93,7 +103,7 @@ export class DNSService extends Base {
 
   async resolvedConfig() {
     const dnsServices = Array.from(this.findServices(DNS_SERVICE_FILTER)).sort(
-      (a, b) => a.priority - b.priority
+      sortByPriority
     );
 
     const master = dnsServices
@@ -129,13 +139,11 @@ export class DNSService extends Base {
       }
     };
 
-    const options = ["forwarders {"];
-    for (const s of this.forwardsTo) {
-      for (const dns of s.findServices(DNS_SERVICE_FILTER)) {
-        options.push(...(dns.rawAddresses.map(a=>`  ${a};`)));
-      }
-    }
-    options.push("};");
+    const options = [
+      "forwarders {",
+      ...this.forwardsToAdresses.map(a => `  ${a};`),
+      "};"
+    ];
     await writeLines(join(p1, "etc/named.d/options"), `${name}.conf`, options);
 
     const category = [];
@@ -157,7 +165,7 @@ export class DNSService extends Base {
       category
     );
 
-    if(options.length > 2 || category.length > 2) {
+    if (options.length > 2 || category.length > 2) {
       yield result;
     }
 
