@@ -31,7 +31,7 @@ const DNSServiceTypeDefinition = {
     expire: { type: "string", collection: false, writeable: true },
     minimum: { type: "string", collection: false, writeable: true },
     forwardsTo: { type: "network", collection: true, writeable: true },
-    trusts: { type: "network", collection: true, writeable: true },
+    trusted: { type: "network", collection: true, writeable: true },
     allowedUpdates: { type: "string", collection: true, writeable: true }
   }
 };
@@ -75,12 +75,12 @@ export class DNSService extends Base {
     return [this.refresh, this.retry, this.expire, this.minimum];
   }
 
-  set trusts(value) {
-    this.#trusts.push(value);
+  set trusted(value) {
+    this.#trusted.push(value);
   }
 
-  get trusts() {
-    return this.#trusts;
+  get trusted() {
+    return this.#trusted;
   }
 
   set forwardsTo(value) {
@@ -159,7 +159,7 @@ export class DNSService extends Base {
 
     const category = [
       "acl trusted {",
-      ...Array.from(subnets(this.trusts)).map(subnet => `  ${subnet.name};`),
+      ...Array.from(subnets(this.trusted)).map(subnet => `  ${subnet.name};`),
       "};"
     ];
 
