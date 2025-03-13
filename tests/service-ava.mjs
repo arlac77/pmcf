@@ -61,6 +61,8 @@ test("Service basics", async t => {
   t.deepEqual(Array.from(l1.findServices({ name: "dns" })), [s1, s2]);
   t.deepEqual(Array.from(l1.findServices({ type: "dns", name: "dns" })), [s1, s2]);
   t.deepEqual(Array.from(l1.findServices({ type: "dns", name: "dnsx" })), []);
+  t.deepEqual(Array.from(l1.findServices({ type: "dns", name: "dns|http" })), [s1, s2]);
+  t.deepEqual(Array.from(l1.findServices({ type: "dns", protocol: "udp" })), [s1, s2]);
   t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: 19 })), [s2]);
   t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: "=19" })), [s2]);
   t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: ">=19" })), [s2]);

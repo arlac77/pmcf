@@ -11,6 +11,7 @@ import {
   formatCIDR,
   hasWellKnownSubnet
 } from "./utils.mjs";
+import { serviceFilter } from "./service.mjs";
 import { addType } from "./types.mjs";
 import {
   generateNetworkDefs,
@@ -263,63 +264,7 @@ export class Host extends Base {
   }
 
   *findServices(filter) {
-    if (filter) {
-      for (const service of this.#services) {
-        if (
-          (filter.type === undefined || filter.type === service.type) &&
-          (filter.name === undefined || filter.name === service.name)
-        ) {
-          switch (typeof filter.priority) {
-            case "number":
-              if (filter.priority !== service.priority) {
-                continue;
-              }
-              break;
-            case "string":
-              const m = filter.priority.match(/^([=><!]+)(\d+)/);
-              if (m) {
-                const priority = parseInt(m[2]);
-                switch (m[1]) {
-                  case "=":
-                    if (service.priority != priority) {
-                      continue;
-                    }
-                    break;
-                  case "!=":
-                    if (service.priority == priority) {
-                      continue;
-                    }
-                    break;
-                  case "<":
-                    if (service.priority >= priority) {
-                      continue;
-                    }
-                    break;
-                  case "<=":
-                    if (service.priority > priority) {
-                      continue;
-                    }
-                    break;
-                  case ">":
-                    if (service.priority <= priority) {
-                      continue;
-                    }
-                    break;
-                  case ">=":
-                    if (service.priority < priority) {
-                      continue;
-                    }
-                    break;
-                }
-              }
-          }
-
-          yield service;
-        }
-      }
-    } else {
-      yield* this.#services;
-    }
+    yield* serviceFilter(this.#services, filter);
   }
 
   typeNamed(typeName, name) {
