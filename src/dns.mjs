@@ -46,7 +46,7 @@ export class DNSService extends Base {
   hasLinkLocalAdresses = true;
   notify = true;
   #forwardsTo = [];
-  #trusts = [];
+  #trusted = [];
 
   refresh = 36000;
   retry = 72000;
