@@ -226,10 +226,6 @@ export class Host extends Base {
     return this.#distribution || this.extends.find(e => e.distribution);
   }
 
-  get domain() {
-    return this.location?.domain;
-  }
-
   get modelName() {
     return this.model?.hostName;
   }
