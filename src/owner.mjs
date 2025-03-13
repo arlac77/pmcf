@@ -128,9 +128,7 @@ export class Owner extends Base {
 
   *findServices(filter) {
     for (const host of this.hosts()) {
-      for (const service of host.findServices(filter)) {
-        yield service;
-      }
+      yield* host.findServices(filter);
     }
   }
 
@@ -143,7 +141,7 @@ export class Owner extends Base {
   }
 
   hostNamed(name) {
-    return this.typeNamed("host", name);
+    return this.typeNamed("host", name) || this.typeNamed("cluster", name);
   }
 
   *hosts() {
@@ -363,5 +361,4 @@ export class Owner extends Base {
       yield location.domain;
     }
   }
-
 }
