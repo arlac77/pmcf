@@ -3,16 +3,17 @@ import { addType } from "./types.mjs";
 import { asArray } from "./utils.mjs";
 
 const ServiceTypes = {
-  dns: { protocol: "udp", port: 53 },
-  ldap: { protocol: "tcp", port: 389 },
-  http: { protocol: "tcp", port: 80 },
-  https: { protocol: "tcp", port: 443 },
-  rtsp: { protocol: "tcp", port: 554 },
-  smtp: { protocol: "tcp", port: 25 },
-  ssh: { protocol: "tcp", port: 22 },
-  imap: { protocol: "tcp", port: 143 },
-  imaps: { protocol: "tcp", port: 993 },
-  dhcp: {}
+  dns: { protocol: "udp", port: 53, tls: false },
+  ldap: { protocol: "tcp", port: 389, tls: false },
+  ldaps: { protocol: "tcp", port: 636, tls: true },
+  http: { protocol: "tcp", port: 80, tls: false },
+  https: { protocol: "tcp", port: 443, tls: true },
+  rtsp: { protocol: "tcp", port: 554, tls: false },
+  smtp: { protocol: "tcp", port: 25, tls: false },
+  ssh: { protocol: "tcp", port: 22, tls: false },
+  imap: { protocol: "tcp", port: 143, tls: false },
+  imaps: { protocol: "tcp", port: 993, tls: true },
+  dhcp: { tls: false }
 };
 
 const ServiceTypeDefinition = {
@@ -29,7 +30,8 @@ const ServiceTypeDefinition = {
     master: { type: "boolean", collection: false, writeable: true },
     priority: { type: "number", collection: false, writeable: true },
     weight: { type: "number", collection: false, writeable: true },
-    srvPrefix: { type: "string", collection: false, writeable: false }
+    srvPrefix: { type: "string", collection: false, writeable: false },
+    tls: { type: "string", collection: false, writeable: false }
   }
 };
 
@@ -156,6 +158,10 @@ export class Service extends Base {
 
   get protocol() {
     return ServiceTypes[this.type]?.protocol;
+  }
+
+  get tls() {
+    return ServiceTypes[this.type]?.tls || false;
   }
 
   get srvPrefix() {
