@@ -132,10 +132,10 @@ export class DNSService extends Base {
     const options = ["forwarders {"];
     for (const s of this.forwardsTo) {
       for (const dns of s.findServices(DNS_SERVICE_FILTER)) {
-        options.push(...(dns.rawAddresses.map(a=>a+";")));
+        options.push(...(dns.rawAddresses.map(a=>`  ${a};`)));
       }
     }
-    options.push("}");
+    options.push("};");
     await writeLines(join(p1, "etc/named.d/options"), `${name}.conf`, options);
 
     const category = [];
