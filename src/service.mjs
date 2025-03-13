@@ -1,6 +1,9 @@
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
 
+
+export const sortByPriority = (a, b) => a.priority - b.priority;
+
 const ServiceTypes = {
   dns: { protocol: "udp", port: 53 },
   ldap: { protocol: "tcp", port: 389 },

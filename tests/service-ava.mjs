@@ -57,11 +57,18 @@ test("Service basics", async t => {
   t.deepEqual(s2.addresses, ["10.0.0.2:53"]);
   t.is([...h2.findServices({ type: "dns" })][0], s2);
 
-  const services = Array.from(l1.findServices({ type: "dns" }));
+  t.deepEqual(Array.from(l1.findServices({ type: "dns" })), [s1, s2]);
+  t.deepEqual(Array.from(l1.findServices({ name: "dns" })), [s1, s2]);
+  t.deepEqual(Array.from(l1.findServices({ type: "dns", name: "dns" })), [s1, s2]);
+  t.deepEqual(Array.from(l1.findServices({ type: "dns", name: "dnsx" })), []);
+  t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: 19 })), [s2]);
+  t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: "=19" })), [s2]);
+  t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: ">=19" })), [s2]);
+  t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: "<20" })), [s1,s2]);
+  t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: "<=20" })), [s1,s2]);
+  t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: "!=19" })), [s1]);
 
-  t.deepEqual(services, [s1, s2]);
-
-  t.is(s1, await l1.findService({ type: "dns" }));
+  t.is(s1, l1.findService({ type: "dns" }));
 
   const s3 = new Service(h1, {
     name: "http",
