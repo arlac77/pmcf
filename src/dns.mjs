@@ -10,6 +10,7 @@ import {
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
 import { sortByPriority } from "./service.mjs";
+import { subnets } from "./subnet.mjs";
 
 const DNSServiceTypeDefinition = {
   name: "dns",
@@ -30,6 +31,7 @@ const DNSServiceTypeDefinition = {
     expire: { type: "string", collection: false, writeable: true },
     minimum: { type: "string", collection: false, writeable: true },
     forwardsTo: { type: "network", collection: true, writeable: true },
+    trusts: { type: "network", collection: true, writeable: true },
     allowedUpdates: { type: "string", collection: true, writeable: true }
   }
 };
@@ -44,6 +46,7 @@ export class DNSService extends Base {
   hasLinkLocalAdresses = true;
   notify = true;
   #forwardsTo = [];
+  #trusts = [];
 
   refresh = 36000;
   retry = 72000;
@@ -70,6 +73,14 @@ export class DNSService extends Base {
 
   get soaUpdates() {
     return [this.refresh, this.retry, this.expire, this.minimum];
+  }
+
+  set trusts(value) {
+    this.#trusts.push(value);
+  }
+
+  get trusts() {
+    return this.#trusts;
   }
 
   set forwardsTo(value) {
@@ -146,18 +157,11 @@ export class DNSService extends Base {
     ];
     await writeLines(join(p1, "etc/named.d/options"), `${name}.conf`, options);
 
-    const category = [];
-
-    /*
-    const category = ["acl trusted {"];
-
-    const network = this.owner.named("LOCAL");
-    for (const subnet of network.subnets()) {
-      category.push(`${subnet.name};`);
-    }
-
-    category.push("}");
-    */
+    const category = [
+      "acl trusted {",
+      ...Array.from(subnets(this.trusts)).map(subnet => `  ${subnet.name};`),
+      "};"
+    ];
 
     await writeLines(
       join(p1, "etc/named.d/categories"),

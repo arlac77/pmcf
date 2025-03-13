@@ -75,3 +75,17 @@ export class Subnet extends Base {
     return false;
   }
 }
+
+
+export function subnets(sources) {
+  const all = new Set();
+
+  for (const owner of sources) {
+    for (const subnet of owner.subnets()) {
+      all.add(subnet);
+    }
+  }
+
+  return all;
+}
+
