@@ -213,10 +213,11 @@ async function generateZoneDefs(dns, targetDir) {
 
     for (const mail of dns.owner.findServices({ type: "smtp" })) {
       records.add(
-        createRecord("@", "MX", mail.priority, fullName(mail.owner.domainName))
+        createRecord("@", "MX", mail.priority, fullName(mail.ipAddressOrDomainName))
       );
     }
 
+    console.log(`${nameService}`,nameService.ipAddressOrDomainName);
     //console.log(dns.owner.fullName, domain, nameService.domainName, rname);
     const reverseZones = new Map();
 
@@ -228,7 +229,7 @@ async function generateZoneDefs(dns, targetDir) {
       `(${updates})`
     );
 
-    const NSRecord = createRecord("@", "NS", fullName(nameService.rawAddress||nameService.domainName));
+    const NSRecord = createRecord("@", "NS", fullName(nameService.ipAddressOrDomainName));
 
     const zone = {
       id: domain,

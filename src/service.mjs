@@ -92,6 +92,10 @@ export class Service extends Base {
     return this.server.domainName;
   }
 
+  get ipAddressOrDomainName() {
+    return this.rawAddress || this.domainName;
+  }
+
   get rawAddresses() {
     return this.#ipAddresses || this.owner.rawAddresses;
   }
