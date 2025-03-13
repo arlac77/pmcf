@@ -26,6 +26,7 @@ const HostTypeDefinition = {
   owners: ["owner", "network", "root"],
   extends: Base.typeDefinition,
   properties: {
+    ...networkAddressProperties,
     networkInterfaces: {
       type: "network_interface",
       collection: true,
@@ -45,9 +46,6 @@ const HostTypeDefinition = {
     depends: { type: "string", collection: true, writeable: true },
     provides: { type: "string", collection: true, writeable: true },
     extends: { type: "host", collection: true, writeable: true },
-    cidrAddresses: { type: "string", collection: true, writeable: false },
-    rawAddresses: { type: "string", collection: true, writeable: false },
-    rawAddress: { type: "string", collection: false, writeable: false },
     model: { type: "string", collection: false, writeable: false },
     isModel: { type: "boolean", collection: false, writeable: false }
   }
