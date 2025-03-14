@@ -13,7 +13,8 @@ const ClusterTypeDefinition = {
   properties: {
     routerId: { type: "number", collection: false, writeable: true },
     masters: { type: "network_interface", collection: true, writeable: true },
-    backups: { type: "network_interface", collection: true, writeable: true }
+    backups: { type: "network_interface", collection: true, writeable: true },
+    members: { type: "network_interface", collection: true, writeable: false }
   }
 };
 
