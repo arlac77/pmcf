@@ -16,12 +16,12 @@ const BaseTypeDefinition = {
       identifier: true,
       writeable: true
     },
-    fullName: {
+   /* fullName: {
       type: "string",
       collection: false,
       identifier: true,
       writeable: false
-    },
+    },*/
     description: { type: "string", collection: false, writeable: true },
     directory: { type: "string", collection: false, writeable: false },
     packaging: { type: "string", collection: false, writeable: true }
