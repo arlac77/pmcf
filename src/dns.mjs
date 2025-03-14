@@ -231,11 +231,13 @@ async function generateZoneDefs(dns, targetDir) {
       fullName(nameService.ipAddressOrDomainName)
     );
 
+    const ALPNRecord = createRecord("@", "HTTPS", 1, ".", "alpn=h3");
+
     const zone = {
       id: domain,
       type: "plain",
       file: `${dns.owner.name}/${domain}.zone`,
-      records: new Set([SOARecord, NSRecord, ...records])
+      records: new Set([SOARecord, NSRecord, ALPNRecord, ...records])
     };
     zones.push(zone);
 
