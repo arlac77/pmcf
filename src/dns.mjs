@@ -101,20 +101,23 @@ export class DNSService extends Base {
   }
 
   get systemdConfig() {
-    return {
-      DNS: serviceAddresses(this, {
-        ...DNS_SERVICE_FILTER,
-        priority: "<10"
-      }).join(" "),
-      FallbackDNS: serviceAddresses(this, {
-        ...DNS_SERVICE_FILTER,
-        priority: ">=10"
-      }).join(" "),
-      Domains: [...this.domains].join(" "),
-      DNSSEC: "no",
-      MulticastDNS: "yes",
-      LLMNR: "no"
-    };
+    return [
+      "Resolve",
+      {
+        DNS: serviceAddresses(this, {
+          ...DNS_SERVICE_FILTER,
+          priority: "<10"
+        }).join(" "),
+        FallbackDNS: serviceAddresses(this, {
+          ...DNS_SERVICE_FILTER,
+          priority: ">=10"
+        }).join(" "),
+        Domains: [...this.domains].join(" "),
+        DNSSEC: "no",
+        MulticastDNS: "yes",
+        LLMNR: "no"
+      }
+    ];
   }
 
   async *preparePackages(stagingDir) {
@@ -133,9 +136,7 @@ export class DNSService extends Base {
 
     const options = [
       "forwarders {",
-      ...serviceAddresses(this.source, DNS_SERVICE_FILTER).map(
-        a => `  ${a};`
-      ),
+      ...serviceAddresses(this.source, DNS_SERVICE_FILTER).map(a => `  ${a};`),
       "};"
     ];
     await writeLines(join(p1, "etc/named.d/options"), `${name}.conf`, options);

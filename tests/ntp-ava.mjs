@@ -7,7 +7,7 @@ test("NTP basics", async t => {
 
   const l1 = await root.named("L1");
 
-  t.deepEqual(l1.ntp.systemdConfig, {
+  t.deepEqual(l1.ntp.systemdConfig[1], {
     NTP: "2.arch.pool.ntp.org"
   });
 });

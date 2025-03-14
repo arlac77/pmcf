@@ -55,7 +55,7 @@ export class Location extends Owner {
       await writeLines(
         join(stagingDir, "etc/systemd/resolved.conf.d"),
         `${this.name}.conf`,
-        sectionLines("Resolve", this.dns.systemdConfig)
+        sectionLines(...this.dns.systemdConfig)
       );
 
       await writeLines(
@@ -71,7 +71,7 @@ export class Location extends Owner {
       await writeLines(
         join(stagingDir, "etc/systemd/timesyncd.conf.d"),
         `${this.name}.conf`,
-        sectionLines("Time", this.ntp.systemdConfig)
+        sectionLines(...this.ntp.systemdConfig)
       );
 
       const locationDir = join(stagingDir, "etc", "location");

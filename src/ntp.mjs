@@ -51,15 +51,18 @@ export class NTPService extends Base {
   }
 
   get systemdConfig() {
-    return {
-      NTP: serviceAddresses(
-        this,
-        {
-          ...NTP_SERVICE_FILTER,
-          priority: "<20"
-        },
-        "domainName"
-      ).join(" ")
-    };
+    return [
+      "Time",
+      {
+        NTP: serviceAddresses(
+          this,
+          {
+            ...NTP_SERVICE_FILTER,
+            priority: "<20"
+          },
+          "domainName"
+        ).join(" ")
+      }
+    ];
   }
 }
