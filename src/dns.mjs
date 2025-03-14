@@ -18,6 +18,8 @@ const DNSServiceTypeDefinition = {
   owners: ["location", "owner", "network", "cluster", "root"],
   priority: 0.1,
   properties: {
+    source: { type: "network", collection: true, writeable: true },
+    trusted: { type: "network", collection: true, writeable: true },
     hasSVRRecords: { type: "boolean", collection: false, writeable: true },
     hasCatalog: { type: "boolean", collection: false, writeable: true },
     hasLinkLocalAdresses: {
@@ -31,8 +33,6 @@ const DNSServiceTypeDefinition = {
     retry: { type: "string", collection: false, writeable: true },
     expire: { type: "string", collection: false, writeable: true },
     minimum: { type: "string", collection: false, writeable: true },
-    forwardsTo: { type: "network", collection: true, writeable: true },
-    trusted: { type: "network", collection: true, writeable: true },
     allowedUpdates: { type: "string", collection: true, writeable: true }
   }
 };
@@ -46,7 +46,7 @@ export class DNSService extends Base {
   hasCatalog = true;
   hasLinkLocalAdresses = true;
   notify = true;
-  #forwardsTo = [];
+  #source = [];
   #trusted = [];
 
   refresh = 36000;
@@ -84,23 +84,23 @@ export class DNSService extends Base {
     return this.#trusted;
   }
 
-  set forwardsTo(value) {
-    this.#forwardsTo.push(value);
+  set source(value) {
+    this.#source.push(value);
   }
 
-  get forwardsTo() {
-    return this.#forwardsTo;
+  get source() {
+    return this.#source;
   }
 
   *findServices(filter) {
     yield* this.owner.findServices(filter);
 
-    for (const s of this.forwardsTo) {
+    for (const s of this.source) {
       yield* s.findServices(filter);
     }
   }
 
-  get resolvedConfig() {
+  get systemdConfig() {
     return {
       DNS: serviceAddresses(this, {
         ...DNS_SERVICE_FILTER,
@@ -133,7 +133,7 @@ export class DNSService extends Base {
 
     const options = [
       "forwarders {",
-      ...serviceAddresses(this.forwardsTo, DNS_SERVICE_FILTER).map(
+      ...serviceAddresses(this.source, DNS_SERVICE_FILTER).map(
         a => `  ${a};`
       ),
       "};"

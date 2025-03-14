@@ -14,7 +14,7 @@ test("DNS basics", async t => {
     ["1.1.1.1", "192.168.1.1", "8.8.8.8"].sort()
   );
 
-  t.deepEqual(l1.dns.resolvedConfig, {
+  t.deepEqual(l1.dns.systemdConfig, {
     DNS: "192.168.1.1",
     FallbackDNS:
       "1.1.1.1 2606:4700:4700:0000:0000:0000:0000:1111 8.8.8.8 2001:4860:4860:0000:0000:0000:0000:8888",

@@ -1,0 +1,5 @@
+{
+  "services": {
+    "ntp": { "type": "ntp", "priority": 12 }
+  }
+}

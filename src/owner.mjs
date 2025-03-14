@@ -3,6 +3,7 @@ import { Base } from "./base.mjs";
 import { Subnet } from "./subnet.mjs";
 import { addType } from "./types.mjs";
 import { DNSService } from "./dns.mjs";
+import { NTPService } from "./ntp.mjs";
 
 const OwnerTypeDefinition = {
   name: "owner",
@@ -19,7 +20,12 @@ const OwnerTypeDefinition = {
       collection: false,
       writeable: true
     },
-    ntp: { type: "string", collection: false, writeable: true },
+    ntp: {
+      type: NTPService.typeDefinition,
+      collection: false,
+      writeable: true
+    },
+
     country: { type: "string", collection: false, writeable: true },
     domain: { type: "string", collection: false, writeable: true },
     timezone: { type: "string", collection: false, writeable: true },
@@ -33,7 +39,6 @@ const EMPTY = new Map();
 export class Owner extends Base {
   #membersByType = new Map();
   #bridges = new Set();
-  ntp;
 
   static {
     addType(this);
@@ -57,6 +62,7 @@ export class Owner extends Base {
       }
 
       this.dns?._traverse(...args);
+      this.ntp?._traverse(...args);
 
       return true;
     }

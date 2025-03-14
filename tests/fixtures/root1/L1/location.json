@@ -6,8 +6,11 @@
   "domain": "mydomain.com",
   "subnets": "192.168.1/24",
   "dns": {
-    "forwardsTo": "/GLOBAL",
+    "source": "/GLOBAL",
     "allowedUpdates": ["trusted"],
     "recordTTL": "1W"
+  },
+  "ntp": {
+    "source": "/GLOBAL"
   }
 }
