@@ -11,7 +11,6 @@ const LocationTypeDefinition = {
   priority: 1.0,
   extends: Owner.typeDefinition,
   properties: {
-    country: { type: "string", writeable: true },
     locales: { type: "string", collection: true, writeable: true }
   }
 };
