@@ -1,6 +1,24 @@
 export function* objectFilter(type, objects, filter) {
   if (filter) {
     advance: for (const object of objects) {
+      const compare = (op, key, value) => {
+        switch (op) {
+          case "=":
+            return object[key] == value;
+          case "!=":
+            return object[key] != value;
+          case "<":
+            return object[key] < value;
+          case "<=":
+            return object[key] <= value;
+          case ">":
+            return object[key] > value;
+          case ">=":
+            return object[key] >= value;
+        }
+        return false;
+      };
+
       const filterString = key => {
         if (filter[key] === undefined) {
           return true;
@@ -27,21 +45,7 @@ export function* objectFilter(type, objects, filter) {
           case "string":
             const m = filter[key].match(/^([=><!]+)(\d+)/);
             if (m) {
-              const value = parseInt(m[2]);
-              switch (m[1]) {
-                case "=":
-                  return object[key] === value;
-                case "!=":
-                  return object[key] !== value;
-                case "<":
-                  return object[key] < value;
-                case "<=":
-                  return object[key] <= value;
-                case ">":
-                  return object[key] > value;
-                case ">=":
-                  return object[key] >= value;
-              }
+              return compare(m[1], key, parseInt(m[2]));
             }
         }
         return false;
