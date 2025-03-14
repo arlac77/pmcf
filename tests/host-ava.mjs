@@ -35,6 +35,26 @@ test("Host all", async t => {
   );
 });
 
+test("Host domains & aliases", t => {
+  const owner = new Root("/");
+  const n1 = new Network(owner, { name: "n1", domain: "example.com" });
+  owner.addObject(n1);
+
+  const h1 = new Host(n1, {
+    name: "h1"
+  });
+  n1.addObject(h1);
+
+  t.is(h1.domain, "example.com");
+  t.deepEqual([...h1.domains], ["example.com"]);
+
+  t.is(h1.domainName, "h1.example.com");
+
+  h1.aliases = "o1.somewhere.net";
+
+  t.deepEqual([...h1.domains].sort(), ["example.com", "somewhere.net"].sort());
+});
+
 test("Host addresses", t => {
   const owner = new Root("/");
   const n1 = new Network(owner, { name: "n1" });

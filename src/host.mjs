@@ -2,7 +2,10 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { Base } from "./base.mjs";
-import { networkProperties, networkAddressProperties } from "./network-support.mjs";
+import {
+  networkProperties,
+  networkAddressProperties
+} from "./network-support.mjs";
 import {
   asArray,
   isIPv4Address,
@@ -33,6 +36,8 @@ const HostTypeDefinition = {
       writeable: true
     },
     services: { type: "service", collection: true, writeable: true },
+    aliases: { type: "string", collection: false, writeable: true },
+
     os: { type: "string", collection: false, writeable: true },
     "machine-id": { type: "string", collection: false, writeable: true },
     distribution: { type: "string", collection: false, writeable: true },
@@ -56,6 +61,7 @@ export class Host extends Base {
   priority = 1;
   #services = [];
   #extends = [];
+  #aliases = new Set();
   #networkInterfaces = new Map();
   #provides = new Set();
   #replaces = new Set();
@@ -158,6 +164,18 @@ export class Host extends Base {
     return this.extends.find(h => h.isModel);
   }
 
+  set aliases(value) {
+    if (value instanceof Set) {
+      this.#aliases = this.#aliases.union(value);
+    } else {
+      this.#aliases.add(value);
+    }
+  }
+
+  get aliases() {
+    return this.#aliases;
+  }
+
   set extends(value) {
     this.#extends.push(value);
   }
@@ -233,6 +251,22 @@ export class Host extends Base {
   get hostName() {
     const parts = this.name.split(/\//);
     return parts[parts.length - 1];
+  }
+
+  get domains() {
+    const domains = new Set(
+      [...this.aliases].map(n => {
+        const p = n.split(".");
+        p.shift();
+        return p.join(".");
+      })
+    );
+    domains.add(this.domain);
+    return domains;
+  }
+
+  get domainNames() {
+    return [this.domainName, ...this.aliases];
   }
 
   get domainName() {
