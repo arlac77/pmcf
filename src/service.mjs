@@ -2,6 +2,7 @@ import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
 import { asArray } from "./utils.mjs";
 import { networkAddressProperties } from "./network-support.mjs";
+import { DNSRecord, dnsFullName } from "./dns-utils.mjs";
 
 const ServiceTypes = {
   dns: { protocol: "udp", port: 53, tls: false },
@@ -175,6 +176,28 @@ export class Service extends Base {
     if (st?.protocol) {
       return `_${this.type}._${st.protocol}`;
     }
+  }
+
+  dnsRecordsForDomainName(domainName, hasSVRRecords) {
+    const records = [];
+    if (this.master && this.alias) {
+      records.push(DNSRecord(this.alias, "CNAME", dnsFullName(domainName)));
+    }
+
+    if (hasSVRRecords && this.srvPrefix) {
+      records.push(
+        DNSRecord(
+          dnsFullName(`${this.srvPrefix}.${domainName}`),
+          "SRV",
+          this.priority,
+          this.weight,
+          this.port,
+          dnsFullName(this.domainName)
+        )
+      );
+    }
+
+    return records;
   }
 }
 

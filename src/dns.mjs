@@ -7,6 +7,7 @@ import {
   normalizeIPAddress,
   isLinkLocal
 } from "./utils.mjs";
+import { DNSRecord, dnsFullName } from "./dns-utils.mjs";
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
 import { serviceAddresses } from "./service.mjs";
@@ -175,10 +176,6 @@ export class DNSService extends Base {
   }
 }
 
-function fullName(name) {
-  return name.endsWith(".") ? name : name + ".";
-}
-
 async function generateZoneDefs(dns, targetDir) {
   const ttl = dns.recordTTL;
   const updates = [Math.ceil(Date.now() / 1000), ...dns.soaUpdates].join(" ");
@@ -192,24 +189,9 @@ async function generateZoneDefs(dns, targetDir) {
 
     let maxKeyLength;
 
-    const createRecord = (key, type, ...values) => {
-      values = values.map(v =>
-        typeof v === "number" ? String(v).padStart(3) : v
-      );
-
-      return {
-        key,
-        toString: () =>
-          `${key.padEnd(maxKeyLength, " ")} ${ttl} IN ${type.padEnd(
-            5,
-            " "
-          )} ${values.join(" ")}`
-      };
-    };
-
     for (const mail of dns.owner.findServices({ type: "smtp" })) {
       records.add(
-        createRecord("@", "MX", mail.priority, fullName(mail.domainName))
+        DNSRecord("@", "MX", mail.priority, dnsFullName(mail.domainName))
       );
     }
 
@@ -217,21 +199,21 @@ async function generateZoneDefs(dns, targetDir) {
     //console.log(dns.owner.fullName, domain, nameService.domainName, rname);
     const reverseZones = new Map();
 
-    const SOARecord = createRecord(
+    const SOARecord = DNSRecord(
       "@",
       "SOA",
-      fullName(nameService.domainName),
-      fullName(rname),
+      dnsFullName(nameService.domainName),
+      dnsFullName(rname),
       `(${updates})`
     );
 
-    const NSRecord = createRecord(
+    const NSRecord = DNSRecord(
       "@",
       "NS",
-      fullName(nameService.ipAddressOrDomainName)
+      dnsFullName(nameService.ipAddressOrDomainName)
     );
 
-    const ALPNRecord = createRecord("@", "HTTPS", 1, ".", "alpn=h3");
+    const ALPNRecord = DNSRecord("@", "HTTPS", 1, ".", "alpn=h3");
 
     const zone = {
       id: domain,
@@ -248,7 +230,7 @@ async function generateZoneDefs(dns, targetDir) {
       records: new Set([
         SOARecord,
         NSRecord,
-        createRecord(fullName(`version.catalog.${domain}`), "TXT", '"1"')
+        DNSRecord(dnsFullName(`version.catalog.${domain}`), "TXT", '"1"')
       ])
     };
 
@@ -280,8 +262,8 @@ async function generateZoneDefs(dns, targetDir) {
           addresses.add(address);
 
           zone.records.add(
-            createRecord(
-              fullName(domainName),
+            DNSRecord(
+              dnsFullName(domainName),
               isIPv6Address(address) ? "AAAA" : "A",
               normalizeIPAddress(address)
             )
@@ -303,10 +285,10 @@ async function generateZoneDefs(dns, targetDir) {
 
             for (const domainName of host.domainNames) {
               reverseZone.records.add(
-                createRecord(
-                  fullName(reverseArpaAddress(address)),
+                DNSRecord(
+                  dnsFullName(reverseArpaAddress(address)),
                   "PTR",
-                  fullName(domainName)
+                  dnsFullName(domainName)
                 )
               );
             }
@@ -316,23 +298,8 @@ async function generateZoneDefs(dns, targetDir) {
         if (!hosts.has(host)) {
           hosts.add(host);
           for (const service of host.findServices()) {
-            if (service.master && service.alias) {
-              zone.records.add(
-                createRecord(service.alias, "CNAME", fullName(domainName))
-              );
-            }
-
-            if (dns.hasSVRRecords && service.srvPrefix) {
-              zone.records.add(
-                createRecord(
-                  fullName(`${service.srvPrefix}.${domainName}`),
-                  "SRV",
-                  service.priority,
-                  service.weight,
-                  service.port,
-                  fullName(host.domainName)
-                )
-              );
+            for (const record of service.dnsRecordsForDomainName(domainName, dns.hasSVRRecords)) {
+              zone.records.add(record);
             }
           }
         }
@@ -345,10 +312,10 @@ async function generateZoneDefs(dns, targetDir) {
       if (zone.type !== "catalog") {
         const hash = createHmac("md5", zone.id).digest("hex");
         catalogZone.records.add(
-          createRecord(
+          DNSRecord(
             `${hash}.zones.catalog.${domain}.`,
             "PTR",
-            fullName(zone.id)
+            dnsFullName(zone.id)
           )
         );
       }
@@ -376,7 +343,7 @@ async function generateZoneDefs(dns, targetDir) {
       await writeLines(
         join(targetDir, "var/lib/named"),
         zone.file,
-        zone.records
+        [...zone.records].map(r => r.toString(maxKeyLength, ttl))
       );
     }
 
