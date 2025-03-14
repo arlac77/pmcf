@@ -53,6 +53,10 @@ test("Host domains & aliases", t => {
   h1.aliases = "o1.somewhere.net";
 
   t.deepEqual([...h1.domains].sort(), ["example.com", "somewhere.net"].sort());
+
+  t.is(h1.domainNameIn("example.com"), "h1.example.com");
+  t.is(h1.domainNameIn("somewhere.net"), "o1.somewhere.net");
+  t.is(h1.domainNameIn("other.net"), undefined);
 });
 
 test("Host addresses", t => {

@@ -99,10 +99,6 @@ export class DNSService extends Base {
     }
   }
 
-  get domains() {
-    return [this.owner.domain];
-  }
-
   async resolvedConfig() {
     return {
       DNS: serviceAddresses(this, {
@@ -113,7 +109,7 @@ export class DNSService extends Base {
         ...DNS_SERVICE_FILTER,
         priority: ">=10"
       }).join(" "),
-      Domains: this.domains.join(" "),
+      Domains: [...this.domains].join(" "),
       DNSSEC: "no",
       MulticastDNS: "yes",
       LLMNR: "no"
@@ -217,7 +213,7 @@ async function generateZoneDefs(dns, targetDir) {
       );
     }
 
-    console.log(`${nameService}`,nameService.ipAddressOrDomainName);
+    console.log(`${nameService}`, nameService.ipAddressOrDomainName);
     //console.log(dns.owner.fullName, domain, nameService.domainName, rname);
     const reverseZones = new Map();
 
@@ -229,7 +225,11 @@ async function generateZoneDefs(dns, targetDir) {
       `(${updates})`
     );
 
-    const NSRecord = createRecord("@", "NS", fullName(nameService.ipAddressOrDomainName));
+    const NSRecord = createRecord(
+      "@",
+      "NS",
+      fullName(nameService.ipAddressOrDomainName)
+    );
 
     const zone = {
       id: domain,
@@ -268,65 +268,70 @@ async function generateZoneDefs(dns, targetDir) {
       networkInterface
     } of dns.owner.networkAddresses()) {
       const host = networkInterface.host;
+      const domainName = host.domainNameIn(domain);
 
-      if (
-        !addresses.has(address) &&
-        (dns.hasLinkLocalAdresses || !isLinkLocal(address))
-      ) {
-        addresses.add(address);
+      if (domainName) {
+        if (
+          !addresses.has(address) &&
+          (dns.hasLinkLocalAdresses || !isLinkLocal(address))
+        ) {
+          addresses.add(address);
 
-        zone.records.add(
-          createRecord(
-            fullName(host.domainName),
-            isIPv6Address(address) ? "AAAA" : "A",
-            normalizeIPAddress(address)
-          )
-        );
-
-        if (subnet) {
-          let reverseZone = reverseZones.get(subnet.address);
-
-          if (!reverseZone) {
-            const reverseArpa = reverseArpaAddress(subnet.prefix);
-            reverseZone = {
-              id: reverseArpa,
-              type: "plain",
-              file: `${dns.owner.name}/${reverseArpa}.zone`,
-              records: new Set([SOARecord, NSRecord])
-            };
-            zones.push(reverseZone);
-            reverseZones.set(subnet.address, reverseZone);
-          }
-          reverseZone.records.add(
+          zone.records.add(
             createRecord(
-              fullName(reverseArpaAddress(address)),
-              "PTR",
-              fullName(host.domainName)
+              fullName(domainName),
+              isIPv6Address(address) ? "AAAA" : "A",
+              normalizeIPAddress(address)
             )
           );
-        }
-      }
+          if (subnet && host.domain === domain) {
+            let reverseZone = reverseZones.get(subnet.address);
 
-      if (!hosts.has(host)) {
-        hosts.add(host);
-        for (const service of host.findServices()) {
-          if (service.master && service.alias) {
-            zone.records.add(
-              createRecord(service.alias, "CNAME", fullName(host.domainName))
-            );
+            if (!reverseZone) {
+              const reverseArpa = reverseArpaAddress(subnet.prefix);
+              reverseZone = {
+                id: reverseArpa,
+                type: "plain",
+                file: `${dns.owner.name}/${reverseArpa}.zone`,
+                records: new Set([SOARecord, NSRecord])
+              };
+              zones.push(reverseZone);
+              reverseZones.set(subnet.address, reverseZone);
+            }
+
+            for (const domainName of host.domainNames) {
+              reverseZone.records.add(
+                createRecord(
+                  fullName(reverseArpaAddress(address)),
+                  "PTR",
+                  fullName(domainName)
+                )
+              );
+            }
           }
+        }
 
-          if (dns.hasSVRRecords && service.srvPrefix) {
-            zone.records.add(
-              createRecord(
-                fullName(`${service.srvPrefix}.${host.domainName}`),
-                "SRV",
-                service.priority,
-                service.weight,
-                service.port,
-                fullName(host.domainName)
-              )
-            );
+        if (!hosts.has(host)) {
+          hosts.add(host);
+          for (const service of host.findServices()) {
+            if (service.master && service.alias) {
+              zone.records.add(
+                createRecord(service.alias, "CNAME", fullName(domainName))
+              );
+            }
+
+            if (dns.hasSVRRecords && service.srvPrefix) {
+              zone.records.add(
+                createRecord(
+                  fullName(`${service.srvPrefix}.${domainName}`),
+                  "SRV",
+                  service.priority,
+                  service.weight,
+                  service.port,
+                  fullName(host.domainName)
+                )
+              );
+            }
           }
         }
       }

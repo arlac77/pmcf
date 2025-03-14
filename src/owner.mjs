@@ -356,9 +356,13 @@ export class Owner extends Base {
     return this.#domain || this.owner?.domain;
   }
 
-  *domains() {
-    for (const location of this.locations()) {
-      yield location.domain;
+  get domains() {
+    let domains = new Set();
+
+    for (const object of this.hosts()) {
+      domains = domains.union(object.domains);
     }
+
+    return domains;
   }
 }

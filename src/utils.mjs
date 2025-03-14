@@ -1,10 +1,23 @@
 import { writeFile, mkdir } from "node:fs/promises";
 import { join, dirname, basename } from "node:path";
 
+export function domainFromDominName(domainName, defaultDomain) {
+  const dcs = domainName.split(".");
+
+  if (dcs.length > 1) {
+    dcs.shift();
+    return dcs.join(".");
+  }
+
+  return defaultDomain;
+}
+
 export async function writeLines(dir, name, lines) {
-  switch(typeof lines) {
-    case "undefined": return;
-    case "string": lines = [lines];
+  switch (typeof lines) {
+    case "undefined":
+      return;
+    case "string":
+      lines = [lines];
   }
 
   const full = join(dir, name);

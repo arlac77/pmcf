@@ -12,7 +12,8 @@ import {
   isIPv6Address,
   normalizeIPAddress,
   formatCIDR,
-  hasWellKnownSubnet
+  hasWellKnownSubnet,
+  domainFromDominName
 } from "./utils.mjs";
 import { objectFilter } from "./filter.mjs";
 import { addType, types } from "./types.mjs";
@@ -36,7 +37,7 @@ const HostTypeDefinition = {
       writeable: true
     },
     services: { type: "service", collection: true, writeable: true },
-    aliases: { type: "string", collection: false, writeable: true },
+    aliases: { type: "string", collection: true, writeable: true },
 
     os: { type: "string", collection: false, writeable: true },
     "machine-id": { type: "string", collection: false, writeable: true },
@@ -255,11 +256,7 @@ export class Host extends Base {
 
   get domains() {
     const domains = new Set(
-      [...this.aliases].map(n => {
-        const p = n.split(".");
-        p.shift();
-        return p.join(".");
-      })
+      [...this.aliases].map(n => domainFromDominName(n, this.domain))
     );
     domains.add(this.domain);
     return domains;
@@ -273,6 +270,14 @@ export class Host extends Base {
     const domain = this.domain;
     const hostName = this.hostName;
     return domain ? hostName + "." + domain : hostName;
+  }
+
+  domainNameIn(domain) {
+    for (const domainName of this.domainNames) {
+      if (domain == domainFromDominName(domainName)) {
+        return domainName;
+      }
+    }
   }
 
   get host() {
