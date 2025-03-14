@@ -2,14 +2,28 @@ import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
 import { asArray } from "./utils.mjs";
 import { networkAddressProperties } from "./network-support.mjs";
-import { DNSRecord, dnsFullName } from "./dns-utils.mjs";
+import { DNSRecord, dnsFullName, dnsFormatParameters } from "./dns-utils.mjs";
 
 const ServiceTypes = {
   dns: { protocol: "udp", port: 53, tls: false },
   ldap: { protocol: "tcp", port: 389, tls: false },
   ldaps: { protocol: "tcp", port: 636, tls: true },
   http: { protocol: "tcp", port: 80, tls: false },
-  https: { protocol: "tcp", port: 443, tls: true },
+  https: {
+    protocol: "tcp",
+    port: 443,
+    tls: true,
+    dnsRecord: { type: "HTTPS", parameters: { alpn: "h2" } }
+  },
+  http3: {
+    protocol: "tcp",
+    port: 443,
+    tls: true,
+    dnsRecord: {
+      type: "HTTPS",
+      parameters: { "no-default-alpn": undefined, alpn: "h3" }
+    }
+  },
   rtsp: { protocol: "tcp", port: 554, tls: false },
   smtp: { protocol: "tcp", port: 25, tls: false },
   ssh: { protocol: "tcp", port: 22, tls: false },
@@ -197,9 +211,35 @@ export class Service extends Base {
       );
     }
 
+    const dnsRecord = ServiceTypes[this.type]?.dnsRecord;
+    if (dnsRecord) {
+      records.push(
+        DNSRecord(
+          dnsFullName(domainName),
+          dnsRecord.type,
+          this.priority,
+          ".",
+          dnsFormatParameters(dnsRecord.parameters)
+        )
+      );
+
+      if (this.master && this.alias) {
+        records.push(
+          DNSRecord(
+            this.alias,
+            dnsRecord.type,
+            this.priority,
+            dnsFullName(domainName),
+            dnsFormatParameters(dnsRecord.parameters)
+          )
+        );
+      }
+    }
+
     return records;
   }
 }
+
 
 export const sortByPriority = (a, b) => a.priority - b.priority;
 

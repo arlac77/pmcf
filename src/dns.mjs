@@ -7,7 +7,7 @@ import {
   normalizeIPAddress,
   isLinkLocal
 } from "./utils.mjs";
-import { DNSRecord, dnsFullName } from "./dns-utils.mjs";
+import { DNSRecord, dnsFullName, dnsFormatParameters } from "./dns-utils.mjs";
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
 import { serviceAddresses } from "./service.mjs";
@@ -213,7 +213,13 @@ async function generateZoneDefs(dns, targetDir) {
       dnsFullName(nameService.ipAddressOrDomainName)
     );
 
-    const ALPNRecord = DNSRecord("@", "HTTPS", 1, ".", "alpn=h3");
+    const ALPNRecord = DNSRecord(
+      "@",
+      "HTTPS",
+      1,
+      ".",
+      dnsFormatParameters({ alpn: "h3" })
+    );
 
     const zone = {
       id: domain,
@@ -298,7 +304,10 @@ async function generateZoneDefs(dns, targetDir) {
         if (!hosts.has(host)) {
           hosts.add(host);
           for (const service of host.findServices()) {
-            for (const record of service.dnsRecordsForDomainName(domainName, dns.hasSVRRecords)) {
+            for (const record of service.dnsRecordsForDomainName(
+              domainName,
+              dns.hasSVRRecords
+            )) {
               zone.records.add(record);
             }
           }

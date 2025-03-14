@@ -14,3 +14,9 @@ export function DNSRecord(key, type, ...values) {
       )} ${values.join(" ")}`
   };
 }
+
+export function dnsFormatParameters(parameters) {
+  return Object.entries(parameters)
+    .map(([name, value]) => (value !== undefined ? `${name}="${value}"` : name))
+    .join(" ");
+}
