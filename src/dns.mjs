@@ -100,7 +100,7 @@ export class DNSService extends Base {
     }
   }
 
-  async resolvedConfig() {
+  get resolvedConfig() {
     return {
       DNS: serviceAddresses(this, {
         ...DNS_SERVICE_FILTER,

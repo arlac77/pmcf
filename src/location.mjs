@@ -55,7 +55,7 @@ export class Location extends Owner {
       await writeLines(
         join(stagingDir, "etc/systemd/resolved.conf.d"),
         `${this.name}.conf`,
-        sectionLines("Resolve", await this.dns.resolvedConfig())
+        sectionLines("Resolve", this.dns.resolvedConfig)
       );
 
       await writeLines(
