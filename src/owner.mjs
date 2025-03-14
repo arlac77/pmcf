@@ -1,7 +1,7 @@
 import { asIterator, normalizeCIDR } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { Subnet } from "./subnet.mjs";
-import { addType } from "./types.mjs";
+import { addType, types } from "./types.mjs";
 import { DNSService } from "./dns.mjs";
 import { NTPService } from "./ntp.mjs";
 
@@ -151,8 +151,27 @@ export class Owner extends Base {
   }
 
   *hosts() {
-    yield* this.typeList("host");
-    yield* this.typeList("cluster");
+    const hosts = new Set();
+
+    for (const type of ["host", "cluster"]) {
+      for (const host of this.typeList(type)) {
+        if (!hosts.has(host)) {
+          hosts.add(host);
+          yield host;
+        }
+      }
+    }
+
+    for (const type of types.host.owners) {
+      for (const object of this.typeList(type)) {
+        for (const host of object.hosts()) {
+          if (!hosts.has(host)) {
+            hosts.add(host);
+            yield host;
+          }
+        }
+      }
+    }
   }
 
   networkNamed(name) {
