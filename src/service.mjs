@@ -222,18 +222,6 @@ export class Service extends Base {
           dnsFormatParameters(dnsRecord.parameters)
         )
       );
-
-      if (this.master && this.alias) {
-        records.push(
-          DNSRecord(
-            this.alias,
-            dnsRecord.type,
-            this.priority,
-            dnsFullName(domainName),
-            dnsFormatParameters(dnsRecord.parameters)
-          )
-        );
-      }
     }
 
     return records;
