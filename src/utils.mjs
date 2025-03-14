@@ -2,12 +2,16 @@ import { writeFile, mkdir } from "node:fs/promises";
 import { join, dirname, basename } from "node:path";
 
 export async function writeLines(dir, name, lines) {
+  switch(typeof lines) {
+    case "undefined": return;
+    case "string": lines = [lines];
+  }
+
   const full = join(dir, name);
   dir = dirname(full);
   name = basename(full);
-
   await mkdir(dir, { recursive: true });
-  if (typeof lines === "string") lines = [lines];
+
   return writeFile(
     join(dir, name),
     [...lines]
