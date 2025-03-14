@@ -1,15 +1,19 @@
 #!/usr/bin/env node
 import { prepare } from "../src/cli.mjs";
-const { root, args } = await prepare();
+const { root, args, options } = await prepare({
+  service: {
+    type: "string"
+  }
+});
 
 const objectName = args[0];
 
-if (objectName) {
-  const object = root.named(objectName);
-  console.log(object.toJSON());
-} else {
-  for await (const location of root.locations()) {
-    console.log(location.name);
-    console.log("  ", (await location.service({ type: "dns" }))?.toString());
+const object = objectName ? root.named(objectName) : root;
+
+if (options.service) {
+  for (const service of root.findServices({ type: options.service })) {
+    console.log(service.toString());
   }
+} else {
+  console.log(object.toJSON());
 }
