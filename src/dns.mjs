@@ -7,7 +7,7 @@ import {
   normalizeIPAddress,
   isLinkLocal
 } from "./utils.mjs";
-import { DNSRecord, dnsFullName, dnsFormatParameters } from "./dns-utils.mjs";
+import { DNSRecord, dnsFullName } from "./dns-utils.mjs";
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
 import { serviceAddresses } from "./service.mjs";
@@ -197,10 +197,15 @@ async function generateZoneDefs(dns, targetDir) {
 
     let maxKeyLength;
 
-    for (const mail of dns.owner.findServices({ type: "smtp", priority: "<10" })) {
-      records.add(
-        DNSRecord("@", "MX", mail.priority, dnsFullName(mail.domainName))
-      );
+    if (isLocalDomain) {
+      for (const mail of dns.owner.findServices({
+        type: "smtp",
+        priority: "<10"
+      })) {
+        records.add(
+          DNSRecord("@", "MX", mail.priority, dnsFullName(mail.domainName))
+        );
+      }
     }
 
     console.log(`${nameService} ${domain}`, nameService.ipAddressOrDomainName);
