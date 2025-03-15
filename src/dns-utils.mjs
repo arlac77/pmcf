@@ -23,7 +23,7 @@ export function dnsFormatParameters(parameters) {
       value !== undefined && [...asIterator(value)].length > 0
         ? `${name}="${[...asIterator(value)].join(",")}"`
         : name
-    )
+    ).sort((a,b)=>a[0].localeCompare(b[0]))
     .join(" ");
 }
 
@@ -35,8 +35,3 @@ export function dnsMergeParameters(a, b) {
     ])
   );
 }
-/*
-console.log(
-  dnsFormatParameters(dnsMergeParameters({ alpn: "h2" }, { alpn: "h3" }))
-);
-*/

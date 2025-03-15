@@ -194,7 +194,7 @@ export class Service extends Base {
   get srvPrefix() {
     const st = ServiceTypes[this.type];
     if (st?.protocol) {
-      return `_${st.type||this.type}._${st.protocol}`;
+      return `_${st.type || this.type}._${st.protocol}`;
     }
   }
 
