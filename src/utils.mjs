@@ -55,8 +55,11 @@ export function asArray(value) {
 }
 
 export function asIterator(value) {
-  if (value === undefined) {
-    return [];
+  switch (typeof value) {
+    case "undefined":
+      return [];
+    case "string":
+      return [value];
   }
 
   if (typeof value[Symbol.iterator] === "function") {

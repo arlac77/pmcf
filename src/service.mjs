@@ -2,7 +2,12 @@ import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
 import { asArray } from "./utils.mjs";
 import { networkAddressProperties } from "./network-support.mjs";
-import { DNSRecord, dnsFullName, dnsFormatParameters } from "./dns-utils.mjs";
+import {
+  DNSRecord,
+  dnsFullName,
+  dnsFormatParameters,
+  dnsMergeParameters
+} from "./dns-utils.mjs";
 
 const ServiceTypes = {
   dns: { protocol: "udp", port: 53, tls: false },
@@ -213,13 +218,25 @@ export class Service extends Base {
 
     const dnsRecord = ServiceTypes[this.type]?.dnsRecord;
     if (dnsRecord) {
+      let parameters = dnsRecord.parameters;
+
+      for (const service of this.findServices()) {
+        if (service !== this) {
+          const r = ServiceTypes[service.type]?.dnsRecord;
+
+          if (r?.type === dnsRecord.type) {
+            parameters = dnsMergeParameters(parameters, r.parameters);
+          }
+        }
+      }
+
       records.push(
         DNSRecord(
           dnsFullName(domainName),
           dnsRecord.type,
           this.priority,
           ".",
-          dnsFormatParameters(dnsRecord.parameters)
+          dnsFormatParameters(parameters)
         )
       );
     }
@@ -227,7 +244,6 @@ export class Service extends Base {
     return records;
   }
 }
-
 
 export const sortByPriority = (a, b) => a.priority - b.priority;
 
