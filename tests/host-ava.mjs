@@ -47,16 +47,31 @@ test("Host domains & aliases", t => {
 
   t.is(h1.domain, "example.com");
   t.deepEqual([...h1.domains], ["example.com"]);
+  t.deepEqual([...h1.localDomains], ["example.com"]);
+  t.deepEqual([...h1.domainNames], ["h1.example.com"]);
 
   t.is(h1.domainName, "h1.example.com");
 
   h1.aliases = "o1.somewhere.net";
 
   t.deepEqual([...h1.domains].sort(), ["example.com", "somewhere.net"].sort());
+  t.deepEqual([...h1.localDomains], ["example.com"]);
+  t.deepEqual(
+    [...h1.domainNames].sort(),
+    ["h1.example.com", "o1.somewhere.net"].sort()
+  );
 
   t.is(h1.domainNameIn("example.com"), "h1.example.com");
   t.is(h1.domainNameIn("somewhere.net"), "o1.somewhere.net");
   t.is(h1.domainNameIn("other.net"), undefined);
+
+  h1.aliases = "h2";
+  t.deepEqual([...h1.domains].sort(), ["example.com", "somewhere.net"].sort());
+  t.deepEqual([...h1.localDomains], ["example.com"]);
+  t.deepEqual(
+    [...h1.domainNames].sort(),
+    ["h1.example.com", "h2.example.com", "o1.somewhere.net"].sort()
+  );
 });
 
 test("Host addresses", t => {

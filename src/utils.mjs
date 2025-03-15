@@ -1,6 +1,13 @@
 import { writeFile, mkdir } from "node:fs/promises";
 import { join, dirname, basename } from "node:path";
 
+export function domainName(name, defaultDomain) {
+  const dcs = name.split(".");
+  return defaultDomain === undefined || dcs.length > 1
+    ? name
+    : [name, defaultDomain].join(".");
+}
+
 export function domainFromDominName(domainName, defaultDomain) {
   const dcs = domainName.split(".");
 

@@ -13,7 +13,8 @@ import {
   normalizeIPAddress,
   formatCIDR,
   hasWellKnownSubnet,
-  domainFromDominName
+  domainFromDominName,
+  domainName
 } from "./utils.mjs";
 import { objectFilter } from "./filter.mjs";
 import { addType, types } from "./types.mjs";
@@ -260,13 +261,13 @@ export class Host extends Base {
   }
 
   get domainNames() {
-    return [this.domainName, ...this.aliases];
+    return [this.hostName, ...this.aliases].map(n =>
+      domainName(n, this.domain)
+    );
   }
 
   get domainName() {
-    const domain = this.domain;
-    const hostName = this.hostName;
-    return domain ? hostName + "." + domain : hostName;
+    return domainName(this.hostName, this.domain);
   }
 
   domainNameIn(domain) {
