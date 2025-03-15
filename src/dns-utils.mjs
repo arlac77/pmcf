@@ -5,7 +5,11 @@ export function dnsFullName(name) {
 }
 
 export function DNSRecord(key, type, ...values) {
-  values = values.map(v => (typeof v === "number" ? String(v).padStart(3) : v));
+  const pad = type === "MX" ? "        " : "";
+
+  values = values.map(v =>
+    typeof v === "number" ? String(v).padStart(3) + pad : v
+  );
 
   return {
     key,
@@ -23,7 +27,8 @@ export function dnsFormatParameters(parameters) {
       value !== undefined && [...asIterator(value)].length > 0
         ? `${name}="${[...asIterator(value)].join(",")}"`
         : name
-    ).sort((a,b)=>a[0].localeCompare(b[0]))
+    )
+    .sort((a, b) => a[0].localeCompare(b[0]))
     .join(" ");
 }
 
