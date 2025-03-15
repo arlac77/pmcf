@@ -38,7 +38,6 @@ const HostTypeDefinition = {
     },
     services: { type: "service", collection: true, writeable: true },
     aliases: { type: "string", collection: true, writeable: true },
-
     os: { type: "string", collection: false, writeable: true },
     "machine-id": { type: "string", collection: false, writeable: true },
     distribution: { type: "string", collection: false, writeable: true },
