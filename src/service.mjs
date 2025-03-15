@@ -21,8 +21,8 @@ const ServiceTypes = {
     dnsRecord: { type: "HTTPS", parameters: { alpn: "h2" } }
   },
   http3: {
-    protocol: "tcp",
     type: "https",
+    protocol: "tcp",
     port: 443,
     tls: true,
     dnsRecord: {
@@ -31,7 +31,7 @@ const ServiceTypes = {
     }
   },
   rtsp: { protocol: "tcp", port: 554, tls: false },
-  smtp: { protocol: "tcp", port: 25, tls: false },
+  smtp: { protocol: "tcp", port: 25, tls: false, dnsRecord: { type: "MX" } },
   ssh: { protocol: "tcp", port: 22, tls: false },
   imap: { protocol: "tcp", port: 143, tls: false },
   imaps: { protocol: "tcp", port: 993, tls: true },
@@ -221,25 +221,31 @@ export class Service extends Base {
     if (dnsRecord) {
       let parameters = dnsRecord.parameters;
 
-      for (const service of this.findServices()) {
-        if (service !== this) {
-          const r = ServiceTypes[service.type]?.dnsRecord;
+      if (parameters) {
+        for (const service of this.findServices()) {
+          if (service !== this) {
+            const r = ServiceTypes[service.type]?.dnsRecord;
 
-          if (r?.type === dnsRecord.type) {
-            parameters = dnsMergeParameters(parameters, r.parameters);
+            if (r?.type === dnsRecord.type) {
+              parameters = dnsMergeParameters(parameters, r.parameters);
+            }
           }
         }
-      }
 
-      records.push(
-        DNSRecord(
-          dnsFullName(domainName),
-          dnsRecord.type,
-          this.priority,
-          ".",
-          dnsFormatParameters(parameters)
-        )
-      );
+        records.push(
+          DNSRecord(
+            dnsFullName(domainName),
+            dnsRecord.type,
+            this.priority,
+            ".",
+            dnsFormatParameters(parameters)
+          )
+        );
+      } else {
+        records.push(
+          DNSRecord("@", dnsRecord.type, this.priority, dnsFullName(domainName))
+        );
+      }
     }
 
     return records;

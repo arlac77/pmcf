@@ -197,17 +197,6 @@ async function generateZoneDefs(dns, targetDir) {
 
     let maxKeyLength;
 
-    if (isLocalDomain) {
-      for (const mail of dns.owner.findServices({
-        type: "smtp",
-        priority: "<10"
-      })) {
-        records.add(
-          DNSRecord("@", "MX", mail.priority, dnsFullName(mail.domainName))
-        );
-      }
-    }
-
     console.log(`${nameService} ${domain}`, nameService.ipAddressOrDomainName);
     //console.log(dns.owner.fullName, domain, nameService.domainName, rname);
     const reverseZones = new Map();
