@@ -170,7 +170,7 @@ export class DNSService extends Base {
     result.sources = [
       new FileContentProvider(p2 + "/", {
         mode: 0o644,
-        user: "named",
+        owner: "named",
         group: "named"
       })[Symbol.asyncIterator]()
     ];
