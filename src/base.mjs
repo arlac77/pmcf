@@ -278,6 +278,10 @@ export class Base {
     return this.owner?.domains || new Set();
   }
 
+  get localDomains() {
+    return this.owner?.localDomains || new Set();
+  }
+
   get administratorEmail() {
     return this.owner?.administratorEmail;
   }

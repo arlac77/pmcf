@@ -254,14 +254,9 @@ export class Host extends Base {
   }
 
   get domains() {
-    const domains = new Set(
+    return new Set(
       [...this.aliases].map(n => domainFromDominName(n, this.domain))
-    );
-
-    if(this.domain) {
-      domains.add(this.domain);
-    }
-    return domains;
+    ).union(this.localDomains);
   }
 
   get domainNames() {
