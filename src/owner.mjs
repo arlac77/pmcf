@@ -382,7 +382,6 @@ export class Owner extends Base {
     return this.#domain || this.owner?.domain;
   }
 
-
   get domains() {
     let domains = new Set();
 
@@ -408,4 +407,14 @@ export class Owner extends Base {
     return domains;
   }
 */
+
+  get domainNames() {
+    let names = new Set();
+
+    for (const host of this.hosts()) {
+      names = names.union(new Set(host.domainNames));
+    }
+
+    return names;
+  }
 }

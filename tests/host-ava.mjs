@@ -72,6 +72,11 @@ test("Host domains & aliases", t => {
     [...h1.domainNames].sort(),
     ["h1.example.com", "h2.example.com", "o1.somewhere.net"].sort()
   );
+
+  t.deepEqual(
+    [...n1.domainNames].sort(),
+    ["h1.example.com", "h2.example.com", "o1.somewhere.net"].sort()
+  );
 });
 
 test("Host addresses", t => {
