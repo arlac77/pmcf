@@ -22,6 +22,7 @@ const ServiceTypes = {
   },
   http3: {
     protocol: "tcp",
+    type: "https",
     port: 443,
     tls: true,
     dnsRecord: {
@@ -193,7 +194,7 @@ export class Service extends Base {
   get srvPrefix() {
     const st = ServiceTypes[this.type];
     if (st?.protocol) {
-      return `_${this.type}._${st.protocol}`;
+      return `_${st.type||this.type}._${st.protocol}`;
     }
   }
 

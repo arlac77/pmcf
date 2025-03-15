@@ -98,13 +98,14 @@ test("Service basics", async t => {
   t.is(s1, l1.findService({ type: "dns" }));
 
   const s3 = new Service(h1, {
-    name: "http",
+    name: "http3",
     weight: 0,
     priority: 0
   });
 
   t.is(s3.priority, 0);
-  t.is(s3.weight, 0);
+  t.is(s3.priority, 0);
+  t.is(s3.srvPrefix, "_https._tcp");
 });
 
 test("Service without protocol", t => {
