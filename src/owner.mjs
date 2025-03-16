@@ -414,7 +414,7 @@ export class Owner extends Base {
     if (value instanceof Set) {
       this.#architectures = this.#architectures ? this.#architectures.union(value) : value;
     } else {
-      this.#architectures.add(value);
+      this.#architectures = new Set(value);
     }
   }
 

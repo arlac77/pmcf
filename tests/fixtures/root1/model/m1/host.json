@@ -1,5 +1,6 @@
 {
   "chassis": "server",
+  "architecture": "aarch64",
   "packaging": "arch",
   "depends": ["d1", "d3"],
   "replaces": ["r1", "r3"],

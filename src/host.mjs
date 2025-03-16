@@ -60,7 +60,6 @@ const HostTypeDefinition = {
 
 export class Host extends Base {
   serial;
-  architecture;
   priority = 1;
   #services = [];
   #extends = [];
@@ -75,6 +74,7 @@ export class Host extends Base {
   #deployment;
   #chassis;
   #vendor;
+  #architecture;
 
   static {
     addType(this);
@@ -149,6 +149,14 @@ export class Host extends Base {
 
   get vendor() {
     return this.#vendor || this.extends.find(e => e.vendor)?.vendor;
+  }
+
+  set architecture(value) {
+    this.#architecture = value;
+  }
+
+  get architecture() {
+    return this.#architecture || this.extends.find(e => e.architecture)?.architecture;
   }
 
   get derivedPackaging() {
