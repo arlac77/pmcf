@@ -47,6 +47,7 @@ const HostTypeDefinition = {
     serial: { type: "string", collection: false, writeable: true },
     vendor: { type: "string", collection: false, writeable: true },
     chassis: { type: "string", collection: false, writeable: true },
+    architecture: { type: "string", collection: false, writeable: true },
     priority: { type: "number", collection: false, writeable: true },
     replaces: { type: "string", collection: true, writeable: true },
     depends: { type: "string", collection: true, writeable: true },
@@ -59,6 +60,7 @@ const HostTypeDefinition = {
 
 export class Host extends Base {
   serial;
+  architecture;
   priority = 1;
   #services = [];
   #extends = [];

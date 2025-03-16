@@ -30,6 +30,7 @@ const OwnerTypeDefinition = {
     domain: { type: "string", collection: false, writeable: true },
     domains: { type: "string", collection: true, writeable: true },
     timezone: { type: "string", collection: false, writeable: true },
+    architectures: { type: "string", collection: true, writeable: true },
     locales: { type: "string", collection: true, writeable: true },
     administratorEmail: { type: "string", collection: false, writeable: true }
   }
@@ -396,18 +397,6 @@ export class Owner extends Base {
     return this.domain ? new Set([this.domain]) : new Set();
   }
 
-  /*
-  get localDomains() {
-    let domains = new Set();
-
-    for (const object of this.hosts()) {
-      domains = domains.union(object.localDomains);
-    }
-
-    return domains;
-  }
-*/
-
   get domainNames() {
     let names = new Set();
 
@@ -416,5 +405,30 @@ export class Owner extends Base {
     }
 
     return names;
+  }
+
+  #architectures;
+
+  set architectures(value)
+  {
+    if (value instanceof Set) {
+      this.#architectures = this.#architectures ? this.#architectures.union(value) : value;
+    } else {
+      this.#architectures.add(value);
+    }
+  }
+
+  get architectures() {
+    if(this.#architectures) {
+      return this.#architectures;
+    }
+
+    const architectures = new Set();
+
+    for (const host of this.hosts()) {
+      architectures.add(host.architecture);
+    }
+
+    return architectures;
   }
 }
