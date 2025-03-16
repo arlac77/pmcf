@@ -23,7 +23,8 @@ const BaseTypeDefinition = {
     },*/
     description: { type: "string", collection: false, writeable: true },
     directory: { type: "string", collection: false, writeable: false },
-    packaging: { type: "string", collection: false, writeable: true }
+    packaging: { type: "string", collection: false, writeable: true },
+    tags: { type: "string", collection: true, writeable: true }
   }
 };
 
@@ -31,6 +32,7 @@ export class Base {
   owner;
   description;
   name;
+  #tags = new Set();
 
   static {
     addType(this);
@@ -366,6 +368,20 @@ export class Base {
         access: "private"
       }
     };
+  }
+
+  get tags()
+  {
+    return this.#tags;
+  }
+
+  set tags(value)
+  {
+    if (value instanceof Set) {
+      this.#tags = this.#tags.union(value);
+    } else {
+      this.#tags.add(value);
+    }
   }
 
   expand(object) {
