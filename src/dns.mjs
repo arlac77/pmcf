@@ -29,6 +29,7 @@ const DNSServiceTypeDefinition = {
     },
     notify: { type: "boolean", collection: false, writeable: true },
     recordTTL: { type: "string", collection: false, writeable: true },
+    serial: { type: "number", collection: false, writeable: true },
     refresh: { type: "string", collection: false, writeable: true },
     retry: { type: "string", collection: false, writeable: true },
     expire: { type: "string", collection: false, writeable: true },
@@ -49,6 +50,7 @@ export class DNSService extends Base {
   #source = [];
   #trusted = [];
 
+  serial = Math.ceil(Date.now() / 1000);
   refresh = 36000;
   retry = 72000;
   expire = 600000;
@@ -73,7 +75,7 @@ export class DNSService extends Base {
   }
 
   get soaUpdates() {
-    return [this.refresh, this.retry, this.expire, this.minimum];
+    return [this.serial, this.refresh, this.retry, this.expire, this.minimum];
   }
 
   set trusted(value) {
@@ -120,11 +122,11 @@ export class DNSService extends Base {
     ];
   }
 
-  async *preparePackages(stagingDir) {
+  async *preparePackages(dir) {
     const name = this.owner.name;
-    const p1 = join(stagingDir, "p1");
-
-    const result = {
+    const p1 = join(dir, "p1");
+    const packageData = {
+      dir: p1,
       sources: [new FileContentProvider(p1 + "/")[Symbol.asyncIterator]()],
       outputs: this.outputs,
       properties: {
@@ -154,12 +156,12 @@ export class DNSService extends Base {
     );
 
     if (options.length > 2 || category.length > 2) {
-      yield result;
+      yield packageData;
     }
 
-    const p2 = join(stagingDir, "p2");
+    const p2 = (packageData.dir = join(dir, "p2"));
 
-    result.properties = {
+    packageData.properties = {
       name: `named-zones-${name}`,
       description: `zone definitions for ${this.fullName}`,
       dependencies: ["mf-named"],
@@ -167,31 +169,28 @@ export class DNSService extends Base {
       access: "private"
     };
 
-    result.sources = [
-      new FileContentProvider(
-        p2 + "/",
-        {
-          mode: 0o644,
-          owner: "named",
-          group: "named"
-        },
-        {
-          mode: 0o755,
-          owner: "named",
-          group: "named"
-        }
-      )[Symbol.asyncIterator]()
+    packageData.sources = [
+      new FileContentProvider(p2 + "/", {
+        mode: 0o644,
+        owner: "named",
+        group: "named"
+      }, {
+        mode: 0o755,
+        owner: "named",
+        group: "named"
+      })[
+        Symbol.asyncIterator
+      ]()
     ];
 
-    await generateZoneDefs(this, p2);
+    await generateZoneDefs(this, packageData);
 
-    yield result;
+    yield packageData;
   }
 }
 
-async function generateZoneDefs(dns, targetDir) {
+async function generateZoneDefs(dns, packageData) {
   const ttl = dns.recordTTL;
-  const updates = [Math.ceil(Date.now() / 1000), ...dns.soaUpdates].join(" ");
   const nameService = dns.findService(DNS_SERVICE_FILTER);
   const rname = dns.administratorEmail.replace(/@/, ".");
 
@@ -200,7 +199,7 @@ async function generateZoneDefs(dns, targetDir) {
     "SOA",
     dnsFullName(nameService.domainName),
     dnsFullName(rname),
-    `(${updates})`
+    `(${[...dns.soaUpdates].join(" ")})`
   );
 
   const NSRecord = DNSRecord(
@@ -380,14 +379,14 @@ async function generateZoneDefs(dns, targetDir) {
       }
 
       await writeLines(
-        join(targetDir, "var/lib/named"),
+        join(packageData.dir, "var/lib/named"),
         zone.file,
         [...zone.records].map(r => r.toString(maxKeyLength, ttl))
       );
     }
 
     await writeLines(
-      join(targetDir, "etc/named.d/zones"),
+      join(packageData.dir, "etc/named.d/zones"),
       config.name,
       content
     );

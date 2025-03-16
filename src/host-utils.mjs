@@ -1,9 +1,10 @@
 import { writeFile, mkdir, copyFile, glob, chmod } from "node:fs/promises";
 import { join } from "node:path";
 import { writeLines, sectionLines } from "../src/utils.mjs";
+import { addHook } from "./hooks.mjs";
 
-export async function generateMachineInfo(host, dir) {
-  const etcDir = join(dir, "etc");
+export async function generateMachineInfo(host, packageData) {
+  const etcDir = join(packageData.dir, "etc");
   await writeLines(
     etcDir,
     "machine-info",
@@ -20,8 +21,8 @@ export async function generateMachineInfo(host, dir) {
   await writeLines(etcDir, "hostname", host.hostName);
 }
 
-export async function generateNetworkDefs(host, dir) {
-  const networkDir = join(dir, "etc/systemd/network");
+export async function generateNetworkDefs(host, packageData) {
+  const networkDir = join(packageData.dir, "etc/systemd/network");
 
   for (const ni of host.networkInterfaces.values()) {
     if (ni.name !== "eth0" && ni.hwaddr) {
@@ -100,7 +101,7 @@ export async function generateNetworkDefs(host, dir) {
         }
         break;
       case "wifi": {
-        const d = join(dir, "etc/wpa_supplicant");
+        const d = join(packageData.dir, "etc/wpa_supplicant");
         await mkdir(d, { recursive: true });
         writeFile(
           join(d, `wpa_supplicant-${ni.name}.conf`),
@@ -116,7 +117,8 @@ network={
           "utf8"
         );
 
-        host.addPackageHook(
+        addHook(
+          packageData.properties.hooks,
           "post_install",
           `systemctl enable wpa_supplicant@${ni.name}.service`
         );
@@ -125,8 +127,8 @@ network={
   }
 }
 
-export async function copySshKeys(host, dir) {
-  const sshDir = join(dir, "etc", "ssh");
+export async function copySshKeys(host, packageData) {
+  const sshDir = join(packageData.dir, "etc", "ssh");
 
   await mkdir(sshDir, { recursive: true });
 

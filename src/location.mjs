@@ -4,6 +4,7 @@ import { FileContentProvider } from "npm-pkgbuild";
 import { Owner } from "./owner.mjs";
 import { addType } from "./types.mjs";
 import { writeLines, sectionLines } from "./utils.mjs";
+import { loadHooks } from "./hooks.mjs";
 
 const LocationTypeDefinition = {
   name: "location",
@@ -45,56 +46,56 @@ export class Location extends Owner {
     return [...this.typeList("network")][0] || super.network;
   }
 
-  async *preparePackages(stagingDir) {
-    await this.loadPackageHooks(
-      new URL("location.install", import.meta.url).pathname
+  async *preparePackages(dir) {
+    const packageData = {
+      dir,
+      sources: [new FileContentProvider(dir + "/")[Symbol.asyncIterator]()],
+      outputs: this.outputs,
+      properties: {
+        name: `${this.typeName}-${this.name}`,
+        description: `${this.typeName} definitions for ${this.fullName}`,
+        access: "private",
+        dependencies: { jq: ">=1.6" },
+        provides: ["location", "mf-location"],
+        replaces: [`mf-location-${this.name}`],
+        hooks: await loadHooks(
+          {},
+          new URL("location.install", import.meta.url).pathname
+        )
+      }
+    };
+
+    await writeLines(
+      join(dir, "etc/systemd/resolved.conf.d"),
+      `${this.name}.conf`,
+      sectionLines(...this.dns.systemdConfig)
     );
 
-    for await (const result of super.preparePackages(stagingDir)) {
-      await writeLines(
-        join(stagingDir, "etc/systemd/resolved.conf.d"),
-        `${this.name}.conf`,
-        sectionLines(...this.dns.systemdConfig)
-      );
+    await writeLines(
+      join(dir, "etc/systemd/journald.conf.d"),
+      `${this.name}.conf`,
+      sectionLines("Journal", {
+        Compress: "yes",
+        SystemMaxUse: "500M",
+        SyncIntervalSec: "15m"
+      })
+    );
 
-      await writeLines(
-        join(stagingDir, "etc/systemd/journald.conf.d"),
-        `${this.name}.conf`,
-        sectionLines("Journal", {
-          Compress: "yes",
-          SystemMaxUse: "500M",
-          SyncIntervalSec: "15m"
-        })
-      );
+    await writeLines(
+      join(dir, "etc/systemd/timesyncd.conf.d"),
+      `${this.name}.conf`,
+      sectionLines(...this.ntp.systemdConfig)
+    );
 
-      await writeLines(
-        join(stagingDir, "etc/systemd/timesyncd.conf.d"),
-        `${this.name}.conf`,
-        sectionLines(...this.ntp.systemdConfig)
-      );
+    const locationDir = join(dir, "etc", "location");
 
-      const locationDir = join(stagingDir, "etc", "location");
+    await mkdir(locationDir, { recursive: true });
 
-      await mkdir(locationDir, { recursive: true });
+    await copyFile(
+      join(this.directory, "location.json"),
+      join(locationDir, "location.json")
+    );
 
-      await copyFile(
-        join(this.directory, "location.json"),
-        join(locationDir, "location.json")
-      );
-
-      result.properties.name = `${this.typeName}-${this.name}`;
-
-      result.properties.provides = ["location", "mf-location"];
-      result.properties.depends = { jq: ">=1.6" };
-      result.properties.replaces = [`mf-location-${this.name}`];
-
-      result.sources.push(
-        new FileContentProvider(stagingDir + "/")[Symbol.asyncIterator]()
-      );
-
-      result.properties.hooks = this.packageHooks;
-
-      yield result;
-    }
+    yield packageData;
   }
 }

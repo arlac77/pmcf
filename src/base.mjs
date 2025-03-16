@@ -1,6 +1,5 @@
 import { join } from "node:path";
-import { createReadStream } from "node:fs";
-import { allOutputs, extractFunctions } from "npm-pkgbuild";
+import { allOutputs } from "npm-pkgbuild";
 import { getAttribute } from "pacc";
 import { addType, primitives } from "./types.mjs";
 
@@ -352,27 +351,6 @@ export class Base {
     }
 
     return this.#packaging;
-  }
-
-  #packageHooks = {};
-
-  get packageHooks() {
-    return this.#packageHooks;
-  }
-
-  async loadPackageHooks(file) {
-    for await (const f of extractFunctions(createReadStream(file, "utf8"))) {
-      this.addPackageHook(f.name, f.body);
-    }
-  }
-
-  addPackageHook(name, content) {
-    const hook = this.#packageHooks[name];
-    if (hook) {
-      content = hook + "\n" + content;
-    }
-
-    this.#packageHooks[name] = content;
   }
 
   get outputs() {

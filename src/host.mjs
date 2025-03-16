@@ -18,6 +18,7 @@ import {
 } from "./utils.mjs";
 import { objectFilter } from "./filter.mjs";
 import { addType, types } from "./types.mjs";
+import { loadHooks } from "./hooks.mjs";
 import {
   generateNetworkDefs,
   generateMachineInfo,
@@ -156,7 +157,9 @@ export class Host extends Base {
   }
 
   get architecture() {
-    return this.#architecture || this.extends.find(e => e.architecture)?.architecture;
+    return (
+      this.#architecture || this.extends.find(e => e.architecture)?.architecture
+    );
   }
 
   get derivedPackaging() {
@@ -390,36 +393,39 @@ export class Host extends Base {
     return readFile(join(this.directory, `ssh_host_${type}_key.pub`), "utf8");
   }
 
-  async *preparePackages(stagingDir) {
-    await this.loadPackageHooks(
-      new URL("host.install", import.meta.url).pathname
+  async *preparePackages(dir) {
+    const packageData = {
+      dir,
+      sources: [
+        new FileContentProvider(dir + "/")[Symbol.asyncIterator]()
+      ],
+      outputs: this.outputs,
+      properties: {
+        name: `${this.typeName}-${this.owner.name}-${this.name}`,
+        description: `${this.typeName} definitions for ${this.fullName}`,
+        access: "private",
+        dependencies: [
+          `${this.location.typeName}-${this.location.name}`,
+          ...this.depends
+        ],
+        provides: [...this.provides],
+        replaces: [`mf-${this.hostName}`, ...this.replaces],
+        backup: "root/.ssh/known_hosts",
+        hooks: await loadHooks({},
+          new URL("host.install", import.meta.url).pathname
+        )
+      }
+    };
+
+    await generateNetworkDefs(this, packageData);
+    await generateMachineInfo(this, packageData);
+    await copySshKeys(this, packageData);
+    await generateKnownHosts(
+      this.owner.hosts(),
+      join(dir, "root", ".ssh")
     );
 
-    for await (const result of super.preparePackages(stagingDir)) {
-      await generateNetworkDefs(this, stagingDir);
-      await generateMachineInfo(this, stagingDir);
-      await copySshKeys(this, stagingDir);
-      await generateKnownHosts(
-        this.owner.hosts(),
-        join(stagingDir, "root", ".ssh")
-      );
-
-      result.properties.name = `${this.typeName}-${this.owner.name}-${this.name}`;
-      result.properties.dependencies = [
-        `${this.location.typeName}-${this.location.name}`,
-        ...this.depends
-      ];
-      result.properties.provides = [...this.provides];
-      result.properties.replaces = [`mf-${this.hostName}`, ...this.replaces];
-      result.properties.backup = "root/.ssh/known_hosts";
-      result.properties.hooks = this.packageHooks;
-
-      result.sources.push(
-        new FileContentProvider(stagingDir + "/")[Symbol.asyncIterator]()
-      );
-
-      yield result;
-    }
+    yield packageData;
   }
 }
 
