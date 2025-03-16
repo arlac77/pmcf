@@ -254,10 +254,18 @@ export class Host extends Base {
     return parts[parts.length - 1];
   }
 
-  get domains() {
+  get foreignDomainNames() {
+    return [...this.aliases].filter(n => n.split(".").length > 1);
+  }
+
+  get foreignDomains() {
     return new Set(
       [...this.aliases].map(n => domainFromDominName(n, this.domain))
-    ).union(this.localDomains);
+    );
+  }
+
+  get domains() {
+    return this.foreignDomains.union(this.localDomains);
   }
 
   get domainNames() {

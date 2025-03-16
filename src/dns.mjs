@@ -184,63 +184,86 @@ export class DNSService extends Base {
 async function generateZoneDefs(dns, targetDir) {
   const ttl = dns.recordTTL;
   const updates = [Math.ceil(Date.now() / 1000), ...dns.soaUpdates].join(" ");
+  const nameService = dns.findService(DNS_SERVICE_FILTER);
+  const rname = dns.administratorEmail.replace(/@/, ".");
 
-  for (const domain of dns.domains) {
-    const isLocalDomain = dns.localDomains.has(domain);
+  const SOARecord = DNSRecord(
+    "@",
+    "SOA",
+    dnsFullName(nameService.domainName),
+    dnsFullName(rname),
+    `(${updates})`
+  );
 
-    const ownerName = isLocalDomain ? dns.owner.name : "FOREIGN";
-    const zones = [];
-    const records = new Set();
+  const NSRecord = DNSRecord(
+    "@",
+    "NS",
+    dnsFullName(nameService.ipAddressOrDomainName)
+  );
 
-    const nameService = dns.findService(DNS_SERVICE_FILTER);
-    const rname = dns.administratorEmail.replace(/@/, ".");
+  console.log(`${nameService}`, nameService.ipAddressOrDomainName);
 
-    let maxKeyLength;
+  const configs = [];
 
-    console.log(`${nameService} ${domain}`, nameService.ipAddressOrDomainName);
-    //console.log(dns.owner.fullName, domain, nameService.domainName, rname);
+  for (const host of dns.owner.hosts()) {
+    for (const domain of host.foreignDomainNames) {
+      const zone = {
+        id: domain,
+        file: `FOREIGN/${domain}.zone`,
+        records: new Set([SOARecord, NSRecord])
+      };
+      const config = {
+        name: `${domain}.zone.conf`,
+        zones: [zone]
+      };
+      configs.push(config);
+
+      for (const address of host.rawAddresses) {
+        zone.records.add(
+          DNSRecord(
+            "@",
+            isIPv6Address(address) ? "AAAA" : "A",
+            normalizeIPAddress(address)
+          )
+        );
+      }
+    }
+  }
+
+  for (const domain of dns.localDomains) {
+    const ownerName = dns.owner.name;
     const reverseZones = new Map();
 
-    const SOARecord = DNSRecord(
-      "@",
-      "SOA",
-      dnsFullName(nameService.domainName),
-      dnsFullName(rname),
-      `(${updates})`
-    );
-
-    const NSRecord = DNSRecord(
-      "@",
-      "NS",
-      dnsFullName(nameService.ipAddressOrDomainName)
-    );
+    const config = {
+      name: `${domain}.zone.conf`,
+      zones: []
+    };
+    configs.push(config);
 
     const zone = {
       id: domain,
-      type: "plain",
       file: `${ownerName}/${domain}.zone`,
-      records: new Set([SOARecord, NSRecord, ...records])
+      records: new Set([SOARecord, NSRecord])
     };
-    zones.push(zone);
+    config.zones.push(zone);
 
-    const catalogZone = {
-      id: `catalog.${domain}`,
-      type: "catalog",
-      file: `${ownerName}/catalog.${domain}.zone`,
-      records: new Set([
-        SOARecord,
-        NSRecord,
-        DNSRecord(dnsFullName(`version.catalog.${domain}`), "TXT", '"1"')
-      ])
-    };
+    if (dns.hasCatalog) {
+      const catalogConfig = {
+        name: `catalog.${domain}.zone.conf`,
+        zones: []
+      };
+      configs.push(catalogConfig);
 
-    const configs = {
-      plain: { name: `${domain}.zone.conf`, content: [] }
-    };
-
-    if (isLocalDomain && dns.hasCatalog) {
-      zones.push(catalogZone);
-      configs.catalog = { name: `catalog.${domain}.zone.conf`, content: [] };
+      zone.catalogZone = {
+        id: `catalog.${domain}`,
+        file: `${ownerName}/catalog.${domain}.zone`,
+        records: new Set([
+          SOARecord,
+          NSRecord,
+          DNSRecord(dnsFullName(`version.catalog.${domain}`), "TXT", '"1"')
+        ])
+      };
+      catalogConfig.zones.push(zone.catalogZone);
     }
 
     const hosts = new Set();
@@ -279,7 +302,7 @@ async function generateZoneDefs(dns, targetDir) {
                 file: `${ownerName}/${reverseArpa}.zone`,
                 records: new Set([SOARecord, NSRecord])
               };
-              zones.push(reverseZone);
+              config.zones.push(reverseZone);
               reverseZones.set(subnet.address, reverseZone);
             }
 
@@ -295,7 +318,7 @@ async function generateZoneDefs(dns, targetDir) {
           }
         }
 
-        if (isLocalDomain && !hosts.has(host)) {
+        if (!hosts.has(host)) {
           hosts.add(host);
           for (const service of host.findServices()) {
             for (const record of service.dnsRecordsForDomainName(
@@ -308,15 +331,20 @@ async function generateZoneDefs(dns, targetDir) {
         }
       }
     }
+  }
 
-    for (const zone of zones) {
-      const content = configs[zone.type].content;
+  for (const config of configs) {
+    console.log(`config: ${config.name}`);
 
-      if (zone.type !== "catalog") {
+    const content = [];
+    for (const zone of config.zones) {
+      console.log(`  zone: ${zone.id}`);
+
+      if (zone.catalogZone) {
         const hash = createHmac("md5", zone.id).digest("hex");
-        catalogZone.records.add(
+        zone.catalogZone.records.add(
           DNSRecord(
-            `${hash}.zones.catalog.${domain}.`,
+            `${hash}.zones.catalog.${zone.id}.`,
             "PTR",
             dnsFullName(zone.id)
           )
@@ -336,7 +364,7 @@ async function generateZoneDefs(dns, targetDir) {
       content.push(`};`);
       content.push("");
 
-      maxKeyLength = 0;
+      let maxKeyLength = 0;
       for (const r of zone.records) {
         if (r.key.length > maxKeyLength) {
           maxKeyLength = r.key.length;
@@ -350,13 +378,11 @@ async function generateZoneDefs(dns, targetDir) {
       );
     }
 
-    for (const cfg of Object.values(configs)) {
-      await writeLines(
-        join(targetDir, "etc/named.d/zones"),
-        cfg.name,
-        cfg.content
-      );
-    }
+    await writeLines(
+      join(targetDir, "etc/named.d/zones"),
+      config.name,
+      content
+    );
   }
 }
 

@@ -49,6 +49,7 @@ test("Host domains & aliases", t => {
   t.deepEqual([...h1.domains], ["example.com"]);
   t.deepEqual([...h1.localDomains], ["example.com"]);
   t.deepEqual([...h1.domainNames], ["h1.example.com"]);
+  t.deepEqual(h1.foreignDomainNames, []);
 
   t.is(h1.domainName, "h1.example.com");
 
@@ -60,6 +61,7 @@ test("Host domains & aliases", t => {
     [...h1.domainNames].sort(),
     ["h1.example.com", "o1.somewhere.net"].sort()
   );
+  t.deepEqual(h1.foreignDomainNames, ["o1.somewhere.net"]);
 
   t.is(h1.domainNameIn("example.com"), "h1.example.com");
   t.is(h1.domainNameIn("somewhere.net"), "o1.somewhere.net");
