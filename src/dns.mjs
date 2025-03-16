@@ -141,7 +141,7 @@ export class DNSService extends Base {
       ...serviceAddresses(this.source, DNS_SERVICE_FILTER).map(a => `  ${a};`),
       "};"
     ];
-    await writeLines(join(p1, "etc/named.d/options"), `${name}.conf`, options);
+    await writeLines(join(p1, "etc/named/options"), `${name}.conf`, options);
 
     const category = [
       "acl trusted {",
@@ -150,7 +150,7 @@ export class DNSService extends Base {
     ];
 
     await writeLines(
-      join(p1, "etc/named.d/categories"),
+      join(p1, "etc/named"),
       `${name}.conf`,
       category
     );
@@ -386,7 +386,7 @@ async function generateZoneDefs(dns, packageData) {
     }
 
     await writeLines(
-      join(packageData.dir, "etc/named.d/zones"),
+      join(packageData.dir, "etc/named/zones"),
       config.name,
       content
     );
