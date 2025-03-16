@@ -168,11 +168,19 @@ export class DNSService extends Base {
     };
 
     result.sources = [
-      new FileContentProvider(p2 + "/", {
-        mode: 0o644,
-        owner: "named",
-        group: "named"
-      })[Symbol.asyncIterator]()
+      new FileContentProvider(
+        p2 + "/",
+        {
+          mode: 0o644,
+          owner: "named",
+          group: "named"
+        },
+        {
+          mode: 0o755,
+          owner: "named",
+          group: "named"
+        }
+      )[Symbol.asyncIterator]()
     ];
 
     await generateZoneDefs(this, p2);
