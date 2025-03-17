@@ -110,6 +110,12 @@ export class Cluster extends Host {
         cfg.push("    auth_type PASS");
         cfg.push("    auth_pass pass1234");
         cfg.push("  }");
+
+
+        cfg.push(`  notify_master "/usr/bin/systemctl start ${host.name}-master.target"`);
+        cfg.push(`  notify_backup "/usr/bin/systemctl start ${host.name}-backup.target"`);
+        cfg.push(`  notify_fault "/usr/bin/systemctl start ${host.name}-fault.target"`);
+
         cfg.push("}");
         cfg.push("");
 
@@ -148,6 +154,33 @@ export class Cluster extends Host {
         join(packageStagingDir, "etc/keepalived"),
         "keepalived.conf",
         cfg
+      );
+
+      await writeLines(
+        join(packageStagingDir, "/usr/lib/systemd/system"),
+        `${this.name}-master.target`,
+        [
+          "[Unit]",
+          `Description: Services to be activated in master state of cluster ${this.name}`
+        ]
+      );
+
+      await writeLines(
+        join(packageStagingDir, "/usr/lib/systemd/system"),
+        `${this.name}-backup.target`,
+        [
+          "[Unit]",
+          `Description: Services to be activated in backup state of cluster ${this.name}`
+        ]
+      );
+
+      await writeLines(
+        join(packageStagingDir, "/usr/lib/systemd/system"),
+        `${this.name}-fault.target`,
+        [
+          "[Unit]",
+          `Description: Services to be activated in fault state of cluster ${this.name}`
+        ]
       );
 
       yield result;

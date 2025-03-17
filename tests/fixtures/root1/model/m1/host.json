@@ -6,6 +6,6 @@
   "replaces": ["r1", "r3"],
   "provides": ["p1", "p3-${hostName}"],
   "services": {
-    "smb": {}
+    "smb": { "systemd": "smb.service" }
   }
 }

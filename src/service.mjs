@@ -54,7 +54,8 @@ const ServiceTypeDefinition = {
     priority: { type: "number", collection: false, writeable: true },
     weight: { type: "number", collection: false, writeable: true },
     srvPrefix: { type: "string", collection: false, writeable: false },
-    tls: { type: "string", collection: false, writeable: false }
+    tls: { type: "string", collection: false, writeable: false },
+    systemd: { type: "string", collection: true, writeable: true }
   }
 };
 
@@ -65,6 +66,7 @@ export class Service extends Base {
   #type;
   #port;
   #ipAddresses;
+  #systemd;
 
   static {
     addType(this);
@@ -96,6 +98,10 @@ export class Service extends Base {
       }
       if (this.#ipAddresses) {
         data.ipAddresses = this.#ipAddresses;
+      }
+
+      if (this.#systemd) {
+        data.systemd = this.#systemd;
       }
 
       // @ts-ignore
@@ -189,6 +195,11 @@ export class Service extends Base {
 
   get tls() {
     return ServiceTypes[this.type]?.tls || false;
+  }
+
+  get systemdServices()
+  {
+    return this.#systemd;
   }
 
   get srvPrefix() {
