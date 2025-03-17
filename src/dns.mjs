@@ -151,9 +151,15 @@ export class DNSService extends Base {
       ...serviceAddresses(this.source, DNS_SERVICE_FILTER).map(a => `  ${a};`),
       "};"
     ];
-    await writeLines(join(p1, "etc/named/options"), `forwarders.conf`, options);
+    if (options.length > 2) {
+      await writeLines(
+        join(p1, "etc/named/options"),
+        `forwarders.conf`,
+        options
+      );
+    }
 
-    const category = [
+    const acls = [
       "acl trusted {",
       ...Array.from(subnets(this.trusted)).map(subnet => `  ${subnet.name};`),
       "};",
@@ -166,13 +172,10 @@ export class DNSService extends Base {
       "};"
     ];
 
-    await writeLines(
-      join(p1, "etc/named"),
-      `0-${name}.conf`,
-      category
-    );
-
-    if (options.length > 2 || category.length > 8) {
+    if (options.length > 8) {
+      await writeLines(join(p1, "etc/named"), `0-acl-${name}.conf`, acls);
+    }
+    if (options.length > 2 || acls.length > 8) {
       yield packageData;
     }
 
@@ -187,17 +190,19 @@ export class DNSService extends Base {
     };
 
     packageData.sources = [
-      new FileContentProvider(p2 + "/", {
-        mode: 0o644,
-        owner: "named",
-        group: "named"
-      }, {
-        mode: 0o755,
-        owner: "named",
-        group: "named"
-      })[
-        Symbol.asyncIterator
-      ]()
+      new FileContentProvider(
+        p2 + "/",
+        {
+          mode: 0o644,
+          owner: "named",
+          group: "named"
+        },
+        {
+          mode: 0o755,
+          owner: "named",
+          group: "named"
+        }
+      )[Symbol.asyncIterator]()
     ];
 
     await generateZoneDefs(this, packageData);
