@@ -157,8 +157,12 @@ export class DNSService extends Base {
       "acl trusted {",
       ...Array.from(subnets(this.trusted)).map(subnet => `  ${subnet.name};`),
       "};",
+      "",
       "acl protected {",
       ...Array.from(subnets(this.protected)).map(subnet => `  ${subnet.name};`),
+      "};",
+      "",
+      "acl open {",
       "};"
     ];
 
