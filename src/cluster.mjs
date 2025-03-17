@@ -86,6 +86,9 @@ export class Cluster extends Host {
         "  }",
         `  smtp_server ${this.smtp.rawAddress}`,
         `  notification_email_from keepalived@${host.domainName}`,
+        "  enable_script_security",
+        "  script_user root",
+        "  max_auto_priority 20",
         "}",
         ""
       ];
