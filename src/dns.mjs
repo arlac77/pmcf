@@ -20,6 +20,7 @@ const DNSServiceTypeDefinition = {
   properties: {
     source: { type: "network", collection: true, writeable: true },
     trusted: { type: "network", collection: true, writeable: true },
+    protected: { type: "network", collection: true, writeable: true },
     hasSVRRecords: { type: "boolean", collection: false, writeable: true },
     hasCatalog: { type: "boolean", collection: false, writeable: true },
     hasLinkLocalAdresses: {
@@ -49,6 +50,7 @@ export class DNSService extends Base {
   notify = true;
   #source = [];
   #trusted = [];
+  #protected = [];
 
   serial = Math.ceil(Date.now() / 1000);
   refresh = 36000;
@@ -76,6 +78,14 @@ export class DNSService extends Base {
 
   get soaUpdates() {
     return [this.serial, this.refresh, this.retry, this.expire, this.minimum];
+  }
+
+  set protected(value) {
+    this.#protected.push(value);
+  }
+
+  get protected() {
+    return this.#protected;
   }
 
   set trusted(value) {
@@ -146,12 +156,15 @@ export class DNSService extends Base {
     const category = [
       "acl trusted {",
       ...Array.from(subnets(this.trusted)).map(subnet => `  ${subnet.name};`),
+      "};",
+      "acl protected {",
+      ...Array.from(subnets(this.protected)).map(subnet => `  ${subnet.name};`),
       "};"
     ];
 
     await writeLines(
       join(p1, "etc/named"),
-      `${name}.conf`,
+      `0-${name}.conf`,
       category
     );
 

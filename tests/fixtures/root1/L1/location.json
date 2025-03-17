@@ -7,6 +7,8 @@
   "subnets": "192.168.1/24",
   "dns": {
     "source": "/GLOBAL",
+    "protected": "/L1",
+    "trusted": ["/LOCAL"],
     "allowedUpdates": ["trusted"],
     "recordTTL": "1W"
   },
