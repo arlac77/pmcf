@@ -86,7 +86,6 @@ export class Cluster extends Host {
         "  }",
         `  smtp_server ${this.smtp.rawAddress}`,
         `  notification_email_from keepalived@${host.domainName}`,
-        `  lvs_id ${host.hostName}`,
         "}",
         ""
       ];
