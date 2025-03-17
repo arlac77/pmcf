@@ -151,7 +151,7 @@ export class DNSService extends Base {
       ...serviceAddresses(this.source, DNS_SERVICE_FILTER).map(a => `  ${a};`),
       "};"
     ];
-    await writeLines(join(p1, "etc/named/options"), `${name}.conf`, options);
+    await writeLines(join(p1, "etc/named/options"), `forwarders.conf`, options);
 
     const category = [
       "acl trusted {",
@@ -172,7 +172,7 @@ export class DNSService extends Base {
       category
     );
 
-    if (options.length > 2 || category.length > 2) {
+    if (options.length > 2 || category.length > 8) {
       yield packageData;
     }
 
