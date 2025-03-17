@@ -41,6 +41,22 @@ const DNSServiceTypeDefinition = {
 
 const DNS_SERVICE_FILTER = { type: DNSServiceTypeDefinition.name };
 
+function addressList(objects) {
+  return Array.from(objects).map(object =>
+    typeof object === "string" ? object : object.name
+  );
+}
+
+function addressesStatement(prefix, objects, generateEmpty = false) {
+  const body = addressList(objects).map(name => `  ${name};`);
+
+  if (body.length || generateEmpty) {
+    return [`${prefix} {`, body, "};"];
+  }
+
+  return [];
+}
+
 export class DNSService extends Base {
   allowedUpdates = [];
   recordTTL = "1W";
@@ -146,11 +162,10 @@ export class DNSService extends Base {
       }
     };
 
-    const options = [
-      "forwarders {",
-      ...serviceAddresses(this.source, DNS_SERVICE_FILTER).map(a => `  ${a};`),
-      "};"
-    ];
+    const options = addressesStatement(
+      "forwarders",
+      serviceAddresses(this.source, DNS_SERVICE_FILTER)
+    );
     if (options.length > 2) {
       await writeLines(
         join(p1, "etc/named/options"),
@@ -160,22 +175,15 @@ export class DNSService extends Base {
     }
 
     const acls = [
-      "acl trusted {",
-      ...Array.from(subnets(this.trusted)).map(subnet => `  ${subnet.name};`),
-      "};",
-      "",
-      "acl protected {",
-      ...Array.from(subnets(this.protected)).map(subnet => `  ${subnet.name};`),
-      "};",
-      "",
-      "acl open {",
-      "};"
-    ];
+      addressesStatement("acl trusted", subnets(this.trusted)),
+      addressesStatement("acl protected", subnets(this.protected)),
+      addressesStatement("acl open", [], true)
+    ].flat();
 
-    if (options.length > 8) {
+    if (acls.length) {
       await writeLines(join(p1, "etc/named"), `0-acl-${name}.conf`, acls);
     }
-    if (options.length > 2 || acls.length > 8) {
+    if (options.length || acls.length) {
       yield packageData;
     }
 
