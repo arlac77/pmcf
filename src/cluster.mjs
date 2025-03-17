@@ -112,9 +112,9 @@ export class Cluster extends Host {
         cfg.push("  }");
 
 
-        cfg.push(`  notify_master "/usr/bin/systemctl start ${host.name}-master.target"`);
-        cfg.push(`  notify_backup "/usr/bin/systemctl start ${host.name}-backup.target"`);
-        cfg.push(`  notify_fault "/usr/bin/systemctl start ${host.name}-fault.target"`);
+        cfg.push(`  notify_master "/usr/bin/systemctl start ${cluster.name}-master.target"`);
+        cfg.push(`  notify_backup "/usr/bin/systemctl start ${cluster.name}-backup.target"`);
+        cfg.push(`  notify_fault "/usr/bin/systemctl start ${cluster.name}-fault.target"`);
 
         cfg.push("}");
         cfg.push("");
