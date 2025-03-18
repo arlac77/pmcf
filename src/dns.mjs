@@ -273,6 +273,7 @@ async function generateZoneDefs(dns, packageData) {
             normalizeIPAddress(address)
           )
         );
+        zone.records.add(DNSRecord("location", "TXT", host.location.name));
       }
     }
   }
