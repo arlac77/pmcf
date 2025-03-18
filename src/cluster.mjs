@@ -113,17 +113,22 @@ export class Cluster extends Host {
         cfg.push("    auth_pass pass1234");
         cfg.push("  }");
 
-
-        cfg.push(`  notify_master "/usr/bin/systemctl start ${cluster.name}-master.target"`);
-        cfg.push(`  notify_backup "/usr/bin/systemctl start ${cluster.name}-backup.target"`);
-        cfg.push(`  notify_fault "/usr/bin/systemctl start ${cluster.name}-fault.target"`);
+        cfg.push(
+          `  notify_master "/usr/bin/systemctl start ${cluster.name}-master.target"`
+        );
+        cfg.push(
+          `  notify_backup "/usr/bin/systemctl start ${cluster.name}-backup.target"`
+        );
+        cfg.push(
+          `  notify_fault "/usr/bin/systemctl start ${cluster.name}-fault.target"`
+        );
 
         cfg.push("}");
         cfg.push("");
 
-        for (const service of cluster.findServices({ type: "http" })) {
+        for (const service of cluster.findServices({ type: "http|dns|smtp" })) {
           cfg.push(`virtual_server ${cluster.rawAddress} ${service.port} {`);
-          cfg.push("  delay_loop 6");
+          cfg.push("  delay_loop 10");
           cfg.push("  lb_algo wlc");
           cfg.push("  persistence_timeout 600");
           cfg.push(`  protocol ${service.protocol.toUpperCase()}`);
@@ -136,12 +141,26 @@ export class Cluster extends Host {
             );
             cfg.push(`    weight ${memberService.weight}`);
 
-            switch (service.protocol) {
-              case "tcp":
-                cfg.push(`    TCP_CHECK {`);
-                cfg.push("      connect_timeout 3");
+            switch (service.type) {
+              case "dns":
+                cfg.push(`    DNS_CHECK {`);
+                cfg.push("      type A");
+                cfg.push("      name google.com");
                 cfg.push("    }");
                 break;
+              case "smtp":
+                cfg.push(`    SMTP_CHECK {`);
+                cfg.push("    }");
+                break;
+
+              default:
+                switch (service.protocol) {
+                  case "tcp":
+                    cfg.push(`    TCP_CHECK {`);
+                    cfg.push("      connect_timeout 10");
+                    cfg.push("    }");
+                    break;
+                }
             }
 
             cfg.push("  }");
@@ -163,7 +182,7 @@ export class Cluster extends Host {
         `${this.name}-master.target`,
         [
           "[Unit]",
-          `Description=Services to be activated in master state of cluster ${this.name}`,
+          `Description=Target for master state of cluster ${this.name}`,
           "PartOf=keepalived.service",
           `Conflicts=${this.name}-fault.target`
         ]
@@ -174,7 +193,7 @@ export class Cluster extends Host {
         `${this.name}-backup.target`,
         [
           "[Unit]",
-          `Description=Services to be activated in backup state of cluster ${this.name}`,
+          `Description=Target for backup state of cluster ${this.name}`,
           "PartOf=keepalived.service",
           `Conflicts=${this.name}-fault.target`
         ]
@@ -185,8 +204,8 @@ export class Cluster extends Host {
         `${this.name}-fault.target`,
         [
           "[Unit]",
-          `Description=Services to be activated in fault state of cluster ${this.name}`,
-          `Conflicts=${this.name}-master.target ${this.name}-backup.target`,
+          `Description=Target for fault state of cluster ${this.name}`,
+          `Conflicts=${this.name}-master.target ${this.name}-backup.target`
         ]
       );
 
