@@ -21,6 +21,7 @@ const DNSServiceTypeDefinition = {
     source: { type: "network", collection: true, writeable: true },
     trusted: { type: "network", collection: true, writeable: true },
     protected: { type: "network", collection: true, writeable: true },
+    open: { type: "network", collection: true, writeable: true },
     hasSVRRecords: { type: "boolean", collection: false, writeable: true },
     hasCatalog: { type: "boolean", collection: false, writeable: true },
     hasLinkLocalAdresses: {
@@ -67,6 +68,7 @@ export class DNSService extends Base {
   #source = [];
   #trusted = [];
   #protected = [];
+  #open = [];
 
   serial = Math.ceil(Date.now() / 1000);
   refresh = 36000;
@@ -110,6 +112,14 @@ export class DNSService extends Base {
 
   get trusted() {
     return this.#trusted;
+  }
+
+  set open(value) {
+    this.#open.push(value);
+  }
+
+  get open() {
+    return this.#open;
   }
 
   set source(value) {
@@ -177,7 +187,7 @@ export class DNSService extends Base {
     const acls = [
       addressesStatement("acl trusted", subnets(this.trusted)),
       addressesStatement("acl protected", subnets(this.protected)),
-      addressesStatement("acl open", [], true)
+      addressesStatement("acl open", subnets(this.open), true)
     ].flat();
 
     if (acls.length) {
