@@ -35,7 +35,22 @@ const ServiceTypes = {
   ssh: { protocol: "tcp", port: 22, tls: false },
   imap: { protocol: "tcp", port: 143, tls: false },
   imaps: { protocol: "tcp", port: 993, tls: true },
-  dhcp: { tls: false }
+  dhcp: { tls: false },
+  smb: { protocol: "tcp", port: 445, tls: false },
+  timemachine: {
+    type: "adisk",
+    protocol: "tcp",
+    tls: false,
+    dnsRecord: {
+      type: "TXT",
+      parameters: {
+        sys: "waMa=0",
+        adVF: "0x100",
+        dk0: "adVN=MF-TM-999",
+      //  adVF: "0x82"
+      }
+    }
+  }
 };
 
 const ServiceTypeDefinition = {
@@ -197,8 +212,7 @@ export class Service extends Base {
     return ServiceTypes[this.type]?.tls || false;
   }
 
-  get systemdServices()
-  {
+  get systemdServices() {
     return this.#systemd;
   }
 
