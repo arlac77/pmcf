@@ -14,7 +14,8 @@ const ClusterTypeDefinition = {
     routerId: { type: "number", collection: false, writeable: true },
     masters: { type: "network_interface", collection: true, writeable: true },
     backups: { type: "network_interface", collection: true, writeable: true },
-    members: { type: "network_interface", collection: true, writeable: false }
+    members: { type: "network_interface", collection: true, writeable: false },
+    checkInterval: { type: "number", collection: false, writeable: true }
   }
 };
 
@@ -22,6 +23,7 @@ export class Cluster extends Host {
   #masters = new Set();
   #backups = new Set();
   routerId = 100;
+  checkInterval = 60;
 
   static {
     addType(this);
@@ -105,7 +107,9 @@ export class Cluster extends Host {
         );
         cfg.push("  }");
         cfg.push(`  virtual_router_id ${cluster.routerId}`);
-        cfg.push(`  priority ${host.priority - (cluster.masters.has(ni) ? 0 : 5)}`);
+        cfg.push(
+          `  priority ${host.priority - (cluster.masters.has(ni) ? 0 : 5)}`
+        );
         cfg.push("  smtp_alert");
         cfg.push("  advert_int 5");
         cfg.push("  authentication {");
@@ -128,7 +132,7 @@ export class Cluster extends Host {
 
         for (const service of cluster.findServices({ type: "http|dns|smtp" })) {
           cfg.push(`virtual_server ${cluster.rawAddress} ${service.port} {`);
-          cfg.push("  delay_loop 10");
+          cfg.push(`  delay_loop ${cluster.checkInterval}`);
           cfg.push("  lb_algo wlc");
           cfg.push("  persistence_timeout 600");
           cfg.push(`  protocol ${service.protocol.toUpperCase()}`);
