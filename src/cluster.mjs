@@ -130,7 +130,7 @@ export class Cluster extends Host {
         cfg.push("}");
         cfg.push("");
 
-        for (const service of cluster.findServices({ type: "http|dns|smtp" })) {
+        for (const service of cluster.findServices({ type: "http" })) {
           cfg.push(`virtual_server ${cluster.rawAddress} ${service.port} {`);
           cfg.push(`  delay_loop ${cluster.checkInterval}`);
           cfg.push("  lb_algo wlc");
