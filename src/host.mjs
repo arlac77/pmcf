@@ -361,9 +361,10 @@ export class Host extends Base {
 
   *networkAddresses() {
     for (const networkInterface of this.networkInterfaces.values()) {
-      for (const [address, subnet] of networkInterface.ipAddresses) {
+      for (const [address, subnet, domainName] of networkInterface.ipAddresses) {
         yield {
           networkInterface,
+          domainName,
           address,
           subnet
         };
@@ -540,6 +541,11 @@ export class NetworkInterface extends Base {
         return a.address;
       }
     }
+  }
+
+  get domainName()
+  {
+    return this.host.domainName;
   }
 
   get host() {
