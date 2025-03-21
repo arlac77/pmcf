@@ -438,6 +438,7 @@ const NetworkInterfaceTypeDefinition = {
   properties: {
     ...networkProperties,
     ...networkAddressProperties,
+    hostName: { type: "string", collection: false, writeable: true },
     ipAddresses: { type: "string", collection: true, writeable: true },
 
     hwaddr: { type: "string", collection: false, writeable: true },
@@ -465,6 +466,7 @@ export class NetworkInterface extends Base {
   #kind;
   arpbridge;
   hwaddr;
+  hostName;
 
   constructor(owner, data) {
     super(owner, data);
@@ -545,7 +547,7 @@ export class NetworkInterface extends Base {
 
   get domainName()
   {
-    return this.host.domainName;
+    return this.hostName ? [this.hostName,this.host.domain].join('.') : this.host.dmainName;
   }
 
   get host() {

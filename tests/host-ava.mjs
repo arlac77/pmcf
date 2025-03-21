@@ -41,7 +41,13 @@ test("Host domains & aliases", t => {
   owner.addObject(n1);
 
   const h1 = new Host(n1, {
-    name: "h1"
+    name: "h1",
+    networkInterfaces: {
+      eth0: {
+        ipAddress: "1.2.3.4",
+        hostName: "name2"
+      }
+    }
   });
   n1.addObject(h1);
 
