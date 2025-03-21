@@ -288,10 +288,12 @@ async function generateZoneDefs(dns, packageData) {
     };
     configs.push(config);
 
+    const locationRecord = DNSRecord("location", "TXT", dns.location.name)
+
     const zone = {
       id: domain,
       file: `${ownerName}/${domain}.zone`,
-      records: new Set([SOARecord, NSRecord])
+      records: new Set([SOARecord, NSRecord, locationRecord])
     };
     config.zones.push(zone);
 
@@ -368,6 +370,13 @@ async function generateZoneDefs(dns, packageData) {
 
         if (!hosts.has(host)) {
           hosts.add(host);
+
+          for (const foreignDomainName of host.foreignDomainNames) {
+            zone.records.add(
+              DNSRecord("external", "PTR", dnsFullName(foreignDomainName))
+            );
+          }
+
           for (const service of host.findServices()) {
             for (const record of service.dnsRecordsForDomainName(
               domainName,
