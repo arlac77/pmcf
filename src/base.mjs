@@ -386,7 +386,15 @@ export class Base {
     }
   }
 
+  get isTemplate() {
+    return false;
+  }
+
   expand(object) {
+    if (this.isTemplate) {
+      return object;
+    }
+
     switch (typeof object) {
       case "string":
         return object.replaceAll(/\$\{([^\}]*)\}/g, (match, m1) => {
