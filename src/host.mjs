@@ -255,7 +255,7 @@ export class Host extends Base {
   }
 
   get os() {
-    return this.#os || this.extends.find(e => e.os);
+    return this.#os || this.extends.find(e => e.os)?.os
   }
 
   set distribution(value) {
