@@ -263,7 +263,7 @@ export class Host extends Base {
   }
 
   get distribution() {
-    return this.#distribution || this.extends.find(e => e.distribution);
+    return this.#distribution || this.extends.find(e => e.distribution)?.distribution;
   }
 
   get modelName() {

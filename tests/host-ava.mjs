@@ -40,6 +40,7 @@ test("Host extends", t => {
   const e1 = new Host(owner, {
     name: "e1",
     os: "linux",
+    distribution: "suse",
     aliases: "e1a",
     deployment: "production",
     chassis: "chassis e1",
@@ -69,6 +70,7 @@ test("Host extends", t => {
 
   t.deepEqual([...h1.aliases].sort(), ["h1a", "e1a", "e2a"].sort());
   t.deepEqual(h1.os, "linux");
+  t.deepEqual(h1.distribution, "suse");
   t.deepEqual(h1.deployment, "production");
   t.deepEqual(h1.chassis, "chassis e1");
   t.deepEqual(h1.vendor, "vendor e1");
