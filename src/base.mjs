@@ -482,7 +482,17 @@ export function extractFrom(
   object,
   typeDefinition = object?.constructor?.typeDefinition
 ) {
-  if (Array.isArray(object)) {
+  switch (typeof object) {
+    case "undefined":
+    case "string":
+    case "number":
+    case "boolean":
+      return object;
+  }
+
+  if (typeof object[Symbol.iterator] === "function") {
+    object = [...object];
+
     if (object.length === 0) {
       return undefined;
     }
@@ -498,11 +508,7 @@ export function extractFrom(
       );
     }
 
-    return object.map(o => extractFrom(o));
-  }
-
-  if (!typeDefinition || object === undefined) {
-    return object;
+    return object.length ? object : undefined;
   }
 
   const json = {};
@@ -533,8 +539,11 @@ export function extractFrom(
               json[name].name = value.name;
             }
           } else {
-            if (Array.isArray(value)) {
-              json[name] = extractFrom(value);
+            if (typeof value[Symbol.iterator] === "function") {
+              value = extractFrom(value);
+              if (value !== undefined) {
+                json[name] = value;
+              }
             } else {
               const resultObject = Object.fromEntries(
                 Object.entries(value).map(([k, v]) => [

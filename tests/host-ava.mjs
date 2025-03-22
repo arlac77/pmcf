@@ -1,5 +1,5 @@
 import test from "ava";
-import { Root, Host, Network } from "pmcf";
+import { Root, Host, Network, Subnet } from "pmcf";
 import { assertObject, assertObjects } from "./util.mjs";
 import { root1 } from "./fixtures.mjs";
 
@@ -39,6 +39,7 @@ test("Host extends", t => {
   const owner = new Root("/");
   const e1 = new Host(owner, {
     name: "e1",
+    os: "linux",
     aliases: "e1a",
     deployment: "production",
     chassis: "chassis e1",
@@ -67,6 +68,7 @@ test("Host extends", t => {
   });
 
   t.deepEqual([...h1.aliases].sort(), ["h1a", "e1a", "e2a"].sort());
+  t.deepEqual(h1.os, "linux");
   t.deepEqual(h1.deployment, "production");
   t.deepEqual(h1.chassis, "chassis e1");
   t.deepEqual(h1.vendor, "vendor e1");
@@ -197,6 +199,13 @@ test("Host addresses", t => {
       name: "n1",
       type: "network"
     },
+    ipAddresses: [
+      ["10.0.0.2", new Subnet(n1, "10.0.0.2/16")],
+      [
+        "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f",
+        new Subnet(n1, "fe80::1e57:3eff:fe22:9a8f/64")
+      ]
+    ],
     cidrAddress: "10.0.0.2/16",
     cidrAddresses: [
       "10.0.0.2/16",
