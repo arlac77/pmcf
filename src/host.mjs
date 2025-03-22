@@ -187,7 +187,7 @@ export class Host extends Base {
   }
 
   get aliases() {
-    return this.#aliases;
+    return this.extends.reduce((a, c) => a.union(c.aliases), this.#aliases);
   }
 
   set extends(value) {
