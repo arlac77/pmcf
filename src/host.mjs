@@ -60,7 +60,6 @@ const HostTypeDefinition = {
 };
 
 export class Host extends Base {
-  serial;
   priority = 1;
   #services = [];
   #extends = [];
@@ -76,6 +75,7 @@ export class Host extends Base {
   #chassis;
   #vendor;
   #architecture;
+  #serial;
 
   static {
     addType(this);
@@ -104,12 +104,6 @@ export class Host extends Base {
             this.services = service.forOwner(this);
           }
         }
-
-        if (!this.isTemplate) {
-          this.#depends = this.expand(this.depends);
-          this.#provides = this.expand(this.provides);
-          this.#replaces = this.expand(this.replaces);
-        }
       });
     }
   }
@@ -126,6 +120,14 @@ export class Host extends Base {
       return true;
     }
     return false;
+  }
+
+  set serial(value) {
+    this.#serial = value;
+  }
+
+  get serial() {
+    return this.#serial || this.extends.find(e => e.serial)?.serial;
   }
 
   set deployment(value) {
@@ -207,7 +209,9 @@ export class Host extends Base {
   }
 
   get provides() {
-    return this.#provides;
+    return this.expand(
+      this.extends.reduce((a, c) => a.union(c.provides), this.#provides)
+    );
   }
 
   set replaces(value) {
@@ -219,7 +223,9 @@ export class Host extends Base {
   }
 
   get replaces() {
-    return this.#replaces;
+    return this.expand(
+      this.extends.reduce((a, c) => a.union(c.replaces), this.#replaces)
+    );
   }
 
   set depends(value) {
@@ -231,7 +237,9 @@ export class Host extends Base {
   }
 
   get depends() {
-    return this.#depends;
+    return this.expand(
+      this.extends.reduce((a, c) => a.union(c.depends), this.#depends)
+    );
   }
 
   set master(value) {

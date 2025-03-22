@@ -35,16 +35,46 @@ test("Host all", async t => {
   );
 });
 
-test("Host extends aliases", t => {
+test("Host extends", t => {
   const owner = new Root("/");
-  const hb = new Host(owner, { aliases: "a1" });
+  const e1 = new Host(owner, {
+    name: "e1",
+    aliases: "e1a",
+    deployment: "production",
+    chassis: "chassis e1",
+    vendor: "vendor e1",
+    architecture: "aarch64",
+    serial: "123",
+    provides: "pkge1",
+    depends: "dpkge1",
+    replaces: "rpkge1"
+  });
+  const e2 = new Host(owner, {
+    name: "e2",
+    extends: e1,
+    aliases: "e2a",
+    provides: "pkge2",
+    depends: "dpkge2",
+    replaces: "rpkge2"
+  });
   const h1 = new Host(owner, {
     name: "h1",
-    extends: hb,
-    aliases: "a2"
+    extends: e2,
+    aliases: "h1a",
+    provides: "pkgh1",
+    depends: "dpkgh1",
+    replaces: "rpkgh1"
   });
 
-  t.deepEqual(h1.aliases, new Set(["a2", "a1"]));
+  t.deepEqual([...h1.aliases].sort(), ["h1a", "e1a", "e2a"].sort());
+  t.deepEqual(h1.deployment, "production");
+  t.deepEqual(h1.chassis, "chassis e1");
+  t.deepEqual(h1.vendor, "vendor e1");
+  t.deepEqual(h1.architecture, "aarch64");
+  t.deepEqual(h1.serial, "123");
+  t.deepEqual([...h1.provides].sort(), ["pkge1", "pkge2", "pkgh1"].sort());
+  t.deepEqual([...h1.depends].sort(), ["dpkge1", "dpkge2", "dpkgh1"].sort());
+  t.deepEqual([...h1.replaces].sort(), ["rpkge1", "rpkge2", "rpkgh1"].sort());
 });
 
 test("Host domains & aliases", t => {
