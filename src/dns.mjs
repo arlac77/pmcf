@@ -288,7 +288,7 @@ async function generateZoneDefs(dns, packageData) {
     };
     configs.push(config);
 
-    const locationRecord = DNSRecord("location", "TXT", dns.location.name)
+    const locationRecord = DNSRecord("location", "TXT", dns.location.name);
 
     const zone = {
       id: domain,
@@ -322,68 +322,65 @@ async function generateZoneDefs(dns, packageData) {
     for await (const {
       address,
       subnet,
-      networkInterface
+      networkInterface,
+      domainName
     } of dns.owner.networkAddresses()) {
       const host = networkInterface.host;
-      const domainName = host.domainNameIn(domain);
+      if (
+        !addresses.has(address) &&
+        (dns.hasLinkLocalAdresses || !isLinkLocal(address))
+      ) {
+        addresses.add(address);
 
-      if (domainName) {
-        if (
-          !addresses.has(address) &&
-          (dns.hasLinkLocalAdresses || !isLinkLocal(address))
-        ) {
-          addresses.add(address);
+        zone.records.add(
+          DNSRecord(
+            dnsFullName(domainName),
+            isIPv6Address(address) ? "AAAA" : "A",
+            normalizeIPAddress(address)
+          )
+        );
+        if (subnet && host.domain === domain) {
+          let reverseZone = reverseZones.get(subnet.address);
 
-          zone.records.add(
-            DNSRecord(
-              dnsFullName(domainName),
-              isIPv6Address(address) ? "AAAA" : "A",
-              normalizeIPAddress(address)
-            )
-          );
-          if (subnet && host.domain === domain) {
-            let reverseZone = reverseZones.get(subnet.address);
-
-            if (!reverseZone) {
-              const reverseArpa = reverseArpaAddress(subnet.prefix);
-              reverseZone = {
-                id: reverseArpa,
-                type: "plain",
-                file: `${ownerName}/${reverseArpa}.zone`,
-                records: new Set([SOARecord, NSRecord])
-              };
-              config.zones.push(reverseZone);
-              reverseZones.set(subnet.address, reverseZone);
-            }
-
-            for (const domainName of host.domainNames) {
-              reverseZone.records.add(
-                DNSRecord(
-                  dnsFullName(reverseArpaAddress(address)),
-                  "PTR",
-                  dnsFullName(domainName)
-                )
-              );
-            }
+          if (!reverseZone) {
+            const reverseArpa = reverseArpaAddress(subnet.prefix);
+            reverseZone = {
+              id: reverseArpa,
+              type: "plain",
+              file: `${ownerName}/${reverseArpa}.zone`,
+              records: new Set([SOARecord, NSRecord])
+            };
+            config.zones.push(reverseZone);
+            reverseZones.set(subnet.address, reverseZone);
           }
-        }
 
-        if (!hosts.has(host)) {
-          hosts.add(host);
-
-          for (const foreignDomainName of host.foreignDomainNames) {
-            zone.records.add(
-              DNSRecord("external", "PTR", dnsFullName(foreignDomainName))
+          for (const domainName of host.domainNames) {
+            reverseZone.records.add(
+              DNSRecord(
+                dnsFullName(reverseArpaAddress(address)),
+                "PTR",
+                dnsFullName(domainName)
+              )
             );
           }
+        }
+      }
 
-          for (const service of host.findServices()) {
-            for (const record of service.dnsRecordsForDomainName(
-              domainName,
-              dns.hasSVRRecords
-            )) {
-              zone.records.add(record);
-            }
+      if (!hosts.has(host)) {
+        hosts.add(host);
+
+        for (const foreignDomainName of host.foreignDomainNames) {
+          zone.records.add(
+            DNSRecord("external", "PTR", dnsFullName(foreignDomainName))
+          );
+        }
+
+        for (const service of host.findServices()) {
+          for (const record of service.dnsRecordsForDomainName(
+            domainName,
+            dns.hasSVRRecords
+          )) {
+            zone.records.add(record);
           }
         }
       }

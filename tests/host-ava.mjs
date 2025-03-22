@@ -54,7 +54,10 @@ test("Host domains & aliases", t => {
   t.is(h1.domain, "example.com");
   t.deepEqual([...h1.domains], ["example.com"]);
   t.deepEqual([...h1.localDomains], ["example.com"]);
-  t.deepEqual([...h1.domainNames], ["h1.example.com"]);
+  t.deepEqual(
+    [...h1.domainNames].sort(),
+    ["h1.example.com", "name2.example.com"].sort()
+  );
   t.deepEqual(h1.foreignDomainNames, []);
 
   t.is(h1.domainName, "h1.example.com");
@@ -65,25 +68,38 @@ test("Host domains & aliases", t => {
   t.deepEqual([...h1.localDomains], ["example.com"]);
   t.deepEqual(
     [...h1.domainNames].sort(),
-    ["h1.example.com", "o1.somewhere.net"].sort()
+    ["h1.example.com", "o1.somewhere.net", "name2.example.com"].sort()
   );
   t.deepEqual(h1.foreignDomainNames, ["o1.somewhere.net"]);
 
-  t.is(h1.domainNameIn("example.com"), "h1.example.com");
-  t.is(h1.domainNameIn("somewhere.net"), "o1.somewhere.net");
-  t.is(h1.domainNameIn("other.net"), undefined);
+  t.deepEqual(
+    [...h1.domainNamesIn("example.com")].sort(),
+    ["h1.example.com", "name2.example.com"].sort()
+  );
+  t.deepEqual([...h1.domainNamesIn("somewhere.net")], ["o1.somewhere.net"]);
+  t.deepEqual([...h1.domainNamesIn("other.net")], []);
 
   h1.aliases = "h2";
   t.deepEqual([...h1.domains].sort(), ["example.com", "somewhere.net"].sort());
   t.deepEqual([...h1.localDomains], ["example.com"]);
   t.deepEqual(
     [...h1.domainNames].sort(),
-    ["h1.example.com", "h2.example.com", "o1.somewhere.net"].sort()
+    [
+      "h1.example.com",
+      "h2.example.com",
+      "o1.somewhere.net",
+      "name2.example.com"
+    ].sort()
   );
 
   t.deepEqual(
     [...n1.domainNames].sort(),
-    ["h1.example.com", "h2.example.com", "o1.somewhere.net"].sort()
+    [
+      "h1.example.com",
+      "h2.example.com",
+      "o1.somewhere.net",
+      "name2.example.com"
+    ].sort()
   );
 });
 

@@ -18,7 +18,7 @@ import {
 } from "./utils.mjs";
 import { objectFilter } from "./filter.mjs";
 import { addType, types } from "./types.mjs";
-import { loadHooks } from "./hooks.mjs";
+import { loadHooks } from "./hooks.mjs";
 import {
   generateNetworkDefs,
   generateMachineInfo,
@@ -282,8 +282,12 @@ export class Host extends Base {
   }
 
   get domainNames() {
-    return [this.hostName, ...this.aliases].map(n =>
-      domainName(n, this.domain)
+    return new Set(
+      [
+        ...[...this.networkInterfaces.values()].map(ni => ni.domainName),
+        this.hostName,
+        ...this.aliases
+      ].map(n => domainName(n, this.domain))
     );
   }
 
@@ -291,10 +295,10 @@ export class Host extends Base {
     return domainName(this.hostName, this.domain);
   }
 
-  domainNameIn(domain) {
+  *domainNamesIn(domain) {
     for (const domainName of this.domainNames) {
-      if (domain == domainFromDominName(domainName)) {
-        return domainName;
+      if (domain === domainFromDominName(domainName)) {
+        yield domainName;
       }
     }
   }
@@ -361,10 +365,10 @@ export class Host extends Base {
 
   *networkAddresses() {
     for (const networkInterface of this.networkInterfaces.values()) {
-      for (const [address, subnet, domainName] of networkInterface.ipAddresses) {
+      for (const [address, subnet] of networkInterface.ipAddresses) {
         yield {
           networkInterface,
-          domainName,
+          domainName: networkInterface.domainName,
           address,
           subnet
         };
@@ -397,9 +401,7 @@ export class Host extends Base {
   async *preparePackages(dir) {
     const packageData = {
       dir,
-      sources: [
-        new FileContentProvider(dir + "/")[Symbol.asyncIterator]()
-      ],
+      sources: [new FileContentProvider(dir + "/")[Symbol.asyncIterator]()],
       outputs: this.outputs,
       properties: {
         name: `${this.typeName}-${this.owner.name}-${this.name}`,
@@ -412,7 +414,8 @@ export class Host extends Base {
         provides: [...this.provides],
         replaces: [`mf-${this.hostName}`, ...this.replaces],
         backup: "root/.ssh/known_hosts",
-        hooks: await loadHooks({},
+        hooks: await loadHooks(
+          {},
           new URL("host.install", import.meta.url).pathname
         )
       }
@@ -421,10 +424,7 @@ export class Host extends Base {
     await generateNetworkDefs(this, packageData);
     await generateMachineInfo(this, packageData);
     await copySshKeys(this, packageData);
-    await generateKnownHosts(
-      this.owner.hosts(),
-      join(dir, "root", ".ssh")
-    );
+    await generateKnownHosts(this.owner.hosts(), join(dir, "root", ".ssh"));
 
     yield packageData;
   }
@@ -545,9 +545,10 @@ export class NetworkInterface extends Base {
     }
   }
 
-  get domainName()
-  {
-    return this.hostName ? [this.hostName,this.host.domain].join('.') : this.host.dmainName;
+  get domainName() {
+    return this.hostName
+      ? [this.hostName, this.host.domain].join(".")
+      : this.host.domainName;
   }
 
   get host() {
