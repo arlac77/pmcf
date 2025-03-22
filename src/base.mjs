@@ -15,7 +15,7 @@ const BaseTypeDefinition = {
       identifier: true,
       writeable: true
     },
-   /* fullName: {
+    /* fullName: {
       type: "string",
       collection: false,
       identifier: true,
@@ -198,9 +198,13 @@ export class Base {
                 instantiateAndAssign(property, v);
               }
             } else {
-              for (const [objectName, objectData] of Object.entries(value)) {
-                objectData[type.identifier.name] = objectName;
-                instantiateAndAssign(property, objectData);
+              if (value instanceof Base) {
+                assign(property, value);
+              } else {
+                for (const [objectName, objectData] of Object.entries(value)) {
+                  objectData[type.identifier.name] = objectName;
+                  instantiateAndAssign(property, objectData);
+                }
               }
             }
             continue;
@@ -370,13 +374,11 @@ export class Base {
     };
   }
 
-  get tags()
-  {
+  get tags() {
     return this.#tags;
   }
 
-  set tags(value)
-  {
+  set tags(value) {
     if (value instanceof Set) {
       this.#tags = this.#tags.union(value);
     } else {

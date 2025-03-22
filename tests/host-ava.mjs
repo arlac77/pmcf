@@ -35,6 +35,18 @@ test("Host all", async t => {
   );
 });
 
+test("Host extends aliases", t => {
+  const owner = new Root("/");
+  const hb = new Host(owner, { aliases: "a1" });
+  const h1 = new Host(owner, {
+    name: "h1",
+    extends: hb,
+    aliases: "a2"
+  });
+
+  t.deepEqual(h1.aliases, new Set(["a2", "a1"]));
+});
+
 test("Host domains & aliases", t => {
   const owner = new Root("/");
   const n1 = new Network(owner, { name: "n1", domain: "example.com" });
