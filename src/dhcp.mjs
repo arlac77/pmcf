@@ -94,6 +94,34 @@ export class DHCPService extends Base {
       }
     };
 
+    // console.log(this.owner.name,this.owner.networks());
+/*
+    const subnets = new Set();
+
+    for (const network of this.owner.networks()) {
+      for (const subnet of network.subnets()) {
+        subnets.add(subnet);
+      }
+    }
+
+    console.log([...subnets].map(s => s.address));
+*/
+    const reservations = [];
+
+    for await (const {
+      networkInterface,
+      address,
+      subnet,
+      domainNames
+    } of this.owner.networkAddresses()) {
+      if (networkInterface.hwaddr) {
+        reservations.push({
+          "hw-address": networkInterface.hwaddr,
+          "ip-address": networkInterface.rawAddress,
+        });
+      }
+    }
+
     const dhcp4 = {
       Dhcp4: {
         "interfaces-config": {
@@ -146,7 +174,7 @@ export class DHCPService extends Base {
                 data: "192.168.1.254"
               }
             ],
-            reservations: [
+            reservations /*: [
               {
                 "hw-address": "1a:1b:1c:1d:1e:1f",
                 "ip-address": "192.168.1.199"
@@ -156,7 +184,7 @@ export class DHCPService extends Base {
                 "ip-address": "192.168.1.198",
                 hostname: "special-snowflake"
               }
-            ]
+            ]*/
           }
         ],
         loggers

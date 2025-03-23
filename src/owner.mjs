@@ -200,6 +200,10 @@ export class Owner extends Base {
       yield* this.owner.subnets();
     }
     yield* this.typeList("subnet");
+
+   /* for (const network of this.networks()) {
+      yield* network.subnets();
+    }*/
   }
 
   addSubnet(address) {
@@ -416,17 +420,18 @@ export class Owner extends Base {
 
   #architectures;
 
-  set architectures(value)
-  {
+  set architectures(value) {
     if (value instanceof Set) {
-      this.#architectures = this.#architectures ? this.#architectures.union(value) : value;
+      this.#architectures = this.#architectures
+        ? this.#architectures.union(value)
+        : value;
     } else {
       this.#architectures = new Set(value);
     }
   }
 
   get architectures() {
-    if(this.#architectures) {
+    if (this.#architectures) {
       return this.#architectures;
     }
 
