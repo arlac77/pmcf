@@ -323,7 +323,7 @@ async function generateZoneDefs(dns, packageData) {
       address,
       subnet,
       networkInterface,
-      domainName
+      domainNames
     } of dns.owner.networkAddresses()) {
       const host = networkInterface.host;
       if (
@@ -332,13 +332,15 @@ async function generateZoneDefs(dns, packageData) {
       ) {
         addresses.add(address);
 
-        zone.records.add(
-          DNSRecord(
-            dnsFullName(domainName),
-            isIPv6Address(address) ? "AAAA" : "A",
-            normalizeIPAddress(address)
-          )
-        );
+        for (const domainName of domainNames) {
+          zone.records.add(
+            DNSRecord(
+              dnsFullName(domainName),
+              isIPv6Address(address) ? "AAAA" : "A",
+              normalizeIPAddress(address)
+            )
+          );
+        }
         if (subnet && host.domain === domain) {
           let reverseZone = reverseZones.get(subnet.address);
 
@@ -376,11 +378,13 @@ async function generateZoneDefs(dns, packageData) {
         }
 
         for (const service of host.findServices()) {
-          for (const record of service.dnsRecordsForDomainName(
-            domainName,
-            dns.hasSVRRecords
-          )) {
-            zone.records.add(record);
+          for (const domainName of domainNames) {
+            for (const record of service.dnsRecordsForDomainName(
+              domainName,
+              dns.hasSVRRecords
+            )) {
+              zone.records.add(record);
+            }
           }
         }
       }

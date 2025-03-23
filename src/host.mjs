@@ -255,7 +255,7 @@ export class Host extends Base {
   }
 
   get os() {
-    return this.#os || this.extends.find(e => e.os)?.os
+    return this.#os || this.extends.find(e => e.os)?.os;
   }
 
   set distribution(value) {
@@ -263,7 +263,9 @@ export class Host extends Base {
   }
 
   get distribution() {
-    return this.#distribution || this.extends.find(e => e.distribution)?.distribution;
+    return (
+      this.#distribution || this.extends.find(e => e.distribution)?.distribution
+    );
   }
 
   get modelName() {
@@ -289,12 +291,19 @@ export class Host extends Base {
     return this.foreignDomains.union(this.localDomains);
   }
 
+  get directDomainNames() {
+    return new Set(
+      [this.hostName, ...this.aliases].map(n => domainName(n, this.domain))
+    );
+  }
+
   get domainNames() {
     return new Set(
       [
-        ...[...this.networkInterfaces.values()].map(ni => ni.domainName),
-        this.hostName,
-        ...this.aliases
+        ...[...this.networkInterfaces.values()].reduce(
+          (all, networkInterface) => all.union(networkInterface.domainNames),
+          this.directDomainNames
+        )
       ].map(n => domainName(n, this.domain))
     );
   }
@@ -376,7 +385,7 @@ export class Host extends Base {
       for (const [address, subnet] of networkInterface.ipAddresses) {
         yield {
           networkInterface,
-          domainName: networkInterface.domainName,
+          domainNames: networkInterface.domainNames,
           address,
           subnet
         };
@@ -553,10 +562,10 @@ export class NetworkInterface extends Base {
     }
   }
 
-  get domainName() {
+  get domainNames() {
     return this.hostName
-      ? [this.hostName, this.host.domain].join(".")
-      : this.host.domainName;
+      ? new Set([[this.hostName, this.host.domain].join(".")])
+      : this.host.directDomainNames;
   }
 
   get host() {
