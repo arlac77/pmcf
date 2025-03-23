@@ -378,14 +378,14 @@ async function generateZoneDefs(dns, packageData) {
         }
 
         for (const service of host.findServices()) {
-          for (const domainName of domainNames) {
+          //for (const domainName of domainNames) {
             for (const record of service.dnsRecordsForDomainName(
-              domainName,
+              host.domainName,
               dns.hasSVRRecords
             )) {
               zone.records.add(record);
             }
-          }
+          //}
         }
       }
     }
