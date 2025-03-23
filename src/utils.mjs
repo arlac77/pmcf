@@ -20,11 +20,21 @@ export function domainFromDominName(domainName, defaultDomain) {
 }
 
 export async function writeLines(dir, name, lines) {
+  let data;
+
   switch (typeof lines) {
     case "undefined":
       return;
     case "string":
-      lines = [lines];
+      data = lines;
+      break;
+
+    default:
+      data = [...lines]
+        .flat()
+        .filter(line => line !== undefined)
+        .map(l => l + "\n")
+        .join("");
   }
 
   const full = join(dir, name);
@@ -32,15 +42,7 @@ export async function writeLines(dir, name, lines) {
   name = basename(full);
   await mkdir(dir, { recursive: true });
 
-  return writeFile(
-    join(dir, name),
-    [...lines]
-      .flat()
-      .filter(line => line !== undefined)
-      .map(l => l + "\n")
-      .join(""),
-    "utf8"
-  );
+  return writeFile(join(dir, name), data, "utf8");
 }
 
 export function sectionLines(sectionName, values) {
@@ -80,9 +82,8 @@ export function isIPv4Address(address) {
   return address.indexOf(".") >= 0;
 }
 
-export function generateEU64(mac)
-{
- //TODO
+export function generateEU64(mac) {
+  //TODO
 }
 
 export function isIPv6Address(address) {

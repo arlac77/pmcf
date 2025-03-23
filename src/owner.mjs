@@ -4,6 +4,7 @@ import { Subnet } from "./subnet.mjs";
 import { addType, types } from "./types.mjs";
 import { DNSService } from "./dns.mjs";
 import { NTPService } from "./ntp.mjs";
+import { DHCPService } from "./dhcp.mjs";
 
 const OwnerTypeDefinition = {
   name: "owner",
@@ -22,6 +23,11 @@ const OwnerTypeDefinition = {
     },
     ntp: {
       type: NTPService.typeDefinition,
+      collection: false,
+      writeable: true
+    },
+    dhcp: {
+      type: DHCPService.typeDefinition,
       collection: false,
       writeable: true
     },
@@ -65,6 +71,7 @@ export class Owner extends Base {
 
       this.dns?._traverse(...args);
       this.ntp?._traverse(...args);
+      this.dhcp?._traverse(...args);
 
       return true;
     }
