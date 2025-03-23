@@ -95,7 +95,7 @@ export class DHCPService extends Base {
     };
 
     // console.log(this.owner.name,this.owner.networks());
-/*
+    /*
     const subnets = new Set();
 
     for (const network of this.owner.networks()) {
@@ -106,7 +106,8 @@ export class DHCPService extends Base {
 
     console.log([...subnets].map(s => s.address));
 */
-    const reservations = [];
+
+    const hwmap = new Map();
 
     for await (const {
       networkInterface,
@@ -115,12 +116,13 @@ export class DHCPService extends Base {
       domainNames
     } of this.owner.networkAddresses()) {
       if (networkInterface.hwaddr) {
-        reservations.push({
-          "hw-address": networkInterface.hwaddr,
-          "ip-address": networkInterface.rawAddress,
-        });
+        hwmap.set(networkInterface.hwaddr, networkInterface.rawAddress);
       }
     }
+
+    const reservations = [...hwmap].map(([k, v]) => {
+      return { "hw-address": k, "ip-address": v };
+    });
 
     const dhcp4 = {
       Dhcp4: {
