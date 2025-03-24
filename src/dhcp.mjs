@@ -46,6 +46,9 @@ export class DHCPService extends Base {
     };
 
     const commonConfig = {
+      "interfaces-config": {
+        interfaces: ["end0"]
+      },
       "lease-database": {
         type: "memfile",
         "lfc-interval": 3600
@@ -148,9 +151,6 @@ export class DHCPService extends Base {
     const dhcp4 = {
       Dhcp4: {
         ...commonConfig,
-        "interfaces-config": {
-          interfaces: ["end0"]
-        },
         "control-socket": {
           "socket-type": "unix",
           "socket-name": "/run/kea/4-ctrl-socket"
@@ -196,9 +196,6 @@ export class DHCPService extends Base {
     const dhcp6 = {
       Dhcp6: {
         ...commonConfig,
-        "interfaces-config": {
-          interfaces: []
-        },
         "control-socket": {
           "socket-type": "unix",
           "socket-name": "/run/kea/6-ctrl-socket"
