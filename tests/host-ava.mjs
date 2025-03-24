@@ -49,7 +49,12 @@ test("Host extends", t => {
     serial: "123",
     provides: "pkge1",
     depends: "dpkge1",
-    replaces: "rpkge1"
+    replaces: "rpkge1",
+    networkInterfaces: {
+      eth0: {
+        kind: "ethernet"
+      }
+    }
   });
   const e2 = new Host(owner, {
     name: "e2",
@@ -79,6 +84,10 @@ test("Host extends", t => {
   t.deepEqual([...h1.provides].sort(), ["pkge1", "pkge2", "pkgh1"].sort());
   t.deepEqual([...h1.depends].sort(), ["dpkge1", "dpkge2", "dpkgh1"].sort());
   t.deepEqual([...h1.replaces].sort(), ["rpkge1", "rpkge2", "rpkgh1"].sort());
+
+  h1.finalize();
+
+  t.is(e1.networkInterfaces.get("eth0").kind, "ethernet");
 });
 
 test("Host domains & aliases", t => {
