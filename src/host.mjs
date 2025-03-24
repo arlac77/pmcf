@@ -103,22 +103,18 @@ export class Host extends Base {
   }
 
   _applyExtends(host) {
-    /*  this.depends = host.depends;
-    this.provides = host.provides;
-    this.replaces = host.replaces;
-*/
     for (const service of host.services) {
       this.services = service.forOwner(this);
     }
 
     for (const [name, ni] of host.networkInterfaces) {
-      const present = this.#networkInterfaces.get(name);
-      if (present) {
-        this.info("ALREADY THERE", name);
-      } else {
-        this.info("CLONE NI", name);
-        this.#networkInterfaces.set(name, ni.forOwner(this));
+      let present = this.#networkInterfaces.get(name);
+      if (!present) {
+        present = ni.forOwner(this);
+        this.#networkInterfaces.set(name, present);
       }
+
+      present.extends.push(ni);
     }
   }
 
@@ -496,6 +492,7 @@ export class NetworkInterface extends Base {
   #network;
   #kind;
   #hostName;
+  extends = [];
   arpbridge;
   hwaddr;
 
