@@ -45,6 +45,24 @@ export class DHCPService extends Base {
       }
     };
 
+    const commonConfig = {
+      "lease-database": {
+        type: "memfile",
+        "lfc-interval": 3600
+      },
+      "expired-leases-processing": {
+        "reclaim-timer-wait-time": 10,
+        "flush-reclaimed-timer-wait-time": 25,
+        "hold-reclaimed-time": 3600,
+        "max-reclaim-leases": 100,
+        "max-reclaim-time": 250,
+        "unwarned-reclaim-cycles": 5
+      },
+      "renew-timer": 900,
+      "rebind-timer": 1800,
+      "valid-lifetime": 3600
+    };
+
     const loggers = [
       {
         "output-options": [
@@ -108,15 +126,14 @@ export class DHCPService extends Base {
 */
 
     const hwmap = new Map();
+    const hostNames = new Set();
 
-    for await (const {
-      networkInterface,
-      address,
-      subnet,
-      domainNames
-    } of this.owner.networkAddresses()) {
+    for await (const { networkInterface } of this.owner.networkAddresses()) {
       if (networkInterface.hwaddr) {
-        hwmap.set(networkInterface.hwaddr, networkInterface);
+        if (!hostNames.has(networkInterface.hostName)) {
+          hwmap.set(networkInterface.hwaddr, networkInterface);
+          hostNames.add(networkInterface.hostName);
+        }
       }
     }
 
@@ -130,6 +147,7 @@ export class DHCPService extends Base {
 
     const dhcp4 = {
       Dhcp4: {
+        ...commonConfig,
         "interfaces-config": {
           interfaces: ["end0"]
         },
@@ -137,21 +155,6 @@ export class DHCPService extends Base {
           "socket-type": "unix",
           "socket-name": "/run/kea/4-ctrl-socket"
         },
-        "lease-database": {
-          type: "memfile",
-          "lfc-interval": 3600
-        },
-        "expired-leases-processing": {
-          "reclaim-timer-wait-time": 10,
-          "flush-reclaimed-timer-wait-time": 25,
-          "hold-reclaimed-time": 3600,
-          "max-reclaim-leases": 100,
-          "max-reclaim-time": 250,
-          "unwarned-reclaim-cycles": 5
-        },
-        "renew-timer": 900,
-        "rebind-timer": 1800,
-        "valid-lifetime": 3600,
         "option-data": [
           {
             name: "domain-name-servers",
@@ -183,8 +186,6 @@ export class DHCPService extends Base {
             reservations /*: [
               {
                 "client-id": "01:11:22:33:44:55:66",
-                "ip-address": "192.168.1.198",
-                hostname: "special-snowflake"
               }
             ]*/
           }
@@ -194,6 +195,7 @@ export class DHCPService extends Base {
     };
     const dhcp6 = {
       Dhcp6: {
+        ...commonConfig,
         "interfaces-config": {
           interfaces: []
         },
@@ -201,22 +203,7 @@ export class DHCPService extends Base {
           "socket-type": "unix",
           "socket-name": "/run/kea/6-ctrl-socket"
         },
-        "lease-database": {
-          type: "memfile",
-          "lfc-interval": 3600
-        },
-        "expired-leases-processing": {
-          "reclaim-timer-wait-time": 10,
-          "flush-reclaimed-timer-wait-time": 25,
-          "hold-reclaimed-time": 3600,
-          "max-reclaim-leases": 100,
-          "max-reclaim-time": 250,
-          "unwarned-reclaim-cycles": 5
-        },
-        "renew-timer": 1000,
-        "rebind-timer": 2000,
         "preferred-lifetime": 3000,
-        "valid-lifetime": 4000,
         "option-data": [
           {
             name: "dns-servers",
