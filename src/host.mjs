@@ -481,9 +481,9 @@ export class NetworkInterface extends Base {
   #psk;
   #network;
   #kind;
+  #hostName;
   arpbridge;
   hwaddr;
-  hostName;
 
   constructor(owner, data) {
     super(owner, data);
@@ -560,6 +560,14 @@ export class NetworkInterface extends Base {
         return a.address;
       }
     }
+  }
+
+  get hostName() {
+    return this.#hostName || this.host.hostName;
+  }
+
+  set hostName(value) {
+    this.#hostName = value;
   }
 
   get domainNames() {

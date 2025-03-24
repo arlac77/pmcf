@@ -116,12 +116,16 @@ export class DHCPService extends Base {
       domainNames
     } of this.owner.networkAddresses()) {
       if (networkInterface.hwaddr) {
-        hwmap.set(networkInterface.hwaddr, networkInterface.rawAddress);
+        hwmap.set(networkInterface.hwaddr, networkInterface);
       }
     }
 
-    const reservations = [...hwmap].map(([k, v]) => {
-      return { "hw-address": k, "ip-address": v };
+    const reservations = [...hwmap].map(([k, networkInterface]) => {
+      return {
+        "hw-address": k,
+        "ip-address": networkInterface.rawAddress,
+        hostname: networkInterface.hostName
+      };
     });
 
     const dhcp4 = {
@@ -177,10 +181,6 @@ export class DHCPService extends Base {
               }
             ],
             reservations /*: [
-              {
-                "hw-address": "1a:1b:1c:1d:1e:1f",
-                "ip-address": "192.168.1.199"
-              },
               {
                 "client-id": "01:11:22:33:44:55:66",
                 "ip-address": "192.168.1.198",

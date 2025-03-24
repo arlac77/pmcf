@@ -197,6 +197,7 @@ test("Host addresses", t => {
       name: "h1",
       type: "host"
     },
+    hostName: "h1",
     network: {
       name: "n1",
       type: "network"
