@@ -8,8 +8,10 @@ import {
   dnsFormatParameters,
   dnsMergeParameters
 } from "./dns-utils.mjs";
+import { DHCPService, DNSService, NTPService } from "./module.mjs";
 
 const ServiceTypes = {
+  ntp: { protocol: "udp", port: 123, tls: false },
   dns: { protocol: "udp", port: 53, tls: false },
   ldap: { protocol: "tcp", port: 389, tls: false },
   ldaps: { protocol: "tcp", port: 636, tls: true },
@@ -46,18 +48,36 @@ const ServiceTypes = {
       parameters: {
         sys: "waMa=0",
         adVF: "0x100",
-        dk0: "adVN=MF-TM-999",
-      //  adVF: "0x82"
+        dk0: "adVN=MF-TM-999"
+        //  adVF: "0x82"
       }
     }
   }
 };
 
-const ServiceTypeDefinition = {
+export const ServiceTypeDefinition = {
   name: "service",
   owners: ["host", "cluster"],
   priority: 0.4,
   extends: Base.typeDefinition,
+  factoryFor(value) {
+    const type = value.type || value.name;
+
+    if (type === "dns") {
+      delete value.type;
+      return DNSService;
+    }
+    if (type === "ntp") {
+      delete value.type;
+      return NTPService;
+    }
+    if (type === "dhcp") {
+      delete value.type;
+      return DHCPService;
+    }
+
+    return Service;
+  },
   properties: {
     ...networkAddressProperties,
     ipAddresses: { type: "string", collection: true, writeable: true },
@@ -126,6 +146,11 @@ export class Service extends Base {
     return this;
   }
 
+  get network()
+  {
+    return this.server.network;
+  }
+  
   get server() {
     return this.owner;
   }

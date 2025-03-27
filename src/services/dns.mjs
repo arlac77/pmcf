@@ -6,16 +6,19 @@ import {
   isIPv6Address,
   normalizeIPAddress,
   isLinkLocal
-} from "./utils.mjs";
-import { DNSRecord, dnsFullName } from "./dns-utils.mjs";
-import { Base } from "./base.mjs";
-import { addType } from "./types.mjs";
-import { serviceAddresses } from "./service.mjs";
-import { subnets } from "./subnet.mjs";
+} from "../utils.mjs";
+import { DNSRecord, dnsFullName } from "../dns-utils.mjs";
+import { addType } from "../types.mjs";
+import {
+  Service,
+  ServiceTypeDefinition,
+  serviceAddresses
+} from "../service.mjs";
+import { subnets } from "../subnet.mjs";
 
 const DNSServiceTypeDefinition = {
   name: "dns",
-  owners: ["location", "owner", "network", "cluster", "root"],
+  owners: ServiceTypeDefinition.owners,
   priority: 0.1,
   properties: {
     source: { type: "network", collection: true, writeable: true },
@@ -58,7 +61,7 @@ function addressesStatement(prefix, objects, generateEmpty = false) {
   return [];
 }
 
-export class DNSService extends Base {
+export class DNSService extends Service {
   allowedUpdates = [];
   recordTTL = "1W";
   hasSVRRecords = true;
@@ -85,13 +88,12 @@ export class DNSService extends Base {
   }
 
   constructor(owner, data) {
-    if (!data.name) {
-      data.name = DNSServiceTypeDefinition.name; // TODO
-    }
     super(owner, data);
     this.read(data, DNSServiceTypeDefinition);
+  }
 
-    owner.addObject(this);
+  get type() {
+    return DNSServiceTypeDefinition.name;
   }
 
   get soaUpdates() {
@@ -252,7 +254,9 @@ async function generateZoneDefs(dns, packageData) {
 
   const configs = [];
 
-  for (const host of dns.owner.hosts()) {
+  const location = dns.location;
+
+  for (const host of location.hosts()) {
     for (const domain of host.foreignDomainNames) {
       const zone = {
         id: domain,
@@ -324,7 +328,7 @@ async function generateZoneDefs(dns, packageData) {
       subnet,
       networkInterface,
       domainNames
-    } of dns.owner.networkAddresses()) {
+    } of location.networkAddresses()) {
       const host = networkInterface.host;
       if (
         !addresses.has(address) &&
@@ -379,12 +383,12 @@ async function generateZoneDefs(dns, packageData) {
 
         for (const service of host.findServices()) {
           //for (const domainName of domainNames) {
-            for (const record of service.dnsRecordsForDomainName(
-              host.domainName,
-              dns.hasSVRRecords
-            )) {
-              zone.records.add(record);
-            }
+          for (const record of service.dnsRecordsForDomainName(
+            host.domainName,
+            dns.hasSVRRecords
+          )) {
+            zone.records.add(record);
+          }
           //}
         }
       }

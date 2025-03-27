@@ -2,9 +2,6 @@ import { asIterator, normalizeCIDR } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { Subnet } from "./subnet.mjs";
 import { addType, types } from "./types.mjs";
-import { DNSService } from "./dns.mjs";
-import { NTPService } from "./ntp.mjs";
-import { DHCPService } from "./dhcp.mjs";
 
 const OwnerTypeDefinition = {
   name: "owner",
@@ -16,21 +13,6 @@ const OwnerTypeDefinition = {
     hosts: { type: "host", collection: true, writeable: true },
     clusters: { type: "cluster", collection: true, writeable: true },
     subnets: { type: Subnet.typeDefinition, collection: true, writeable: true },
-    dns: {
-      type: DNSService.typeDefinition,
-      collection: false,
-      writeable: true
-    },
-    ntp: {
-      type: NTPService.typeDefinition,
-      collection: false,
-      writeable: true
-    },
-    dhcp: {
-      type: DHCPService.typeDefinition,
-      collection: false,
-      writeable: true
-    },
 
     country: { type: "string", collection: false, writeable: true },
     domain: { type: "string", collection: false, writeable: true },
@@ -68,10 +50,6 @@ export class Owner extends Base {
           object._traverse(...args);
         }
       }
-
-      this.dns?._traverse(...args);
-      this.ntp?._traverse(...args);
-      this.dhcp?._traverse(...args);
 
       return true;
     }

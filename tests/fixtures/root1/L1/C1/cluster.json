@@ -11,5 +11,17 @@
       "network": "/L1/n1",
       "ipAddresses": "192.168.1.11"
     }
+  },
+  "services": {
+    "dns": {
+      "source": "/GLOBAL",
+      "protected": "/L1",
+      "trusted": ["/LOCAL"],
+      "allowedUpdates": ["trusted"],
+      "recordTTL": "1W"
+    },
+    "ntp": {
+      "source": "/GLOBAL"
+    }
   }
 }

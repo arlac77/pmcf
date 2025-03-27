@@ -179,9 +179,11 @@ export class Base {
           if (value instanceof property.type.clazz) {
             assign(property, value);
           } else {
+            const factory = property.type.factoryFor?.(value) || property.type.clazz;
+
             assign(
               property,
-              new property.type.clazz(this.ownerFor(property, value), value)
+              new factory(this.ownerFor(property, value), value)
             );
           }
           break;

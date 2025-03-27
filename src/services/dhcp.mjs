@@ -1,18 +1,21 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
-import { Base } from "./base.mjs";
-import { addType } from "./types.mjs";
-import { writeLines } from "./utils.mjs";
-import { serviceAddresses } from "./service.mjs";
+import {
+  Service,
+  ServiceTypeDefinition,
+  serviceAddresses
+} from "../service.mjs";
+import { addType } from "../types.mjs";
+import { writeLines } from "../utils.mjs";
 
 const DHCPServiceTypeDefinition = {
   name: "dhcp",
-  owners: ["location", "owner", "network", "cluster", "root"],
+  owners: ServiceTypeDefinition.owners,
   priority: 0.1,
   properties: {}
 };
 
-export class DHCPService extends Base {
+export class DHCPService extends Service {
   static {
     addType(this);
   }
@@ -22,13 +25,12 @@ export class DHCPService extends Base {
   }
 
   constructor(owner, data) {
-    if (!data.name) {
-      data.name = DHCPServiceTypeDefinition.name; // TODO
-    }
     super(owner, data);
     this.read(data, DHCPServiceTypeDefinition);
+  }
 
-    owner.addObject(this);
+  get type() {
+    return DHCPServiceTypeDefinition.name;
   }
 
   async *preparePackages(dir) {
@@ -41,7 +43,8 @@ export class DHCPService extends Base {
         name: `kea-${name}`,
         description: `kea definitions for ${this.fullName}`,
         access: "private",
-        dependencies: ["kea"]
+        dependencies: ["kea"],
+        replaces: ["kea-sw"] // TODO remove
       }
     };
 
@@ -131,7 +134,7 @@ export class DHCPService extends Base {
     const hwmap = new Map();
     const hostNames = new Set();
 
-    for await (const { networkInterface } of this.owner.networkAddresses()) {
+    for await (const { networkInterface } of this.network.networkAddresses()) {
       if (networkInterface.hwaddr) {
         if (!hostNames.has(networkInterface.hostName)) {
           hwmap.set(networkInterface.hwaddr, networkInterface);

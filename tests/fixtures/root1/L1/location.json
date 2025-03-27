@@ -4,15 +4,5 @@
   "locales": ["C.UTF-8", "de_DE.UTF-8", "en_US.UTF-8"],
   "timezone": "Europe/Berlin",
   "domain": "mydomain.com",
-  "subnets": "192.168.1/24",
-  "dns": {
-    "source": "/GLOBAL",
-    "protected": "/L1",
-    "trusted": ["/LOCAL"],
-    "allowedUpdates": ["trusted"],
-    "recordTTL": "1W"
-  },
-  "ntp": {
-    "source": "/GLOBAL"
-  }
+  "subnets": "192.168.1/24"
 }

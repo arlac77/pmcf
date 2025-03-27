@@ -1,10 +1,13 @@
-import { Base } from "./base.mjs";
-import { addType } from "./types.mjs";
-import { serviceAddresses } from "./service.mjs";
+import { addType } from "../types.mjs";
+import {
+  Service,
+  ServiceTypeDefinition,
+  serviceAddresses
+} from "../service.mjs";
 
 const NTPServiceTypeDefinition = {
   name: "ntp",
-  owners: ["location", "owner", "network", "cluster", "root"],
+  owners: ServiceTypeDefinition.owners,
   priority: 0.1,
   properties: {
     source: { type: "network", collection: true, writeable: true }
@@ -13,7 +16,7 @@ const NTPServiceTypeDefinition = {
 
 const NTP_SERVICE_FILTER = { type: NTPServiceTypeDefinition.name };
 
-export class NTPService extends Base {
+export class NTPService extends Service {
   #source = [];
 
   static {
@@ -25,13 +28,12 @@ export class NTPService extends Base {
   }
 
   constructor(owner, data) {
-    if (!data.name) {
-      data.name = NTPServiceTypeDefinition.name; // TODO
-    }
     super(owner, data);
     this.read(data, NTPServiceTypeDefinition);
+  }
 
-    owner.addObject(this);
+  get type() {
+    return NTPServiceTypeDefinition.name;
   }
 
   set source(value) {

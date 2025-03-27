@@ -5,9 +5,9 @@ test("NTP basics", async t => {
   const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
   await root.loadAll();
 
-  const l1 = await root.named("L1");
+  const ntp = await root.named("/L1/C1/ntp");
 
-  t.deepEqual(l1.ntp.systemdConfig[1], {
-    NTP: "2.arch.pool.ntp.org"
+  t.deepEqual(ntp.systemdConfig[1], {
+    NTP: "C1.mydomain.com 2.arch.pool.ntp.org"
   });
 });
