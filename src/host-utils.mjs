@@ -25,6 +25,11 @@ export async function generateNetworkDefs(host, packageData) {
   const networkDir = join(packageData.dir, "etc/systemd/network");
 
   for (const ni of host.networkInterfaces.values()) {
+    switch (ni.kind) {
+      case "loopback":
+        continue;
+    }
+
     if (ni.name !== "eth0" && ni.hwaddr) {
       await writeLines(networkDir, `${ni.name}.link`, [
         sectionLines("Match", { MACAddress: ni.hwaddr }),
@@ -46,7 +51,7 @@ export async function generateNetworkDefs(host, packageData) {
 
     switch (ni.kind) {
       case "ethernet":
-      case "wifi":
+      case "wlan":
         const routeSectionExtra = ni.destination
           ? { Destination: ni.destination }
           : { Gateway: ni.gatewayAddress };

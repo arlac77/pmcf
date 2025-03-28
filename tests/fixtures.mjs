@@ -29,7 +29,7 @@ export function root1(root, filter) {
     instanceof: Network,
     owner: L1,
     scope: "global",
-    kind: "wifi",
+    kind: "wlan",
     metric: 1010,
     ssid: "ID2",
     description: "home wifi",
@@ -86,7 +86,7 @@ export function root1(root, filter) {
         ssid: "ID2",
         rawAddresses: ["192.168.1.2"],
         cidrAddresses: ["192.168.1.2/24"],
-        kind: "wifi"
+        kind: "wlan"
       }
     },
     services: {

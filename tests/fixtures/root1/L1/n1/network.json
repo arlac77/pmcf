@@ -1,6 +1,6 @@
 {
   "description": "home wifi",
-  "kind": "wifi",
+  "kind": "wlan",
   "scope": "global",
   "ssid": "ID2",
   "metric": 1010,
