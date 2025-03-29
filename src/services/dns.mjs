@@ -161,7 +161,8 @@ export class DNSService extends Service {
   }
 
   async *preparePackages(dir) {
-    const name = this.owner.name;
+    const location = this.location;
+    const name = location.name;
     const p1 = join(dir, "p1");
     const packageData = {
       dir: p1,
@@ -169,7 +170,7 @@ export class DNSService extends Service {
       outputs: this.outputs,
       properties: {
         name: `named-${name}`,
-        description: `named definitions for ${this.fullName}`,
+        description: `named definitions for ${location.fullName}`,
         access: "private"
       }
     };
@@ -203,7 +204,7 @@ export class DNSService extends Service {
 
     packageData.properties = {
       name: `named-zones-${name}`,
-      description: `zone definitions for ${this.fullName}`,
+      description: `zone definitions for ${location.fullName}`,
       dependencies: ["mf-named"],
       replaces: ["mf-named-zones"],
       access: "private"
@@ -283,7 +284,7 @@ async function generateZoneDefs(dns, packageData) {
   }
 
   for (const domain of dns.localDomains) {
-    const ownerName = dns.owner.name;
+    const locationName = location.name;
     const reverseZones = new Map();
 
     const config = {
@@ -296,7 +297,7 @@ async function generateZoneDefs(dns, packageData) {
 
     const zone = {
       id: domain,
-      file: `${ownerName}/${domain}.zone`,
+      file: `${locationName}/${domain}.zone`,
       records: new Set([SOARecord, NSRecord, locationRecord])
     };
     config.zones.push(zone);
@@ -310,7 +311,7 @@ async function generateZoneDefs(dns, packageData) {
 
       zone.catalogZone = {
         id: `catalog.${domain}`,
-        file: `${ownerName}/catalog.${domain}.zone`,
+        file: `${locationName}/catalog.${domain}.zone`,
         records: new Set([
           SOARecord,
           NSRecord,
@@ -353,7 +354,7 @@ async function generateZoneDefs(dns, packageData) {
             reverseZone = {
               id: reverseArpa,
               type: "plain",
-              file: `${ownerName}/${reverseArpa}.zone`,
+              file: `${locationName}/${reverseArpa}.zone`,
               records: new Set([SOARecord, NSRecord])
             };
             config.zones.push(reverseZone);
