@@ -62,21 +62,21 @@ const HostTypeDefinition = {
 
 export class Host extends Base {
   priority = 1;
-  #services = [];
-  #extends = [];
-  #aliases = new Set();
-  #networkInterfaces = new Map();
-  #provides = new Set();
-  #replaces = new Set();
-  #depends = new Set();
-  #master = false;
-  #os;
-  #distribution;
-  #deployment;
-  #chassis;
-  #vendor;
-  #architecture;
-  #serial;
+  _services = [];
+  _extends = [];
+  _aliases = new Set();
+  _networkInterfaces = new Map();
+  _provides = new Set();
+  _replaces = new Set();
+  _depends = new Set();
+  _master = false;
+  _os;
+  _distribution;
+  _deployment;
+  _chassis;
+  _vendor;
+  _architecture;
+  _serial;
 
   static {
     addType(this);
@@ -109,10 +109,10 @@ export class Host extends Base {
     }
 
     for (const [name, ni] of host.networkInterfaces) {
-      let present = this.#networkInterfaces.get(name);
+      let present = this._networkInterfaces.get(name);
       if (!present) {
         present = ni.forOwner(this);
-        this.#networkInterfaces.set(name, present);
+        this._networkInterfaces.set(name, present);
       }
 
       present.extends.push(ni);
@@ -124,7 +124,7 @@ export class Host extends Base {
       for (const ni of this.networkInterfaces.values()) {
         ni._traverse(...args);
       }
-      for (const service of this.#services) {
+      for (const service of this._services) {
         service._traverse(...args);
       }
 
@@ -134,44 +134,44 @@ export class Host extends Base {
   }
 
   set serial(value) {
-    this.#serial = value;
+    this._serial = value;
   }
 
   get serial() {
-    return this.#serial || this.extends.find(e => e.serial)?.serial;
+    return this._serial || this.extends.find(e => e.serial)?.serial;
   }
 
   set deployment(value) {
-    this.#deployment = value;
+    this._deployment = value;
   }
 
   get deployment() {
-    return this.#deployment || this.extends.find(e => e.deployment)?.deployment;
+    return this._deployment || this.extends.find(e => e.deployment)?.deployment;
   }
 
   set chassis(value) {
-    this.#chassis = value;
+    this._chassis = value;
   }
 
   get chassis() {
-    return this.#chassis || this.extends.find(e => e.chassis)?.chassis;
+    return this._chassis || this.extends.find(e => e.chassis)?.chassis;
   }
 
   set vendor(value) {
-    this.#vendor = value;
+    this._vendor = value;
   }
 
   get vendor() {
-    return this.#vendor || this.extends.find(e => e.vendor)?.vendor;
+    return this._vendor || this.extends.find(e => e.vendor)?.vendor;
   }
 
   set architecture(value) {
-    this.#architecture = value;
+    this._architecture = value;
   }
 
   get architecture() {
     return (
-      this.#architecture || this.extends.find(e => e.architecture)?.architecture
+      this._architecture || this.extends.find(e => e.architecture)?.architecture
     );
   }
 
@@ -184,7 +184,7 @@ export class Host extends Base {
   }
 
   get isModel() {
-    return this.#vendor || this.#chassis ? true : false;
+    return this._vendor || this._chassis ? true : false;
   }
 
   get model() {
@@ -193,89 +193,89 @@ export class Host extends Base {
 
   set aliases(value) {
     if (value instanceof Set) {
-      this.#aliases = this.#aliases.union(value);
+      this._aliases = this._aliases.union(value);
     } else {
-      this.#aliases.add(value);
+      this._aliases.add(value);
     }
   }
 
   get aliases() {
-    return this.extends.reduce((a, c) => a.union(c.aliases), this.#aliases);
+    return this.extends.reduce((a, c) => a.union(c.aliases), this._aliases);
   }
 
   set extends(value) {
-    this.#extends.push(value);
+    this._extends.push(value);
   }
 
   get extends() {
-    return this.#extends;
+    return this._extends;
   }
 
   set provides(value) {
     if (value instanceof Set) {
-      this.#provides = this.#provides.union(value);
+      this._provides = this._provides.union(value);
     } else {
-      this.#provides.add(value);
+      this._provides.add(value);
     }
   }
 
   get provides() {
     return this.expand(
-      this.extends.reduce((a, c) => a.union(c.provides), this.#provides)
+      this.extends.reduce((a, c) => a.union(c.provides), this._provides)
     );
   }
 
   set replaces(value) {
     if (value instanceof Set) {
-      this.#replaces = this.#replaces.union(value);
+      this._replaces = this._replaces.union(value);
     } else {
-      this.#replaces.add(value);
+      this._replaces.add(value);
     }
   }
 
   get replaces() {
     return this.expand(
-      this.extends.reduce((a, c) => a.union(c.replaces), this.#replaces)
+      this.extends.reduce((a, c) => a.union(c.replaces), this._replaces)
     );
   }
 
   set depends(value) {
     if (value instanceof Set) {
-      this.#depends = this.#depends.union(value);
+      this._depends = this._depends.union(value);
     } else {
-      this.#depends.add(value);
+      this._depends.add(value);
     }
   }
 
   get depends() {
     return this.expand(
-      this.extends.reduce((a, c) => a.union(c.depends), this.#depends)
+      this.extends.reduce((a, c) => a.union(c.depends), this._depends)
     );
   }
 
   set master(value) {
-    this.#master = value;
+    this._master = value;
   }
 
   get master() {
-    return this.#master || this.extends.find(e => e.master) ? true : false;
+    return this._master || this.extends.find(e => e.master) ? true : false;
   }
 
   set os(value) {
-    this.#os = value;
+    this._os = value;
   }
 
   get os() {
-    return this.#os || this.extends.find(e => e.os)?.os;
+    return this._os || this.extends.find(e => e.os)?.os;
   }
 
   set distribution(value) {
-    this.#distribution = value;
+    this._distribution = value;
   }
 
   get distribution() {
     return (
-      this.#distribution || this.extends.find(e => e.distribution)?.distribution
+      this._distribution || this.extends.find(e => e.distribution)?.distribution
     );
   }
 
@@ -336,24 +336,24 @@ export class Host extends Base {
   }
 
   get services() {
-    return this.#services;
+    return this._services;
   }
 
   set services(service) {
-    const present = this.#services.find(s => s.name === service.name);
+    const present = this._services.find(s => s.name === service.name);
 
     if (!present) {
-      this.#services.push(service);
+      this._services.push(service);
     }
   }
 
   *findServices(filter) {
-    yield* objectFilter(types.service, this.#services, filter);
+    yield* objectFilter(types.service, this._services, filter);
   }
 
   typeNamed(typeName, name) {
     if (typeName === NetworkInterfaceTypeDefinition.name) {
-      const ni = this.#networkInterfaces.get(name);
+      const ni = this._networkInterfaces.get(name);
       if (ni) {
         return ni;
       }
@@ -369,7 +369,7 @@ export class Host extends Base {
   }
 
   named(name) {
-    const ni = this.#networkInterfaces.get(name);
+    const ni = this._networkInterfaces.get(name);
     if (ni) {
       return ni;
     }
@@ -380,11 +380,11 @@ export class Host extends Base {
   }
 
   get networkInterfaces() {
-    return this.#networkInterfaces;
+    return this._networkInterfaces;
   }
 
   set networkInterfaces(networkInterface) {
-    this.#networkInterfaces.set(networkInterface.name, networkInterface);
+    this._networkInterfaces.set(networkInterface.name, networkInterface);
 
     if (!this.isTemplate) {
       networkInterface.network?.addObject(this);
@@ -485,14 +485,14 @@ export class NetworkInterface extends Base {
     return NetworkInterfaceTypeDefinition;
   }
 
-  #ipAddresses = new Map();
-  #scope;
-  #metric;
-  #ssid;
-  #psk;
-  #network;
-  #kind;
-  #hostName;
+  _ipAddresses = new Map();
+  _scope;
+  _metric;
+  _ssid;
+  _psk;
+  _network;
+  _kind;
+  _hostName;
   extends = [];
   arpbridge;
   hwaddr;
@@ -513,12 +513,12 @@ export class NetworkInterface extends Base {
   }
 
   get ipAddresses() {
-    return this.#ipAddresses;
+    return this._ipAddresses;
   }
 
   set ipAddresses(value) {
     for (const address of asArray(value)) {
-      this.#ipAddresses.set(
+      this._ipAddresses.set(
         normalizeIPAddress(address),
         this.addSubnet(address)
       );
@@ -530,7 +530,7 @@ export class NetworkInterface extends Base {
   }
 
   get rawAddresses() {
-    return [...this.#ipAddresses].map(([address]) => address);
+    return [...this._ipAddresses].map(([address]) => address);
   }
 
   get cidrAddress() {
@@ -538,7 +538,7 @@ export class NetworkInterface extends Base {
   }
 
   get cidrAddresses() {
-    return [...this.#ipAddresses].map(([address, subnet]) =>
+    return [...this._ipAddresses].map(([address, subnet]) =>
       formatCIDR(address, subnet)
     );
   }
@@ -575,11 +575,11 @@ export class NetworkInterface extends Base {
   }
 
   get hostName() {
-    return this.#hostName || this.host.hostName;
+    return this._hostName || this.host.hostName;
   }
 
   set hostName(value) {
-    this.#hostName = value;
+    this._hostName = value;
   }
 
   get domainNames() {
@@ -597,50 +597,50 @@ export class NetworkInterface extends Base {
   }
 
   get network() {
-    return this.#network || this.host.network;
+    return this._network || this.host.network;
   }
 
   set network(network) {
-    this.#network = network;
+    this._network = network;
   }
 
   set scope(value) {
-    this.#scope = value;
+    this._scope = value;
   }
 
   get scope() {
-    return this.#scope || this.network?.scope || "global";
+    return this._scope || this.network?.scope || "global";
   }
 
   set metric(value) {
-    this.#metric = value;
+    this._metric = value;
   }
 
   get metric() {
-    return this.#metric || this.network?.metric || 1004;
+    return this._metric || this.network?.metric || 1004;
   }
 
   set ssid(value) {
-    this.#ssid = value;
+    this._ssid = value;
   }
 
   get ssid() {
-    return this.#ssid || this.network?.ssid;
+    return this._ssid || this.network?.ssid;
   }
 
   set psk(value) {
-    this.#psk = value;
+    this._psk = value;
   }
 
   get psk() {
-    return this.#psk || this.network?.psk;
+    return this._psk || this.network?.psk;
   }
 
   set kind(value) {
-    this.#kind = value;
+    this._kind = value;
   }
 
   get kind() {
-    return this.#kind || this.network?.kind;
+    return this._kind || this.network?.kind;
   }
 }

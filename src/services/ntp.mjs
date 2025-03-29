@@ -17,7 +17,7 @@ const NTPServiceTypeDefinition = {
 const NTP_SERVICE_FILTER = { type: NTPServiceTypeDefinition.name };
 
 export class NTPService extends Service {
-  #source = [];
+  _source = [];
 
   static {
     addType(this);
@@ -37,11 +37,11 @@ export class NTPService extends Service {
   }
 
   set source(value) {
-    this.#source.push(value);
+    this._source.push(value);
   }
 
   get source() {
-    return this.#source;
+    return this._source;
   }
 
   *findServices(filter) {

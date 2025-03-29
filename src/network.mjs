@@ -20,7 +20,7 @@ export class Network extends Owner {
   scope;
   metric;
   gateway;
-  #bridge;
+  _bridge;
 
   static {
     addType(this);
@@ -54,11 +54,11 @@ export class Network extends Owner {
   }
 
   get bridge() {
-    return this.#bridge;
+    return this._bridge;
   }
 
   set bridge(network) {
-    this.#bridge = this.owner.addBridge(this, network);
+    this._bridge = this.owner.addBridge(this, network);
     network.bridge = this.bridge; // TODO should happen in addBridge
   }
 }

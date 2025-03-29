@@ -27,8 +27,8 @@ const OwnerTypeDefinition = {
 const EMPTY = new Map();
 
 export class Owner extends Base {
-  #membersByType = new Map();
-  #bridges = new Set();
+  _membersByType = new Map();
+  _bridges = new Set();
 
   static {
     addType(this);
@@ -45,7 +45,7 @@ export class Owner extends Base {
 
   _traverse(...args) {
     if (super._traverse(...args)) {
-      for (const typeSlot of this.#membersByType.values()) {
+      for (const typeSlot of this._membersByType.values()) {
         for (const object of typeSlot.values()) {
           object._traverse(...args);
         }
@@ -62,7 +62,7 @@ export class Owner extends Base {
       name = name.substring(this.fullName.length + 1);
     }
 
-    for (const slot of this.#membersByType.values()) {
+    for (const slot of this._membersByType.values()) {
       const object = slot.get(name);
       if (object) {
         return object;
@@ -83,7 +83,7 @@ export class Owner extends Base {
   }
 
   typeNamed(typeName, name) {
-    const typeSlot = this.#membersByType.get(typeName);
+    const typeSlot = this._membersByType.get(typeName);
     if (typeSlot) {
       const object = typeSlot.get(
         name[0] === "/" ? name.substring(this.fullName.length + 1) : name
@@ -97,19 +97,19 @@ export class Owner extends Base {
   }
 
   typeObject(typeName) {
-    return this.#membersByType.get(typeName);
+    return this._membersByType.get(typeName);
   }
 
   typeList(typeName) {
-    const typeSlot = this.#membersByType.get(typeName);
+    const typeSlot = this._membersByType.get(typeName);
     return (typeSlot || EMPTY).values();
   }
 
   addTypeObject(typeName, name, object) {
-    let typeSlot = this.#membersByType.get(typeName);
+    let typeSlot = this._membersByType.get(typeName);
     if (!typeSlot) {
       typeSlot = new Map();
-      this.#membersByType.set(typeName, typeSlot);
+      this._membersByType.set(typeName, typeSlot);
     }
 
     typeSlot.set(name, object);
@@ -221,7 +221,7 @@ export class Owner extends Base {
     if (destinationNetworks) {
       let bridge;
 
-      for (bridge of this.#bridges) {
+      for (bridge of this._bridges) {
         if (bridge.has(network.name)) {
           bridge.delete(network.name);
           bridge.add(network);
@@ -235,7 +235,7 @@ export class Owner extends Base {
 
       if (!bridge) {
         bridge = new Set([network]);
-        this.#bridges.add(bridge);
+        this._bridges.add(bridge);
       }
 
       for (const nameOrNetwork of asIterator(destinationNetworks)) {
@@ -259,7 +259,7 @@ export class Owner extends Base {
   }
 
   _resolveBridges() {
-    for (const bridge of this.#bridges) {
+    for (const bridge of this._bridges) {
       const subnets = new Map();
 
       for (let network of bridge) {
@@ -307,69 +307,69 @@ export class Owner extends Base {
     }
   }
 
-  #country;
+  _country;
 
   set country(value) {
-    this.#country = value;
+    this._country = value;
   }
 
   get country() {
-    return this.#country || this.owner?.country;
+    return this._country || this.owner?.country;
   }
 
-  #locales = new Set();
+  _locales = new Set();
 
   set locales(value) {
     if (value instanceof Set) {
-      this.#locales = this.#locales.union(value);
+      this._locales = this._locales.union(value);
     } else {
-      this.#locales.add(value);
+      this._locales.add(value);
     }
   }
 
   get locales() {
     if (this.owner) {
-      return this.owner.locales.union(this.#locales);
+      return this.owner.locales.union(this._locales);
     }
-    return this.#locales;
+    return this._locales;
   }
 
-  #timezone;
+  _timezone;
 
   set timezone(value) {
-    this.#timezone = value;
+    this._timezone = value;
   }
 
   get timezone() {
-    return this.#timezone || this.owner?.timezone;
+    return this._timezone || this.owner?.timezone;
   }
 
-  #administratorEmail;
+  _administratorEmail;
 
   set administratorEmail(value) {
-    this.#administratorEmail = value;
+    this._administratorEmail = value;
   }
 
   get administratorEmail() {
-    if (this.#administratorEmail) {
-      return this.#administratorEmail;
+    if (this._administratorEmail) {
+      return this._administratorEmail;
     }
 
-    if (this.owner && !this.#domain) {
+    if (this.owner && !this._domain) {
       return this.owner.administratorEmail;
     }
 
     return "admin@" + this.domain;
   }
 
-  #domain;
+  _domain;
 
   set domain(value) {
-    this.#domain = value;
+    this._domain = value;
   }
 
   get domain() {
-    return this.#domain || this.owner?.domain;
+    return this._domain || this.owner?.domain;
   }
 
   get domains() {
@@ -396,21 +396,21 @@ export class Owner extends Base {
     return names;
   }
 
-  #architectures;
+  _architectures;
 
   set architectures(value) {
     if (value instanceof Set) {
-      this.#architectures = this.#architectures
-        ? this.#architectures.union(value)
+      this._architectures = this._architectures
+        ? this._architectures.union(value)
         : value;
     } else {
-      this.#architectures = new Set(value);
+      this._architectures = new Set(value);
     }
   }
 
   get architectures() {
-    if (this.#architectures) {
-      return this.#architectures;
+    if (this._architectures) {
+      return this._architectures;
     }
 
     const architectures = new Set();

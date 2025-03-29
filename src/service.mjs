@@ -96,12 +96,12 @@ export const ServiceTypeDefinition = {
 
 export class Service extends Base {
   alias;
-  #weight;
-  #priority;
-  #type;
-  #port;
-  #ipAddresses;
-  #systemd;
+  _weight;
+  _priority;
+  _type;
+  _port;
+  _ipAddresses;
+  _systemd;
 
   static {
     addType(this);
@@ -114,39 +114,6 @@ export class Service extends Base {
   constructor(owner, data) {
     super(owner, data);
     this.read(data, ServiceTypeDefinition);
-  }
-
-  forOwner(owner) {
-    if (this.owner !== owner) {
-      const data = { name: this.name };
-      if (this.alias) {
-        data.alias = this.alias;
-      }
-      if (this.#type) {
-        data.type = this.#type;
-      }
-      if (this.#weight) {
-        data.weight = this.#weight;
-      }
-      if (this.#priority) {
-        data.priority = this.#priority;
-      }
-      if (this.#port) {
-        data.port = this.#port;
-      }
-      if (this.#ipAddresses) {
-        data.ipAddresses = this.#ipAddresses;
-      }
-
-      if (this.#systemd) {
-        data.systemd = this.#systemd;
-      }
-
-      // @ts-ignore
-      return new this.constructor(owner, data);
-    }
-
-    return this;
   }
 
   get network() {
@@ -166,15 +133,15 @@ export class Service extends Base {
   }
 
   get rawAddresses() {
-    return this.#ipAddresses || this.owner.rawAddresses;
+    return this._ipAddresses || this.owner.rawAddresses;
   }
 
   get rawAddress() {
-    return this.#ipAddresses?.[0] || this.server.rawAddress;
+    return this._ipAddresses?.[0] || this.server.rawAddress;
   }
 
   set ipAddresses(value) {
-    this.#ipAddresses = value;
+    this._ipAddresses = value;
   }
 
   get addresses() {
@@ -182,20 +149,20 @@ export class Service extends Base {
   }
 
   set port(value) {
-    this.#port = value;
+    this._port = value;
   }
 
   get port() {
-    return this.#port || ServiceTypes[this.type]?.port;
+    return this._port || ServiceTypes[this.type]?.port;
   }
 
   set priority(value) {
-    this.#priority = value;
+    this._priority = value;
   }
 
   get priority() {
-    if (this.#priority !== undefined) {
-      return this.#priority;
+    if (this._priority !== undefined) {
+      return this._priority;
     }
     if (this.owner.priority !== undefined) {
       return this.owner.priority;
@@ -205,12 +172,12 @@ export class Service extends Base {
   }
 
   set weight(value) {
-    this.#weight = value;
+    this._weight = value;
   }
 
   get weight() {
-    if (this.#weight !== undefined) {
-      return this.#weight;
+    if (this._weight !== undefined) {
+      return this._weight;
     }
 
     if (this.owner.weight !== undefined) {
@@ -221,11 +188,11 @@ export class Service extends Base {
   }
 
   set type(value) {
-    this.#type = value;
+    this._type = value;
   }
 
   get type() {
-    return this.#type || this.name;
+    return this._type || this.name;
   }
 
   get master() {
@@ -241,7 +208,7 @@ export class Service extends Base {
   }
 
   get systemdServices() {
-    return this.#systemd;
+    return this._systemd;
   }
 
   get srvPrefix() {

@@ -32,7 +32,10 @@ export class Base {
   owner;
   description;
   name;
-  #tags = new Set();
+  _tags = new Set();
+  _packaging = new Set();
+  _directory;
+  _finalize;
 
   static {
     addType(this);
@@ -179,7 +182,8 @@ export class Base {
           if (value instanceof property.type.clazz) {
             assign(property, value);
           } else {
-            const factory = property.type.factoryFor?.(value) || property.type.clazz;
+            const factory =
+              property.type.factoryFor?.(value) || property.type.clazz;
 
             assign(
               property,
@@ -328,13 +332,12 @@ export class Base {
     }
   }
 
-  #directory;
   set directory(directory) {
-    this.#directory = directory;
+    this._directory = directory;
   }
 
   get directory() {
-    return this.#directory || join(this.owner.directory, this.name);
+    return this._directory || join(this.owner.directory, this.name);
   }
 
   get fullName() {
@@ -343,10 +346,9 @@ export class Base {
       : this.owner.fullName;
   }
 
-  #packaging = new Set();
 
   set packaging(value) {
-    this.#packaging.add(value);
+    this._packaging.add(value);
   }
 
   get derivedPackaging() {
@@ -357,10 +359,10 @@ export class Base {
     const dp = this.derivedPackaging;
 
     if (dp) {
-      return this.#packaging.union(dp);
+      return this._packaging.union(dp);
     }
 
-    return this.#packaging;
+    return this._packaging;
   }
 
   get outputs() {
@@ -379,14 +381,14 @@ export class Base {
   }
 
   get tags() {
-    return this.#tags;
+    return this._tags;
   }
 
   set tags(value) {
     if (value instanceof Set) {
-      this.#tags = this.#tags.union(value);
+      this._tags = this._tags.union(value);
     } else {
-      this.#tags.add(value);
+      this._tags.add(value);
     }
   }
 
@@ -422,25 +424,24 @@ export class Base {
     return object;
   }
 
-  #finalize;
 
   finalize(action) {
-    if (!this.#finalize) {
-      this.#finalize = [];
+    if (!this._finalize) {
+      this._finalize = [];
     }
-    this.#finalize.push(action);
+    this._finalize.push(action);
   }
 
   execFinalize() {
-    this.traverse(object => object._finalize());
+    this.traverse(object => object._execFinalize());
   }
 
-  _finalize() {
-    if (this.#finalize) {
+  _execFinalize() {
+    if (this._finalize) {
       let i = 0;
-      for (const action of this.#finalize) {
+      for (const action of this._finalize) {
         if (action) {
-          this.#finalize[i] = undefined;
+          this._finalize[i] = undefined;
           action();
         }
         i++;

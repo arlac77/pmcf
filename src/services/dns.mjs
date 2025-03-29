@@ -68,10 +68,10 @@ export class DNSService extends Service {
   hasCatalog = true;
   hasLinkLocalAdresses = true;
   notify = true;
-  #source = [];
-  #trusted = [];
-  #protected = [];
-  #open = [];
+  _source = [];
+  _trusted = [];
+  _protected = [];
+  _open = [];
 
   serial = Math.ceil(Date.now() / 1000);
   refresh = 36000;
@@ -101,35 +101,35 @@ export class DNSService extends Service {
   }
 
   set protected(value) {
-    this.#protected.push(value);
+    this._protected.push(value);
   }
 
   get protected() {
-    return this.#protected;
+    return this._protected;
   }
 
   set trusted(value) {
-    this.#trusted.push(value);
+    this._trusted.push(value);
   }
 
   get trusted() {
-    return this.#trusted;
+    return this._trusted;
   }
 
   set open(value) {
-    this.#open.push(value);
+    this._open.push(value);
   }
 
   get open() {
-    return this.#open;
+    return this._open;
   }
 
   set source(value) {
-    this.#source.push(value);
+    this._source.push(value);
   }
 
   get source() {
-    return this.#source;
+    return this._source;
   }
 
   *findServices(filter) {

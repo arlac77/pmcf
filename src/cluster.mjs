@@ -20,8 +20,8 @@ const ClusterTypeDefinition = {
 };
 
 export class Cluster extends Host {
-  #masters = new Set();
-  #backups = new Set();
+  _masters = new Set();
+  _backups = new Set();
   routerId = 100;
   checkInterval = 60;
 
@@ -39,19 +39,19 @@ export class Cluster extends Host {
   }
 
   set masters(value) {
-    this.#masters.add(value);
+    this._masters.add(value);
   }
 
   get masters() {
-    return this.#masters;
+    return this._masters;
   }
 
   set backups(value) {
-    this.#backups.add(value);
+    this._backups.add(value);
   }
 
   get backups() {
-    return this.#backups;
+    return this._backups;
   }
 
   get members() {
