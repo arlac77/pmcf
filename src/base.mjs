@@ -239,8 +239,10 @@ export class Base {
 
   forOwner(owner) {
     if (this.owner !== owner) {
-      // @ts-ignore
-      return new this.constructor(owner, this.toJSON());
+      const newObject = Object.create(this);
+
+      newObject.owner = owner;
+      return newObject;
     }
 
     return this;

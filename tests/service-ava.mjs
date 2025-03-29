@@ -1,7 +1,7 @@
 import test from "ava";
 import { Root, Location, Host, Service } from "pmcf";
 
-test("Service basics", async t => {
+test("Service basics", t => {
   const root = new Root("/somwhere");
 
   const l1 = new Location(root, {
@@ -14,7 +14,7 @@ test("Service basics", async t => {
     name: "h1",
     networkInterfaces: { eth0: { ipAddresses: "10.0.0.1/16" } }
   });
-  h1.addObject(h1);
+  l1.addObject(h1);
 
   const s1 = new Service(h1, {
     name: "dns",
@@ -136,4 +136,29 @@ test("Service load", t => {
   t.is(h1.services[0].name, "dns");
 
   t.is(h1.typeNamed("service", "dns"), h1.services[0]);
+});
+
+test("Service owner", t => {
+  const root = new Root("/somwhere");
+
+  const h1 = new Host(root, {
+    name: "h1"
+  });
+  root.addObject(h1);
+
+  const h2 = new Host(root, {
+    name: "h2"
+  });
+  root.addObject(h2);
+
+  const s1 = new Service(h1, {
+    name: "dns",
+    weight: 5,
+    priority: 3,
+    alias: "primary-dns"
+  });
+
+  const s1b = s1.forOwner(h2);
+
+  t.is(s1b.owner, h2);
 });

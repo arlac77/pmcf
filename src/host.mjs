@@ -501,17 +501,6 @@ export class NetworkInterface extends Base {
     this.read(data, NetworkInterfaceTypeDefinition);
   }
 
-  forOwner(owner) {
-    if (this.owner !== owner) {
-      const data = { name: this.name };
-
-      // @ts-ignore
-      return new this.constructor(owner, data);
-    }
-
-    return this;
-  }
-
   addSubnet(address) {
     if (!this.network) {
       if (!hasWellKnownSubnet(address)) {
