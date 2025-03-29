@@ -142,23 +142,29 @@ test("Service owner", t => {
   const root = new Root("/somwhere");
 
   const h1 = new Host(root, {
-    name: "h1"
+    name: "h1",
+    priority: 3,
+    weight: 5
   });
   root.addObject(h1);
 
   const h2 = new Host(root, {
-    name: "h2"
+    name: "h2",
+    priority: 8,
+    weight: 7
   });
   root.addObject(h2);
 
+  t.is(h2.weight, 7);
   const s1 = new Service(h1, {
     name: "dns",
-    weight: 5,
-    priority: 3,
     alias: "primary-dns"
   });
 
   const s1b = s1.forOwner(h2);
 
   t.is(s1b.owner, h2);
+  t.is(s1b.name, "dns");
+  t.is(s1b.priority, 8);
+  t.is(s1b.weight, 7);
 });

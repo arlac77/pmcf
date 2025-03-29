@@ -128,6 +128,9 @@ export class Service extends Base {
       if (this.#weight) {
         data.weight = this.#weight;
       }
+      if (this.#priority) {
+        data.priority = this.#priority;
+      }
       if (this.#port) {
         data.port = this.#port;
       }
@@ -146,11 +149,10 @@ export class Service extends Base {
     return this;
   }
 
-  get network()
-  {
+  get network() {
     return this.server.network;
   }
-  
+
   get server() {
     return this.owner;
   }
@@ -210,6 +212,7 @@ export class Service extends Base {
     if (this.#weight !== undefined) {
       return this.#weight;
     }
+
     if (this.owner.weight !== undefined) {
       return this.owner.weight;
     }
