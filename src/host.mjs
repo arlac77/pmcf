@@ -109,13 +109,17 @@ export class Host extends Base {
     }
 
     for (const [name, ni] of host.networkInterfaces) {
-      let present = this._networkInterfaces.get(name);
-      if (!present) {
-        present = ni.forOwner(this);
-        this._networkInterfaces.set(name, present);
+      if (ni.isTemplate) {
       }
+      else {
+        let present = this._networkInterfaces.get(name);
+        if (!present) {
+          present = ni.forOwner(this);
+          this._networkInterfaces.set(name, present);
+        }
 
-      present.extends.push(ni);
+        present.extends.push(ni);
+      }
     }
   }
 
@@ -500,6 +504,19 @@ export class NetworkInterface extends Base {
   constructor(owner, data) {
     super(owner, data);
     this.read(data, NetworkInterfaceTypeDefinition);
+  }
+
+  get isTemplate() {
+    return this.name.indexOf("*") >= 0;
+  }
+
+  matches(other) {
+    if(this.isTemplate) {
+      const name = this.name.replace('*','');
+      return name.length === 0 || other.name.indexOf(name) >= 0;
+    }
+
+    return false;
   }
 
   addSubnet(address) {
