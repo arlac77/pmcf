@@ -301,7 +301,7 @@ async function generateZoneDefs(dns, location, packageData) {
     };
     configs.push(config);
 
-    const locationRecord = DNSRecord("location", "TXT", dns.location.name);
+    const locationRecord = DNSRecord("location", "TXT", locationName);
 
     const zone = {
       id: domain,
