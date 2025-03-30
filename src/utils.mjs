@@ -94,6 +94,11 @@ export function isLinkLocal(address) {
   return address.startsWith("fe80");
 }
 
+export function isLocalhost(address) {
+  const eaddr = encodeIP(address);
+  return eaddr === IPV4_LOCALHOST || eaddr === IPV6_LOCALHOST;
+}
+
 export function normalizeIPAddress(address) {
   address = address.replace(/\/\d+$/, "");
   if (isIPv4Address(address)) {
