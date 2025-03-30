@@ -171,7 +171,7 @@ export class DNSService extends Service {
   }
 
   async *preparePackages(dir) {
-    const location = this.location;
+    const location = this.owner.owner;
     const name = location.name;
     const p1 = join(dir, "p1");
     const packageData = {
