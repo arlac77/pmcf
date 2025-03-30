@@ -32,6 +32,7 @@ const DNSServiceTypeDefinition = {
       collection: false,
       writeable: true
     },
+    excludeNetworks: { type: "network", collection: true, writeable: true },
     notify: { type: "boolean", collection: false, writeable: true },
     recordTTL: { type: "string", collection: false, writeable: true },
     serial: { type: "number", collection: false, writeable: true },
@@ -72,6 +73,7 @@ export class DNSService extends Service {
   _trusted = [];
   _protected = [];
   _open = [];
+  _excludeNetworks = new Set([]);
 
   serial = Math.ceil(Date.now() / 1000);
   refresh = 36000;
@@ -130,6 +132,14 @@ export class DNSService extends Service {
 
   get source() {
     return this._source;
+  }
+
+  set excludeNetworks(value) {
+    this._excludeNetworks.add(value);
+  }
+
+  get excludeNetworks() {
+    return this._excludeNetworks;
   }
 
   *findServices(filter) {
@@ -226,13 +236,13 @@ export class DNSService extends Service {
       )[Symbol.asyncIterator]()
     ];
 
-    await generateZoneDefs(this, packageData);
+    await generateZoneDefs(this, location, packageData);
 
     yield packageData;
   }
 }
 
-async function generateZoneDefs(dns, packageData) {
+async function generateZoneDefs(dns, location, packageData) {
   const ttl = dns.recordTTL;
   const nameService = dns.findService(DNS_SERVICE_FILTER);
   const rname = dns.administratorEmail.replace(/@/, ".");
@@ -254,8 +264,6 @@ async function generateZoneDefs(dns, packageData) {
   console.log(`${nameService}`, nameService.ipAddressOrDomainName);
 
   const configs = [];
-
-  const location = dns.location;
 
   for (const host of location.hosts()) {
     for (const domain of host.foreignDomainNames) {
@@ -330,67 +338,67 @@ async function generateZoneDefs(dns, packageData) {
       networkInterface,
       domainNames
     } of location.networkAddresses()) {
-      const host = networkInterface.host;
-      if (
-        !addresses.has(address) &&
-        (dns.hasLinkLocalAdresses || !isLinkLocal(address))
-      ) {
-        addresses.add(address);
+      if (!dns.excludeNetworks.has(networkInterface.network)) {
+        const host = networkInterface.host;
+        if (
+          !addresses.has(address) &&
+          (dns.hasLinkLocalAdresses || !isLinkLocal(address))
+        ) {
+          addresses.add(address);
 
-        for (const domainName of domainNames) {
-          zone.records.add(
-            DNSRecord(
-              dnsFullName(domainName),
-              isIPv6Address(address) ? "AAAA" : "A",
-              normalizeIPAddress(address)
-            )
-          );
-        }
-        if (subnet && host.domain === domain) {
-          let reverseZone = reverseZones.get(subnet.address);
-
-          if (!reverseZone) {
-            const reverseArpa = reverseArpaAddress(subnet.prefix);
-            reverseZone = {
-              id: reverseArpa,
-              type: "plain",
-              file: `${locationName}/${reverseArpa}.zone`,
-              records: new Set([SOARecord, NSRecord])
-            };
-            config.zones.push(reverseZone);
-            reverseZones.set(subnet.address, reverseZone);
-          }
-
-          for (const domainName of host.domainNames) {
-            reverseZone.records.add(
+          for (const domainName of domainNames) {
+            zone.records.add(
               DNSRecord(
-                dnsFullName(reverseArpaAddress(address)),
-                "PTR",
-                dnsFullName(domainName)
+                dnsFullName(domainName),
+                isIPv6Address(address) ? "AAAA" : "A",
+                normalizeIPAddress(address)
               )
             );
           }
-        }
-      }
+          if (subnet && host.domain === domain) {
+            let reverseZone = reverseZones.get(subnet.address);
 
-      if (!hosts.has(host)) {
-        hosts.add(host);
+            if (!reverseZone) {
+              const reverseArpa = reverseArpaAddress(subnet.prefix);
+              reverseZone = {
+                id: reverseArpa,
+                type: "plain",
+                file: `${locationName}/${reverseArpa}.zone`,
+                records: new Set([SOARecord, NSRecord])
+              };
+              config.zones.push(reverseZone);
+              reverseZones.set(subnet.address, reverseZone);
+            }
 
-        for (const foreignDomainName of host.foreignDomainNames) {
-          zone.records.add(
-            DNSRecord("external", "PTR", dnsFullName(foreignDomainName))
-          );
-        }
-
-        for (const service of host.findServices()) {
-          //for (const domainName of domainNames) {
-          for (const record of service.dnsRecordsForDomainName(
-            host.domainName,
-            dns.hasSVRRecords
-          )) {
-            zone.records.add(record);
+            for (const domainName of host.domainNames) {
+              reverseZone.records.add(
+                DNSRecord(
+                  dnsFullName(reverseArpaAddress(address)),
+                  "PTR",
+                  dnsFullName(domainName)
+                )
+              );
+            }
           }
-          //}
+        }
+
+        if (!hosts.has(host)) {
+          hosts.add(host);
+
+          for (const foreignDomainName of host.foreignDomainNames) {
+            zone.records.add(
+              DNSRecord("external", "PTR", dnsFullName(foreignDomainName))
+            );
+          }
+
+          for (const service of host.findServices()) {
+            for (const record of service.dnsRecordsForDomainName(
+              host.domainName,
+              dns.hasSVRRecords
+            )) {
+              zone.records.add(record);
+            }
+          }
         }
       }
     }
@@ -401,7 +409,7 @@ async function generateZoneDefs(dns, packageData) {
 
     const content = [];
     for (const zone of config.zones) {
-      console.log(`  zone: ${zone.id}`);
+      console.log(`  file: ${zone.file}`);
 
       if (zone.catalogZone) {
         const hash = createHmac("md5", zone.id).digest("hex");
