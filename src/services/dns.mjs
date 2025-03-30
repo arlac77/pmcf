@@ -32,7 +32,7 @@ const DNSServiceTypeDefinition = {
       collection: false,
       writeable: true
     },
-    excludeNetworks: { type: "network", collection: true, writeable: true },
+    exclude: { type: "network", collection: true, writeable: true },
     notify: { type: "boolean", collection: false, writeable: true },
     recordTTL: { type: "string", collection: false, writeable: true },
     serial: { type: "number", collection: false, writeable: true },
@@ -73,7 +73,7 @@ export class DNSService extends Service {
   _trusted = [];
   _protected = [];
   _open = [];
-  _excludeNetworks = new Set([]);
+  _exclude = new Set([]);
 
   serial = Math.ceil(Date.now() / 1000);
   refresh = 36000;
@@ -134,12 +134,12 @@ export class DNSService extends Service {
     return this._source;
   }
 
-  set excludeNetworks(value) {
-    this._excludeNetworks.add(value);
+  set exclude(value) {
+    this._exclude.add(value);
   }
 
-  get excludeNetworks() {
-    return this._excludeNetworks;
+  get exclude() {
+    return this._exclude;
   }
 
   *findServices(filter) {
@@ -338,7 +338,7 @@ async function generateZoneDefs(dns, location, packageData) {
       networkInterface,
       domainNames
     } of location.networkAddresses()) {
-      if (!dns.excludeNetworks.has(networkInterface.network)) {
+      if (!dns.exclude.has(networkInterface.network)) {
         const host = networkInterface.host;
         if (
           !addresses.has(address) &&
