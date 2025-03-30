@@ -5,8 +5,7 @@ import {
   writeLines,
   isIPv6Address,
   normalizeIPAddress,
-  isLinkLocal,
-  isLocalhost
+  isLinkLocal
 } from "../utils.mjs";
 import { DNSRecord, dnsFullName } from "../dns-utils.mjs";
 import { addType } from "../types.mjs";
@@ -158,7 +157,7 @@ export class DNSService extends Service {
         DNS: serviceAddresses(this, {
           ...DNS_SERVICE_FILTER,
           priority: "<10"
-        }).filter(a=>!isLocalhost(a)).join(" "),
+        }).join(" "),
         FallbackDNS: serviceAddresses(this, {
           ...DNS_SERVICE_FILTER,
           priority: ">=10"

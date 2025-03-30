@@ -62,7 +62,8 @@ export class NTPService extends Service {
             ...NTP_SERVICE_FILTER,
             priority: "<20"
           },
-          "domainName"
+          "domainName",
+          ()=>true
         ).join(" ")
       }
     ];

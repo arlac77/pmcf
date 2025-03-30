@@ -1,6 +1,6 @@
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
-import { asArray } from "./utils.mjs";
+import { asArray,isLocalhost } from "./utils.mjs";
 import { networkAddressProperties } from "./network-support.mjs";
 import {
   DNSRecord,
@@ -277,12 +277,13 @@ export const sortByPriority = (a, b) => a.priority - b.priority;
 export function serviceAddresses(
   sources,
   filter,
-  addressType = "rawAddresses"
+  addressType = "rawAddresses",
+  addressFilter = a=>!isLocalhost(a)
 ) {
   return asArray(sources)
     .map(ft => Array.from(ft.findServices(filter)))
     .flat()
     .sort(sortByPriority)
     .map(s => s[addressType])
-    .flat();
+    .flat().filter(addressFilter);
 }
