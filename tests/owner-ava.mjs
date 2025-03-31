@@ -47,7 +47,7 @@ test("Owner read write", t => {
 
   t.is(o1.administratorEmail, "master@somewhere");
   t.is(o1.subnetNamed("10.0/16").name, "10.0/16");
-  t.is(o1.subnetNamed("fe80:0000:0000:0000/64").name, "fe80:0000:0000:0000/64");
+  t.is(o1.subnetNamed("fe80::/64").name, "fe80::/64");
 
   t.deepEqual(o1.toJSON(), {
     name: "o1",
@@ -69,7 +69,7 @@ test("Owner read write", t => {
           "10.0/16": {
             prefixLength: 16
           },
-          "fe80:0000:0000:0000/64": {
+          "fe80::/64": {
             prefixLength: 64
           }
         }
@@ -79,7 +79,7 @@ test("Owner read write", t => {
       "10.0/16": {
         prefixLength: 16
       },
-      "fe80:0000:0000:0000/64": {
+      "fe80::/64": {
         prefixLength: 64
       }
     }

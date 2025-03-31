@@ -28,8 +28,8 @@ test("Network addresses", t => {
   t.is(s1.prefixLength, 16);
   t.true(s1.networks.has(n1));
 
-  const s2 = n1.subnetNamed("fe80:0000:0000:0000/64");
-  t.is(s2.name, "fe80:0000:0000:0000/64");
+  const s2 = n1.subnetNamed("fe80::/64");
+  t.is(s2.name, "fe80::/64");
   t.is(s2.prefixLength, 64);
   t.true(s2.networks.has(n1));
 });

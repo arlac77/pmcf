@@ -79,7 +79,12 @@ export function asIterator(value) {
 }
 
 export function isIPv4Address(address) {
-  return address.indexOf(".") >= 0;
+  switch (typeof address) {
+    case "string":
+      return address.indexOf(".") >= 0;
+  }
+
+  return false;
 }
 
 export function generateEU64(mac) {
@@ -123,6 +128,7 @@ const ipv4 = {
 };
 const ipv6 = {
   separator: ":",
+  compressor: "::",
   length: 128,
   segmentLength: 16,
   segmentMask: 0xffffn,
@@ -132,22 +138,44 @@ const ipv6 = {
 };
 
 function _decode(definition, address, length = definition.length) {
-  const words = [];
+  let result = "";
+  let compressed = 0;
   let shift = definition.length;
+  let j, word;
+  const last = length / definition.segmentLength;
 
-  for (let i = 0; i < length / definition.segmentLength; i++) {
-    shift -= definition.segmentLength;
-    words.push(
-      ((address >> BigInt(shift)) & definition.segmentMask)
-        .toString(definition.base)
-        .padStart(definition.pad, "0")
-    );
+  for (let i = 0; i < last; i = j + 1) {
+    for (j = i; j < last; j++) {
+      shift -= definition.segmentLength;
+      word = (address >> BigInt(shift)) & definition.segmentMask;
+
+      if (word !== 0n || !definition.compressor || compressed > 0) {
+        break;
+      }
+    }
+
+    if (j > i + 1) {
+      compressed++;
+      result += definition.compressor;
+    } else {
+      if (result.length > 0) {
+        result += definition.separator;
+      }
+    }
+
+    if (j < last) {
+      result += word.toString(definition.base).padStart(definition.pad, "0");
+    }
   }
 
-  return words.join(definition.separator);
+  return result;
 }
 
 export function _encode(definition, address) {
+  if (typeof address !== "string") {
+    return address;
+  }
+
   let res = 0n;
   let shift = BigInt(definition.length);
 

@@ -63,10 +63,10 @@ test("Subnet ipv6", t => {
   const root = new Root("/");
   const s1 = new Subnet(root, "fe80::1e57:3eff:fe22:9a8f/64");
 
-  t.is(s1.name, "fe80:0000:0000:0000/64");
+  t.is(s1.name, "fe80::/64");
   t.is(s1.prefixLength, 64);
 
-  t.true(s1.matchesAddress("fe80:0000:0000:0000:1e57:3eff:fe22:9a8f"));
+  t.true(s1.matchesAddress("fe80::1e57:3eff:fe22:9a8f"));
   t.false(s1.matchesAddress("fe81:0000:0000:0000:1e57:3eff:fe22:9a8f"));
   // t.false(s1.matchesAddress("fe80:0000:0000:0000:1e57:3eff:fe22:9a8e"));
 
