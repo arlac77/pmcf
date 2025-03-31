@@ -287,7 +287,7 @@ test("Host addresses with network", t => {
   ]);
 });
 
-test.skip("clone NetworkInterface", t => {
+test("clone NetworkInterface", t => {
   const owner = new Root("/");
 
   const n1 = new Network(owner, {
@@ -313,4 +313,6 @@ test.skip("clone NetworkInterface", t => {
 
   t.is(ni.owner, h2);
   t.is(ni.name, "eth0");
+  t.is(ni.network, n1);
+  t.deepEqual(ni.rawAddresses, ["10.0.0.2", "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f"]);
 });
