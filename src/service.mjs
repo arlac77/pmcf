@@ -1,6 +1,6 @@
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
-import { asArray,isLocalhost } from "./utils.mjs";
+import { asArray, isLocalhost } from "./utils.mjs";
 import { networkAddressProperties } from "./network-support.mjs";
 import {
   DNSRecord,
@@ -37,7 +37,9 @@ const ServiceTypes = {
   ssh: { protocol: "tcp", port: 22, tls: false },
   imap: { protocol: "tcp", port: 143, tls: false },
   imaps: { protocol: "tcp", port: 993, tls: true },
-  dhcp: { tls: false },
+  dhcp: { port: 547, tls: false },
+  "dhcpv6-client": { port: 546, tls: false },
+  "dhcpv6-server": { port: 547, tls: false },
   smb: { protocol: "tcp", port: 445, tls: false },
   timemachine: {
     type: "adisk",
@@ -144,6 +146,13 @@ export class Service extends Base {
   get addresses() {
     return this.rawAddresses.map(a => `${a}:${this.port}`);
   }
+
+  /*
+  get endpoints()
+  {
+    return [ { protocol: this.protocol,  }];
+  }
+*/
 
   set port(value) {
     this._port = value;
@@ -256,12 +265,13 @@ export function serviceAddresses(
   sources,
   filter,
   addressType = "rawAddresses",
-  addressFilter = a=>!isLocalhost(a)
+  addressFilter = a => !isLocalhost(a)
 ) {
   return asArray(sources)
     .map(ft => Array.from(ft.findServices(filter)))
     .flat()
     .sort(sortByPriority)
     .map(s => s[addressType])
-    .flat().filter(addressFilter);
+    .flat()
+    .filter(addressFilter);
 }
