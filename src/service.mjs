@@ -234,7 +234,7 @@ export class Service extends Base {
           DNSRecord(
             dnsFullName(domainName),
             dnsRecord.type,
-            this.priority,
+            this.priority || 10,
             ".",
             dnsFormatParameters(parameters)
           )
