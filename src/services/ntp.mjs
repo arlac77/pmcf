@@ -1,24 +1,18 @@
 import { addType } from "../types.mjs";
-import {
-  Service,
-  ServiceTypeDefinition,
-  serviceAddresses
-} from "../service.mjs";
+import { ServiceTypeDefinition, serviceAddresses } from "../service.mjs";
+import { ExtraSourceService, ExtraSourceServiceTypeDefinition } from "../extra-source-service.mjs";
 
 const NTPServiceTypeDefinition = {
   name: "ntp",
   owners: ServiceTypeDefinition.owners,
+  extends: ExtraSourceServiceTypeDefinition,
   priority: 0.1,
-  properties: {
-    source: { type: "network", collection: true, writeable: true }
-  }
+  properties: {}
 };
 
 const NTP_SERVICE_FILTER = { type: NTPServiceTypeDefinition.name };
 
-export class NTPService extends Service {
-  _source = [];
-
+export class NTPService extends ExtraSourceService {
   static {
     addType(this);
   }
@@ -36,22 +30,6 @@ export class NTPService extends Service {
     return NTPServiceTypeDefinition.name;
   }
 
-  set source(value) {
-    this._source.push(value);
-  }
-
-  get source() {
-    return this._source;
-  }
-
-  *findServices(filter) {
-    yield* this.owner.owner.findServices(filter);
-
-    for (const s of this.source) {
-      yield* s.findServices(filter);
-    }
-  }
-
   get systemdConfig() {
     return [
       "Time",
@@ -63,7 +41,7 @@ export class NTPService extends Service {
             priority: "<20"
           },
           "domainName",
-          ()=>true
+          () => true
         ).join(" ")
       }
     ];

@@ -11,6 +11,7 @@ import { writeLines } from "../utils.mjs";
 const DHCPServiceTypeDefinition = {
   name: "dhcp",
   owners: ServiceTypeDefinition.owners,
+  extends: ServiceTypeDefinition,
   priority: 0.1,
   properties: {}
 };
@@ -128,9 +129,8 @@ export class DHCPService extends Service {
         subnets.add(subnet);
       }
     }
-
     console.log([...subnets].map(s => s.address));
-*/
+    */
 
     const hwmap = new Map();
     const hostNames = new Set();

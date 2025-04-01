@@ -14,14 +14,15 @@ import {
   ServiceTypeDefinition,
   serviceAddresses
 } from "../service.mjs";
+import { ExtraSourceService, ExtraSourceServiceTypeDefinition } from "../extra-source-service.mjs";
 import { subnets } from "../subnet.mjs";
 
 const DNSServiceTypeDefinition = {
   name: "dns",
   owners: ServiceTypeDefinition.owners,
+  extends: ExtraSourceServiceTypeDefinition,
   priority: 0.1,
   properties: {
-    source: { type: "network", collection: true, writeable: true },
     trusted: { type: "network", collection: true, writeable: true },
     protected: { type: "network", collection: true, writeable: true },
     open: { type: "network", collection: true, writeable: true },
@@ -62,14 +63,13 @@ function addressesStatement(prefix, objects, generateEmpty = false) {
   return [];
 }
 
-export class DNSService extends Service {
+export class DNSService extends ExtraSourceService {
   allowedUpdates = [];
   recordTTL = "1W";
   hasSVRRecords = true;
   hasCatalog = true;
   hasLinkLocalAdresses = true;
   notify = true;
-  _source = [];
   _trusted = [];
   _protected = [];
   _open = [];
@@ -126,28 +126,12 @@ export class DNSService extends Service {
     return this._open;
   }
 
-  set source(value) {
-    this._source.push(value);
-  }
-
-  get source() {
-    return this._source;
-  }
-
   set exclude(value) {
     this._exclude.add(value);
   }
 
   get exclude() {
     return this._exclude;
-  }
-
-  *findServices(filter) {
-    yield* this.owner.owner.findServices(filter);
-
-    for (const s of this.source) {
-      yield* s.findServices(filter);
-    }
   }
 
   get systemdConfig() {
