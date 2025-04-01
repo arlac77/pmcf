@@ -9,12 +9,11 @@ import {
 } from "../utils.mjs";
 import { DNSRecord, dnsFullName } from "../dns-utils.mjs";
 import { addType } from "../types.mjs";
+import { ServiceTypeDefinition, serviceAddresses } from "../service.mjs";
 import {
-  Service,
-  ServiceTypeDefinition,
-  serviceAddresses
-} from "../service.mjs";
-import { ExtraSourceService, ExtraSourceServiceTypeDefinition } from "../extra-source-service.mjs";
+  ExtraSourceService,
+  ExtraSourceServiceTypeDefinition
+} from "../extra-source-service.mjs";
 import { subnets } from "../subnet.mjs";
 
 const DNSServiceTypeDefinition = {
