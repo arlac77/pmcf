@@ -19,7 +19,7 @@ nt.title = (providedTitle = "normalizeCIDR", address, cidr) =>
 
 test(nt, "127.0.0.1", "127/8");
 test(nt, "127/8", "127/8");
-test(nt, "::1", "::0001/128");
+test(nt, "::1", "::1/128");
 test(nt, "1.2.3.4", undefined);
 test(nt, "1.2.3.4/24", "1.2.3/24");
 test(nt, "1.2.3.4/16", "1.2/16");
@@ -59,12 +59,12 @@ function dt(t, address, expected) {
 dt.title = (providedTitle = "decode", address, expected) =>
   `${providedTitle} ${address.toString(16)} => ${expected}`.trim();
 
-test(dt, 0x20010db8000000000001000000000001n, "2001:0db8::0001:0000:0000:0001");
-test(dt, 0xf000e000d000c000b000an, "::000f:000e:000d:000c:000b:000a");
-test(dt, 0xf000e0000000c000b000an, "::000f:000e:0000:000c:000b:000a");
-test(dt, 0xd000c000b000an, "::000d:000c:000b:000a");
-test(dt, 0xc000b000an, "::000c:000b:000a");
-test(dt, 0x000an, "::000a");
+test(dt, 0x20010db8000000000001000000000001n, "2001:db8::1:0:0:1");
+test(dt, 0xf000e000d000c000b000an, "::f:e:d:c:b:a");
+test(dt, 0xf000e0000000c000b000an, "::f:e:0:c:b:a");
+test(dt, 0xd000c000b000an, "::d:c:b:a");
+test(dt, 0xc000b000an, "::c:b:a");
+test(dt, 0x000an, "::a");
 
 test("wellKnownSubnet", t => {
   t.true(hasWellKnownSubnet("::1"));

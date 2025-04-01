@@ -123,8 +123,7 @@ const ipv4 = {
   segmentLength: 8,
   segmentMask: 0xffn,
   mask: 0xffffffffn,
-  base: 10,
-  pad: 0
+  base: 10
 };
 const ipv6 = {
   separator: ":",
@@ -133,19 +132,18 @@ const ipv6 = {
   segmentLength: 16,
   segmentMask: 0xffffn,
   mask: 0xffffffffffffffffffffffffffffffffn,
-  base: 16,
-  pad: 4
+  base: 16
 };
 
 function _decode(definition, address, length = definition.length) {
   let result = "";
   let compressed = 0;
   let shift = definition.length;
-  let j, word;
+  let word;
   const last = length / definition.segmentLength;
 
-  for (let i = 0; i < last; i = j + 1) {
-    for (j = i; j < last; j++) {
+  for (let i = 0, j = 0; i < last; j = j + 1, i = j) {
+    for (; j < last; j++) {
       shift -= definition.segmentLength;
       word = (address >> BigInt(shift)) & definition.segmentMask;
 
@@ -164,7 +162,7 @@ function _decode(definition, address, length = definition.length) {
     }
 
     if (j < last) {
-      result += word.toString(definition.base).padStart(definition.pad, "0");
+      result += word.toString(definition.base);
     }
   }
 
