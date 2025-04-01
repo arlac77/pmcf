@@ -68,7 +68,7 @@ export class Location extends Owner {
     await writeLines(
       join(dir, "etc/systemd/resolved.conf.d"),
       `${this.name}.conf`,
-      sectionLines(...this.findService({type: "dns"}).systemdConfig)
+      sectionLines(...this.findService({ type: "dns" }).systemdConfig)
     );
 
     await writeLines(
@@ -84,7 +84,7 @@ export class Location extends Owner {
     await writeLines(
       join(dir, "etc/systemd/timesyncd.conf.d"),
       `${this.name}.conf`,
-      sectionLines(...this.findService({type: "ntp"}).systemdConfig)
+      sectionLines(...this.findService({ type: "ntp" }).systemdConfig)
     );
 
     const locationDir = join(dir, "etc", "location");

@@ -143,7 +143,7 @@ export class DNSService extends Service {
   }
 
   *findServices(filter) {
-    yield* this.owner.findServices(filter);
+    yield* this.owner.owner.findServices(filter);
 
     for (const s of this.source) {
       yield* s.findServices(filter);
@@ -151,6 +151,13 @@ export class DNSService extends Service {
   }
 
   get systemdConfig() {
+/*    console.log([
+      ...this.findServices({
+        ...DNS_SERVICE_FILTER,
+        priority: "<10"
+      })
+    ].map((s)=>`${s.owner.name}[${s.priority}]`));
+*/
     return [
       "Resolve",
       {

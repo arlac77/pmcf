@@ -33,7 +33,6 @@ export class Base {
   owner;
   description;
   name;
-  _priority;
   _tags = new Set();
   _packaging = new Set();
   _directory;

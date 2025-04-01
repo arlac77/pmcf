@@ -45,7 +45,7 @@ export class NTPService extends Service {
   }
 
   *findServices(filter) {
-    yield* this.owner.findServices(filter);
+    yield* this.owner.owner.findServices(filter);
 
     for (const s of this.source) {
       yield* s.findServices(filter);

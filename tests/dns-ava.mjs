@@ -11,14 +11,14 @@ test("DNS basics", async t => {
 
   t.deepEqual(
     dnsServices.map(s => s.rawAddress).sort(),
-    [ "192.168.1.1", "192.168.1.11"].sort()
-   // ["1.1.1.1", "192.168.1.1", "8.8.8.8"].sort()
+    ["192.168.1.1", "192.168.1.11"].sort()
+    // ["1.1.1.1", "192.168.1.1", "8.8.8.8"].sort()
   );
 
   const dns = await root.named("/L1/C1/dns");
 
   t.deepEqual(dns.systemdConfig[1], {
-    DNS: "192.168.1.11",
+    DNS: "192.168.1.1 192.168.1.11",
     FallbackDNS:
       "1.1.1.1 2606:4700:4700:0000:0000:0000:0000:1111 8.8.8.8 2001:4860:4860:0000:0000:0000:0000:8888",
     Domains: "mydomain.com",
