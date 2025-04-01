@@ -34,7 +34,7 @@ export class DHCPService extends Service {
   }
 
   async *preparePackages(dir) {
-    const name = this.owner.name;
+    const name = this.owner.owner.name;
     const packageData = {
       dir,
       sources: [new FileContentProvider(dir + "/")[Symbol.asyncIterator]()],
