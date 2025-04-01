@@ -85,7 +85,6 @@ export const ServiceTypeDefinition = {
     protocol: { type: "string", collection: false, writeable: true },
     alias: { type: "string", collection: false, writeable: true },
     type: { type: "string", collection: false, writeable: true },
-    master: { type: "boolean", collection: false, writeable: true },
     weight: { type: "number", collection: false, writeable: true },
     srvPrefix: { type: "string", collection: false, writeable: false },
     tls: { type: "string", collection: false, writeable: false },
@@ -178,10 +177,6 @@ export class Service extends Base {
     return this._type || this.name;
   }
 
-  get master() {
-    return this.owner.master;
-  }
-
   get protocol() {
     return ServiceTypes[this.type]?.protocol;
   }
@@ -203,7 +198,7 @@ export class Service extends Base {
 
   dnsRecordsForDomainName(domainName, hasSVRRecords) {
     const records = [];
-    if (this.master && this.alias) {
+    if (this.priority <= 1 && this.alias) {
       records.push(DNSRecord(this.alias, "CNAME", dnsFullName(domainName)));
     }
 

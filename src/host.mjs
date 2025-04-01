@@ -44,7 +44,6 @@ const HostTypeDefinition = {
     "machine-id": { type: "string", collection: false, writeable: true },
     distribution: { type: "string", collection: false, writeable: true },
     deployment: { type: "string", collection: false, writeable: true },
-    master: { type: "boolean", collection: false, writeable: true },
     weight: { type: "number", collection: false, writeable: true },
     serial: { type: "string", collection: false, writeable: true },
     vendor: { type: "string", collection: false, writeable: true },
@@ -67,7 +66,6 @@ export class Host extends Base {
   _provides = new Set();
   _replaces = new Set();
   _depends = new Set();
-  _master = false;
   _os;
   _distribution;
   _deployment;
@@ -253,14 +251,6 @@ export class Host extends Base {
     return this.expand(
       this.extends.reduce((a, c) => a.union(c.depends), this._depends)
     );
-  }
-
-  set master(value) {
-    this._master = value;
-  }
-
-  get master() {
-    return this._master || this.extends.find(e => e.master) ? true : false;
   }
 
   set os(value) {
