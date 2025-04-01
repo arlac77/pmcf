@@ -207,7 +207,7 @@ export class Service extends Base {
         DNSRecord(
           dnsFullName(`${this.srvPrefix}.${domainName}`),
           "SRV",
-          this.priority,
+          this.priority || 10,
           this.weight,
           this.port,
           dnsFullName(this.domainName)
