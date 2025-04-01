@@ -5,7 +5,8 @@ export const networkProperties = {
   psk: { type: "string", collection: false, writeable: true },
   metric: { type: "number", collection: false, writeable: true },
   MTU: { type: "number", collection: false, writeable: true },
-  gateway: { type: "host", collection: false, writeable: true }
+  gateway: { type: "host", collection: false, writeable: true },
+  multicastDNS: { type: "boolean", collection: false, writeable: true }
 };
 
 export const networkAddressProperties = {

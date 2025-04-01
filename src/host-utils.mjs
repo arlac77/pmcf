@@ -69,7 +69,7 @@ export async function generateNetworkDefs(host, packageData) {
             ...networkSectionExtra,
             DHCP: "no",
             DHCPServer: "no",
-            MulticastDNS: "yes",
+            MulticastDNS: ni.network.multicastDNS ? "yes" : "no",
             LinkLocalAddressing: "ipv6",
             IPv6LinkLocalAddressGenerationMode: "stable-privacy"
           }),

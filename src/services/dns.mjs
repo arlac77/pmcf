@@ -151,13 +151,6 @@ export class DNSService extends Service {
   }
 
   get systemdConfig() {
-/*    console.log([
-      ...this.findServices({
-        ...DNS_SERVICE_FILTER,
-        priority: "<10"
-      })
-    ].map((s)=>`${s.owner.name}[${s.priority}]`));
-*/
     return [
       "Resolve",
       {
@@ -171,7 +164,7 @@ export class DNSService extends Service {
         }).join(" "),
         Domains: [...this.domains].join(" "),
         DNSSEC: "no",
-        MulticastDNS: "yes",
+        MulticastDNS: this.network.multicastDNS ? "yes" : "no",
         LLMNR: "no"
       }
     ];

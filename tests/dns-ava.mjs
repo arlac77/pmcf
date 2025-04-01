@@ -12,7 +12,6 @@ test("DNS basics", async t => {
   t.deepEqual(
     dnsServices.map(s => s.rawAddress).sort(),
     ["192.168.1.1", "192.168.1.11"].sort()
-    // ["1.1.1.1", "192.168.1.1", "8.8.8.8"].sort()
   );
 
   const dns = await root.named("/L1/C1/dns");
