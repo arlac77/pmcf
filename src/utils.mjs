@@ -96,7 +96,15 @@ export function isIPv6Address(address) {
 }
 
 export function isLinkLocal(address) {
-  return address.startsWith("fe80");
+  switch (typeof address) {
+    case "string":
+      return address.startsWith("fe80");
+
+    case "bigint":
+      return ((address >> 112n) & 0xffffn) === 0xfe80n;
+  }
+
+  return false;
 }
 
 export function isLocalhost(address) {

@@ -31,7 +31,6 @@ test(nt, "fe80::/64", "fe80::/64");
 function lt(t, address, expected) {
   t.is(isLinkLocal(address), expected);
 }
-
 lt.title = (providedTitle = "isLinkLocal", address, expected) =>
   `${providedTitle} ${address} => ${expected}`.trim();
 
@@ -39,6 +38,7 @@ test(lt, "1.2.3.4", false);
 test(lt, "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f/64", true);
 test(lt, "fe80:::1e57:3eff:fe22:9a8f/64", true);
 test(lt, "fe80:::1e57:3eff:fe22:9a8f", true);
+test(lt, 0xfe800000000000001e573efffe229a8fn, true);
 
 function e6t(t, address, expected) {
   t.is(encodeIPv6(address), expected);
