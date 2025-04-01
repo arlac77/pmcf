@@ -45,7 +45,6 @@ const HostTypeDefinition = {
     distribution: { type: "string", collection: false, writeable: true },
     deployment: { type: "string", collection: false, writeable: true },
     master: { type: "boolean", collection: false, writeable: true },
-    priority: { type: "number", collection: false, writeable: true },
     weight: { type: "number", collection: false, writeable: true },
     serial: { type: "string", collection: false, writeable: true },
     vendor: { type: "string", collection: false, writeable: true },
@@ -61,7 +60,6 @@ const HostTypeDefinition = {
 };
 
 export class Host extends Base {
-  priority = 1;
   _services = [];
   _extends = [];
   _aliases = new Set();

@@ -22,6 +22,7 @@ const BaseTypeDefinition = {
       writeable: false
     },*/
     description: { type: "string", collection: false, writeable: true },
+    priority: { type: "number", collection: false, writeable: true },
     directory: { type: "string", collection: false, writeable: false },
     packaging: { type: "string", collection: false, writeable: true },
     tags: { type: "string", collection: true, writeable: true }
@@ -32,6 +33,7 @@ export class Base {
   owner;
   description;
   name;
+  _priority;
   _tags = new Set();
   _packaging = new Set();
   _directory;
@@ -311,6 +313,19 @@ export class Base {
     return this.owner?.timezone;
   }
 
+  set priority(value) {
+    this._priority = value;
+  }
+
+  get priority() {
+    if (this._priority !== undefined) {
+      return this._priority;
+    }
+    if (this.owner?.priority !== undefined) {
+      return this.owner.priority;
+    }
+  }
+
   get smtp() {
     return this.findService({ type: "smtp" });
   }
@@ -345,7 +360,6 @@ export class Base {
       ? join(this.owner.fullName, "/", this.name)
       : this.owner.fullName;
   }
-
 
   set packaging(value) {
     this._packaging.add(value);
@@ -423,7 +437,6 @@ export class Base {
 
     return object;
   }
-
 
   finalize(action) {
     if (!this._finalize) {

@@ -86,7 +86,6 @@ export const ServiceTypeDefinition = {
     alias: { type: "string", collection: false, writeable: true },
     type: { type: "string", collection: false, writeable: true },
     master: { type: "boolean", collection: false, writeable: true },
-    priority: { type: "number", collection: false, writeable: true },
     weight: { type: "number", collection: false, writeable: true },
     srvPrefix: { type: "string", collection: false, writeable: false },
     tls: { type: "string", collection: false, writeable: false },
@@ -97,7 +96,6 @@ export const ServiceTypeDefinition = {
 export class Service extends Base {
   alias;
   _weight;
-  _priority;
   _type;
   _port;
   _ipAddresses;
@@ -154,21 +152,6 @@ export class Service extends Base {
 
   get port() {
     return this._port || ServiceTypes[this.type]?.port;
-  }
-
-  set priority(value) {
-    this._priority = value;
-  }
-
-  get priority() {
-    if (this._priority !== undefined) {
-      return this._priority;
-    }
-    if (this.owner.priority !== undefined) {
-      return this.owner.priority;
-    }
-
-    return 99;
   }
 
   set weight(value) {
