@@ -34,6 +34,7 @@ export class DHCPService extends Service {
   }
 
   async *preparePackages(dir) {
+    const network = this.network;
     const name = this.owner.owner.name;
     const packageData = {
       dir,
@@ -134,7 +135,7 @@ export class DHCPService extends Service {
     const hwmap = new Map();
     const hostNames = new Set();
 
-    for await (const { networkInterface } of this.network.networkAddresses()) {
+    for await (const { networkInterface } of network.networkAddresses()) {
       if (networkInterface.hwaddr) {
         if (!hostNames.has(networkInterface.hostName)) {
           hwmap.set(networkInterface.hwaddr, networkInterface);
@@ -183,14 +184,10 @@ export class DHCPService extends Service {
             "option-data": [
               {
                 name: "routers",
-                data: "192.168.1.254"
+                data: network.gateway.rawAddress
               }
             ],
-            reservations /*: [
-              {
-                "client-id": "01:11:22:33:44:55:66",
-              }
-            ]*/
+            reservations
           }
         ],
         loggers
