@@ -5,7 +5,8 @@ import {
   writeLines,
   isIPv6Address,
   normalizeIPAddress,
-  isLinkLocal
+  isLinkLocal,
+  isLocalhost
 } from "../utils.mjs";
 import { DNSRecord, dnsFullName } from "../dns-utils.mjs";
 import { addType } from "../types.mjs";
@@ -261,15 +262,14 @@ async function generateZoneDefs(dns, location, packageData) {
       };
       configs.push(config);
 
+      zone.records.add(DNSRecord("location", "TXT", host.location.name));
+
       for (const address of host.rawAddresses) {
-        zone.records.add(
-          DNSRecord(
-            "@",
-            isIPv6Address(address) ? "AAAA" : "A",
-            normalizeIPAddress(address)
-          )
-        );
-        zone.records.add(DNSRecord("location", "TXT", host.location.name));
+        if (!isLocalhost(address)) {
+          zone.records.add(
+            DNSRecord("@", isIPv6Address(address) ? "AAAA" : "A", address)
+          );
+        }
       }
     }
   }
@@ -334,7 +334,7 @@ async function generateZoneDefs(dns, location, packageData) {
               DNSRecord(
                 dnsFullName(domainName),
                 isIPv6Address(address) ? "AAAA" : "A",
-                normalizeIPAddress(address)
+                address
               )
             );
           }

@@ -144,6 +144,10 @@ const ipv6 = {
 };
 
 function _decode(definition, address, length = definition.length) {
+  if (typeof address === "string") {
+    return address;
+  }
+
   let result = "";
   let compressed = 0;
   let shift = definition.length;

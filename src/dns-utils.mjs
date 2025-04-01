@@ -1,11 +1,29 @@
-import { asArray, asIterator } from "./utils.mjs";
+import {
+  asIterator,
+  decodeIPv6,
+  encodeIPv6,
+  normalizeIPAddress
+} from "./utils.mjs";
 
 export function dnsFullName(name) {
   return name.endsWith(".") ? name : name + ".";
 }
 
 export function DNSRecord(key, type, ...values) {
-  const pad = type === "MX" ? "        " : "";
+  let pad = "";
+
+  switch (type) {
+    case "MX":
+      pad = "        ";
+      break;
+
+    case "A":
+      values[0] = normalizeIPAddress(values[0]);
+      break;
+    case "AAAA":
+      values[0] = decodeIPv6(encodeIPv6(values[0]));
+      break;
+  }
 
   values = values.map(v =>
     typeof v === "number" ? String(v).padStart(3) + pad : v
