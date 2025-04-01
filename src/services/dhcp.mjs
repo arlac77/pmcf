@@ -73,7 +73,7 @@ export class DHCPService extends Service {
       {
         "output-options": [
           {
-            output: "systlog"
+            output: "syslog"
           }
         ],
         severity: "INFO",
