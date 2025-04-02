@@ -47,11 +47,11 @@ export class DHCPService extends Service {
       sources: [new FileContentProvider(dir + "/")[Symbol.asyncIterator]()],
       outputs: this.outputs,
       properties: {
-        name: `kea-${name}`,
+        name: `kea-${this.location.name}-${host.name}`,
         description: `kea definitions for ${this.fullName}@${name}`,
         access: "private",
         dependencies: ["kea"],
-        replaces: ["kea-SW"] // TODO remove
+        replaces: ["kea-SW",`kea-${name}`] // TODO remove
       }
     };
 

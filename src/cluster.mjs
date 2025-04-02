@@ -64,7 +64,7 @@ export class Cluster extends Host {
       new Set()
     )) {
       const host = ni.host;
-      const name = `keepalived-${host.name}`;
+      const name = `keepalived-${host.location.name}-${host.name}`;
       const packageStagingDir = join(stagingDir, name);
       const result = {
         sources: [
@@ -77,7 +77,8 @@ export class Cluster extends Host {
           name,
           description: `${this.typeName} definitions for ${this.fullName}`,
           access: "private",
-          dependencies: ["keepalived>=2.3.3"]
+          dependencies: ["keepalived>=2.3.3"],
+          replaces: [`keepalived-${host.name}`]
         }
       };
 
