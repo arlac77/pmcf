@@ -395,6 +395,14 @@ export class Host extends Base {
     return super.network;
   }
 
+  get networks() {
+    return new Set(
+      [...this.networkInterfaces.values()]
+        .filter(ni => ni._network)
+        .map(ni => ni._network)
+    );
+  }
+
   get networkInterfaces() {
     return this._networkInterfaces;
   }
