@@ -39,6 +39,9 @@ export class DHCPService extends Service {
     const network = this.network;
     const host = this.server;
     const name = host.name;
+
+    console.log("kea", host.name, network.name);
+
     const packageData = {
       dir,
       sources: [new FileContentProvider(dir + "/")[Symbol.asyncIterator]()],
@@ -54,7 +57,9 @@ export class DHCPService extends Service {
 
     const commonConfig = {
       "interfaces-config": {
-        interfaces: [...host.networkInterfaces.values()].filter(ni=>ni.kind !== 'loopback').map(ni => ni.name)
+        interfaces: [...host.networkInterfaces.values()]
+          .filter(ni => ni.kind !== "loopback")
+          .map(ni => ni.name)
       },
       "lease-database": {
         type: "memfile",
@@ -164,7 +169,7 @@ export class DHCPService extends Service {
         "option-data": [
           {
             name: "domain-name-servers",
-            data: serviceAddresses(this, {
+            data: serviceAddresses(network, {
               type: "dns",
               priority: "<10"
             }).join(",")
