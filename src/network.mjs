@@ -5,7 +5,7 @@ import { networkProperties } from "./network-support.mjs";
 
 const NetworkTypeDefinition = {
   name: "network",
-  owners: ["location", "cluster", "owner", "root"],
+  owners: ["location", "owner", "root"],
   priority: 0.8,
   extends: Owner.typeDefinition,
   properties: {
@@ -51,6 +51,18 @@ export class Network extends Owner {
     if (object instanceof Subnet) {
       object.networks.add(this);
     }
+  }
+
+  hosts() {
+    if (this.bridge) {
+      let hosts = new Set();
+      for (const network of this.bridge) {
+        hosts = hosts.union(network.directHosts());
+      }
+      return hosts;
+    }
+
+    return super.hosts();
   }
 
   get bridge() {

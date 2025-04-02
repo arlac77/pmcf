@@ -5,7 +5,7 @@ import { addType, types } from "./types.mjs";
 
 const OwnerTypeDefinition = {
   name: "owner",
-  owners: ["owner", "root"],
+  owners: ["location", "owner", "root"],
   priority: 0.9,
   extends: Base.typeDefinition,
   properties: {
@@ -137,12 +137,17 @@ export class Owner extends Base {
     return this.typeNamed("host", name) || this.typeNamed("cluster", name);
   }
 
-  hosts() {
+  directHosts() {
     let hosts = new Set();
-
     for (const type of ["host", "cluster"]) {
       hosts = hosts.union(new Set(Array.from(this.typeList(type))));
     }
+
+    return hosts;
+  }
+
+  hosts() {
+    let hosts = this.directHosts();
 
     for (const type of types.host.owners) {
       for (const object of this.typeList(type)) {
