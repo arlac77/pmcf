@@ -5,7 +5,8 @@ import {
   encodeIPv6,
   decodeIP,
   encodeIP,
-  hasWellKnownSubnet
+  hasWellKnownSubnet,
+  isLocalhost
 } from "../src/utils.mjs";
 
 function nt(t, address, expected) {
@@ -72,3 +73,18 @@ test("wellKnownSubnet", t => {
   t.true(hasWellKnownSubnet("fe80::1e57:3eff:fe22:9a8f"));
   t.false(hasWellKnownSubnet("1.2.3.4"));
 });
+
+
+function ilt(t, address, expected) {
+  t.is(isLocalhost(address), expected);
+}
+ilt.title = (providedTitle = "isLocalhost", address, expected) =>
+  `${providedTitle} ${address} => ${expected}`.trim();
+
+test(ilt, "127.0.0.1", true);
+test(ilt, "", false);
+test(ilt, undefined, false);
+test(ilt, 2, false);
+test(ilt, "1.2.3.4", false);
+test(ilt, "::1", true);
+test(ilt, 0x1n, true);
