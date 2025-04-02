@@ -282,14 +282,14 @@ async function generateZoneDefs(dns, location, packageData) {
         }
       }
     }
+  }
 
-    if (configs.length > 0) {
-      addHook(
-        packageData.properties.hooks,
-        "post_upgrade",
-        "systemctl restart named"
-      );
-    }
+  if (configs.length > 0) {
+    addHook(
+      packageData.properties.hooks,
+      "post_upgrade",
+      "systemctl try-reload-or-restart named"
+    );
   }
 
   for (const domain of dns.localDomains) {
