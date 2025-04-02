@@ -262,8 +262,8 @@ async function generateZoneDefs(dns, location, packageData) {
 
       addHook(
         packageData.properties.hooks,
-        "post_install",
-        `rm /var/lib/named/${zone.file}.jnl`
+        "post_upgrade",
+        `rm -f /var/lib/named/${zone.file}.jnl`
       );
 
       const config = {
@@ -286,7 +286,7 @@ async function generateZoneDefs(dns, location, packageData) {
     if (configs.length > 0) {
       addHook(
         packageData.properties.hooks,
-        "post_install",
+        "post_upgrade",
         "systemctl restart named"
       );
     }
