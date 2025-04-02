@@ -65,20 +65,14 @@ export const ServiceTypeDefinition = {
   owners: ["host", "cluster"],
   priority: 0.4,
   extends: Base.typeDefinition,
+  specializations: {},
   factoryFor(value) {
     const type = value.type ?? value.name;
+    const t = ServiceTypeDefinition.specializations[type];
 
-    if (type === "dns") {
+    if (t) {
       delete value.type;
-      return DNSService;
-    }
-    if (type === "ntp") {
-      delete value.type;
-      return NTPService;
-    }
-    if (type === "dhcp") {
-      delete value.type;
-      return DHCPService;
+      return t.clazz;
     }
 
     return Service;

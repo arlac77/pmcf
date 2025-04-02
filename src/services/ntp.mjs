@@ -4,6 +4,7 @@ import { ExtraSourceService, ExtraSourceServiceTypeDefinition } from "../extra-s
 
 const NTPServiceTypeDefinition = {
   name: "ntp",
+  specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
   extends: ExtraSourceServiceTypeDefinition,
   priority: 0.1,

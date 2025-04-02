@@ -3,6 +3,10 @@ export const types = {};
 export function addType(clazz) {
   const type = clazz.typeDefinition;
 
+  if(type.specializationOf) {
+    type.specializationOf.specializations[type.name] = type;
+  }
+
   types[type.name] = type;
 
   type.clazz = clazz;

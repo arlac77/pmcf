@@ -19,6 +19,7 @@ import { subnets } from "../subnet.mjs";
 
 const DNSServiceTypeDefinition = {
   name: "dns",
+  specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
   extends: ExtraSourceServiceTypeDefinition,
   priority: 0.1,

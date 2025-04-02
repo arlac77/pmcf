@@ -10,6 +10,7 @@ import { writeLines } from "../utils.mjs";
 
 const DHCPServiceTypeDefinition = {
   name: "dhcp",
+  specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
