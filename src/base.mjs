@@ -412,7 +412,7 @@ export class Base {
     switch (typeof object) {
       case "string":
         return object.replaceAll(/\$\{([^\}]*)\}/g, (match, m1) => {
-          return getAttribute(this, m1) || "${" + m1 + "}";
+          return getAttribute(this, m1) ?? "${" + m1 + "}";
         });
 
       case "object":

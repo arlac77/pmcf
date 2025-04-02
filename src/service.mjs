@@ -66,7 +66,7 @@ export const ServiceTypeDefinition = {
   priority: 0.4,
   extends: Base.typeDefinition,
   factoryFor(value) {
-    const type = value.type || value.name;
+    const type = value.type ?? value.name;
 
     if (type === "dns") {
       delete value.type;
@@ -130,15 +130,15 @@ export class Service extends Base {
   }
 
   get ipAddressOrDomainName() {
-    return this.rawAddress || this.domainName;
+    return this.rawAddress ?? this.domainName;
   }
 
   get rawAddresses() {
-    return this._ipAddresses || this.owner.rawAddresses;
+    return this._ipAddresses ?? this.owner.rawAddresses;
   }
 
   get rawAddress() {
-    return this._ipAddresses?.[0] || this.server.rawAddress;
+    return this._ipAddresses?.[0] ?? this.server.rawAddress;
   }
 
   set ipAddresses(value) {
@@ -180,7 +180,7 @@ export class Service extends Base {
   }
 
   get type() {
-    return this._type || this.name;
+    return this._type ?? this.name;
   }
 
   get protocol() {
@@ -188,7 +188,7 @@ export class Service extends Base {
   }
 
   get tls() {
-    return ServiceTypes[this.type]?.tls || false;
+    return ServiceTypes[this.type]?.tls ?? false;
   }
 
   get systemdServices() {
@@ -206,7 +206,7 @@ export class Service extends Base {
         records.push(
           DNSRecord(
             dnsFullName(
-              `_${ServiceTypes[this.type]?.type || this.type}._${
+              `_${ServiceTypes[this.type]?.type ?? this.type}._${
                 ep.protocol
               }.${domainName}`
             ),

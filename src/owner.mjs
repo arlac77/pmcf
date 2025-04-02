@@ -314,7 +314,7 @@ export class Owner extends Base {
   }
 
   get country() {
-    return this._country || this.owner?.country;
+    return this._country ?? this.owner?.country;
   }
 
   _locales = new Set();
@@ -341,7 +341,7 @@ export class Owner extends Base {
   }
 
   get timezone() {
-    return this._timezone || this.owner?.timezone;
+    return this._timezone ?? this.owner?.timezone;
   }
 
   _administratorEmail;
@@ -369,7 +369,7 @@ export class Owner extends Base {
   }
 
   get domain() {
-    return this._domain || this.owner?.domain;
+    return this._domain ?? this.owner?.domain;
   }
 
   get domains() {
