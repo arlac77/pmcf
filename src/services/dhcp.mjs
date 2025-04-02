@@ -162,6 +162,9 @@ export class DHCPService extends Service {
     const dhcp4 = {
       Dhcp4: {
         ...commonConfig,
+        "multi-threading": {
+          "enable-multi-threading": false
+        },
         "control-socket": {
           "socket-type": "unix",
           "socket-name": "/run/kea/4-ctrl-socket"
