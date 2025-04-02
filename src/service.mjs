@@ -164,7 +164,7 @@ export class Service extends Base {
   }
 
   get port() {
-    return this._port || ServiceTypes[this.type]?.endpoints[0].port;
+    return this._port ?? ServiceTypes[this.type]?.endpoints[0].port;
   }
 
   set weight(value) {
@@ -172,15 +172,7 @@ export class Service extends Base {
   }
 
   get weight() {
-    if (this._weight !== undefined) {
-      return this._weight;
-    }
-
-    if (this.owner.weight !== undefined) {
-      return this.owner.weight;
-    }
-
-    return 1;
+    return this._weight ?? this.owner.weight ?? 1;
   }
 
   set type(value) {
@@ -219,7 +211,7 @@ export class Service extends Base {
               }.${domainName}`
             ),
             "SRV",
-            this.priority === undefined ? 10 : this.priority,
+            this.priority ?? 10
             this.weight,
             ep.port,
             dnsFullName(this.domainName)
@@ -247,7 +239,7 @@ export class Service extends Base {
           DNSRecord(
             dnsFullName(domainName),
             dnsRecord.type,
-            this.priority === undefined ? 10 : this.priority,
+            this.priority ?? 10,
             ".",
             dnsFormatParameters(parameters)
           )

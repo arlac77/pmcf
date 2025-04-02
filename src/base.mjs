@@ -289,11 +289,11 @@ export class Base {
   }
 
   get domains() {
-    return this.owner?.domains || new Set();
+    return this.owner?.domains ?? new Set();
   }
 
   get localDomains() {
-    return this.owner?.localDomains || new Set();
+    return this.owner?.localDomains ?? new Set();
   }
 
   get administratorEmail() {
@@ -317,12 +317,7 @@ export class Base {
   }
 
   get priority() {
-    if (this._priority !== undefined) {
-      return this._priority;
-    }
-    if (this.owner?.priority !== undefined) {
-      return this.owner.priority;
-    }
+    return this._priority ?? this.owner?.priority;
   }
 
   get smtp() {
@@ -351,7 +346,7 @@ export class Base {
   }
 
   get directory() {
-    return this._directory || join(this.owner.directory, this.name);
+    return this._directory ?? join(this.owner.directory, this.name);
   }
 
   get fullName() {

@@ -138,7 +138,7 @@ export class Host extends Base {
   }
 
   get serial() {
-    return this._serial || this.extends.find(e => e.serial)?.serial;
+    return this._serial ?? this.extends.find(e => e.serial)?.serial;
   }
 
   set deployment(value) {
@@ -146,7 +146,7 @@ export class Host extends Base {
   }
 
   get deployment() {
-    return this._deployment || this.extends.find(e => e.deployment)?.deployment;
+    return this._deployment ?? this.extends.find(e => e.deployment)?.deployment;
   }
 
   set chassis(value) {
@@ -154,7 +154,7 @@ export class Host extends Base {
   }
 
   get chassis() {
-    return this._chassis || this.extends.find(e => e.chassis)?.chassis;
+    return this._chassis ?? this.extends.find(e => e.chassis)?.chassis;
   }
 
   set vendor(value) {
@@ -162,7 +162,7 @@ export class Host extends Base {
   }
 
   get vendor() {
-    return this._vendor || this.extends.find(e => e.vendor)?.vendor;
+    return this._vendor ?? this.extends.find(e => e.vendor)?.vendor;
   }
 
   set architecture(value) {
@@ -171,7 +171,7 @@ export class Host extends Base {
 
   get architecture() {
     return (
-      this._architecture || this.extends.find(e => e.architecture)?.architecture
+      this._architecture ?? this.extends.find(e => e.architecture)?.architecture
     );
   }
 
@@ -258,7 +258,7 @@ export class Host extends Base {
   }
 
   get os() {
-    return this._os || this.extends.find(e => e.os)?.os;
+    return this._os ?? this.extends.find(e => e.os)?.os;
   }
 
   set distribution(value) {
@@ -267,7 +267,7 @@ export class Host extends Base {
 
   get distribution() {
     return (
-      this._distribution || this.extends.find(e => e.distribution)?.distribution
+      this._distribution ?? this.extends.find(e => e.distribution)?.distribution
     );
   }
 
@@ -580,7 +580,7 @@ export class NetworkInterface extends Base {
   }
 
   get hostName() {
-    return this._hostName || this.host.hostName;
+    return this._hostName ?? this.host.hostName;
   }
 
   set hostName(value) {
@@ -602,7 +602,7 @@ export class NetworkInterface extends Base {
   }
 
   get network() {
-    return this._network || this.host.network;
+    return this._network ?? this.host.network;
   }
 
   set network(network) {
@@ -614,7 +614,7 @@ export class NetworkInterface extends Base {
   }
 
   get scope() {
-    return this._scope || this.network?.scope || "global";
+    return this._scope ?? this.network?.scope ?? "global";
   }
 
   set metric(value) {
@@ -622,7 +622,7 @@ export class NetworkInterface extends Base {
   }
 
   get metric() {
-    return this._metric || this.network?.metric || 1004;
+    return this._metric ?? this.network?.metric ?? 1004;
   }
 
   set ssid(value) {
@@ -630,7 +630,7 @@ export class NetworkInterface extends Base {
   }
 
   get ssid() {
-    return this._ssid || this.network?.ssid;
+    return this._ssid ?? this.network?.ssid;
   }
 
   set psk(value) {
@@ -638,7 +638,7 @@ export class NetworkInterface extends Base {
   }
 
   get psk() {
-    return this._psk || this.network?.psk;
+    return this._psk ?? this.network?.psk;
   }
 
   set kind(value) {
@@ -646,6 +646,6 @@ export class NetworkInterface extends Base {
   }
 
   get kind() {
-    return this._kind || this.network?.kind;
+    return this._kind ?? this.network?.kind;
   }
 }
