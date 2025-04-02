@@ -8,7 +8,6 @@ import {
   dnsFormatParameters,
   dnsMergeParameters
 } from "./dns-utils.mjs";
-import { DHCPService, DNSService, NTPService } from "./module.mjs";
 
 const ServiceTypes = {
   ntp: { endpoints: [{ protocol: "udp", port: 123, tls: false }] },
@@ -47,7 +46,7 @@ const ServiceTypes = {
   smb: { endpoints: [{ protocol: "tcp", port: 445, tls: false }] },
   timemachine: {
     type: "adisk",
-    endpoints: [{ protocol: "tcp", tls: false }],
+    endpoints: [{ protocol: "tcp", port: 445, tls: false }],
     dnsRecord: {
       type: "TXT",
       parameters: {
@@ -149,13 +148,13 @@ export class Service extends Base {
   }
 
   get endpoints() {
-    if (this._port !== undefined) {
+    if (!ServiceTypes[this.type]) {
       return [
-        { protocol: this.protocol, address: this.rawAddress, port: this._port }
+        { address: this.rawAddress, port: this._port, tls: false }
       ];
     }
 
-    return ServiceTypes[this.type]?.endpoints || [];
+    return ServiceTypes[this.type].endpoints;
   }
 
   set port(value) {
@@ -163,7 +162,15 @@ export class Service extends Base {
   }
 
   get port() {
-    return this._port ?? ServiceTypes[this.type]?.endpoints[0].port;
+    return this.endpoints[0].port;
+  }
+
+  get protocol() {
+    return this.endpoints[0].protocol;
+  }
+
+  get tls() {
+    return this.endpoints[0].tls;
   }
 
   set weight(value) {
@@ -180,14 +187,6 @@ export class Service extends Base {
 
   get type() {
     return this._type ?? this.name;
-  }
-
-  get protocol() {
-    return ServiceTypes[this.type]?.endpoints[0].protocol;
-  }
-
-  get tls() {
-    return ServiceTypes[this.type]?.tls ?? false;
   }
 
   get systemdServices() {
