@@ -36,23 +36,24 @@ export class DHCPService extends Service {
 
   async *preparePackages(dir) {
     const network = this.network;
-    const name = this.owner.owner.name;
+    const host = this.server;
+    const name = host.name;
     const packageData = {
       dir,
       sources: [new FileContentProvider(dir + "/")[Symbol.asyncIterator]()],
       outputs: this.outputs,
       properties: {
         name: `kea-${name}`,
-        description: `kea definitions for ${this.fullName}`,
+        description: `kea definitions for ${this.fullName}@${name}`,
         access: "private",
         dependencies: ["kea"],
-        replaces: ["kea-sw"] // TODO remove
+        replaces: ["kea-SW"] // TODO remove
       }
     };
 
     const commonConfig = {
       "interfaces-config": {
-        interfaces: ["end0"]
+        interfaces: [...host.networkInterfaces.values()].filter(ni=>ni.kind !== 'loopback').map(ni => ni.name)
       },
       "lease-database": {
         type: "memfile",
