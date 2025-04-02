@@ -51,7 +51,7 @@ export class DHCPService extends Service {
         description: `kea definitions for ${this.fullName}@${name}`,
         access: "private",
         dependencies: ["kea"],
-        replaces: ["kea-SW",`kea-${name}`] // TODO remove
+        replaces: [`kea-${name}`] // TODO remove
       }
     };
 
