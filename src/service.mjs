@@ -211,7 +211,7 @@ export class Service extends Base {
               }.${domainName}`
             ),
             "SRV",
-            this.priority ?? 10
+            this.priority ?? 10,
             this.weight,
             ep.port,
             dnsFullName(this.domainName)
