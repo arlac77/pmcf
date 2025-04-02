@@ -137,28 +137,20 @@ export class Owner extends Base {
     return this.typeNamed("host", name) || this.typeNamed("cluster", name);
   }
 
-  *hosts() {
-    const hosts = new Set();
+  hosts() {
+    let hosts = new Set();
 
     for (const type of ["host", "cluster"]) {
-      for (const host of this.typeList(type)) {
-        if (!hosts.has(host)) {
-          hosts.add(host);
-          yield host;
-        }
-      }
+      hosts = hosts.union(new Set(Array.from(this.typeList(type))));
     }
 
     for (const type of types.host.owners) {
       for (const object of this.typeList(type)) {
-        for (const host of object.hosts()) {
-          if (!hosts.has(host)) {
-            hosts.add(host);
-            yield host;
-          }
-        }
+        hosts = hosts.union(object.hosts());
       }
     }
+
+    return hosts;
   }
 
   networkNamed(name) {
@@ -179,7 +171,7 @@ export class Owner extends Base {
     }
     yield* this.typeList("subnet");
 
-   /* for (const network of this.networks()) {
+    /* for (const network of this.networks()) {
       yield* network.subnets();
     }*/
   }
