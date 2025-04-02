@@ -385,6 +385,16 @@ export class Host extends Base {
     }
   }
 
+  get network() {
+    for (const ni of this.networkInterfaces.values()) {
+      if (ni._kind !== "loopback" && ni._network) {
+        return ni._network;
+      }
+    }
+
+    return super.network;
+  }
+
   get networkInterfaces() {
     return this._networkInterfaces;
   }
