@@ -93,6 +93,12 @@ export class Base {
   read(data, type) {
     const assign = (property, value) => {
       if (value !== undefined) {
+        if (property.values) {
+          if (property.values.indexOf(value) < 0) {
+            this.error(property.name, "unknown value", value, property.values);
+          }
+        }
+
         if (property.collection) {
           const current = this[property.name];
 
@@ -121,16 +127,6 @@ export class Base {
               break;
           }
         } else {
-          if (property.values) {
-            if (property.values.indexOf(value) < 0) {
-              this.error(
-                property.name,
-                "unknown value",
-                value,
-                property.values
-              );
-            }
-          }
           this[property.name] = value;
         }
       }
