@@ -31,7 +31,7 @@ export function DNSRecord(key, type, ...values) {
 
   return {
     key,
-    toString: (maxKeyLength, ttl) =>
+    toString: (maxKeyLength = 0, ttl = "1W") =>
       `${key.padEnd(maxKeyLength, " ")} ${ttl} IN ${type.padEnd(
         5,
         " "

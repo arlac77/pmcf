@@ -11,40 +11,43 @@ import {
 import { DHCPService, DNSService, NTPService } from "./module.mjs";
 
 const ServiceTypes = {
-  ntp: { protocol: "udp", port: 123, tls: false },
-  dns: { protocol: "udp", port: 53, tls: false },
-  ldap: { protocol: "tcp", port: 389, tls: false },
-  ldaps: { protocol: "tcp", port: 636, tls: true },
-  http: { protocol: "tcp", port: 80, tls: false },
+  ntp: { endpoints: [{ protocol: "udp", port: 123, tls: false }] },
+  dns: { endpoints: [{ protocol: "udp", port: 53, tls: false }] },
+  ldap: { endpoints: [{ protocol: "tcp", port: 389, tls: false }] },
+  ldaps: { endpoints: [{ protocol: "tcp", port: 636, tls: true }] },
+  http: { endpoints: [{ protocol: "tcp", port: 80, tls: false }] },
   https: {
-    protocol: "tcp",
-    port: 443,
-    tls: true,
+    endpoints: [{ protocol: "tcp", port: 443, tls: true }],
     dnsRecord: { type: "HTTPS", parameters: { alpn: "h2" } }
   },
   http3: {
     type: "https",
-    protocol: "tcp",
-    port: 443,
-    tls: true,
+    endpoints: [{ protocol: "tcp", port: 443, tls: true }],
     dnsRecord: {
       type: "HTTPS",
       parameters: { "no-default-alpn": undefined, alpn: "h3" }
     }
   },
-  rtsp: { protocol: "tcp", port: 554, tls: false },
-  smtp: { protocol: "tcp", port: 25, tls: false, dnsRecord: { type: "MX" } },
-  ssh: { protocol: "tcp", port: 22, tls: false },
-  imap: { protocol: "tcp", port: 143, tls: false },
-  imaps: { protocol: "tcp", port: 993, tls: true },
-  dhcp: { port: 547, tls: false },
-  "dhcpv6-client": { port: 546, tls: false },
-  "dhcpv6-server": { port: 547, tls: false },
-  smb: { protocol: "tcp", port: 445, tls: false },
+  rtsp: { endpoints: [{ protocol: "tcp", port: 554, tls: false }] },
+  smtp: {
+    endpoints: [{ protocol: "tcp", port: 25, tls: false }],
+    dnsRecord: { type: "MX" }
+  },
+  ssh: { endpoints: [{ protocol: "tcp", port: 22, tls: false }] },
+  imap: { endpoints: [{ protocol: "tcp", port: 143, tls: false }] },
+  imaps: { endpoints: [{ protocol: "tcp", port: 993, tls: true }] },
+  dhcp: { endpoints: [{ port: 547, tls: false }] },
+  "dhcpv6-client": {
+    endpoints: [
+      { protocol: "tcp", port: 546, tls: false },
+      { protocol: "udp", port: 546, tls: false }
+    ]
+  },
+  "dhcpv6-server": { endpoints: [{ port: 547, tls: false }] },
+  smb: { endpoints: [{ protocol: "tcp", port: 445, tls: false }] },
   timemachine: {
     type: "adisk",
-    protocol: "tcp",
-    tls: false,
+    endpoints: [{ protocol: "tcp", tls: false }],
     dnsRecord: {
       type: "TXT",
       parameters: {
@@ -88,7 +91,6 @@ export const ServiceTypeDefinition = {
     alias: { type: "string", collection: false, writeable: true },
     type: { type: "string", collection: false, writeable: true },
     weight: { type: "number", collection: false, writeable: true },
-    srvPrefix: { type: "string", collection: false, writeable: false },
     tls: { type: "string", collection: false, writeable: false },
     systemd: { type: "string", collection: true, writeable: true }
   }
@@ -147,19 +149,22 @@ export class Service extends Base {
     return this.rawAddresses.map(a => `${a}:${this.port}`);
   }
 
-  /*
-  get endpoints()
-  {
-    return [ { protocol: this.protocol,  }];
+  get endpoints() {
+    if (this._port !== undefined) {
+      return [
+        { protocol: this.protocol, address: this.rawAddress, port: this._port }
+      ];
+    }
+
+    return ServiceTypes[this.type]?.endpoints || [];
   }
-*/
 
   set port(value) {
     this._port = value;
   }
 
   get port() {
-    return this._port || ServiceTypes[this.type]?.port;
+    return this._port || ServiceTypes[this.type]?.endpoints[0].port;
   }
 
   set weight(value) {
@@ -187,7 +192,7 @@ export class Service extends Base {
   }
 
   get protocol() {
-    return ServiceTypes[this.type]?.protocol;
+    return ServiceTypes[this.type]?.endpoints[0].protocol;
   }
 
   get tls() {
@@ -198,30 +203,29 @@ export class Service extends Base {
     return this._systemd;
   }
 
-  get srvPrefix() {
-    const st = ServiceTypes[this.type];
-    if (st?.protocol) {
-      return `_${st.type || this.type}._${st.protocol}`;
-    }
-  }
-
   dnsRecordsForDomainName(domainName, hasSVRRecords) {
     const records = [];
     if (this.priority <= 1 && this.alias) {
       records.push(DNSRecord(this.alias, "CNAME", dnsFullName(domainName)));
     }
 
-    if (hasSVRRecords && this.srvPrefix) {
-      records.push(
-        DNSRecord(
-          dnsFullName(`${this.srvPrefix}.${domainName}`),
-          "SRV",
-          this.priority || 10,
-          this.weight,
-          this.port,
-          dnsFullName(this.domainName)
-        )
-      );
+    if (hasSVRRecords) {
+      for (const ep of this.endpoints.filter(e => e.protocol)) {
+        records.push(
+          DNSRecord(
+            dnsFullName(
+              `_${ServiceTypes[this.type]?.type || this.type}._${
+                ep.protocol
+              }.${domainName}`
+            ),
+            "SRV",
+            this.priority === undefined ? 10 : this.priority,
+            this.weight,
+            ep.port,
+            dnsFullName(this.domainName)
+          )
+        );
+      }
     }
 
     const dnsRecord = ServiceTypes[this.type]?.dnsRecord;
@@ -243,7 +247,7 @@ export class Service extends Base {
           DNSRecord(
             dnsFullName(domainName),
             dnsRecord.type,
-            this.priority || 10,
+            this.priority === undefined ? 10 : this.priority,
             ".",
             dnsFormatParameters(parameters)
           )
