@@ -40,15 +40,30 @@ const HostTypeDefinition = {
     },
     services: { type: "service", collection: true, writeable: true },
     aliases: { type: "string", collection: true, writeable: true },
-    os: { type: "string", collection: false, writeable: true },
+    os: {
+      type: "string",
+      collection: false,
+      writeable: true,
+      values: ["osx", "windows", "linux"]
+    },
     "machine-id": { type: "string", collection: false, writeable: true },
     distribution: { type: "string", collection: false, writeable: true },
-    deployment: { type: "string", collection: false, writeable: true },
+    deployment: {
+      type: "string",
+      collection: false,
+      writeable: true,
+      values: ["production", "development"]
+    },
     weight: { type: "number", collection: false, writeable: true },
     serial: { type: "string", collection: false, writeable: true },
     vendor: { type: "string", collection: false, writeable: true },
     chassis: { type: "string", collection: false, writeable: true },
-    architecture: { type: "string", collection: false, writeable: true },
+    architecture: {
+      type: "string",
+      collection: false,
+      writeable: true,
+      values: ["x86", "aarch64", "armv7"]
+    },
     replaces: { type: "string", collection: true, writeable: true },
     depends: { type: "string", collection: true, writeable: true },
     provides: { type: "string", collection: true, writeable: true },
@@ -106,8 +121,7 @@ export class Host extends Base {
 
     for (const [name, ni] of host.networkInterfaces) {
       if (ni.isTemplate) {
-      }
-      else {
+      } else {
         let present = this._networkInterfaces.get(name);
         if (!present) {
           present = ni.forOwner(this);
@@ -499,8 +513,8 @@ export class NetworkInterface extends Base {
   }
 
   matches(other) {
-    if(this.isTemplate) {
-      const name = this.name.replace('*','');
+    if (this.isTemplate) {
+      const name = this.name.replace("*", "");
       return name.length === 0 || other.name.indexOf(name) >= 0;
     }
 

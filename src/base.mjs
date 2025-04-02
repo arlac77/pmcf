@@ -121,6 +121,16 @@ export class Base {
               break;
           }
         } else {
+          if (property.values) {
+            if (property.values.indexOf(value) < 0) {
+              this.error(
+                property.name,
+                "unknown value",
+                value,
+                property.values
+              );
+            }
+          }
           this[property.name] = value;
         }
       }

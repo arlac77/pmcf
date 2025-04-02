@@ -87,7 +87,12 @@ export const ServiceTypeDefinition = {
     ...networkAddressProperties,
     ipAddresses: { type: "string", collection: true, writeable: true },
     port: { type: "number", collection: false, writeable: true },
-    protocol: { type: "string", collection: false, writeable: true },
+    protocol: {
+      type: "string",
+      collection: false,
+      writeable: true,
+      values: ["tcp", "udp"]
+    },
     alias: { type: "string", collection: false, writeable: true },
     type: { type: "string", collection: false, writeable: true },
     weight: { type: "number", collection: false, writeable: true },

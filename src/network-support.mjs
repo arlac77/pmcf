@@ -1,6 +1,16 @@
 export const networkProperties = {
-  scope: { type: "string", collection: false, writeable: true },
-  kind: { type: "string", collection: false, writeable: true },
+  scope: {
+    type: "string",
+    collection: false,
+    writeable: true,
+    values: ["global", "site", "link", "local"]
+  },
+  kind: {
+    type: "string",
+    collection: false,
+    writeable: true,
+    values: ["loopback", "ethernet", "wlan", "wireguard", "fiber", "dsl"]
+  },
   ssid: { type: "string", collection: false, writeable: true },
   psk: { type: "string", collection: false, writeable: true },
   metric: { type: "number", collection: false, writeable: true },
