@@ -50,8 +50,7 @@ export class DHCPService extends Service {
         name: `kea-${this.location.name}-${host.name}`,
         description: `kea definitions for ${this.fullName}@${name}`,
         access: "private",
-        dependencies: ["kea"],
-        replaces: [`kea-${name}`] // TODO remove
+        dependencies: ["kea>=2.6.1"]
       }
     };
 
