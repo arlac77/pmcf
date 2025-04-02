@@ -16,6 +16,7 @@ import {
   ExtraSourceServiceTypeDefinition
 } from "../extra-source-service.mjs";
 import { subnets } from "../subnet.mjs";
+import { addHook } from "../hooks.mjs";
 
 const DNSServiceTypeDefinition = {
   name: "dns",
@@ -202,7 +203,8 @@ export class DNSService extends ExtraSourceService {
       description: `zone definitions for ${location.fullName}`,
       dependencies: ["mf-named"],
       replaces: ["mf-named-zones"],
-      access: "private"
+      access: "private",
+      hooks: {}
     };
 
     packageData.sources = [
@@ -257,6 +259,13 @@ async function generateZoneDefs(dns, location, packageData) {
         file: `FOREIGN/${domain}.zone`,
         records: new Set([SOARecord, NSRecord])
       };
+
+      addHook(
+        packageData.properties.hooks,
+        "post_install",
+        `rm /var/lib/named/${zone.file}.jnl`
+      );
+
       const config = {
         name: `${domain}.zone.conf`,
         zones: [zone]
@@ -272,6 +281,14 @@ async function generateZoneDefs(dns, location, packageData) {
           );
         }
       }
+    }
+
+    if (configs.length > 0) {
+      addHook(
+        packageData.properties.hooks,
+        "post_install",
+        "systemctl restart named"
+      );
     }
   }
 
