@@ -63,7 +63,7 @@ export class DHCPService extends Service {
       "interfaces-config": {
         interfaces: [...host.networkInterfaces.values()]
           .filter(ni => ni.kind !== "loopback")
-          .map(ni => ni.name)
+          .map(ni => `${ni.name}/${ni.rawAddress}`)
       },
       "lease-database": {
         type: "memfile",
