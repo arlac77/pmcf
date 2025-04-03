@@ -42,6 +42,11 @@ export class DHCPService extends Service {
 
     console.log("kea", host.name, network.name);
 
+    const dnsServerAddreses = serviceAddresses(network, {
+      type: "dns",
+      priority: "<10"
+    });
+
     const packageData = {
       dir,
       sources: [new FileContentProvider(dir + "/")[Symbol.asyncIterator]()],
@@ -111,6 +116,16 @@ export class DHCPService extends Service {
       }
     };
 
+    const dnsServersSlot = domains =>
+      domains.map(domain => {
+        return {
+          name: domain,
+          "dns-servers": dnsServerAddreses.map(address => {
+            return { "ip-address": address };
+          })
+        };
+      });
+
     const ddns = {
       DhcpDdns: {
         "ip-address": "127.0.0.1",
@@ -120,8 +135,14 @@ export class DHCPService extends Service {
           "socket-name": "/run/kea/ddns-ctrl-socket"
         },
         "tsig-keys": [],
-        "forward-ddns": {},
-        "reverse-ddns": {},
+        "forward-ddns": {
+          "ddns-domains": dnsServersSlot([...this.domains])
+        },
+        /*
+        "reverse-ddns": {
+          "ddns-domains": dnsSlot()
+        },
+        */
         loggers
       }
     };
@@ -171,10 +192,7 @@ export class DHCPService extends Service {
         "option-data": [
           {
             name: "domain-name-servers",
-            data: serviceAddresses(network, {
-              type: "dns",
-              priority: "<10"
-            }).join(",")
+            data: dnsServerAddreses.join(",")
           },
           {
             name: "domain-search",

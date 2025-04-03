@@ -4,11 +4,10 @@ import { FileContentProvider } from "npm-pkgbuild";
 import {
   writeLines,
   isIPv6Address,
-  normalizeIPAddress,
   isLinkLocal,
   isLocalhost
 } from "../utils.mjs";
-import { DNSRecord, dnsFullName } from "../dns-utils.mjs";
+import { DNSRecord, dnsFullName, reverseArpaAddress } from "../dns-utils.mjs";
 import { addType } from "../types.mjs";
 import { ServiceTypeDefinition, serviceAddresses } from "../service.mjs";
 import {
@@ -456,23 +455,4 @@ async function generateZoneDefs(dns, location, packageData) {
       content
     );
   }
-}
-
-export function reverseAddress(address) {
-  if (isIPv6Address(address)) {
-    return normalizeIPAddress(address)
-      .replaceAll(":", "")
-      .split("")
-      .reverse()
-      .join(".");
-  }
-
-  return address.split(".").reverse().join(".");
-}
-
-export function reverseArpaAddress(address) {
-  return (
-    reverseAddress(address) +
-    (isIPv6Address(address) ? ".ip6.arpa" : ".in-addr.arpa")
-  );
 }

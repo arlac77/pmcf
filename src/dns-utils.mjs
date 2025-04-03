@@ -2,6 +2,7 @@ import {
   asIterator,
   decodeIPv6,
   encodeIPv6,
+  isIPv6Address,
   normalizeIPAddress
 } from "./utils.mjs";
 
@@ -56,5 +57,24 @@ export function dnsMergeParameters(a, b) {
       key,
       new Set(asIterator(a[key])).union(new Set(asIterator(b[key])))
     ])
+  );
+}
+
+export function reverseAddress(address) {
+  if (isIPv6Address(address)) {
+    return normalizeIPAddress(address)
+      .replaceAll(":", "")
+      .split("")
+      .reverse()
+      .join(".");
+  }
+
+  return address.split(".").reverse().join(".");
+}
+
+export function reverseArpaAddress(address) {
+  return (
+    reverseAddress(address) +
+    (isIPv6Address(address) ? ".ip6.arpa" : ".in-addr.arpa")
   );
 }
