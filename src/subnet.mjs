@@ -61,10 +61,24 @@ export class Subnet extends Base {
     return isIPv6Address(this.address);
   }
 
-  get addressRange()
-  {
+  get addressRange() {
     const l = this.prefixLength;
-    return l === 24 ? [this.prefix + '.0', this.prefix + '.255'] : [this.prefix + '.0.0', this.prefix + '.255.255']
+    return l === 24
+      ? [this.prefix + ".0", this.prefix + ".255"]
+      : [this.prefix + ".0.0", this.prefix + ".255.255"];
+  }
+
+  get longPrefix() {
+    const prefix = this.prefix;
+
+    switch (this.prefixLength) {
+      case 24:
+        return prefix + ".0";
+      case 16:
+        return prefix + ".0.0";
+    }
+
+    return prefix;
   }
 
   get prefix() {
@@ -81,6 +95,10 @@ export class Subnet extends Base {
 
   get address() {
     return this.name;
+  }
+
+  get longAddress() {
+    return `${this.longPrefix}/${this.prefixLength}`;
   }
 
   _traverse(...args) {

@@ -49,6 +49,8 @@ test("Subnet ipv4", t => {
   const s1 = new Subnet(root, "10.0.0.77/16");
 
   t.is(s1.name, "10.0/16");
+  t.is(s1.address, "10.0/16");
+  t.is(s1.longAddress, "10.0.0.0/16");
   t.is(s1.prefixLength, 16);
   t.deepEqual(s1.addressRange, ["10.0.0.0", "10.0.255.255"]);
 

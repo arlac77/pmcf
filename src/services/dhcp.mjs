@@ -201,7 +201,7 @@ export class DHCPService extends Service {
           .map((subnet, index) => {
             return {
               id: index + 1,
-              subnet: subnet.address,
+              subnet: subnet.longAddress,
               pools: [{ pool: subnet.addressRange.join(" - ") }],
               "option-data": [
                 {
