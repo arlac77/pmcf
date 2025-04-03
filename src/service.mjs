@@ -89,7 +89,12 @@ export const ServiceTypeDefinition = {
     alias: { type: "string", collection: false, writeable: true },
     type: { type: "string", collection: false, writeable: true },
     weight: { type: "number", collection: false, writeable: true, default: 1 },
-    tls: { type: "string", collection: false, writeable: false, default: false },
+    tls: {
+      type: "string",
+      collection: false,
+      writeable: false,
+      default: false
+    },
     systemd: { type: "string", collection: true, writeable: true }
   }
 };
@@ -149,12 +154,12 @@ export class Service extends Base {
 
   get endpoints() {
     if (!ServiceTypes[this.type]) {
-      return [
-        { address: this.rawAddress, port: this._port, tls: false }
-      ];
+      return [{ address: this.rawAddress, port: this._port, tls: false }];
     }
 
-    return ServiceTypes[this.type].endpoints;
+    return ServiceTypes[this.type].endpoints.map(e =>
+      Object.assign({ address: this.rawAddress }, e)
+    );
   }
 
   set port(value) {
