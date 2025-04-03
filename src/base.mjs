@@ -274,6 +274,32 @@ export class Base {
     return this.constructor.typeDefinition.name;
   }
 
+  get extends() {
+    return [];
+  }
+
+  _extendedProperty(propertyName, seen) {
+    if (!seen.has(this)) {
+      seen.add(this);
+      for (const e of this.extends) {
+        const value =
+          e[propertyName] ?? e._extendedProperty(propertyName, seen);
+        if (value !== undefined) {
+          return value;
+        }
+      }
+    }
+  }
+
+  extendedProperty(propertyName) {
+    const value = this[propertyName];
+    if (value !== undefined) {
+      return value;
+    }
+
+    return this._extendedProperty(propertyName, new Set());
+  }
+
   get root() {
     return this.owner.root;
   }

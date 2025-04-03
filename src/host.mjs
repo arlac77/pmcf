@@ -107,9 +107,6 @@ export class Host extends Base {
     if (data.extends) {
       this.finalize(() => {
         for (const host of this.extends) {
-          if (host === this) {
-            this.error("Cant extend myself");
-          }
           host.execFinalize();
           this._applyExtends(host);
         }
@@ -156,7 +153,7 @@ export class Host extends Base {
   }
 
   get serial() {
-    return this._serial ?? this.extends.find(e => e.serial)?.serial;
+    return this.extendedProperty("_serial");
   }
 
   set deployment(value) {
@@ -164,7 +161,7 @@ export class Host extends Base {
   }
 
   get deployment() {
-    return this._deployment ?? this.extends.find(e => e.deployment)?.deployment;
+    return this.extendedProperty("_deployment");
   }
 
   set chassis(value) {
@@ -172,7 +169,7 @@ export class Host extends Base {
   }
 
   get chassis() {
-    return this._chassis ?? this.extends.find(e => e.chassis)?.chassis;
+    return this.extendedProperty("_chassis");
   }
 
   set vendor(value) {
@@ -180,7 +177,7 @@ export class Host extends Base {
   }
 
   get vendor() {
-    return this._vendor ?? this.extends.find(e => e.vendor)?.vendor;
+    return this.extendedProperty("_vendor");
   }
 
   set architecture(value) {
@@ -188,9 +185,7 @@ export class Host extends Base {
   }
 
   get architecture() {
-    return (
-      this._architecture ?? this.extends.find(e => e.architecture)?.architecture
-    );
+    return this.extendedProperty("_architecture");
   }
 
   get derivedPackaging() {
@@ -276,7 +271,7 @@ export class Host extends Base {
   }
 
   get os() {
-    return this._os ?? this.extends.find(e => e.os)?.os;
+    return this.extendedProperty("_os");
   }
 
   set distribution(value) {
@@ -284,9 +279,7 @@ export class Host extends Base {
   }
 
   get distribution() {
-    return (
-      this._distribution ?? this.extends.find(e => e.distribution)?.distribution
-    );
+    return this.extendedProperty("_distribution");
   }
 
   get modelName() {
@@ -522,7 +515,8 @@ export class NetworkInterface extends Base {
   _kind;
   _hostName;
   _hwaddr;
-  extends = [];
+  _class;
+  _extends = [];
   arpbridge;
 
   constructor(owner, data) {
@@ -616,7 +610,7 @@ export class NetworkInterface extends Base {
   }
 
   get hostName() {
-    return this._hostName ?? this.host.hostName;
+    return this.extendedProperty("_hostName") ?? this.host.hostName;
   }
 
   set hostName(value) {
@@ -637,14 +631,16 @@ export class NetworkInterface extends Base {
     return this;
   }
 
-  extendedProperty(name) {
-    return this.extends.find(i => i[name])?.[name];
+  set extends(value) {
+    this._extends.push(value);
+  }
+
+  get extends() {
+    return this._extends;
   }
 
   get network() {
-    return (
-      this._network ?? this.extendedProperty("_network") ?? this.host.network
-    );
+    return this.extendedProperty("_network") ?? this.host.network;
   }
 
   set network(network) {
@@ -656,12 +652,7 @@ export class NetworkInterface extends Base {
   }
 
   get scope() {
-    return (
-      this._scope ??
-      this.extendedProperty("_scope") ??
-      this.network?.scope ??
-      "global"
-    );
+    return this.extendedProperty("_scope") ?? this.network?.scope ?? "global";
   }
 
   set hwaddr(value) {
@@ -669,7 +660,7 @@ export class NetworkInterface extends Base {
   }
 
   get hwaddr() {
-    return this._hwaddr ?? this.extendedProperty("_hwaddr");
+    return this.extendedProperty("_hwaddr");
   }
 
   set metric(value) {
@@ -677,12 +668,15 @@ export class NetworkInterface extends Base {
   }
 
   get metric() {
-    return (
-      this._metric ??
-      this.extendedProperty("_metric") ??
-      this.network?.metric ??
-      1004
-    );
+    return this.extendedProperty("_metric") ?? this.network?.metric ?? 1004;
+  }
+
+  set class(value) {
+    this._class = value;
+  }
+
+  get class() {
+    return this.extendedProperty("_class") ?? this.network?.class;
   }
 
   set ssid(value) {
@@ -690,7 +684,7 @@ export class NetworkInterface extends Base {
   }
 
   get ssid() {
-    return this._ssid ?? this.extendedProperty("_ssid") ?? this.network?.ssid;
+    return this.extendedProperty("_ssid") ?? this.network?.ssid;
   }
 
   set psk(value) {
@@ -698,7 +692,7 @@ export class NetworkInterface extends Base {
   }
 
   get psk() {
-    return this._psk ?? this.extendedProperty("_psk") ?? this.network?.psk;
+    return this.extendedProperty("_psk") ?? this.network?.psk;
   }
 
   set kind(value) {
@@ -706,8 +700,6 @@ export class NetworkInterface extends Base {
   }
 
   get kind() {
-    return (
-      this._kind ?? this.extendedProperty("_kind") ?? this.network?.kind
-    );
+    return this.extendedProperty("_kind") ?? this.network?.kind;
   }
 }

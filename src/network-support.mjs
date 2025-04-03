@@ -5,6 +5,12 @@ export const networkProperties = {
     writeable: true,
     values: ["global", "site", "link", "host"]
   },
+  class: {
+    type: "string",
+    collection: false,
+    writeable: true,
+    values: ["10GBASE-T", "1000BASE-T", "100BASE-T", "10BASE-T"]
+  },
   kind: {
     type: "string",
     collection: false,

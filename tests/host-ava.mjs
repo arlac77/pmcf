@@ -64,6 +64,7 @@ test("Host extends", t => {
     depends: "dpkge2",
     replaces: "rpkge2"
   });
+
   const h1 = new Host(owner, {
     name: "h1",
     extends: e2,
@@ -74,13 +75,13 @@ test("Host extends", t => {
   });
 
   t.deepEqual([...h1.aliases].sort(), ["h1a", "e1a", "e2a"].sort());
-  t.deepEqual(h1.os, "linux");
-  t.deepEqual(h1.distribution, "suse");
-  t.deepEqual(h1.deployment, "production");
-  t.deepEqual(h1.chassis, "chassis e1");
-  t.deepEqual(h1.vendor, "vendor e1");
-  t.deepEqual(h1.architecture, "aarch64");
-  t.deepEqual(h1.serial, "123");
+  t.is(h1.os, "linux");
+  t.is(h1.distribution, "suse");
+  t.is(h1.deployment, "production");
+  t.is(h1.chassis, "chassis e1");
+  t.is(h1.vendor, "vendor e1");
+  t.is(h1.architecture, "aarch64");
+  t.is(h1.serial, "123");
   t.deepEqual([...h1.provides].sort(), ["pkge1", "pkge2", "pkgh1"].sort());
   t.deepEqual([...h1.depends].sort(), ["dpkge1", "dpkge2", "dpkgh1"].sort());
   t.deepEqual([...h1.replaces].sort(), ["rpkge1", "rpkge2", "rpkgh1"].sort());
