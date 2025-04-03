@@ -300,19 +300,36 @@ test("clone NetworkInterface", t => {
     name: "h1",
     networkInterfaces: {
       eth0: {
-        network: n1,
-        ipAddresses: ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f"]
+        kind: "ethernet",
+        hwaddr: "00:01:02:03:04:05"
       }
     }
   });
   owner.addObject(h1);
 
-  const h2 = new Host(owner, { name: "h2" });
+  const h2 = new Host(owner, {
+    name: "h2",
+    extends: [h1],
+    networkInterfaces: {
+      eth0: {
+        network: n1,
+        ipAddresses: ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f"]
+      }
+    }
+  });
 
-  const ni = h1.typeNamed("network_interface", "eth0").forOwner(h2);
+  h2.execFinalize();
 
-  t.is(ni.owner, h2);
+  const ni = h2.typeNamed("network_interface", "eth0");
+
   t.is(ni.name, "eth0");
+  t.is(ni.owner, h2);
   t.is(ni.network, n1);
-  t.deepEqual(ni.rawAddresses, ["10.0.0.2", "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f"]);
+  t.is(ni.hwaddr, "00:01:02:03:04:05");
+  t.is(ni.kind, "ethernet");
+
+  t.deepEqual(ni.rawAddresses, [
+    "10.0.0.2",
+    "fe80:0000:0000:0000:1e57:3eff:fe22:9a8f"
+  ]);
 });

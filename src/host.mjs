@@ -107,6 +107,9 @@ export class Host extends Base {
     if (data.extends) {
       this.finalize(() => {
         for (const host of this.extends) {
+          if(host === this) {
+            this.error("Cant extend myself");
+          }
           host.execFinalize();
           this._applyExtends(host);
         }
@@ -123,6 +126,7 @@ export class Host extends Base {
       if (ni.isTemplate) {
       } else {
         let present = this._networkInterfaces.get(name);
+
         if (!present) {
           present = ni.forOwner(this);
           this._networkInterfaces.set(name, present);
@@ -517,9 +521,9 @@ export class NetworkInterface extends Base {
   _network;
   _kind;
   _hostName;
+  _hwaddr;
   extends = [];
   arpbridge;
-  hwaddr;
 
   constructor(owner, data) {
     super(owner, data);
@@ -634,7 +638,11 @@ export class NetworkInterface extends Base {
   }
 
   get network() {
-    return this._network ?? this.host.network;
+    return (
+      this._network ??
+      this.extends.find(i => i.network)?.network ??
+      this.host.network
+    );
   }
 
   set network(network) {
@@ -646,7 +654,20 @@ export class NetworkInterface extends Base {
   }
 
   get scope() {
-    return this._scope ?? this.network?.scope ?? "global";
+    return (
+      this._scope ??
+      this.extends.find(i => i.scope)?.scope ??
+      this.network?.scope ??
+      "global"
+    );
+  }
+
+  set hwaddr(value) {
+    this._hwaddr = value;
+  }
+
+  get hwaddr() {
+    return this._hwaddr ?? this.extends.find(i => i._hwaddr)?._hwaddr;
   }
 
   set metric(value) {
@@ -662,7 +683,9 @@ export class NetworkInterface extends Base {
   }
 
   get ssid() {
-    return this._ssid ?? this.network?.ssid;
+    return (
+      this._ssid ?? this.extends.find(i => i.ssid)?.ssid ?? this.network?.ssid
+    );
   }
 
   set psk(value) {
@@ -670,7 +693,7 @@ export class NetworkInterface extends Base {
   }
 
   get psk() {
-    return this._psk ?? this.network?.psk;
+    return this._psk ?? this.extends.find(i => i.psk)?.psk ?? this.network?.psk;
   }
 
   set kind(value) {
@@ -678,6 +701,8 @@ export class NetworkInterface extends Base {
   }
 
   get kind() {
-    return this._kind ?? this.network?.kind;
+    return (
+      this._kind ?? this.extends.find(i => i.kind)?.kind ?? this.network?.kind
+    );
   }
 }
