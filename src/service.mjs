@@ -152,6 +152,10 @@ export class Service extends Base {
     return this.rawAddresses.map(a => `${a}:${this.port}`);
   }
 
+  get networks() {
+    return this.server.networks;
+  }
+
   get endpoints() {
     if (!ServiceTypes[this.type]) {
       return [{ address: this.rawAddress, port: this._port, tls: false }];

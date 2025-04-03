@@ -147,17 +147,14 @@ export class DHCPService extends Service {
       }
     };
 
-    // console.log(this.owner.name,this.owner.networks());
-    /*
     const subnets = new Set();
 
-    for (const network of this.owner.networks()) {
+    for (const network of this.networks) {
       for (const subnet of network.subnets()) {
         subnets.add(subnet);
       }
     }
-    console.log([...subnets].map(s => s.address));
-    */
+    //console.log([...subnets].filter(s => s.isIPv4).map(s => s.address));
 
     const hwmap = new Map();
     const hostNames = new Set();
@@ -199,24 +196,22 @@ export class DHCPService extends Service {
             data: [...this.domains].join(",")
           }
         ],
-        subnet4: [
-          {
-            id: 1,
-            subnet: "192.168.1.0/24",
-            pools: [
-              {
-                pool: "192.168.1.100 - 192.168.1.200"
-              }
-            ],
-            "option-data": [
-              {
-                name: "routers",
-                data: network.gateway.rawAddress
-              }
-            ],
-            reservations
-          }
-        ],
+        subnet4: [...subnets]
+          .filter(s => s.isIPv4)
+          .map((subnet, index) => {
+            return {
+              id: index + 1,
+              subnet: subnet.address,
+              pools: [{ pool: subnet.addressRange.join(" - ") }],
+              "option-data": [
+                {
+                  name: "routers",
+                  data: network.gateway.rawAddress
+                }
+              ],
+              reservations
+            };
+          }),
         loggers
       }
     };
