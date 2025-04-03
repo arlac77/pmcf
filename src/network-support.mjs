@@ -19,10 +19,10 @@ export const networkProperties = {
   },
   ssid: { type: "string", collection: false, writeable: true },
   psk: { type: "string", collection: false, writeable: true },
-  metric: { type: "number", collection: false, writeable: true },
-  MTU: { type: "number", collection: false, writeable: true },
+  metric: { type: "number", collection: false, writeable: true, default: 1004 },
+  MTU: { type: "number", collection: false, writeable: true, default: 1500 },
   gateway: { type: "host", collection: false, writeable: true },
-  multicastDNS: { type: "boolean", collection: false, writeable: true }
+  multicastDNS: { type: "boolean", collection: false, writeable: true, default: false }
 };
 
 export const networkAddressProperties = {

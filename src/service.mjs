@@ -88,8 +88,8 @@ export const ServiceTypeDefinition = {
     },
     alias: { type: "string", collection: false, writeable: true },
     type: { type: "string", collection: false, writeable: true },
-    weight: { type: "number", collection: false, writeable: true },
-    tls: { type: "string", collection: false, writeable: false },
+    weight: { type: "number", collection: false, writeable: true, default: 1 },
+    tls: { type: "string", collection: false, writeable: false, default: false },
     systemd: { type: "string", collection: true, writeable: true }
   }
 };

@@ -27,15 +27,16 @@ const DNSServiceTypeDefinition = {
     trusted: { type: "network", collection: true, writeable: true },
     protected: { type: "network", collection: true, writeable: true },
     open: { type: "network", collection: true, writeable: true },
-    hasSVRRecords: { type: "boolean", collection: false, writeable: true },
-    hasCatalog: { type: "boolean", collection: false, writeable: true },
+    hasSVRRecords: { type: "boolean", collection: false, writeable: true, default: false },
+    hasCatalog: { type: "boolean", collection: false, writeable: true, default: false },
     hasLinkLocalAdresses: {
       type: "boolean",
       collection: false,
-      writeable: true
+      writeable: true,
+      default: false
     },
     exclude: { type: "network", collection: true, writeable: true },
-    notify: { type: "boolean", collection: false, writeable: true },
+    notify: { type: "boolean", collection: false, writeable: true, default: false },
     recordTTL: { type: "string", collection: false, writeable: true },
     serial: { type: "number", collection: false, writeable: true },
     refresh: { type: "string", collection: false, writeable: true },
