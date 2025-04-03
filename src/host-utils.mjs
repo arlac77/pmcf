@@ -1,4 +1,4 @@
-import { writeFile, mkdir, copyFile, glob, chmod } from "node:fs/promises";
+import { writeFile, mkdir, copyFile, glob, chmod, stat } from "node:fs/promises";
 import { join } from "node:path";
 import { writeLines, sectionLines } from "../src/utils.mjs";
 import { addHook } from "./hooks.mjs";
@@ -142,8 +142,11 @@ export async function copySshKeys(host, packageData) {
     await copyFile(join(host.directory, file), destinationFileName);
     await chmod(
       destinationFileName,
-      destinationFileName.endsWith(".pub") ? 0o0644 : 0o0600
+      destinationFileName.endsWith(".pub") ? 0o644 : 0o600
     );
+
+    const s = await stat(destinationFileName);
+    console.log(destinationFileName,s.mode)
   }
 }
 
