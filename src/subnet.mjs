@@ -1,4 +1,9 @@
-import { normalizeCIDR, isLinkLocal } from "./utils.mjs";
+import {
+  normalizeCIDR,
+  isLinkLocal,
+  isIPv4Address,
+  isIPv6Address
+} from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
 
@@ -48,6 +53,20 @@ export class Subnet extends Base {
     return isLinkLocal(this.address);
   }
 
+  get isIPv4() {
+    return isIPv4Address(this.address);
+  }
+
+  get isIPv6() {
+    return isIPv6Address(this.address);
+  }
+
+  get addressRange()
+  {
+    const l = this.prefixLength;
+    return l === 24 ? [this.prefix + '.0', this.prefix + '.255'] : [this.prefix + '.0.0', this.prefix + '.255.255']
+  }
+
   get prefix() {
     const [prefix] = this.name.split("/");
     return prefix;
@@ -76,7 +95,6 @@ export class Subnet extends Base {
   }
 }
 
-
 export function subnets(sources) {
   const all = new Set();
 
@@ -88,4 +106,3 @@ export function subnets(sources) {
 
   return all;
 }
-

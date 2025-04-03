@@ -35,7 +35,6 @@ test("Subnet owner", t => {
 
 test("Subnet localhost", t => {
   const root = new Root("/");
-
   const s1 = new Subnet(root, "127/8");
 
   t.is(s1.name, "127/8");
@@ -47,11 +46,14 @@ test("Subnet localhost", t => {
 
 test("Subnet ipv4", t => {
   const root = new Root("/");
-
   const s1 = new Subnet(root, "10.0.0.77/16");
 
   t.is(s1.name, "10.0/16");
   t.is(s1.prefixLength, 16);
+  t.deepEqual(s1.addressRange, ["10.0.0.0", "10.0.255.255"]);
+
+  t.true(s1.isIPv4);
+  t.false(s1.isIPv6);
 
   t.true(s1.matchesAddress("10.0.0.77"));
   t.false(s1.matchesAddress("10.2.0.77"));
@@ -65,6 +67,8 @@ test("Subnet ipv6", t => {
 
   t.is(s1.name, "fe80::/64");
   t.is(s1.prefixLength, 64);
+  t.false(s1.isIPv4);
+  t.true(s1.isIPv6);
 
   t.true(s1.matchesAddress("fe80::1e57:3eff:fe22:9a8f"));
   t.false(s1.matchesAddress("fe81:0000:0000:0000:1e57:3eff:fe22:9a8f"));
