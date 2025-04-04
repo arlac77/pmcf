@@ -172,13 +172,15 @@ export class DHCPService extends Service {
       }
     }
 
-    const reservations = [...hwmap].map(([k, networkInterface]) => {
-      return {
-        "hw-address": k,
-        "ip-address": networkInterface.rawAddress,
-        hostname: networkInterface.hostName
-      };
-    });
+    const reservations = [...hwmap]
+      .map(([k, networkInterface]) => {
+        return {
+          "hw-address": k,
+          "ip-address": networkInterface.rawIPv4Address,
+          hostname: networkInterface.hostName
+        };
+      })
+      .sort((a, b) => a.hostname.localeCompare(b.hostname));
 
     const dhcp4 = {
       Dhcp4: {
