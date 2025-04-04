@@ -88,7 +88,7 @@ function st(t, address, expected) {
 st.title = (providedTitle = "subnet", address, expected) =>
   `${providedTitle} ${address} => ${JSON.stringify(expected)}`.trim();
 
-test(st, "127/8", {
+test(st, "127.0.0.1/8", {
   address: "127/8",
   longAddress: "127.0.0.0/8",
   prefixLength: 8,
@@ -122,4 +122,16 @@ test(st, "192.168.1/24", {
   matches: ["192.168.1.77"],
   notMatches: ["192.168.2.77"],
   addressRange: ["192.168.1.0", "192.168.1.255"]
+});
+
+test(st, "192.168.1.61/30", {
+  address: "192.168.1.60/30",
+  longAddress: "192.168.1.60/30",
+  prefixLength: 30,
+  isIPv4: true,
+  isIPv6: false,
+  isLinkLocal: false,
+  // matches: ["192.168.1.62/30"],
+  notMatches: ["192.168.2.77"]
+  // addressRange: ["192.168.1.60", "192.168.1.62"]
 });
