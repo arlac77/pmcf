@@ -2,7 +2,8 @@ import {
   normalizeCIDR,
   isLinkLocal,
   isIPv4Address,
-  isIPv6Address
+  isIPv6Address,
+  addressWithPrefixLength
 } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
@@ -62,23 +63,14 @@ export class Subnet extends Base {
   }
 
   get addressRange() {
-    const l = this.prefixLength;
-    return l === 24
-      ? [this.prefix + ".0", this.prefix + ".255"]
-      : [this.prefix + ".0.0", this.prefix + ".255.255"];
+    return [
+      addressWithPrefixLength(this.prefix, this.prefixLength),
+      this.prefix + ".255".repeat((32 - this.prefixLength) / 8)
+    ];
   }
 
   get longPrefix() {
-    const prefix = this.prefix;
-
-    switch (this.prefixLength) {
-      case 24:
-        return prefix + ".0";
-      case 16:
-        return prefix + ".0.0";
-    }
-
-    return prefix;
+    return addressWithPrefixLength(this.prefix, this.prefixLength);
   }
 
   get prefix() {

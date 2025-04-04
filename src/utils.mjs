@@ -143,6 +143,15 @@ const ipv6 = {
   base: 16
 };
 
+export function addressWithPrefixLength(address, prefixLength) {
+  const definition = ipv4;
+
+  return (
+    address +
+    ".0".repeat((definition.length - prefixLength) / definition.segmentLength)
+  );
+}
+
 function _decode(definition, address, length = definition.length) {
   if (typeof address === "string") {
     return address;

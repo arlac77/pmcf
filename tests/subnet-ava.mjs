@@ -1,5 +1,6 @@
 import test from "ava";
 import { Root, Network, Subnet } from "pmcf";
+import { asArray } from "../src/utils.mjs";
 
 test("Subnet owner", t => {
   const root = new Root("/");
@@ -33,36 +34,6 @@ test("Subnet owner", t => {
   );
 });
 
-test("Subnet localhost", t => {
-  const root = new Root("/");
-  const s1 = new Subnet(root, "127/8");
-
-  t.is(s1.name, "127/8");
-  t.is(s1.prefixLength, 8);
-
-  t.true(s1.matchesAddress("127.0.01"));
-  t.false(s1.matchesAddress("10.2.0.77"));
-});
-
-test("Subnet ipv4", t => {
-  const root = new Root("/");
-  const s1 = new Subnet(root, "10.0.0.77/16");
-
-  t.is(s1.name, "10.0/16");
-  t.is(s1.address, "10.0/16");
-  t.is(s1.longAddress, "10.0.0.0/16");
-  t.is(s1.prefixLength, 16);
-  t.deepEqual(s1.addressRange, ["10.0.0.0", "10.0.255.255"]);
-
-  t.true(s1.isIPv4);
-  t.false(s1.isIPv6);
-
-  t.true(s1.matchesAddress("10.0.0.77"));
-  t.false(s1.matchesAddress("10.2.0.77"));
-
-  t.false(s1.isLinkLocal);
-});
-
 test("Subnet ipv6", t => {
   const root = new Root("/");
   const s1 = new Subnet(root, "fe80::1e57:3eff:fe22:9a8f/64");
@@ -77,4 +48,78 @@ test("Subnet ipv6", t => {
   // t.false(s1.matchesAddress("fe80:0000:0000:0000:1e57:3eff:fe22:9a8e"));
 
   t.true(s1.isLinkLocal);
+});
+
+function st(t, address, expected) {
+  const root = new Root("/");
+  const subnet = new Subnet(root, address);
+
+  for (const property of [
+    "address",
+    "longAddress",
+    "prefixLength",
+    "isIPv4",
+    "isIPv6",
+    "isLinkLocal",
+    "addressRange"
+  ]) {
+    if (expected[property] !== undefined) {
+      if (Array.isArray(expected[property])) {
+        t.deepEqual(
+          subnet[property],
+          expected[property],
+          `${property} ${address} ${expected[property]}`
+        );
+      } else {
+        t.is(subnet[property], expected[property], `${property} ${address}`);
+      }
+    }
+  }
+
+  for (const a of asArray(expected.matches)) {
+    t.true(subnet.matchesAddress(a), `matches ${address} ${a}`);
+  }
+
+  for (const a of asArray(expected.notMatches)) {
+    t.false(subnet.matchesAddress(a), `not matches ${address} ${a}`);
+  }
+}
+
+st.title = (providedTitle = "subnet", address, expected) =>
+  `${providedTitle} ${address} => ${JSON.stringify(expected)}`.trim();
+
+test(st, "127/8", {
+  address: "127/8",
+  longAddress: "127.0.0.0/8",
+  prefixLength: 8,
+  //isIPv4: true,
+  isIPv6: false,
+  isLinkLocal: false,
+  matches: ["127.0.01"],
+  notMatches: ["10.2.0.77"]
+  // addressRange: ["10.0.0.0", "10.0.255.255"]
+});
+
+test(st, "10.0.0.77/16", {
+  address: "10.0/16",
+  longAddress: "10.0.0.0/16",
+  prefixLength: 16,
+  isIPv4: true,
+  isIPv6: false,
+  isLinkLocal: false,
+  matches: ["10.0.0.77"],
+  notMatches: ["10.2.0.77"],
+  addressRange: ["10.0.0.0", "10.0.255.255"]
+});
+
+test(st, "192.168.1/24", {
+  address: "192.168.1/24",
+  longAddress: "192.168.1.0/24",
+  prefixLength: 24,
+  isIPv4: true,
+  isIPv6: false,
+  isLinkLocal: false,
+  matches: ["192.168.1.77"],
+  notMatches: ["192.168.2.77"],
+  addressRange: ["192.168.1.0", "192.168.1.255"]
 });
