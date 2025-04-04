@@ -564,6 +564,14 @@ export class NetworkInterface extends Base {
     return this.rawAddresses[0];
   }
 
+  get rawIPv4Address() {
+    return this.rawAddresses.filter(a=>isIPv4Address(a))[0];
+  }
+  
+  get rawIPv6Address() {
+    return this.rawAddresses.filter(a=>isIPv6Address(a))[0];
+  }
+
   get rawAddresses() {
     return [...this._ipAddresses].map(([address]) => address);
   }

@@ -60,11 +60,6 @@ export class DHCPService extends Service {
     };
 
     const commonConfig = {
-      "interfaces-config": {
-        interfaces: [...host.networkInterfaces.values()]
-          .filter(ni => ni.kind !== "loopback")
-          .map(ni => `${ni.name}/${ni.rawAddress}`)
-      },
       "lease-database": {
         type: "memfile",
         "lfc-interval": 3600
@@ -179,6 +174,11 @@ export class DHCPService extends Service {
     const dhcp4 = {
       Dhcp4: {
         ...commonConfig,
+        "interfaces-config": {
+          interfaces: [...host.networkInterfaces.values()]
+            .filter(ni => ni.kind !== "loopback")
+            .map(ni => `${ni.name}/${ni.rawIPv4Address}`)
+        },  
         "multi-threading": {
           "enable-multi-threading": false
         },
@@ -218,6 +218,11 @@ export class DHCPService extends Service {
     const dhcp6 = {
       Dhcp6: {
         ...commonConfig,
+        "interfaces-config": {
+          interfaces: [...host.networkInterfaces.values()]
+            .filter(ni => ni.kind !== "loopback")
+            .map(ni => `${ni.name}/${ni.rawIPv6Address}`)
+        },  
         "control-socket": {
           "socket-type": "unix",
           "socket-name": "/run/kea/6-ctrl-socket"
