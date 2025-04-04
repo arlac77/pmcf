@@ -1,4 +1,3 @@
-import { mkdir, copyFile } from "node:fs/promises";
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { Owner } from "./owner.mjs";
@@ -49,10 +48,13 @@ export class Location extends Owner {
   async *preparePackages(dir) {
     const packageData = {
       dir,
-      sources: [new FileContentProvider(dir + "/"), new FileContentProvider(
-            { base: host.directory, pattern: "location.json" },
-            { destination: "/etc/location/location.json" }
-          )],
+      sources: [
+        new FileContentProvider(dir + "/"),
+        new FileContentProvider(
+          { base: this.directory, pattern: "location.json" },
+          { destination: "/etc/location/location.json" }
+        )
+      ],
       outputs: this.outputs,
       properties: {
         name: `${this.typeName}-${this.name}`,
