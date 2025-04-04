@@ -87,12 +87,13 @@ export function isIPv4Address(address) {
   return false;
 }
 
-export function generateEU64(mac) {
-  //TODO
-}
-
 export function isIPv6Address(address) {
-  return address.indexOf(":") >= 0;
+  switch (typeof address) {
+    case "string":
+      return address.indexOf(":") >= 0;
+  }
+
+  return false;
 }
 
 export function isLinkLocal(address) {
@@ -105,6 +106,10 @@ export function isLinkLocal(address) {
   }
 
   return false;
+}
+
+export function generateEU64(mac) {
+  //TODO
 }
 
 export function isLocalhost(address) {
