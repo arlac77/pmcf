@@ -60,6 +60,7 @@ function dt(t, address, expected) {
 dt.title = (providedTitle = "decode", address, expected) =>
   `${providedTitle} ${address.toString(16)} => ${expected}`.trim();
 
+test(dt, 0xfe800000000000000000000000000000n,"fe80::")
 test(dt, 0x20010db8000000000001000000000001n, "2001:db8::1:0:0:1");
 test(dt, 0xf000e000d000c000b000an, "::f:e:d:c:b:a");
 test(dt, 0xf000e0000000c000b000an, "::f:e:0:c:b:a");
