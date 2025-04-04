@@ -142,6 +142,18 @@ export class DHCPService extends Service {
       }
     };
 
+    const dhcpServerDdns = {
+      "enable-updates": false,
+      "server-ip": "127.0.0.1",
+      "server-port": ddns.DhcpDdns.port,
+      /*"sender-ip": "",
+      "sender-port": 0,
+      */
+      "max-queue-size": 64,
+      "ncr-protocol": "UDP",
+      "ncr-format": "JSON"
+    };
+
     const subnets = new Set();
 
     for (const network of this.networks) {
@@ -178,7 +190,7 @@ export class DHCPService extends Service {
           interfaces: [...host.networkInterfaces.values()]
             .filter(ni => ni.kind !== "loopback")
             .map(ni => `${ni.name}/${ni.rawIPv4Address}`)
-        },  
+        },
         "multi-threading": {
           "enable-multi-threading": false
         },
@@ -212,6 +224,7 @@ export class DHCPService extends Service {
               reservations
             };
           }),
+        "dhcp-ddns": dhcpServerDdns,
         loggers
       }
     };
@@ -222,7 +235,7 @@ export class DHCPService extends Service {
           interfaces: [...host.networkInterfaces.values()]
             .filter(ni => ni.kind !== "loopback")
             .map(ni => `${ni.name}/${ni.rawIPv6Address}`)
-        },  
+        },
         "control-socket": {
           "socket-type": "unix",
           "socket-name": "/run/kea/6-ctrl-socket"
@@ -264,6 +277,7 @@ export class DHCPService extends Service {
             ]
           }
         ],
+        "dhcp-ddns": dhcpServerDdns,
         loggers
       }
     };
