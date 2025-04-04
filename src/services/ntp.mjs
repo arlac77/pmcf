@@ -63,7 +63,7 @@ export class NTPService extends ExtraSourceService {
 
     const packageData = {
       dir,
-      sources: [new FileContentProvider(dir + "/")[Symbol.asyncIterator]()],
+      sources: [new FileContentProvider(dir + "/")],
       outputs: this.outputs,
       properties: {
         name: `chrony-${this.location.name}-${host.name}`,

@@ -49,7 +49,7 @@ export class DHCPService extends Service {
 
     const packageData = {
       dir,
-      sources: [new FileContentProvider(dir + "/")[Symbol.asyncIterator]()],
+      sources: [new FileContentProvider(dir + "/")],
       outputs: this.outputs,
       properties: {
         name: `kea-${this.location.name}-${host.name}`,

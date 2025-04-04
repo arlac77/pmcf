@@ -1,5 +1,13 @@
-import { writeFile, mkdir, copyFile, glob, chmod, stat } from "node:fs/promises";
+import {
+  writeFile,
+  mkdir,
+  copyFile,
+  glob,
+  chmod,
+  stat
+} from "node:fs/promises";
 import { join } from "node:path";
+import { FileContentProvider } from "npm-pkgbuild";
 import { writeLines, sectionLines } from "../src/utils.mjs";
 import { addHook } from "./hooks.mjs";
 
@@ -129,24 +137,6 @@ network={
         );
       }
     }
-  }
-}
-
-export async function copySshKeys(host, packageData) {
-  const sshDir = join(packageData.dir, "etc", "ssh");
-
-  await mkdir(sshDir, { recursive: true });
-
-  for await (const file of glob("ssh_host_*", { cwd: host.directory })) {
-    const destinationFileName = join(sshDir, file);
-    await copyFile(join(host.directory, file), destinationFileName);
-    await chmod(
-      destinationFileName,
-      destinationFileName.endsWith(".pub") ? 0o644 : 0o600
-    );
-
-    const s = await stat(destinationFileName);
-    console.log(destinationFileName,s.mode)
   }
 }
 

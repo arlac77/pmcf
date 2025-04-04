@@ -49,7 +49,10 @@ export class Location extends Owner {
   async *preparePackages(dir) {
     const packageData = {
       dir,
-      sources: [new FileContentProvider(dir + "/")[Symbol.asyncIterator]()],
+      sources: [new FileContentProvider(dir + "/"), new FileContentProvider(
+            { base: host.directory, pattern: "location.json" },
+            { destination: "/etc/location/location.json" }
+          )],
       outputs: this.outputs,
       properties: {
         name: `${this.typeName}-${this.name}`,
@@ -85,15 +88,6 @@ export class Location extends Owner {
       join(dir, "etc/systemd/timesyncd.conf.d"),
       `${this.name}.conf`,
       sectionLines(...this.findService({ type: "ntp" }).systemdConfig)
-    );
-
-    const locationDir = join(dir, "etc", "location");
-
-    await mkdir(locationDir, { recursive: true });
-
-    await copyFile(
-      join(this.directory, "location.json"),
-      join(locationDir, "location.json")
     );
 
     yield packageData;

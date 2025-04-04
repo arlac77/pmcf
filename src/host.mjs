@@ -22,7 +22,6 @@ import { loadHooks } from "./hooks.mjs";
 import {
   generateNetworkDefs,
   generateMachineInfo,
-  copySshKeys,
   generateKnownHosts
 } from "./host-utils.mjs";
 
@@ -450,7 +449,17 @@ export class Host extends Base {
   async *preparePackages(dir) {
     const packageData = {
       dir,
-      sources: [new FileContentProvider(dir + "/")[Symbol.asyncIterator]()],
+      sources: [
+        new FileContentProvider(
+          { base: this.directory, pattern: "*.pub" },
+          { destination: "/etc/ssh/", mode: 0o644 }
+        ),
+        new FileContentProvider(
+          { base: this.directory, pattern: "*_key" },
+          { destination: "/etc/ssh/", mode: 0o600 }
+        ),
+        new FileContentProvider(dir + "/")
+      ],
       outputs: this.outputs,
       properties: {
         name: `${this.typeName}-${this.owner.name}-${this.name}`,
@@ -472,7 +481,6 @@ export class Host extends Base {
 
     await generateNetworkDefs(this, packageData);
     await generateMachineInfo(this, packageData);
-    await copySshKeys(this, packageData);
     await generateKnownHosts(this.owner.hosts(), join(dir, "root", ".ssh"));
 
     yield packageData;
@@ -565,11 +573,11 @@ export class NetworkInterface extends Base {
   }
 
   get rawIPv4Address() {
-    return this.rawAddresses.filter(a=>isIPv4Address(a))[0];
+    return this.rawAddresses.filter(a => isIPv4Address(a))[0];
   }
-  
+
   get rawIPv6Address() {
-    return this.rawAddresses.filter(a=>isIPv6Address(a))[0];
+    return this.rawAddresses.filter(a => isIPv6Address(a))[0];
   }
 
   get rawAddresses() {

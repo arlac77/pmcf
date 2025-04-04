@@ -27,8 +27,18 @@ const DNSServiceTypeDefinition = {
     trusted: { type: "network", collection: true, writeable: true },
     protected: { type: "network", collection: true, writeable: true },
     open: { type: "network", collection: true, writeable: true },
-    hasSVRRecords: { type: "boolean", collection: false, writeable: true, default: false },
-    hasCatalog: { type: "boolean", collection: false, writeable: true, default: false },
+    hasSVRRecords: {
+      type: "boolean",
+      collection: false,
+      writeable: true,
+      default: false
+    },
+    hasCatalog: {
+      type: "boolean",
+      collection: false,
+      writeable: true,
+      default: false
+    },
     hasLinkLocalAdresses: {
       type: "boolean",
       collection: false,
@@ -36,7 +46,12 @@ const DNSServiceTypeDefinition = {
       default: false
     },
     exclude: { type: "network", collection: true, writeable: true },
-    notify: { type: "boolean", collection: false, writeable: true, default: false },
+    notify: {
+      type: "boolean",
+      collection: false,
+      writeable: true,
+      default: false
+    },
     recordTTL: { type: "string", collection: false, writeable: true },
     serial: { type: "number", collection: false, writeable: true },
     refresh: { type: "string", collection: false, writeable: true },
@@ -162,7 +177,7 @@ export class DNSService extends ExtraSourceService {
     const p1 = join(dir, "p1");
     const packageData = {
       dir: p1,
-      sources: [new FileContentProvider(p1 + "/")[Symbol.asyncIterator]()],
+      sources: [new FileContentProvider(p1 + "/")],
       outputs: this.outputs,
       properties: {
         name: `named-${name}`,
@@ -220,7 +235,7 @@ export class DNSService extends ExtraSourceService {
           owner: "named",
           group: "named"
         }
-      )[Symbol.asyncIterator]()
+      )
     ];
 
     await generateZoneDefs(this, location, packageData);
