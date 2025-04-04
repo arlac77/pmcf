@@ -143,12 +143,9 @@ export class DHCPService extends Service {
     };
 
     const dhcpServerDdns = {
-      "enable-updates": false,
+      "enable-updates": true,
       "server-ip": "127.0.0.1",
       "server-port": ddns.DhcpDdns.port,
-      /*"sender-ip": "",
-      "sender-port": 0,
-      */
       "max-queue-size": 64,
       "ncr-protocol": "UDP",
       "ncr-format": "JSON"
