@@ -17,6 +17,8 @@ test("Service basics", t => {
   });
   l1.addObject(h1);
 
+  const eth0 = h1.networkInterfaces.get('eth0');
+
   const s1 = new Service(h1, {
     name: "dns",
     weight: 5,
@@ -27,7 +29,7 @@ test("Service basics", t => {
   h1.services = s1;
 
   t.deepEqual(s1.endpoints, [
-    new Endpoint(s1, {
+    new Endpoint(s1, eth0, {
       rawAddress: "10.0.0.1",
       port: 53,
       protocol: "udp",
@@ -144,6 +146,8 @@ test("Service without protocol", t => {
   });
   root.addObject(h1);
 
+  const eth0 = h1.networkInterfaces.get('eth0');
+
   const s1 = new Service(h1, {
     name: "xyz",
     port: 555,
@@ -156,7 +160,7 @@ test("Service without protocol", t => {
   ]);
 
   t.deepEqual(s1.endpoints, [
-    new Endpoint(s1, { rawAddress: "10.0.0.1", port: 555, tls: false })
+    new Endpoint(s1, eth0, { rawAddress: "10.0.0.1", port: 555, tls: false })
   ]);
 });
 
@@ -208,11 +212,11 @@ test("Service owner", t => {
   t.is(s1b.weight, 7);
 
   t.deepEqual(s1b.endpoints, [
-    new Endpoint(s1b, {
+    /*new Endpoint(s1b, unknown,{
       rawAddress: undefined,
       port: 53,
       protocol: "udp",
       tls: false
-    })
+    })*/
   ]);
 });

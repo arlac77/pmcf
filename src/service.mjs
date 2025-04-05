@@ -166,19 +166,28 @@ export class Service extends Base {
   }
 
   get endpoints() {
+    const nis = [...this.server.networkInterfaces.values()];
+
     if (!ServiceTypes[this.type]) {
-      return [
-        new Endpoint(this, {
-          rawAddress: this.rawAddress,
-          port: this._port,
-          tls: false
-        })
-      ];
+      return nis.map(
+        networkInterface =>
+          new Endpoint(this, networkInterface, {
+            rawAddress: this.rawAddress,
+            port: this._port,
+            tls: false
+          })
+      );
     }
 
-    return ServiceTypes[this.type].endpoints.map(
-      e => new Endpoint(this, { rawAddress: this.rawAddress, ...e })
-    );
+    return nis.map(networkInterface =>
+      ServiceTypes[this.type].endpoints.map(
+        e =>
+          new Endpoint(this, networkInterface, {
+            rawAddress: this.rawAddress,
+            ...e
+          })
+      )
+    ).flat();
   }
 
   set alias(value) {
@@ -286,8 +295,9 @@ export class Service extends Base {
 }
 
 export class Endpoint {
-  constructor(service, data) {
+  constructor(service, networkInterface, data) {
     this.service = service;
+    this.networkInterface = networkInterface;
     Object.assign(this, data);
   }
 }
