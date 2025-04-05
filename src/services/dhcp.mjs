@@ -200,7 +200,9 @@ export class DHCPService extends Service {
         "option-data": [
           {
             name: "domain-name-servers",
-            data: dnsServerAddreses.join(",")
+            data: dnsServerEndpoints
+              .map(endpoint => endpoint.rawAddress)
+              .join(",")
           },
           {
             name: "domain-search",
