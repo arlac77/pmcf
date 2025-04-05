@@ -166,28 +166,26 @@ export class Service extends Base {
   }
 
   get endpoints() {
-    const nis = [...this.server.networkInterfaces.values()];
+    const local = this._port === undefined ? {} : { port: this._port };
 
-    if (!ServiceTypes[this.type]) {
-      return nis.map(
-        networkInterface =>
-          new Endpoint(this, networkInterface, {
-            rawAddress: this.rawAddress,
-            port: this._port,
-            tls: false
-          })
-      );
-    }
+    const data = ServiceTypes[this.type]?.endpoints || [
+      {
+        tls: false
+      }
+    ];
 
-    return nis.map(networkInterface =>
-      ServiceTypes[this.type].endpoints.map(
-        e =>
-          new Endpoint(this, networkInterface, {
-            rawAddress: this.rawAddress,
-            ...e
-          })
+    return [...this.server.networkAddresses()]
+      .map(sa =>
+        data.map(
+          d =>
+            new Endpoint(this, sa.networkInterface, {
+              ...d,
+              rawAddress: sa.address,
+              ...local
+            })
+        )
       )
-    ).flat();
+      .flat();
   }
 
   set alias(value) {
@@ -241,7 +239,9 @@ export class Service extends Base {
     }
 
     if (hasSVRRecords) {
-      for (const ep of this.endpoints.filter(e => e.protocol)) {
+      for (const ep of this.endpoints.filter(
+        e => e.protocol && e.networkInterface.scope !== "host" // TODO how to identify related interfaces
+      )) {
         records.push(
           DNSRecord(
             dnsFullName(
@@ -299,6 +299,24 @@ export class Endpoint {
     this.service = service;
     this.networkInterface = networkInterface;
     Object.assign(this, data);
+  }
+
+  toString() {
+    return `${this.rawAddress}[${this.port}]`;
+  }
+
+  get hostName() {
+    return this.networkInterface.hostName;
+  }
+
+  #rawAddress;
+
+  get rawAddress() {
+    return this.#rawAddress ?? this.networkInterface.rawAddress;
+  }
+
+  set rawAddress(value) {
+    this.#rawAddress = value;
   }
 }
 

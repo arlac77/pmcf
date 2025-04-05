@@ -12,12 +12,16 @@ test("Service basics", t => {
 
   const h1 = new Host(l1, {
     name: "h1",
-    networkInterfaces: { eth0: { ipAddresses: "10.0.0.1/16" } },
+    networkInterfaces: {
+      l0: { ipAddresses: "127.0.0.1", scope: "host" },
+      eth0: { ipAddresses: "10.0.0.1/16" }
+    },
     priority: 19
   });
   l1.addObject(h1);
 
-  const eth0 = h1.networkInterfaces.get('eth0');
+  const l0 = h1.networkInterfaces.get("l0");
+  const eth0 = h1.networkInterfaces.get("eth0");
 
   const s1 = new Service(h1, {
     name: "dns",
@@ -29,13 +33,22 @@ test("Service basics", t => {
   h1.services = s1;
 
   t.deepEqual(s1.endpoints, [
+    new Endpoint(s1, l0, {
+      port: 53,
+      protocol: "udp",
+      tls: false
+    }),
     new Endpoint(s1, eth0, {
-      rawAddress: "10.0.0.1",
       port: 53,
       protocol: "udp",
       tls: false
     })
   ]);
+
+  t.deepEqual(
+    s1.dnsRecordsForDomainName("example.com", true).map(r => r.toString()),
+    ["_dns._udp.example.com. 1W IN SRV     3   5  53 h1."]
+  );
 
   t.is(s1.name, "dns");
   t.is(s1.type, "dns");
@@ -45,13 +58,8 @@ test("Service basics", t => {
   t.is(s1.port, 53);
   t.is(s1.protocol, "udp");
 
-  t.deepEqual(
-    s1.dnsRecordsForDomainName("example.com", true).map(r => r.toString()),
-    ["_dns._udp.example.com. 1W IN SRV     3   5  53 h1."]
-  );
-
-  t.deepEqual(s1.rawAddresses, ["10.0.0.1"]);
-  t.deepEqual(s1.addresses, ["10.0.0.1:53"]);
+  t.deepEqual(s1.rawAddresses, ["127.0.0.1", "10.0.0.1"]);
+  t.deepEqual(s1.addresses, ["127.0.0.1:53", "10.0.0.1:53"]);
 
   t.is([...h1.findServices({ type: "dns" })][0], s1);
 
@@ -146,7 +154,7 @@ test("Service without protocol", t => {
   });
   root.addObject(h1);
 
-  const eth0 = h1.networkInterfaces.get('eth0');
+  const eth0 = h1.networkInterfaces.get("eth0");
 
   const s1 = new Service(h1, {
     name: "xyz",
@@ -160,7 +168,10 @@ test("Service without protocol", t => {
   ]);
 
   t.deepEqual(s1.endpoints, [
-    new Endpoint(s1, eth0, { rawAddress: "10.0.0.1", port: 555, tls: false })
+    new Endpoint(s1, eth0, {
+      /*rawAddress: "10.0.0.1",*/ port: 555,
+      tls: false
+    })
   ]);
 });
 
@@ -194,7 +205,10 @@ test("Service owner", t => {
   const h2 = new Host(root, {
     name: "h2",
     priority: 8,
-    weight: 7
+    weight: 7,
+    networkInterfces: {
+      eth0: { ipAddresses: "10.0.0.1" }
+    }
   });
   root.addObject(h2);
 
