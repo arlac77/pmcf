@@ -100,12 +100,13 @@ export const ServiceTypeDefinition = {
 };
 
 export class Service extends Base {
-  alias;
+  _alias;
   _weight;
   _type;
   _port;
   _ipAddresses;
   _systemd;
+  _extends = [];
 
   static {
     addType(this);
@@ -118,6 +119,14 @@ export class Service extends Base {
   constructor(owner, data) {
     super(owner, data);
     this.read(data, ServiceTypeDefinition);
+  }
+
+  set extends(value) {
+    this._extends.push(value);
+  }
+
+  get extends() {
+    return this._extends;
   }
 
   get network() {
@@ -158,12 +167,27 @@ export class Service extends Base {
 
   get endpoints() {
     if (!ServiceTypes[this.type]) {
-      return [{ address: this.rawAddress, port: this._port, tls: false }];
+      return [
+        {
+          service: this,
+          address: this.rawAddress,
+          port: this._port,
+          tls: false
+        }
+      ];
     }
 
     return ServiceTypes[this.type].endpoints.map(e =>
-      Object.assign({ address: this.rawAddress }, e)
+      Object.assign({ service: this, address: this.rawAddress }, e)
     );
+  }
+
+  set alias(value) {
+    this._alias = value;
+  }
+
+  get alias() {
+    return this.extendedProperty("_alias");
   }
 
   set port(value) {
@@ -187,7 +211,7 @@ export class Service extends Base {
   }
 
   get weight() {
-    return this._weight ?? this.owner.weight ?? 1;
+    return this.extendedProperty("_weight") ?? this.owner.weight ?? 1;
   }
 
   set type(value) {
@@ -199,7 +223,7 @@ export class Service extends Base {
   }
 
   get systemdServices() {
-    return this._systemd;
+    return this.extendedProperty("_systemd");
   }
 
   dnsRecordsForDomainName(domainName, hasSVRRecords) {

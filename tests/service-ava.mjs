@@ -26,6 +26,10 @@ test("Service basics", t => {
 
   h1.services = s1;
 
+  t.deepEqual(s1.endpoints, [
+    { service: s1, address: "10.0.0.1", port: 53, protocol: "udp", tls: false }
+  ]);
+
   t.is(s1.name, "dns");
   t.is(s1.type, "dns");
   t.is(s1.alias, "primary-dns");
@@ -137,13 +141,17 @@ test("Service without protocol", t => {
 
   const s1 = new Service(h1, {
     name: "xyz",
-    //port: 555,
+    port: 555,
     weight: 5,
     priority: 3
   });
 
   t.deepEqual(s1.dnsRecordsForDomainName("example.com", true), [
     //   DNSRecord("_xxx._yyy", "SRV", 3, 5, 555, "example.com")
+  ]);
+
+  t.deepEqual(s1.endpoints, [
+    { service: s1, address: "10.0.0.1", port: 555, tls: false }
   ]);
 });
 
@@ -193,4 +201,8 @@ test("Service owner", t => {
   t.is(s1b.name, "dns");
   t.is(s1b.priority, 8);
   t.is(s1b.weight, 7);
+
+  t.deepEqual(s1b.endpoints, [
+    { service: s1b, address: undefined, port: 53, protocol: "udp", tls: false }
+  ]);
 });

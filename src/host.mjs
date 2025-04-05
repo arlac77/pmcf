@@ -115,6 +115,9 @@ export class Host extends Base {
 
   _applyExtends(host) {
     for (const service of host.services) {
+
+      //present.extends.push(service);
+
       this.services = service.forOwner(this);
     }
 
