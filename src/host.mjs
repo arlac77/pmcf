@@ -671,7 +671,7 @@ export class NetworkInterface extends Base {
   }
 
   get scope() {
-    return this.extendedProperty("_scope") ?? this.network?.scope ?? "global";
+    return this.extendedProperty("_scope") ?? this.network?.scope ?? networkProperties.scope.default;
   }
 
   set hwaddr(value) {
@@ -687,7 +687,15 @@ export class NetworkInterface extends Base {
   }
 
   get metric() {
-    return this.extendedProperty("_metric") ?? this.network?.metric ?? 1004;
+    return this.extendedProperty("_metric") ?? this.network?.metric ?? networkProperties.metric.default;
+  }
+
+  set MTU(value) {
+    this._MTU = value;
+  }
+
+  get MTU() {
+    return this.extendedProperty("_MTU") ?? networkProperties.MTU.default;
   }
 
   set class(value) {

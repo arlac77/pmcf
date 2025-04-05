@@ -3,7 +3,8 @@ export const networkProperties = {
     type: "string",
     collection: false,
     writeable: true,
-    values: ["global", "site", "link", "host"]
+    values: ["global", "site", "link", "host"],
+    default: "global"
   },
   class: {
     type: "string",

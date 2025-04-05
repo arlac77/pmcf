@@ -201,6 +201,7 @@ test("Host addresses", t => {
     directory: "/n1/h1/eth0",
     name: "eth0",
     metric: 1004,
+    MTU: 1500,
     kind: "ethernet",
     scope: "global",
     owner: {
