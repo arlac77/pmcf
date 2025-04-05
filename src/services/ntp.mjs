@@ -14,7 +14,14 @@ const NTPServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ExtraSourceServiceTypeDefinition,
   priority: 0.1,
-  properties: {}
+  properties: {
+    isPool: {
+      type: "boolean",
+      collection: false,
+      writeable: true,
+      default: false
+    }
+  }
 };
 
 const NTP_SERVICE_FILTER = { type: NTPServiceTypeDefinition.name };
