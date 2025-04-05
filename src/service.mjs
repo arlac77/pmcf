@@ -168,17 +168,16 @@ export class Service extends Base {
   get endpoints() {
     if (!ServiceTypes[this.type]) {
       return [
-        {
-          service: this,
-          address: this.rawAddress,
+        new Endpoint(this, {
+          rawAddress: this.rawAddress,
           port: this._port,
           tls: false
-        }
+        })
       ];
     }
 
-    return ServiceTypes[this.type].endpoints.map(e =>
-      Object.assign({ service: this, address: this.rawAddress }, e)
+    return ServiceTypes[this.type].endpoints.map(
+      e => new Endpoint(this, { rawAddress: this.rawAddress, ...e })
     );
   }
 
@@ -286,6 +285,13 @@ export class Service extends Base {
   }
 }
 
+export class Endpoint {
+  constructor(service, data) {
+    this.service = service;
+    Object.assign(this, data);
+  }
+}
+
 export const sortByPriority = (a, b) => a.priority - b.priority;
 
 export function serviceAddresses(
@@ -301,4 +307,13 @@ export function serviceAddresses(
     .map(s => s[addressType])
     .flat()
     .filter(addressFilter);
+}
+
+export function serviceEndpoints(sources, filter) {
+  return asArray(sources)
+    .map(ft => Array.from(ft.findServices(filter)))
+    .flat()
+    .sort(sortByPriority)
+    .map(service => service.endpoints)
+    .flat();
 }

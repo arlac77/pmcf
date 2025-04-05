@@ -3,7 +3,7 @@ import { FileContentProvider } from "npm-pkgbuild";
 import {
   Service,
   ServiceTypeDefinition,
-  serviceAddresses
+  serviceEndpoints
 } from "../service.mjs";
 import { addType } from "../types.mjs";
 import { writeLines } from "../utils.mjs";
@@ -42,7 +42,7 @@ export class DHCPService extends Service {
 
     console.log("kea", host.name, network.name);
 
-    const dnsServerAddreses = serviceAddresses(network, {
+    const dnsServerEndpoints = serviceEndpoints(network, {
       type: "dns",
       priority: "<10"
     });
@@ -115,8 +115,8 @@ export class DHCPService extends Service {
       domains.map(domain => {
         return {
           name: domain,
-          "dns-servers": dnsServerAddreses.map(address => {
-            return { "ip-address": address };
+          "dns-servers": dnsServerEndpoints.map(endpoint => {
+            return { "ip-address": endpoint.rawAddress };
           })
         };
       });

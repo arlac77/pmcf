@@ -1,5 +1,5 @@
 import test from "ava";
-import { Root, Location, Host, Service } from "pmcf";
+import { Root, Location, Host, Service, Endpoint } from "pmcf";
 
 test("Service basics", t => {
   const root = new Root("/somwhere");
@@ -27,7 +27,12 @@ test("Service basics", t => {
   h1.services = s1;
 
   t.deepEqual(s1.endpoints, [
-    { service: s1, address: "10.0.0.1", port: 53, protocol: "udp", tls: false }
+    new Endpoint(s1, {
+      rawAddress: "10.0.0.1",
+      port: 53,
+      protocol: "udp",
+      tls: false
+    })
   ]);
 
   t.is(s1.name, "dns");
@@ -151,7 +156,7 @@ test("Service without protocol", t => {
   ]);
 
   t.deepEqual(s1.endpoints, [
-    { service: s1, address: "10.0.0.1", port: 555, tls: false }
+    new Endpoint(s1, { rawAddress: "10.0.0.1", port: 555, tls: false })
   ]);
 });
 
@@ -203,6 +208,11 @@ test("Service owner", t => {
   t.is(s1b.weight, 7);
 
   t.deepEqual(s1b.endpoints, [
-    { service: s1b, address: undefined, port: 53, protocol: "udp", tls: false }
+    new Endpoint(s1b, {
+      rawAddress: undefined,
+      port: 53,
+      protocol: "udp",
+      tls: false
+    })
   ]);
 });

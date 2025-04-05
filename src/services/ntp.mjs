@@ -1,7 +1,11 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { addType } from "../types.mjs";
-import { ServiceTypeDefinition, serviceAddresses } from "../service.mjs";
+import {
+  ServiceTypeDefinition,
+  serviceAddresses,
+  serviceEndpoints
+} from "../service.mjs";
 import {
   ExtraSourceService,
   ExtraSourceServiceTypeDefinition
@@ -81,10 +85,15 @@ export class NTPService extends ExtraSourceService {
     };
 
     const lines = [
-      ...serviceAddresses(this, {
+      ...serviceEndpoints(this, {
         ...NTP_SERVICE_FILTER,
         priority: ">=10"
-      }).map(address => `server ${address} iburst`),
+      }).map(
+        endpoint =>
+          `${endpoint.service.isPool ? "pool" : "server"} ${
+            endpoint.rawAddress
+          } iburst`
+      ),
       `mailonchange ${this.administratorEmail} 0.5`,
       "local stratum 10",
       "leapsectz right/UTC",
