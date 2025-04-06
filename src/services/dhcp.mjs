@@ -6,7 +6,7 @@ import {
   serviceEndpoints
 } from "../service.mjs";
 import { addType } from "../types.mjs";
-import { writeLines } from "../utils.mjs";
+import { writeLines, isIPv4Address, isIPv6Address } from "../utils.mjs";
 
 const DHCPServiceTypeDefinition = {
   name: "dhcp",
@@ -186,9 +186,16 @@ export class DHCPService extends Service {
       Dhcp4: {
         ...commonConfig,
         "interfaces-config": {
-          interfaces: [...host.networkInterfaces.values()]
-            .filter(ni => ni.kind !== "loopback")
-            .map(ni => `${ni.name}/${ni.rawIPv4Address}`)
+          interfaces: this.endpoints
+            .filter(
+              endpoint =>
+                isIPv4Address(endpoint.rawAddress) &&
+                endpoint.networkInterface.kind !== "loopback"
+            )
+            .map(
+              endpoint =>
+                `${endpoint.networkInterface.name}/${endpoint.rawAddress}`
+            )
         },
         "multi-threading": {
           "enable-multi-threading": false
@@ -233,9 +240,16 @@ export class DHCPService extends Service {
       Dhcp6: {
         ...commonConfig,
         "interfaces-config": {
-          interfaces: [...host.networkInterfaces.values()]
-            .filter(ni => ni.kind !== "loopback")
-            .map(ni => `${ni.name}/${ni.rawIPv6Address}`)
+          interfaces: this.endpoints
+            .filter(
+              endpoint =>
+                isIPv6Address(endpoint.rawAddress) &&
+                endpoint.networkInterface.kind !== "loopback"
+            )
+            .map(
+              endpoint =>
+                `${endpoint.networkInterface.name}/${endpoint.rawAddress}`
+            )
         },
         "control-socket": {
           "socket-type": "unix",
