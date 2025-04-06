@@ -330,10 +330,6 @@ export class Endpoint {
     return this.networkInterface.hostName;
   }
 
-  get domainName() {
-    return this.networkInterface.domainName;
-  }
-
   #rawAddress;
 
   get rawAddress() {

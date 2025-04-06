@@ -406,7 +406,7 @@ export class Host extends Base {
       filter
     );
   }
-
+  
   findNetworkInterface(filter) {
     for (const ni of objectFilter(
       types.network_interface,
@@ -647,17 +647,13 @@ export class NetworkInterface extends Base {
     return this.extendedProperty("_hostName") ?? this.host.hostName;
   }
 
-  get domainName() {
-    return [this.hostName, this.host.domain].join(".");
-  }
-
   set hostName(value) {
     this._hostName = value;
   }
 
   get domainNames() {
     return this.hostName
-      ? new Set([this.domainName])
+      ? new Set([[this.hostName, this.host.domain].join(".")])
       : this.host.directDomainNames;
   }
 
