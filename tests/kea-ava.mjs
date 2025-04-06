@@ -1,7 +1,7 @@
 import test from "ava";
 import { Root, Host, DHCPService, Endpoint } from "pmcf";
 
-test("kea basics", async t => {
+test("kea basics", t => {
   const owner = new Root("/");
 
   const h1 = new Host(owner, {
@@ -16,7 +16,18 @@ test("kea basics", async t => {
   const l0 = h1.networkInterfaces.get("l0");
   const eth0 = h1.networkInterfaces.get("eth0");
 
-  const kea = new DHCPService(h1, { name: "kea" });
+  const kea = new DHCPService(h1, {
+    name: "kea",
+
+    subsystems: {
+      "kea-control-agent": {
+        port: 8000
+      },
+      "kea-ddns": {
+        port: 53001
+      }
+    }
+  });
 
   h1.services = kea;
 
