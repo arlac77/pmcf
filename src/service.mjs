@@ -1,5 +1,6 @@
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
+import { objectFilter } from "./filter.mjs";
 import { asArray, isLocalhost } from "./utils.mjs";
 import { networkAddressProperties } from "./network-support.mjs";
 import {
@@ -59,6 +60,31 @@ const ServiceTypes = {
   }
 };
 
+export const endpointProperties = {
+  port: { type: "number", collection: false, writeable: true },
+  protocol: {
+    type: "string",
+    collection: false,
+    writeable: true,
+    values: ["tcp", "udp"]
+  },
+  type: { type: "string", collection: false, writeable: true },
+  tls: {
+    type: "boolean",
+    collection: false,
+    writeable: false,
+    default: false
+  }
+};
+
+export const EndpointTypeDefinition = {
+  name: "endpoint",
+  owners: ["service"],
+  priority: 0.4,
+  specializations: {},
+  properties: endpointProperties
+};
+
 export const ServiceTypeDefinition = {
   name: "service",
   owners: ["host", "cluster"],
@@ -78,23 +104,10 @@ export const ServiceTypeDefinition = {
   },
   properties: {
     ...networkAddressProperties,
+    ...endpointProperties,
     ipAddresses: { type: "string", collection: true, writeable: true },
-    port: { type: "number", collection: false, writeable: true },
-    protocol: {
-      type: "string",
-      collection: false,
-      writeable: true,
-      values: ["tcp", "udp"]
-    },
     alias: { type: "string", collection: false, writeable: true },
-    type: { type: "string", collection: false, writeable: true },
     weight: { type: "number", collection: false, writeable: true, default: 1 },
-    tls: {
-      type: "string",
-      collection: false,
-      writeable: false,
-      default: false
-    },
     systemd: { type: "string", collection: true, writeable: true }
   }
 };
@@ -189,6 +202,10 @@ export class Service extends Base {
         )
       )
       .flat();
+  }
+
+  *findEndpoints(filter) {
+    yield* objectFilter(EndpointTypeDefinition, this.endpoints, filter);
   }
 
   set alias(value) {

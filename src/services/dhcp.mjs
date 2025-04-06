@@ -74,7 +74,7 @@ export class DHCPService extends Service {
     const dnsServerEndpoints = serviceEndpoints(network, {
       type: "dns",
       priority: "<10"
-    });
+    }).filter(endpoint => endpoint.networkInterface.kind !== "loopback");
 
     const packageData = {
       dir,
@@ -144,9 +144,11 @@ export class DHCPService extends Service {
       domains.map(domain => {
         return {
           name: domain,
-          "dns-servers": dnsServerEndpoints.map(endpoint => {
-            return { "ip-address": endpoint.rawAddress };
-          })
+          "dns-servers": dnsServerEndpoints
+            .filter(endpoint => isIPv4Address(endpoint.rawAddress))
+            .map(endpoint => {
+              return { "ip-address": endpoint.rawAddress };
+            })
         };
       });
 
@@ -240,6 +242,7 @@ export class DHCPService extends Service {
           {
             name: "domain-name-servers",
             data: dnsServerEndpoints
+              .filter(endpoint => isIPv4Address(endpoint.rawAddress))
               .map(endpoint => endpoint.rawAddress)
               .join(",")
           },
@@ -282,7 +285,10 @@ export class DHCPService extends Service {
         "option-data": [
           {
             name: "dns-servers",
-            data: "2001:db8:2::45, 2001:db8:2::100"
+            data: dnsServerEndpoints
+              .filter(endpoint => isIPv6Address(endpoint.rawAddress))
+              .map(endpoint => endpoint.rawAddress)
+              .join(",")
           }
         ],
         subnet6: [
@@ -299,12 +305,6 @@ export class DHCPService extends Service {
                 prefix: "2001:db8:8::",
                 "prefix-len": 56,
                 "delegated-len": 64
-              }
-            ],
-            "option-data": [
-              {
-                name: "dns-servers",
-                data: "2001:db8:2::dead:beef, 2001:db8:2::cafe:babe"
               }
             ],
             reservations: [
