@@ -34,11 +34,13 @@ test("Service basics", t => {
 
   t.deepEqual(s1.endpoints, [
     new Endpoint(s1, l0, {
+      type: "dns",
       port: 53,
       protocol: "udp",
       tls: false
     }),
     new Endpoint(s1, eth0, {
+      type: "dns",
       port: 53,
       protocol: "udp",
       tls: false
@@ -169,7 +171,8 @@ test("Service without protocol", t => {
 
   t.deepEqual(s1.endpoints, [
     new Endpoint(s1, eth0, {
-      /*rawAddress: "10.0.0.1",*/ port: 555,
+      type: "xyz",
+      port: 555,
       tls: false
     })
   ]);

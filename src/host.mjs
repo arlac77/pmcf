@@ -115,7 +115,6 @@ export class Host extends Base {
 
   _applyExtends(host) {
     for (const service of host.services) {
-
       //present.extends.push(service);
 
       this.services = service.forOwner(this);
@@ -402,6 +401,24 @@ export class Host extends Base {
     );
   }
 
+  *findNetworkInterfaces(filter) {
+    yield* objectFilter(
+      types.network_interface,
+      this._networkInterfaces.values(),
+      filter
+    );
+  }
+  
+  findNetworkInterface(filter) {
+    for (const ni of objectFilter(
+      types.network_interface,
+      this._networkInterfaces.values(),
+      filter
+    )) {
+      return ni;
+    }
+  }
+
   get networkInterfaces() {
     return this._networkInterfaces;
   }
@@ -671,7 +688,11 @@ export class NetworkInterface extends Base {
   }
 
   get scope() {
-    return this.extendedProperty("_scope") ?? this.network?.scope ?? networkProperties.scope.default;
+    return (
+      this.extendedProperty("_scope") ??
+      this.network?.scope ??
+      networkProperties.scope.default
+    );
   }
 
   set hwaddr(value) {
@@ -687,7 +708,11 @@ export class NetworkInterface extends Base {
   }
 
   get metric() {
-    return this.extendedProperty("_metric") ?? this.network?.metric ?? networkProperties.metric.default;
+    return (
+      this.extendedProperty("_metric") ??
+      this.network?.metric ??
+      networkProperties.metric.default
+    );
   }
 
   set MTU(value) {

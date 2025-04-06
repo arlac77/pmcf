@@ -3,6 +3,7 @@ import { FileContentProvider } from "npm-pkgbuild";
 import {
   Service,
   ServiceTypeDefinition,
+  Endpoint,
   serviceEndpoints
 } from "../service.mjs";
 import { addType } from "../types.mjs";
@@ -15,6 +16,20 @@ const DHCPServiceTypeDefinition = {
   extends: ServiceTypeDefinition,
   priority: 0.1,
   properties: {}
+};
+
+const controlAgentEndpoint = {
+  type: "kea-control-agent",
+  port: 8000,
+  protocol: "tcp",
+  tls: false
+};
+
+const ddnsEndpoint = {
+  type: "kea-ddns",
+  port: 53001,
+  protocol: "tcp",
+  tls: false
 };
 
 export class DHCPService extends Service {
@@ -33,6 +48,20 @@ export class DHCPService extends Service {
 
   get type() {
     return DHCPServiceTypeDefinition.name;
+  }
+
+  get endpoints() {
+    const l0 = this.server.findNetworkInterface({ scope: "host" });
+
+    if (l0) {
+      return [
+        ...super.endpoints,
+        new Endpoint(this, l0, controlAgentEndpoint),
+        new Endpoint(this, l0, ddnsEndpoint)
+      ];
+    }
+
+    return super.endpoints;
   }
 
   async *preparePackages(dir) {
@@ -182,20 +211,23 @@ export class DHCPService extends Service {
       })
       .sort((a, b) => a.hostname.localeCompare(b.hostname));
 
+    const listenInterfaces = filter =>
+      this.endpoints
+        .filter(
+          endpoint =>
+            endpoint.type === "dhcp" &&
+            filter(endpoint.rawAddress) &&
+            endpoint.networkInterface.kind !== "loopback"
+        )
+        .map(
+          endpoint => `${endpoint.networkInterface.name}/${endpoint.rawAddress}`
+        );
+
     const dhcp4 = {
       Dhcp4: {
         ...commonConfig,
         "interfaces-config": {
-          interfaces: this.endpoints
-            .filter(
-              endpoint =>
-                isIPv4Address(endpoint.rawAddress) &&
-                endpoint.networkInterface.kind !== "loopback"
-            )
-            .map(
-              endpoint =>
-                `${endpoint.networkInterface.name}/${endpoint.rawAddress}`
-            )
+          interfaces: listenInterfaces(isIPv4Address)
         },
         "multi-threading": {
           "enable-multi-threading": false
@@ -240,16 +272,7 @@ export class DHCPService extends Service {
       Dhcp6: {
         ...commonConfig,
         "interfaces-config": {
-          interfaces: this.endpoints
-            .filter(
-              endpoint =>
-                isIPv6Address(endpoint.rawAddress) &&
-                endpoint.networkInterface.kind !== "loopback"
-            )
-            .map(
-              endpoint =>
-                `${endpoint.networkInterface.name}/${endpoint.rawAddress}`
-            )
+          interfaces: listenInterfaces(isIPv6Address)
         },
         "control-socket": {
           "socket-type": "unix",

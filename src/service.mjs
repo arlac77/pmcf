@@ -35,7 +35,7 @@ const ServiceTypes = {
   ssh: { endpoints: [{ protocol: "tcp", port: 22, tls: false }] },
   imap: { endpoints: [{ protocol: "tcp", port: 143, tls: false }] },
   imaps: { endpoints: [{ protocol: "tcp", port: 993, tls: true }] },
-  dhcp: { endpoints: [{ port: 547, tls: false }] },
+  dhcp: { endpoints: [{ port: 547, protocol: "udp", tls: false }] },
   "dhcpv6-client": {
     endpoints: [
       { protocol: "tcp", port: 546, tls: false },
@@ -166,7 +166,10 @@ export class Service extends Base {
   }
 
   get endpoints() {
-    const local = this._port === undefined ? {} : { port: this._port };
+    const local =
+      this._port === undefined
+        ? { type: this.type }
+        : { type: this.type, port: this._port };
 
     const data = ServiceTypes[this.type]?.endpoints || [
       {
