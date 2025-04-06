@@ -7,7 +7,8 @@ import {
   serviceEndpoints
 } from "../service.mjs";
 import { addType } from "../types.mjs";
-import { writeLines, isIPv4Address, isIPv6Address } from "../utils.mjs";
+import { writeLines } from "../utils.mjs";
+import { isIPv4Address, isIPv6Address } from "../ip.mjs";
 
 const DHCPServiceTypeDefinition = {
   name: "dhcp",

@@ -1,10 +1,10 @@
+import { asIterator } from "./utils.mjs";
 import {
-  asIterator,
   decodeIPv6,
   encodeIPv6,
   isIPv6Address,
   normalizeIPAddress
-} from "./utils.mjs";
+} from "./ip.mjs";
 
 export function dnsFullName(name) {
   return name.endsWith(".") ? name : name + ".";

@@ -7,7 +7,7 @@ import {
   encodeIP,
   hasWellKnownSubnet,
   isLocalhost
-} from "../src/utils.mjs";
+} from "../src/ip.mjs";
 
 function nt(t, address, expected) {
   const { cidr } = normalizeCIDR(address);

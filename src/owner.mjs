@@ -1,8 +1,8 @@
-import { asIterator, normalizeCIDR } from "./utils.mjs";
+import { asIterator } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { Subnet } from "./subnet.mjs";
 import { addType, types } from "./types.mjs";
-
+import { normalizeCIDR } from "./ip.mjs";
 const OwnerTypeDefinition = {
   name: "owner",
   owners: ["location", "owner", "root"],

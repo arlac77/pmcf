@@ -4,7 +4,7 @@ import {
   isIPv4Address,
   isIPv6Address,
   addressWithPrefixLength
-} from "./utils.mjs";
+} from "./ip.mjs";
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
 

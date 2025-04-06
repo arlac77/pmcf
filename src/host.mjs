@@ -6,16 +6,14 @@ import {
   networkProperties,
   networkAddressProperties
 } from "./network-support.mjs";
+import { asArray, domainFromDominName, domainName } from "./utils.mjs";
 import {
-  asArray,
   isIPv4Address,
   isIPv6Address,
   normalizeIPAddress,
   formatCIDR,
-  hasWellKnownSubnet,
-  domainFromDominName,
-  domainName
-} from "./utils.mjs";
+  hasWellKnownSubnet
+} from "./ip.mjs";
 import { objectFilter } from "./filter.mjs";
 import { addType, types } from "./types.mjs";
 import { loadHooks } from "./hooks.mjs";

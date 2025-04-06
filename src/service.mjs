@@ -1,8 +1,9 @@
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
 import { objectFilter } from "./filter.mjs";
-import { asArray, isLocalhost } from "./utils.mjs";
+import { asArray } from "./utils.mjs";
 import { networkAddressProperties } from "./network-support.mjs";
+import { isLocalhost } from "./ip.mjs";
 import {
   DNSRecord,
   dnsFullName,

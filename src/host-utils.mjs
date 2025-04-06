@@ -1,13 +1,5 @@
-import {
-  writeFile,
-  mkdir,
-  copyFile,
-  glob,
-  chmod,
-  stat
-} from "node:fs/promises";
+import { writeFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
-import { FileContentProvider } from "npm-pkgbuild";
 import { writeLines, sectionLines } from "../src/utils.mjs";
 import { addHook } from "./hooks.mjs";
 
