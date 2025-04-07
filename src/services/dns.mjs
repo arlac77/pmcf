@@ -170,10 +170,10 @@ export class DNSService extends ExtraSourceService {
   async *preparePackages(dir) {
     const location = this.owner.owner;
     const name = location.name;
-    const p1 = join(dir, "p1");
+    const p1 = join(dir, "p1") + "/";
     const packageData = {
       dir: p1,
-      sources: [new FileContentProvider(p1 + "/")],
+      sources: [new FileContentProvider(p1)],
       outputs: this.outputs,
       properties: {
         name: `named-${name}`,
@@ -207,10 +207,10 @@ export class DNSService extends ExtraSourceService {
       yield packageData;
     }
 
-    const p2 = join(dir, "p2");
+    const p2 = join(dir, "p2") + "/";
 
+    packageData.dir = p2;
     packageData.properties = {
-      dir: p2,
       name: `named-zones-${name}`,
       description: `zone definitions for ${location.fullName}`,
       dependencies: ["mf-named"],
@@ -221,7 +221,7 @@ export class DNSService extends ExtraSourceService {
 
     packageData.sources = [
       new FileContentProvider(
-        p2 + "/",
+        p2,
         {
           mode: 0o644,
           owner: "named",
