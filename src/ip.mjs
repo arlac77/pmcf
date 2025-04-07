@@ -230,18 +230,9 @@ export function rangeIP(address, prefix, lowerAdd = 0, upperReduce = 0) {
   const definition = isIPv4(address) ? ipv4 : ipv6;
 
   const from = _prefix(definition, address, prefix);
-  const to = _encode(definition, from); // /*from ||*/ definition.mask >> BigInt(prefix);
+  const to = from | ((1n << BigInt(definition.bitLength - prefix)) - 1n);
 
-  for (
-    let i = prefix / definition.segmentLength;
-    i < definition.segments;
-    i++
-  ) {
-    to[i] = 0xffff;
-  }
-
-  //console.log(from, to);
-  return [_encode(definition, from + BigInt(lowerAdd)), to];
+  return [_encode(definition, from + BigInt(lowerAdd)), _encode(definition, to - BigInt(upperReduce))];
 }
 
 export function normalizeCIDR(address) {

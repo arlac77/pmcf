@@ -68,7 +68,7 @@ export class Subnet extends Base {
   }
 
   get addressRange() {
-    return rangeIP(this.prefix, this.prefixLength, 0, 0).map(a => decodeIP(a));
+    return rangeIP(this.prefix, this.prefixLength, 1, 1).map(a => decodeIP(a));
   }
 
   get address() {

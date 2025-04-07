@@ -109,7 +109,7 @@ test(st, "10.0.0.77/16", {
   isLinkLocal: false,
   matches: ["10.0.0.77"],
   notMatches: ["10.2.0.77"],
-  addressRange: ["10.0.0.0", "10.0.255.255"]
+  addressRange: ["10.0.0.1", "10.0.255.254"]
 });
 
 test(st, "192.168.1/24", {
@@ -121,7 +121,7 @@ test(st, "192.168.1/24", {
   isLinkLocal: false,
   matches: ["192.168.1.77"],
   notMatches: ["192.168.2.77"],
-  addressRange: ["192.168.1.0", "192.168.1.255"]
+  addressRange: ["192.168.1.1", "192.168.1.254"]
 });
 
 test(st, "192.168.1.61/30", {
@@ -132,6 +132,6 @@ test(st, "192.168.1.61/30", {
   isIPv6: false,
   isLinkLocal: false,
   // matches: ["192.168.1.62/30"],
-  notMatches: ["192.168.2.77"]
-  // addressRange: ["192.168.1.60", "192.168.1.62"]
+  notMatches: ["192.168.2.77"],
+  addressRange: ["192.168.1.61", "192.168.1.62"]
 });
