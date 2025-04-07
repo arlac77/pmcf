@@ -1,8 +1,9 @@
 import { parseArgs } from "node:util";
+import { resolve } from "node:path";
 import { argv, cwd, env } from "node:process";
 import { Root } from "./module.mjs";
 
-export async function prepare(options={}) {  
+export async function prepare(options = {}) {
   const { values, positionals } = parseArgs({
     args: argv.slice(2),
     options: {
@@ -17,7 +18,7 @@ export async function prepare(options={}) {
         default: false
       },
       publish: {
-        type: "string",
+        type: "string"
       },
       root: {
         type: "string",
@@ -32,9 +33,13 @@ export async function prepare(options={}) {
     allowPositionals: true
   });
 
+  if (values.output) {
+    values.output = resolve(cwd(), values.output);
+  }
+
   const root = new Root(values.root);
 
   await root.loadAll();
-  
+
   return { root, options: values, args: positionals };
 }
