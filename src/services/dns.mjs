@@ -272,12 +272,6 @@ async function generateZoneDefs(dns, location, packageData) {
         records: new Set([SOARecord, NSRecord])
       };
 
-      addHook(
-        packageData.properties.hooks,
-        "post_upgrade",
-        `rm -f /var/lib/named/${zone.file}.jnl`
-      );
-
       const config = {
         name: `${domain}.zone.conf`,
         zones: [zone]
@@ -296,11 +290,17 @@ async function generateZoneDefs(dns, location, packageData) {
     }
   }
 
-  if (configs.length > 0) {
+  const foreignZones = configs.map(c => c.zones).flat();
+
+  if (foreignZones.length) {
     addHook(
       packageData.properties.hooks,
       "post_upgrade",
-      "systemctl try-reload-or-restart named"
+      `rm -f ${foreignZones.map(zone => `/var/lib/named/${zone.file}.jnl`)}\n` +
+        "systemctl try-reload-or-restart named\n" +
+        `/usr/bin/named-hostname-info ${foreignZones
+          .map(zone => zone.id)
+          .join(" ")}|/usr/bin/named-hostname-update`
     );
   }
 
