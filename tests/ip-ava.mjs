@@ -15,6 +15,7 @@ import {
   normalizeIP,
   prefixIP,
   normalizeCIDR,
+  rangeIP,
   reverseArpa,
   IPV4_LOCALHOST,
   IPV6_LOCALHOST
@@ -85,6 +86,15 @@ test(
   new Uint16Array([0xfe80, 0, 0, 0, 0x1e57, 0x3eff, 0xfe22, 0x9a8f]),
   true
 );
+test(isLinkLocalT, "", false);
+test(isLinkLocalT, 2, false);
+test(isLinkLocalT, 3.14, false);
+test(isLinkLocalT, 4n, false);
+test(isLinkLocalT, false, false);
+test(isLinkLocalT, true, false);
+test(isLinkLocalT, undefined, false);
+test(isLinkLocalT, null, false);
+test(isLinkLocalT, {}, false);
 
 function encodeIPT(t, address, expected) {
   t.deepEqual(encodeIP(address), expected);
@@ -96,7 +106,7 @@ test(encodeIPT, "1.2.3.4", new Uint8Array([1, 2, 3, 4]));
 test(encodeIPT, "::1", new Uint16Array([0, 0, 0, 0, 0, 0, 0, 1]));
 test(encodeIPT, "::1%lo", new Uint16Array([0, 0, 0, 0, 0, 0, 0, 1]));
 test(encodeIPT, "fe80::/64", new Uint16Array([0xfe80, 0, 0, 0, 0, 0, 0, 0]));
-test(encodeIPT, "", new Uint16Array([0, 0, 0, 0, 0, 0, 0, 0]));
+test(encodeIPT, "", undefined);
 test(encodeIPT, undefined, undefined);
 test(encodeIPT, null, undefined);
 test(encodeIPT, 1, undefined);
@@ -136,7 +146,9 @@ function decodeIPT(t, address, length, expected) {
   t.is(decodeIP(address, length), expected);
 }
 decodeIPT.title = (providedTitle = "decodeIP", address, length, expected) =>
-  `${providedTitle} ${address}${length === undefined ? "" : "/"+length} => ${expected}`.trim();
+  `${providedTitle} ${address}${
+    length === undefined ? "" : "/" + length
+  } => ${expected}`.trim();
 
 test(decodeIPT, new Uint8Array([1, 2, 3, 4]), undefined, "1.2.3.4");
 test(
@@ -274,7 +286,6 @@ function normalizeCIDRT(t, address, expected) {
   const { cidr } = normalizeCIDR(address);
   t.is(cidr, expected);
 }
-
 normalizeCIDRT.title = (providedTitle = "normalizeCIDR", address, cidr) =>
   `${providedTitle} ${address} => ${cidr}`.trim();
 
@@ -288,3 +299,25 @@ test(normalizeCIDRT, "10.0/16", "10.0/16");
 test(normalizeCIDRT, "1.2.3.4/8", "1/8");
 test(normalizeCIDRT, "192.168.1.62/30", "192.168.1.60/30");
 test(normalizeCIDRT, "fe80::/64", "fe80::/64");
+
+function rangeIPT(t, address, prefix, l, u, expectedFrom, expectedTo) {
+  const [from, to] = rangeIP(address, prefix, l, u);
+  t.is(decodeIP(from), expectedFrom);
+  t.is(decodeIP(to), expectedTo);
+}
+rangeIPT.title = (
+  providedTitle = "rangeIP",
+  address,
+  prefix,
+  l,
+  u,
+  expectedFrom,
+  expectedTo
+) =>
+  `${providedTitle} ${address}/${prefix} [${l},${u}] => ${expectedFrom} - ${expectedTo}`.trim();
+
+test(rangeIPT, "192.168.1.7", 24, 0, 0, "192.168.1.0", "192.168.1.255");
+test(rangeIPT, "192.168.1.7", 24, 1, 0, "192.168.1.1", "192.168.1.255");
+test(rangeIPT, "192.168.1.7", 16, 0, 0, "192.168.0.0", "192.168.255.255");
+test(rangeIPT, "fe80::", 64, 0, 0, "fe80::", "fe80::ffff:ffff:ffff:ffff");
+test(rangeIPT, "fe80::", 96, 0, 0, "fe80::", "fe80::ffff:ffff");

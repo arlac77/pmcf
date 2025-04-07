@@ -21,8 +21,7 @@ const ipv6 = {
     if (i >= 0) {
       parts.splice(i, 1, ..."0".repeat(9 - parts.length));
     }
-    return parts /*.map(s => s.padStart(4, "0"))*/
-      .join(":");
+    return parts.join(":");
   },
   separator: ":",
   compressor: "::",
@@ -51,7 +50,8 @@ function _create(definition, ...args) {
 }
 
 export function encodeIP(address) {
-  return _encode(isIPv4(address) ? ipv4 : ipv6, address);
+  const d = _definition(address);
+  return d && _encode(d, address);
 }
 
 export function encodeIPv6(address) {
@@ -75,6 +75,9 @@ export function _encode(definition, address) {
       }
 
       return res;
+
+    case "bigint":
+      return _encodeBigInt(definition, address);
 
     case "object":
       if (
@@ -156,6 +159,14 @@ export function isIPv6(address) {
   return _is(ipv6, address);
 }
 
+function _definition(address) {
+  for (const defintion of [ipv4, ipv6]) {
+    if (_is(defintion, address)) {
+      return defintion;
+    }
+  }
+}
+
 export function _is(definition, address) {
   switch (typeof address) {
     case "string":
@@ -215,6 +226,24 @@ export function _prefix(definition, address, length) {
   );
 }
 
+export function rangeIP(address, prefix, lowerAdd = 0, upperReduce = 0) {
+  const definition = isIPv4(address) ? ipv4 : ipv6;
+
+  const from = _prefix(definition, address, prefix);
+  const to = _encode(definition, from); // /*from ||*/ definition.mask >> BigInt(prefix);
+
+  for (
+    let i = prefix / definition.segmentLength;
+    i < definition.segments;
+    i++
+  ) {
+    to[i] = 0xffff;
+  }
+
+  //console.log(from, to);
+  return [_encode(definition, from + BigInt(lowerAdd)), to];
+}
+
 export function normalizeCIDR(address) {
   let [prefix, prefixLength] = address.split(/\//);
   let longPrefix;
@@ -244,7 +273,12 @@ export function normalizeCIDR(address) {
     longPrefix = _decode(definition, n);
   }
 
-  return { longPrefix, prefix, prefixLength, cidr: `${prefix}/${prefixLength}` };
+  return {
+    longPrefix,
+    prefix,
+    prefixLength,
+    cidr: `${prefix}/${prefixLength}`
+  };
 }
 
 export function formatCIDR(address, subnet) {
@@ -285,7 +319,7 @@ export function isLocalhost(address) {
 
 export function isLinkLocal(address) {
   const eaddr = encodeIP(address);
-  return eaddr[0] === 0xfe80;
+  return eaddr?.[0] === 0xfe80;
 }
 
 export function hasWellKnownSubnet(address) {

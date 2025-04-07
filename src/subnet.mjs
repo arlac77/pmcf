@@ -1,4 +1,11 @@
-import { normalizeCIDR, isLinkLocal, isIPv4, isIPv6, prefixIP } from "./ip.mjs";
+import {
+  normalizeCIDR,
+  isLinkLocal,
+  isIPv4,
+  isIPv6,
+  rangeIP,
+  decodeIP
+} from "./ip.mjs";
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
 
@@ -61,10 +68,7 @@ export class Subnet extends Base {
   }
 
   get addressRange() {
-    return [
-      prefixIP(this.prefix, this.prefixLength),
-      this.prefix + ".255".repeat((32 - this.prefixLength) / 8)
-    ];
+    return rangeIP(this.prefix, this.prefixLength, 0, 0).map(a => decodeIP(a));
   }
 
   get address() {
