@@ -2,8 +2,8 @@ import { join } from "node:path";
 import { createHmac } from "node:crypto";
 import { FileContentProvider } from "npm-pkgbuild";
 import { writeLines } from "../utils.mjs";
-import { isIPv6Address, isLinkLocal, isLocalhost } from "../ip.mjs";
-import { DNSRecord, dnsFullName, reverseArpaAddress } from "../dns-utils.mjs";
+import { isIPv6, isLinkLocal, isLocalhost, reverseArpa } from "../ip.mjs";
+import { DNSRecord, dnsFullName } from "../dns-utils.mjs";
 import { addType } from "../types.mjs";
 import { ServiceTypeDefinition, serviceAddresses } from "../service.mjs";
 import {
@@ -288,7 +288,7 @@ async function generateZoneDefs(dns, location, packageData) {
       for (const address of host.rawAddresses) {
         if (!isLocalhost(address)) {
           zone.records.add(
-            DNSRecord("@", isIPv6Address(address) ? "AAAA" : "A", address)
+            DNSRecord("@", isIPv6(address) ? "AAAA" : "A", address)
           );
         }
       }
@@ -362,7 +362,7 @@ async function generateZoneDefs(dns, location, packageData) {
             zone.records.add(
               DNSRecord(
                 dnsFullName(domainName),
-                isIPv6Address(address) ? "AAAA" : "A",
+                isIPv6(address) ? "AAAA" : "A",
                 address
               )
             );
@@ -371,11 +371,11 @@ async function generateZoneDefs(dns, location, packageData) {
             let reverseZone = reverseZones.get(subnet.address);
 
             if (!reverseZone) {
-              const reverseArpa = reverseArpaAddress(subnet.prefix);
+              const id = reverseArpa(subnet.prefix);
               reverseZone = {
-                id: reverseArpa,
+                id,
                 type: "plain",
-                file: `${locationName}/${reverseArpa}.zone`,
+                file: `${locationName}/${id}.zone`,
                 records: new Set([SOARecord, NSRecord])
               };
               config.zones.push(reverseZone);
@@ -385,7 +385,7 @@ async function generateZoneDefs(dns, location, packageData) {
             for (const domainName of host.domainNames) {
               reverseZone.records.add(
                 DNSRecord(
-                  dnsFullName(reverseArpaAddress(address)),
+                  dnsFullName(reverseArpa(address)),
                   "PTR",
                   dnsFullName(domainName)
                 )

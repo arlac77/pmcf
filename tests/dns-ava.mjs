@@ -19,7 +19,7 @@ test("DNS basics", async t => {
   t.deepEqual(dns.systemdConfig[1], {
     DNS: "192.168.1.1 192.168.1.11",
     FallbackDNS:
-      "1.1.1.1 2606:4700:4700:0000:0000:0000:0000:1111 8.8.8.8 2001:4860:4860:0000:0000:0000:0000:8888",
+      "1.1.1.1 2606:4700:4700::1111 8.8.8.8 2001:4860:4860::8888",
     Domains: "mydomain.com",
     DNSSEC: "no",
     MulticastDNS: "yes",

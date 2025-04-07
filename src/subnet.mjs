@@ -1,10 +1,4 @@
-import {
-  normalizeCIDR,
-  isLinkLocal,
-  isIPv4Address,
-  isIPv6Address,
-  addressWithPrefixLength
-} from "./ip.mjs";
+import { normalizeCIDR, isLinkLocal, isIPv4, isIPv6, prefixIP } from "./ip.mjs";
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
 
@@ -37,9 +31,13 @@ export class Subnet extends Base {
   }
 
   constructor(owner, address) {
-    const { cidr } = normalizeCIDR(address);
+    const { longPrefix, prefix, prefixLength, cidr } = normalizeCIDR(address);
     super(owner, cidr);
     owner.addObject(this);
+
+    this.prefix = prefix;
+    this.prefixLength = prefixLength;
+    this.longPrefix = longPrefix;
   }
 
   get fullName() {
@@ -55,34 +53,18 @@ export class Subnet extends Base {
   }
 
   get isIPv4() {
-    return isIPv4Address(this.address);
+    return isIPv4(this.address);
   }
 
   get isIPv6() {
-    return isIPv6Address(this.address);
+    return isIPv6(this.address);
   }
 
   get addressRange() {
     return [
-      addressWithPrefixLength(this.prefix, this.prefixLength),
+      prefixIP(this.prefix, this.prefixLength),
       this.prefix + ".255".repeat((32 - this.prefixLength) / 8)
     ];
-  }
-
-  get longPrefix() {
-    return addressWithPrefixLength(this.prefix, this.prefixLength);
-  }
-
-  get prefix() {
-    const [prefix] = this.name.split("/");
-    return prefix;
-  }
-
-  get prefixLength() {
-    const m = this.name.match(/\/(\d+)$/);
-    if (m) {
-      return parseInt(m[1]);
-    }
   }
 
   get address() {

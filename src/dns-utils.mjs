@@ -1,10 +1,5 @@
 import { asIterator } from "./utils.mjs";
-import {
-  decodeIPv6,
-  encodeIPv6,
-  isIPv6Address,
-  normalizeIPAddress
-} from "./ip.mjs";
+import { decodeIPv4, decodeIPv6 } from "./ip.mjs";
 
 export function dnsFullName(name) {
   return name.endsWith(".") ? name : name + ".";
@@ -19,10 +14,10 @@ export function DNSRecord(key, type, ...values) {
       break;
 
     case "A":
-      values[0] = normalizeIPAddress(values[0]);
+      values[0] = decodeIPv4(values[0]);
       break;
     case "AAAA":
-      values[0] = decodeIPv6(encodeIPv6(values[0]));
+      values[0] = decodeIPv6(values[0]);
       break;
   }
 
@@ -57,24 +52,5 @@ export function dnsMergeParameters(a, b) {
       key,
       new Set(asIterator(a[key])).union(new Set(asIterator(b[key])))
     ])
-  );
-}
-
-export function reverseAddress(address) {
-  if (isIPv6Address(address)) {
-    return normalizeIPAddress(address)
-      .replaceAll(":", "")
-      .split("")
-      .reverse()
-      .join(".");
-  }
-
-  return address.split(".").reverse().join(".");
-}
-
-export function reverseArpaAddress(address) {
-  return (
-    reverseAddress(address) +
-    (isIPv6Address(address) ? ".ip6.arpa" : ".in-addr.arpa")
   );
 }

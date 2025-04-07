@@ -8,11 +8,11 @@ import {
 } from "./network-support.mjs";
 import { asArray, domainFromDominName, domainName } from "./utils.mjs";
 import {
-  isIPv4Address,
-  isIPv6Address,
-  normalizeIPAddress,
+  isIPv4,
+  isIPv6,
   formatCIDR,
-  hasWellKnownSubnet
+  hasWellKnownSubnet,
+  normalizeIP
 } from "./ip.mjs";
 import { objectFilter } from "./filter.mjs";
 import { addType, types } from "./types.mjs";
@@ -580,7 +580,7 @@ export class NetworkInterface extends Base {
   set ipAddresses(value) {
     for (const address of asArray(value)) {
       this._ipAddresses.set(
-        normalizeIPAddress(address),
+        normalizeIP(address),
         this.addSubnet(address)
       );
     }
@@ -591,11 +591,11 @@ export class NetworkInterface extends Base {
   }
 
   get rawIPv4Address() {
-    return this.rawAddresses.filter(a => isIPv4Address(a))[0];
+    return this.rawAddresses.filter(a => isIPv4(a))[0];
   }
 
   get rawIPv6Address() {
-    return this.rawAddresses.filter(a => isIPv6Address(a))[0];
+    return this.rawAddresses.filter(a => isIPv6(a))[0];
   }
 
   get rawAddresses() {
@@ -614,13 +614,13 @@ export class NetworkInterface extends Base {
 
   get rawIPv4Addresses() {
     return [...this.ipAddresses]
-      .filter(([address]) => isIPv4Address(address))
+      .filter(([address]) => isIPv4(address))
       .map(([address]) => address);
   }
 
   get rawIPv6Addresses() {
     return [...this.ipAddresses]
-      .filter(([address]) => isIPv6Address(address))
+      .filter(([address]) => isIPv6(address))
       .map(([address]) => address);
   }
 

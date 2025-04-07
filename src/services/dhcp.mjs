@@ -8,7 +8,7 @@ import {
 } from "../service.mjs";
 import { addType } from "../types.mjs";
 import { writeLines } from "../utils.mjs";
-import { isIPv4Address, isIPv6Address } from "../ip.mjs";
+import { isIPv4, isIPv6 } from "../ip.mjs";
 
 const DHCPServiceTypeDefinition = {
   name: "dhcp",
@@ -146,7 +146,7 @@ export class DHCPService extends Service {
         return {
           name: domain,
           "dns-servers": dnsServerEndpoints
-            .filter(endpoint => isIPv4Address(endpoint.rawAddress))
+            .filter(endpoint => isIPv4(endpoint.rawAddress))
             .map(endpoint => {
               return { "ip-address": endpoint.rawAddress };
             })
@@ -230,7 +230,7 @@ export class DHCPService extends Service {
       Dhcp4: {
         ...commonConfig,
         "interfaces-config": {
-          interfaces: listenInterfaces(isIPv4Address)
+          interfaces: listenInterfaces(isIPv4)
         },
         "multi-threading": {
           "enable-multi-threading": false
@@ -243,7 +243,7 @@ export class DHCPService extends Service {
           {
             name: "domain-name-servers",
             data: dnsServerEndpoints
-              .filter(endpoint => isIPv4Address(endpoint.rawAddress))
+              .filter(endpoint => isIPv4(endpoint.rawAddress))
               .map(endpoint => endpoint.rawAddress)
               .join(",")
           },
@@ -276,7 +276,7 @@ export class DHCPService extends Service {
       Dhcp6: {
         ...commonConfig,
         "interfaces-config": {
-          interfaces: listenInterfaces(isIPv6Address)
+          interfaces: listenInterfaces(isIPv6)
         },
         "control-socket": {
           "socket-type": "unix",
@@ -287,7 +287,7 @@ export class DHCPService extends Service {
           {
             name: "dns-servers",
             data: dnsServerEndpoints
-              .filter(endpoint => isIPv6Address(endpoint.rawAddress))
+              .filter(endpoint => isIPv6(endpoint.rawAddress))
               .map(endpoint => endpoint.rawAddress)
               .join(",")
           }
