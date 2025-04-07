@@ -207,9 +207,10 @@ export class DNSService extends ExtraSourceService {
       yield packageData;
     }
 
-    const p2 = (packageData.dir = join(dir, "p2"));
+    const p2 = join(dir, "p2");
 
     packageData.properties = {
+      dir: p2,
       name: `named-zones-${name}`,
       description: `zone definitions for ${location.fullName}`,
       dependencies: ["mf-named"],
