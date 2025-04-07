@@ -3,7 +3,6 @@ post_install()
     ls -l /etc/resolv.conf | grep -q /run/systemd/resolve/resolv.conf
     if [ $? = 1 ]
     then
-        mv /etc/resolv.conf /etc/resolv.conf.pre
         ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
     fi
 }
@@ -13,7 +12,6 @@ post_upgrade()
     ls -l /etc/resolv.conf | grep -q /run/systemd/resolve/resolv.conf
     if [ $? = 1 ]
     then
-        mv /etc/resolv.conf /etc/resolv.conf.pre
         ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
     fi
 }
