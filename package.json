@@ -40,7 +40,7 @@
   "dependencies": {
     "ip-utilties": "^1.1.0",
     "npm-pkgbuild": "^18.0.1",
-    "pacc": "^3.3.0",
+    "pacc": "^3.4.0",
     "pkg-dir": "^8.0.0"
   },
   "devDependencies": {
