@@ -6,12 +6,21 @@ import {
   normalizeIP
 } from "ip-utilties";
 import { Base } from "./base.mjs";
+import { Subnet } from "./subnet.mjs";
 import {
   networkProperties,
   networkAddressProperties
 } from "./network-support.mjs";
 import { asArray } from "./utils.mjs";
 import { addType } from "./types.mjs";
+
+/**
+ * @typedef {object} NetworkAddress
+ * @property {NetworkInterface} networkInterface
+ * @property {string|Uint8Array|Uint16Array} address
+ * @property {Subnet} subnet
+ * @property {Set<string>} domainNames
+ */
 
 class SkeletonNetworkInterface extends Base {
   _extends = [];
@@ -62,6 +71,11 @@ class SkeletonNetworkInterface extends Base {
     return new Map();
   }
 
+  /**
+   * 
+   * @param {object} filter
+   * @return {Iterable<NetworkAddress>} 
+   */
   *networkAddresses(filter) {
     for (const [address, subnet] of this.ipAddresses) {
       yield {
