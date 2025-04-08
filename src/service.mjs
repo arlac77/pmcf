@@ -22,6 +22,7 @@ const ServiceTypes = {
     dnsRecord: { type: "HTTPS", parameters: { alpn: "h2" } }
   },
   http3: {
+    extends: ["https"],
     type: "https",
     endpoints: [{ protocol: "tcp", port: 443, tls: true }],
     dnsRecord: {
@@ -48,6 +49,7 @@ const ServiceTypes = {
   smb: { endpoints: [{ protocol: "tcp", port: 445, tls: false }] },
   timemachine: {
     type: "adisk",
+    extends: ["smb"],
     endpoints: [{ protocol: "tcp", port: 445, tls: false }],
     dnsRecord: {
       type: "TXT",

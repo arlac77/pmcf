@@ -41,6 +41,12 @@ const DNSServiceTypeDefinition = {
       writeable: true,
       default: false
     },
+    excludeInterfaceKinds: {
+      type: "string",
+      collection: true,
+      writeable: true
+    },
+
     exclude: { type: "network", collection: true, writeable: true },
     notify: {
       type: "boolean",
@@ -87,6 +93,7 @@ export class DNSService extends ExtraSourceService {
   _protected = [];
   _open = [];
   _exclude = new Set([]);
+  _excludeInterfaceKinds = new Set();
 
   serial = Math.ceil(Date.now() / 1000);
   refresh = 36000;
@@ -145,6 +152,14 @@ export class DNSService extends ExtraSourceService {
 
   get exclude() {
     return this._exclude;
+  }
+
+  set excludeInterfaceKinds(value) {
+    this._excludeInterfaceKinds.add(value);
+  }
+
+  get excludeInterfaceKinds() {
+    return this._excludeInterfaceKinds;
   }
 
   get systemdConfig() {
@@ -351,7 +366,7 @@ async function generateZoneDefs(dns, location, packageData) {
       networkInterface,
       domainNames
     } of location.networkAddresses()) {
-      if (!dns.exclude.has(networkInterface.network)) {
+      if (!dns.exclude.has(networkInterface.network) && !dns.excludeInterfaceKinds.has(networkInterface.kind)) {
         const host = networkInterface.host;
         if (
           !addresses.has(address) &&

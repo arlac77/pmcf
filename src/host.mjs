@@ -406,7 +406,7 @@ export class Host extends Base {
       filter
     );
   }
-  
+
   findNetworkInterface(filter) {
     for (const ni of objectFilter(
       types.network_interface,
@@ -505,11 +505,85 @@ export class Host extends Base {
   }
 }
 
+class SkeletonNetworkInterface extends Base {
+  _extends = [];
+  _network;
+
+  set extends(value) {
+    this._extends.push(value);
+  }
+
+  get extends() {
+    return this._extends;
+  }
+
+  get isTemplate() {
+    return this.name.indexOf("*") >= 0;
+  }
+
+  get host() {
+    return this.owner;
+  }
+
+  get network_interface() {
+    return this;
+  }
+
+  get domainNames() {
+    return new Set();
+  }
+
+  matches(other) {
+    if (this.isTemplate) {
+      const name = this.name.replace("*", "");
+      return name.length === 0 || other.name.indexOf(name) >= 0;
+    }
+
+    return false;
+  }
+
+  get network() {
+    return this.extendedProperty("_network") ?? this.host.network;
+  }
+
+  set network(network) {
+    this._network = network;
+  }
+
+  get rawAddress() {
+    return this.rawAddresses[0];
+  }
+
+  get rawIPv4Address() {
+    return this.rawAddresses.filter(a => isIPv4(a))[0];
+  }
+
+  get rawIPv6Address() {
+    return this.rawAddresses.filter(a => isIPv6(a))[0];
+  }
+
+  get cidrAddress() {
+    return this.cidrAddresses[0];
+  }
+}
+
 const NetworkInterfaceTypeDefinition = {
   name: "network_interface",
   priority: 0.4,
   owners: ["host"],
   extends: Base.typeDefinition,
+  specializations: {},
+  factoryFor(value) {
+    const kind = value.kind;
+    const t = NetworkInterfaceTypeDefinition.specializations[kind];
+
+    if (t) {
+      delete value.type;
+      return t.clazz;
+    }
+
+    return NetworkInterface;
+  },
   properties: {
     ...networkProperties,
     ...networkAddressProperties,
@@ -523,7 +597,7 @@ const NetworkInterfaceTypeDefinition = {
   }
 };
 
-export class NetworkInterface extends Base {
+export class NetworkInterface extends SkeletonNetworkInterface {
   static {
     addType(this);
   }
@@ -537,30 +611,15 @@ export class NetworkInterface extends Base {
   _metric;
   _ssid;
   _psk;
-  _network;
   _kind;
   _hostName;
   _hwaddr;
   _class;
-  _extends = [];
   arpbridge;
 
   constructor(owner, data) {
     super(owner, data);
     this.read(data, NetworkInterfaceTypeDefinition);
-  }
-
-  get isTemplate() {
-    return this.name.indexOf("*") >= 0;
-  }
-
-  matches(other) {
-    if (this.isTemplate) {
-      const name = this.name.replace("*", "");
-      return name.length === 0 || other.name.indexOf(name) >= 0;
-    }
-
-    return false;
   }
 
   addSubnet(address) {
@@ -579,31 +638,12 @@ export class NetworkInterface extends Base {
 
   set ipAddresses(value) {
     for (const address of asArray(value)) {
-      this._ipAddresses.set(
-        normalizeIP(address),
-        this.addSubnet(address)
-      );
+      this._ipAddresses.set(normalizeIP(address), this.addSubnet(address));
     }
-  }
-
-  get rawAddress() {
-    return this.rawAddresses[0];
-  }
-
-  get rawIPv4Address() {
-    return this.rawAddresses.filter(a => isIPv4(a))[0];
-  }
-
-  get rawIPv6Address() {
-    return this.rawAddresses.filter(a => isIPv6(a))[0];
   }
 
   get rawAddresses() {
     return [...this._ipAddresses].map(([address]) => address);
-  }
-
-  get cidrAddress() {
-    return this.cidrAddresses[0];
   }
 
   get cidrAddresses() {
@@ -655,30 +695,6 @@ export class NetworkInterface extends Base {
     return this.hostName
       ? new Set([[this.hostName, this.host.domain].join(".")])
       : this.host.directDomainNames;
-  }
-
-  get host() {
-    return this.owner;
-  }
-
-  get network_interface() {
-    return this;
-  }
-
-  set extends(value) {
-    this._extends.push(value);
-  }
-
-  get extends() {
-    return this._extends;
-  }
-
-  get network() {
-    return this.extendedProperty("_network") ?? this.host.network;
-  }
-
-  set network(network) {
-    this._network = network;
   }
 
   set scope(value) {
@@ -751,5 +767,49 @@ export class NetworkInterface extends Base {
 
   get kind() {
     return this.extendedProperty("_kind") ?? this.network?.kind;
+  }
+}
+
+const LoopbackNetworkInterfaceTypeDefinition = {
+  name: "loopback",
+  specializationOf: NetworkInterfaceTypeDefinition,
+  owners: NetworkInterfaceTypeDefinition.owners,
+  extends: NetworkInterfaceTypeDefinition,
+  priority: 0.1,
+  properties: {}
+};
+
+const _localAddresses = new Map([
+  ["127.0.0.1", { prefix: "127.0.0", prefixLength: 8 }], // TODO
+  ["::1", { prefix: "", prefixLength: 128 }]
+]);
+
+export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
+  static {
+    addType(this);
+  }
+
+  static get typeDefinition() {
+    return LoopbackNetworkInterfaceTypeDefinition;
+  }
+
+  get kind() {
+    return "loopback";
+  }
+
+  get scope() {
+    return "host";
+  }
+
+  get hostName() {
+    return "localhost";
+  }
+
+  get ipAddresses() {
+    return _localAddresses;
+  }
+
+  get cidrAddresses() {
+    return ["127.0.0.1/8", "::1/128"];
   }
 }

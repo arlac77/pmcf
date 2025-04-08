@@ -20,6 +20,7 @@ const DHCPServiceTypeDefinition = {
 };
 
 const controlAgentEndpoint = {
+ // extends: ["http"],
   type: "kea-control-agent",
   port: 8000,
   protocol: "tcp",
