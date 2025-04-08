@@ -5,7 +5,7 @@ import {
   isIPv6,
   rangeIP,
   decodeIP
-} from "./ip.mjs";
+} from "ip-utilties";
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
 

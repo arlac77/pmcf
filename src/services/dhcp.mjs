@@ -1,5 +1,6 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
+import { isIPv4, isIPv6 } from "ip-utilties";
 import {
   Service,
   ServiceTypeDefinition,
@@ -8,7 +9,6 @@ import {
 } from "../service.mjs";
 import { addType } from "../types.mjs";
 import { writeLines } from "../utils.mjs";
-import { isIPv4, isIPv6 } from "../ip.mjs";
 
 const DHCPServiceTypeDefinition = {
   name: "dhcp",

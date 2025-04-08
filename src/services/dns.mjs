@@ -1,8 +1,8 @@
 import { join } from "node:path";
 import { createHmac } from "node:crypto";
 import { FileContentProvider } from "npm-pkgbuild";
+import { isIPv6, isLinkLocal, isLocalhost, reverseArpa } from "ip-utilties";
 import { writeLines } from "../utils.mjs";
-import { isIPv6, isLinkLocal, isLocalhost, reverseArpa } from "../ip.mjs";
 import { DNSRecord, dnsFullName } from "../dns-utils.mjs";
 import { addType } from "../types.mjs";
 import { ServiceTypeDefinition, serviceAddresses } from "../service.mjs";

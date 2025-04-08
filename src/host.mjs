@@ -1,19 +1,19 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
-import { Base } from "./base.mjs";
-import {
-  networkProperties,
-  networkAddressProperties
-} from "./network-support.mjs";
-import { asArray, domainFromDominName, domainName } from "./utils.mjs";
 import {
   isIPv4,
   isIPv6,
   formatCIDR,
   hasWellKnownSubnet,
   normalizeIP
-} from "./ip.mjs";
+} from "ip-utilties";
+import { Base } from "./base.mjs";
+import {
+  networkProperties,
+  networkAddressProperties
+} from "./network-support.mjs";
+import { asArray, domainFromDominName, domainName } from "./utils.mjs";
 import { objectFilter } from "./filter.mjs";
 import { addType, types } from "./types.mjs";
 import { loadHooks } from "./hooks.mjs";

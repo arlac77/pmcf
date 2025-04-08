@@ -1,5 +1,5 @@
+import { decodeIPv4, decodeIPv6 } from "ip-utilties";
 import { asIterator } from "./utils.mjs";
-import { decodeIPv4, decodeIPv6 } from "./ip.mjs";
 
 export function dnsFullName(name) {
   return name.endsWith(".") ? name : name + ".";
