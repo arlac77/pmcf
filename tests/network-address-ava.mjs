@@ -1,4 +1,5 @@
 import test from "ava";
+import { filter } from "pacc";
 import { Root, Host, Network } from "pmcf";
 
 test("NetworkAddress filter", t => {
@@ -41,7 +42,7 @@ test("NetworkAddress filter", t => {
   t.deepEqual([...h2.networkAddresses()], [a1, a2]);
 
   t.deepEqual(
-    [...h2.networkAddresses({ "networkInterface.host.name": "h2" })],
-    [a1, a2]
+    [...h2.networkAddresses(n => n.networkInterface.network.name !== "n1")],
+    []
   );
 });

@@ -76,14 +76,18 @@ class SkeletonNetworkInterface extends Base {
    * @param {object} filter
    * @return {Iterable<NetworkAddress>} 
    */
-  *networkAddresses(filter) {
+  *networkAddresses(filter=(n)=>true) {
     for (const [address, subnet] of this.ipAddresses) {
-      yield {
+      const networkAddress = {
         networkInterface: this,
         domainNames: this.domainNames,
         address,
         subnet
       };
+
+      if(filter(networkAddress)) {
+        yield networkAddress;
+      }
     }
   }
 
