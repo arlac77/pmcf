@@ -298,9 +298,9 @@ export class Owner extends Base {
     return all;
   }
 
-  *networkAddresses() {
+  *networkAddresses(filter) {
     for (const host of this.hosts()) {
-      yield* host.networkAddresses();
+      yield* host.networkAddresses(filter);
     }
   }
 

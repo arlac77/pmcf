@@ -58,7 +58,11 @@ class SkeletonNetworkInterface extends Base {
     this._network = network;
   }
 
-  *networkAddresses() {
+  get ipAddresses() {
+    return new Map();
+  }
+
+  *networkAddresses(filter) {
     for (const [address, subnet] of this.ipAddresses) {
       yield {
         networkInterface: this,
@@ -83,10 +87,6 @@ class SkeletonNetworkInterface extends Base {
 
   get cidrAddress() {
     return this.cidrAddresses[0];
-  }
-
-  get ipAddresses() {
-    return new Map();
   }
 
   get rawAddresses() {

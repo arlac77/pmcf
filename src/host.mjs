@@ -421,9 +421,9 @@ export class Host extends Base {
     }
   }
 
-  *networkAddresses() {
+  *networkAddresses(filter) {
     for (const networkInterface of this.networkInterfaces.values()) {
-      yield* networkInterface.networkAddresses();
+      yield* networkInterface.networkAddresses(filter);
     }
   }
 
