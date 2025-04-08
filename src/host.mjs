@@ -13,7 +13,7 @@ import {
   generateMachineInfo,
   generateKnownHosts
 } from "./host-utils.mjs";
-import {NetworkInterfaceTypeDefinition} from "./network-interface.mjs";
+import { NetworkInterfaceTypeDefinition } from "./network-interface.mjs";
 
 const HostTypeDefinition = {
   name: "host",
@@ -448,7 +448,7 @@ export class Host extends Base {
 
   get cidrAddresses() {
     return [...this.networkAddresses()].map(({ address, subnet }) =>
-      formatCIDR(address, subnet)
+      formatCIDR(address, subnet.prefixLength)
     );
   }
 
