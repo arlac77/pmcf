@@ -423,14 +423,7 @@ export class Host extends Base {
 
   *networkAddresses() {
     for (const networkInterface of this.networkInterfaces.values()) {
-      for (const [address, subnet] of networkInterface.ipAddresses) {
-        yield {
-          networkInterface,
-          domainNames: networkInterface.domainNames,
-          address,
-          subnet
-        };
-      }
+      yield* networkInterface.networkAddresses();
     }
   }
 

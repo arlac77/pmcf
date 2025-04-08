@@ -43,7 +43,7 @@ class SkeletonNetworkInterface extends Base {
 
   matches(other) {
     if (this.isTemplate) {
-      const name = this.name.replace("*", "");
+      const name = this.name.replaceAll("*", "");
       return name.length === 0 || other.name.indexOf(name) >= 0;
     }
 
@@ -56,6 +56,17 @@ class SkeletonNetworkInterface extends Base {
 
   set network(network) {
     this._network = network;
+  }
+
+  *networkAddresses() {
+    for (const [address, subnet] of this.ipAddresses) {
+      yield {
+        networkInterface: this,
+        domainNames: this.domainNames,
+        address,
+        subnet
+      };
+    }
   }
 
   get rawAddress() {
