@@ -4,6 +4,7 @@ import { Owner } from "./owner.mjs";
 import { Host } from "./host.mjs";
 import { addType } from "./types.mjs";
 import { writeLines } from "./utils.mjs";
+import { cidrAddresses } from "./network-support.mjs";
 
 const ClusterTypeDefinition = {
   name: "cluster",
@@ -102,10 +103,15 @@ export class Cluster extends Host {
         cfg.push(`vrrp_instance ${cluster.name} {`);
         cfg.push(`  state ${cluster.masters.has(ni) ? "MASTER" : "BACKUP"}`);
         cfg.push(`  interface ${ni.name}`);
+
         cfg.push("  virtual_ipaddress {");
-        cfg.push(
-          `    ${cluster.cidrAddress} dev ${ni.name} label ${cluster.name}`
-        );
+        for (const na of cluster.networkAddresses(
+          na => na.networkInterface.kind !== "loopback"
+        )) {
+          cfg.push(
+            `    ${na.cidrAddress} dev ${ni.name} label ${cluster.name}`
+          );
+        }
         cfg.push("  }");
         cfg.push(`  virtual_router_id ${cluster.routerId}`);
         cfg.push(
@@ -141,9 +147,7 @@ export class Cluster extends Host {
           for (const member of this.members) {
             const memberService = member.findService({ type: service.type });
 
-            cfg.push(
-              `  real_server ${member.address} ${memberService.port} {`
-            );
+            cfg.push(`  real_server ${member.address} ${memberService.port} {`);
             cfg.push(`    weight ${memberService.weight}`);
 
             switch (service.type) {

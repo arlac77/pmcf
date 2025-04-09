@@ -1,6 +1,5 @@
 import test from "ava";
-import { filter } from "pacc";
-import { Root, Host, Network } from "pmcf";
+import { Root, Host, Network, NetworkAddress } from "pmcf";
 
 test("NetworkAddress filter", t => {
   const owner = new Root("/");
@@ -23,23 +22,10 @@ test("NetworkAddress filter", t => {
     }
   });
 
-  const domainNames = new Set(["h2."]);
   const eth0 = h2.networkInterfaces.get("eth0");
 
-  const a1 = {
-    networkInterface: eth0,
-    domainNames,
-    subnet: s1,
-    address: "10.0.0.2",
-    family: "IPv4"
-  };
-  const a2 = {
-    networkInterface: eth0,
-    domainNames,
-    subnet: s2,
-    address: "fe80::1e57:3eff:fe22:9a8f",
-    family: "IPv6"
-  };
+  const a1 = new NetworkAddress(eth0, "10.0.0.2", s1);
+  const a2 = new NetworkAddress(eth0, "fe80::1e57:3eff:fe22:9a8f", s2);
 
   t.deepEqual([...h2.networkAddresses()], [a1, a2]);
 

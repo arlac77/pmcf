@@ -1,5 +1,3 @@
-import { formatCIDR } from "ip-utilties";
-
 export const networkProperties = {
   scope: {
     type: "string",
@@ -46,7 +44,5 @@ export function addresses(networkAddresses) {
 }
 
 export function cidrAddresses(networkAddresses) {
-  return [...networkAddresses].map(na =>
-    formatCIDR(na.address, na.subnet.prefixLength)
-  );
+  return [...networkAddresses].map(na => na.cidrAddress);
 }

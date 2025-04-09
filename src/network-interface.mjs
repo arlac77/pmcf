@@ -1,4 +1,9 @@
-import { hasWellKnownSubnet, normalizeIP, familyIP } from "ip-utilties";
+import {
+  hasWellKnownSubnet,
+  normalizeIP,
+  familyIP,
+  formatCIDR
+} from "ip-utilties";
 import { Base } from "./base.mjs";
 import { Subnet } from "./subnet.mjs";
 import {
@@ -9,13 +14,35 @@ import { asArray } from "./utils.mjs";
 import { addType } from "./types.mjs";
 
 /**
- * @typedef {object} NetworkAddress
  * @property {NetworkInterface} networkInterface
  * @property {string|Uint8Array|Uint16Array} address
  * @property {string} family
  * @property {Subnet} subnet
  * @property {Set<string>} domainNames
  */
+export class NetworkAddress {
+  /** @type {Subnet} */ subnet;
+  /** @type {NetworkInterface} */ networkInterface;
+  /** @type {string|Uint8Array|Uint16Array} */ address;
+
+  constructor(networkInterface, address, subnet) {
+    this.networkInterface = networkInterface;
+    this.address = address;
+    this.subnet = subnet;
+  }
+
+  get domainNames() {
+    this.networkInterface.domainNames;
+  }
+
+  get family() {
+    return familyIP(this.address);
+  }
+
+  get cidrAddress() {
+    return formatCIDR(this.address, this.subnet.prefixLength);
+  }
+}
 
 class SkeletonNetworkInterface extends Base {
   _extends = [];
@@ -73,13 +100,7 @@ class SkeletonNetworkInterface extends Base {
    */
   *networkAddresses(filter = n => true) {
     for (const [address, subnet] of this.ipAddresses) {
-      const networkAddress = {
-        networkInterface: this,
-        domainNames: this.domainNames,
-        address,
-        family: familyIP(address),
-        subnet
-      };
+      const networkAddress = new NetworkAddress(this, address, subnet);
 
       if (filter(networkAddress)) {
         yield networkAddress;
