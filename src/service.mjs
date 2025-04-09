@@ -173,10 +173,6 @@ export class Service extends Base {
     this._ipAddresses = value;
   }
 
-  get addresses() {
-    return this.rawAddresses.map(a => `${a}:${this.port}`);
-  }
-
   get networks() {
     return this.server.networks;
   }
@@ -328,12 +324,22 @@ export class Endpoint {
     return `${this.rawAddress}[${this.port}]`;
   }
 
+  get socketAddress()
+  {
+    return `${this.address}:${this.port}`;
+  }
+
   get hostName() {
     return this.networkInterface.hostName;
   }
 
   #rawAddress;
 
+  get address()
+  {
+    return this.#rawAddress ?? this.networkInterface.rawAddress;
+  }
+  
   get rawAddress() {
     return this.#rawAddress ?? this.networkInterface.rawAddress;
   }
