@@ -220,13 +220,8 @@ test("Host addresses", t => {
         new Subnet(n1, "fe80::1e57:3eff:fe22:9a8f/64")
       ]
     ],
-    /*cidrAddress: "10.0.0.2/16",
-    cidrAddresses: [
-      "10.0.0.2/16",
-      "fe80::1e57:3eff:fe22:9a8f/64"
-    ],*/
-    rawAddress: "10.0.0.2",
-    rawAddresses: ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f"]
+    address: "10.0.0.2",
+    addresses: ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f"]
   });
 
   const s1 = n1.subnetNamed("10.0/16");
@@ -237,7 +232,7 @@ test("Host addresses", t => {
   t.is(s2.name, "fe80::/64");
   t.is(s2.prefixLength, 64);
 
-  t.deepEqual(h1.rawAddresses, [
+  t.deepEqual(h1.addresses, [
     "127.0.0.1",
     "::1",
     "10.0.0.2",
@@ -279,7 +274,7 @@ test("Host addresses with network", t => {
   t.is(s2.name, "fe80::/64");
   t.is(s2.prefixLength, 64);
 
-  t.deepEqual(h1.rawAddresses, [
+  t.deepEqual(h1.addresses, [
     "10.0.0.2",
     "fe80::1e57:3eff:fe22:9a8f"
   ]);
@@ -330,7 +325,7 @@ test("clone NetworkInterface", t => {
   t.is(ni.hwaddr, "00:01:02:03:04:05");
   t.is(ni.kind, "ethernet");
 
-  t.deepEqual(ni.rawAddresses, [
+  t.deepEqual(ni.addresses, [
     "10.0.0.2",
     "fe80::1e57:3eff:fe22:9a8f"
   ]);

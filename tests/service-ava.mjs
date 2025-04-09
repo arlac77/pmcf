@@ -13,7 +13,7 @@ test("Service basics", t => {
   const h1 = new Host(l1, {
     name: "h1",
     networkInterfaces: {
-      l0: { ipAddresses: "127.0.0.1", scope: "host" },
+      l0: { ipAddresses: "127.0.0.1", kind: "loopback" },
       eth0: { ipAddresses: "10.0.0.1/16" }
     },
     priority: 19
@@ -32,20 +32,23 @@ test("Service basics", t => {
 
   h1.services = s1;
 
-  t.deepEqual(s1.endpoints, [
-    new Endpoint(s1, l0, {
-      type: "dns",
-      port: 53,
-      protocol: "udp",
-      tls: false
-    }),
-    new Endpoint(s1, eth0, {
-      type: "dns",
-      port: 53,
-      protocol: "udp",
-      tls: false
-    })
-  ]);
+  t.deepEqual(
+    s1.endpoints(e => e.family === "IPv4"),
+    [
+      new Endpoint(s1, l0, {
+        type: "dns",
+        port: 53,
+        protocol: "udp",
+        tls: false
+      }),
+      new Endpoint(s1, eth0, {
+        type: "dns",
+        port: 53,
+        protocol: "udp",
+        tls: false
+      })
+    ]
+  );
 
   t.deepEqual(
     s1.dnsRecordsForDomainName("example.com", true).map(r => r.toString()),
@@ -60,10 +63,12 @@ test("Service basics", t => {
   t.is(s1.port, 53);
   t.is(s1.protocol, "udp");
 
-  t.deepEqual(s1.rawAddresses, ["127.0.0.1", "10.0.0.1"]);
+  t.deepEqual(s1.addresses, ["127.0.0.1", "::1", "10.0.0.1"]);
 
-
-  t.deepEqual([...s1.endpoints].map(e=>e.socketAddress), ["127.0.0.1:53", "10.0.0.1:53"]);
+  t.deepEqual(
+    [...s1.endpoints(e => e.family == "IPv4")].map(e => e.socketAddress),
+    ["127.0.0.1:53", "10.0.0.1:53"]
+  );
 
   t.is([...h1.findServices({ type: "dns" })][0], s1);
 
@@ -87,8 +92,11 @@ test("Service basics", t => {
     ["_dns._udp.example.com. 1W IN SRV     3   5  53 h2."]
   );
 
-  t.deepEqual(s2.rawAddresses, ["10.0.0.2"]);
-  t.deepEqual([...s2.endpoints].map(e=>e.socketAddress), ["10.0.0.2:53"]);
+  t.deepEqual(s2.addresses, ["10.0.0.2"]);
+  t.deepEqual(
+    [...s2.endpoints()].map(e => e.socketAddress),
+    ["10.0.0.2:53"]
+  );
   t.is([...h2.findServices({ type: "dns" })][0], s2);
 
   t.deepEqual(Array.from(l1.findServices({ type: "dns" })), [s1, s2]);
@@ -171,7 +179,7 @@ test("Service without protocol", t => {
     //   DNSRecord("_xxx._yyy", "SRV", 3, 5, 555, "example.com")
   ]);
 
-  t.deepEqual(s1.endpoints, [
+  t.deepEqual(s1.endpoints(), [
     new Endpoint(s1, eth0, {
       type: "xyz",
       port: 555,
@@ -230,9 +238,8 @@ test("Service owner", t => {
   t.is(s1b.priority, 8);
   t.is(s1b.weight, 7);
 
-  t.deepEqual(s1b.endpoints, [
+  t.deepEqual(s1b.endpoints(), [
     /*new Endpoint(s1b, unknown,{
-      rawAddress: undefined,
       port: 53,
       protocol: "udp",
       tls: false

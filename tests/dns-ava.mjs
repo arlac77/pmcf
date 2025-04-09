@@ -10,7 +10,7 @@ test("DNS basics", async t => {
   const dnsServices = Array.from(l1.findServices({ type: "dns" }));
 
   t.deepEqual(
-    dnsServices.map(s => s.rawAddress).sort(),
+    dnsServices.map(s => s.address).sort(),
     ["192.168.1.1", "192.168.1.11"].sort()
   );
 

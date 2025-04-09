@@ -1,7 +1,6 @@
-import { isLocalhost } from "ip-utilties";
+import { isLocalhost, familyIP } from "ip-utilties";
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
-import { objectFilter } from "./filter.mjs";
 import { asArray } from "./utils.mjs";
 import { networkAddressProperties } from "./network-support.mjs";
 import {
@@ -158,15 +157,15 @@ export class Service extends Base {
   }
 
   get ipAddressOrDomainName() {
-    return this.rawAddress ?? this.domainName;
+    return this.address ?? this.domainName;
   }
 
-  get rawAddresses() {
-    return this._ipAddresses ?? this.owner.rawAddresses;
+  get addresses() {
+    return this._ipAddresses ?? this.owner.addresses;
   }
 
-  get rawAddress() {
-    return this._ipAddresses?.[0] ?? this.server.rawAddress;
+  get address() {
+    return this._ipAddresses?.[0] ?? this.server.address;
   }
 
   set ipAddresses(value) {
@@ -177,7 +176,7 @@ export class Service extends Base {
     return this.server.networks;
   }
 
-  get endpoints() {
+  endpoints(filter) {
     const local =
       this._port === undefined
         ? { type: this.type }
@@ -189,22 +188,20 @@ export class Service extends Base {
       }
     ];
 
-    return [...this.server.networkAddresses()]
+    const result = [...this.server.networkAddresses()]
       .map(sa =>
         data.map(
           d =>
             new Endpoint(this, sa.networkInterface, {
               ...d,
-              rawAddress: sa.address,
+              address: sa.address,
               ...local
             })
         )
       )
       .flat();
-  }
 
-  *findEndpoints(filter) {
-    yield* objectFilter(EndpointTypeDefinition, this.endpoints, filter);
+    return filter ? result.filter(filter) : result;
   }
 
   set alias(value) {
@@ -220,15 +217,15 @@ export class Service extends Base {
   }
 
   get port() {
-    return this.endpoints[0].port;
+    return this.endpoints()[0].port;
   }
 
   get protocol() {
-    return this.endpoints[0].protocol;
+    return this.endpoints()[0].protocol;
   }
 
   get tls() {
-    return this.endpoints[0].tls;
+    return this.endpoints()[0].tls;
   }
 
   set weight(value) {
@@ -258,8 +255,8 @@ export class Service extends Base {
     }
 
     if (hasSVRRecords) {
-      for (const ep of this.endpoints.filter(
-        e => e.protocol && e.networkInterface.scope !== "host" // TODO how to identify related interfaces
+      for (const ep of this.endpoints(
+        e => e.protocol && e.networkInterface.kind !== "loopback"
       )) {
         records.push(
           DNSRecord(
@@ -321,11 +318,10 @@ export class Endpoint {
   }
 
   toString() {
-    return `${this.rawAddress}[${this.port}]`;
+    return `${this.address}[${this.port}]`;
   }
 
-  get socketAddress()
-  {
+  get socketAddress() {
     return `${this.address}:${this.port}`;
   }
 
@@ -333,19 +329,18 @@ export class Endpoint {
     return this.networkInterface.hostName;
   }
 
-  #rawAddress;
+  #address;
 
-  get address()
-  {
-    return this.#rawAddress ?? this.networkInterface.rawAddress;
-  }
-  
-  get rawAddress() {
-    return this.#rawAddress ?? this.networkInterface.rawAddress;
+  get address() {
+    return this.#address ?? this.networkInterface.address;
   }
 
-  set rawAddress(value) {
-    this.#rawAddress = value;
+  set address(value) {
+    this.#address = value;
+  }
+
+  get family() {
+    return familyIP(this.address);
   }
 }
 
@@ -354,7 +349,7 @@ export const sortByPriority = (a, b) => a.priority - b.priority;
 export function serviceAddresses(
   sources,
   filter,
-  addressType = "rawAddresses",
+  addressType = "addresses",
   addressFilter = a => !isLocalhost(a)
 ) {
   return asArray(sources)
@@ -366,11 +361,11 @@ export function serviceAddresses(
     .filter(addressFilter);
 }
 
-export function serviceEndpoints(sources, filter) {
+export function serviceEndpoints(sources, filter, endpointFilter) {
   return asArray(sources)
     .map(ft => Array.from(ft.findServices(filter)))
     .flat()
     .sort(sortByPriority)
-    .map(service => service.endpoints)
+    .map(service => service.endpoints(endpointFilter))
     .flat();
 }

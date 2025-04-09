@@ -1,11 +1,4 @@
-import {
-  isIPv4,
-  isIPv6,
-  formatCIDR,
-  hasWellKnownSubnet,
-  normalizeIP,
-  familyIP
-} from "ip-utilties";
+import { hasWellKnownSubnet, normalizeIP, familyIP } from "ip-utilties";
 import { Base } from "./base.mjs";
 import { Subnet } from "./subnet.mjs";
 import {
@@ -100,11 +93,11 @@ class SkeletonNetworkInterface extends Base {
     }
   }
 
-  get rawAddress() {
-    return this.rawAddresses[0];
+  get address() {
+    return this.addresses[0];
   }
 
-  get rawAddresses() {
+  get addresses() {
     return [...this.ipAddresses].map(([address]) => address);
   }
 }

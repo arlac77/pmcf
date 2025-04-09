@@ -61,7 +61,7 @@ export function root1(root, filter) {
       eth0: {
         network: L1n1,
         metric: 1010,
-        rawAddresses: ["192.168.1.1"],
+        addresses: ["192.168.1.1"],
       }
     },
     services: {
@@ -83,7 +83,7 @@ export function root1(root, filter) {
         network: L1n1,
         metric: 1010,
         ssid: "ID2",
-        rawAddresses: ["192.168.1.2"],
+        addresses: ["192.168.1.2"],
         kind: "wlan"
       }
     },

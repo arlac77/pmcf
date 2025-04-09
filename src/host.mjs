@@ -1,9 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
-import { formatCIDR } from "ip-utilties";
 import { Base } from "./base.mjs";
-import { networkAddressProperties } from "./network-support.mjs";
+import { networkAddressProperties, addresses } from "./network-support.mjs";
 import { domainFromDominName, domainName } from "./utils.mjs";
 import { objectFilter } from "./filter.mjs";
 import { addType, types } from "./types.mjs";
@@ -427,12 +426,12 @@ export class Host extends Base {
     }
   }
 
-  get rawAddress() {
-    return this.rawAddresses[0];
+  get address() {
+    return this.addresses[0];
   }
 
-  get rawAddresses() {
-    return [...this.networkAddresses()].map(na => na.address);
+  get addresses() {
+    return addresses(this.networkAddresses());
   }
 
   async publicKey(type = "ed25519") {

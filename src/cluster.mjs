@@ -87,7 +87,7 @@ export class Cluster extends Host {
         "   notification_email {",
         "    " + this.administratorEmail,
         "  }",
-        `  smtp_server ${this.smtp.rawAddress}`,
+        `  smtp_server ${this.smtp.address}`,
         `  notification_email_from keepalived@${host.domainName}`,
         "  enable_script_security",
         "  script_user root",
@@ -132,7 +132,7 @@ export class Cluster extends Host {
         cfg.push("");
 
         for (const service of cluster.findServices({ type: "http" })) {
-          cfg.push(`virtual_server ${cluster.rawAddress} ${service.port} {`);
+          cfg.push(`virtual_server ${cluster.address} ${service.port} {`);
           cfg.push(`  delay_loop ${cluster.checkInterval}`);
           cfg.push("  lb_algo wlc");
           cfg.push("  persistence_timeout 600");
@@ -142,7 +142,7 @@ export class Cluster extends Host {
             const memberService = member.findService({ type: service.type });
 
             cfg.push(
-              `  real_server ${member.rawAddress} ${memberService.port} {`
+              `  real_server ${member.address} ${memberService.port} {`
             );
             cfg.push(`    weight ${memberService.weight}`);
 

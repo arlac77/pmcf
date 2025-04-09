@@ -31,7 +31,7 @@ test("kea basics", t => {
 
   h1.services = kea;
 
-  t.deepEqual(kea.endpoints, [
+  t.deepEqual(kea.endpoints(), [
     new Endpoint(kea, l0, {
       type: "dhcp",
       port: 547,

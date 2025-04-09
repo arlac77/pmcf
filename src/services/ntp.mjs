@@ -91,7 +91,7 @@ export class NTPService extends ExtraSourceService {
       }).map(
         endpoint =>
           `${endpoint.service.isPool ? "pool" : "server"} ${
-            endpoint.rawAddress
+            endpoint.address
           } iburst`
       ),
       `mailonchange ${this.administratorEmail} 0.5`,

@@ -37,9 +37,13 @@ export const networkAddressProperties = {
   hostName: { type: "string", collection: false, writeable: true },
   cidrAddresses: { type: "string", collection: true, writeable: false },
   cidrAddress: { type: "string", collection: false, writeable: false },
-  rawAddresses: { type: "string", collection: true, writeable: false },
-  rawAddress: { type: "string", collection: false, writeable: false }
+  addresses: { type: "string", collection: true, writeable: false },
+  address: { type: "string", collection: false, writeable: false }
 };
+
+export function addresses(networkAddresses) {
+  return [...networkAddresses].map(na => na.address);
+}
 
 export function cidrAddresses(networkAddresses) {
   return [...networkAddresses].map(na =>

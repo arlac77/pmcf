@@ -295,12 +295,12 @@ async function generateZoneDefs(dns, location, packageData) {
 
       zone.records.add(DNSRecord("location", "TXT", host.location.name));
 
-      for (const address of host.rawAddresses) {
-        if (!isLocalhost(address)) {
-          zone.records.add(
-            DNSRecord("@", isIPv6(address) ? "AAAA" : "A", address)
-          );
-        }
+      for (const na of host.networkAddresses(
+        na => na.networkInterface.kind != "loopback"
+      )) {
+        zone.records.add(
+          DNSRecord("@", na.family === "IPv6" ? "AAAA" : "A", na.address)
+        );
       }
     }
   }
@@ -311,11 +311,11 @@ async function generateZoneDefs(dns, location, packageData) {
     addHook(
       packageData.properties.hooks,
       "post_upgrade",
-    //  `rm -f ${foreignZones.map(zone => `/var/lib/named/${zone.file}.jnl`)}\n` +
-    //    "systemctl try-reload-or-restart named\n" +
-        `/usr/bin/named-hostname-info ${foreignZones
-          .map(zone => zone.id)
-          .join(" ")}|/usr/bin/named-hostname-update`
+      //  `rm -f ${foreignZones.map(zone => `/var/lib/named/${zone.file}.jnl`)}\n` +
+      //    "systemctl try-reload-or-restart named\n" +
+      `/usr/bin/named-hostname-info ${foreignZones
+        .map(zone => zone.id)
+        .join(" ")}|/usr/bin/named-hostname-update`
     );
   }
 
@@ -366,7 +366,10 @@ async function generateZoneDefs(dns, location, packageData) {
       networkInterface,
       domainNames
     } of location.networkAddresses()) {
-      if (!dns.exclude.has(networkInterface.network) && !dns.excludeInterfaceKinds.has(networkInterface.kind)) {
+      if (
+        !dns.exclude.has(networkInterface.network) &&
+        !dns.excludeInterfaceKinds.has(networkInterface.kind)
+      ) {
         const host = networkInterface.host;
         if (
           !addresses.has(address) &&

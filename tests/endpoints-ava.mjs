@@ -26,16 +26,16 @@ test("Service basics", t => {
 
   h1.services = s1;
 
-  t.deepEqual(s1.endpoints, [
+  t.deepEqual(s1.endpoints(), [
     new Endpoint(s1, l0, {
-      rawAddress: "127.0.0.1",
+      address: "127.0.0.1",
       type: "dns",
       port: 53,
       protocol: "udp",
       tls: false
     }),
     new Endpoint(s1, l0, {
-      rawAddress: "::1",
+      address: "::1",
       type: "dns",
       port: 53,
       protocol: "udp",
@@ -49,6 +49,6 @@ test("Service basics", t => {
     })
   ]);
 
-  t.is(s1.endpoints.find(e => e.networkInterface === l0).hostName, "localhost");
-  t.is(s1.endpoints.find(e => e.networkInterface === eth0).hostName, "h1");
+  t.is(s1.endpoints(e => e.networkInterface === l0)[0].hostName, "localhost");
+  t.is(s1.endpoints(e => e.networkInterface === eth0)[0].hostName, "h1");
 });

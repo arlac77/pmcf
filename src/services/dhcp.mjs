@@ -20,7 +20,7 @@ const DHCPServiceTypeDefinition = {
 };
 
 const controlAgentEndpoint = {
- // extends: ["http"],
+  // extends: ["http"],
   type: "kea-control-agent",
   port: 8000,
   protocol: "tcp",
@@ -52,18 +52,18 @@ export class DHCPService extends Service {
     return DHCPServiceTypeDefinition.name;
   }
 
-  get endpoints() {
+  endpoints(filter) {
     const l0 = this.server.findNetworkInterface({ scope: "host" });
 
     if (l0) {
       return [
-        ...super.endpoints,
+        ...super.endpoints(filter),
         new Endpoint(this, l0, controlAgentEndpoint),
         new Endpoint(this, l0, ddnsEndpoint)
       ];
     }
 
-    return super.endpoints;
+    return super.endpoints(filter);
   }
 
   async *preparePackages(dir) {
@@ -147,9 +147,9 @@ export class DHCPService extends Service {
         return {
           name: domain,
           "dns-servers": dnsServerEndpoints
-            .filter(endpoint => isIPv4(endpoint.rawAddress))
+            .filter(endpoint => isIPv4(endpoint.address))
             .map(endpoint => {
-              return { "ip-address": endpoint.rawAddress };
+              return { "ip-address": endpoint.address };
             })
         };
       });
@@ -209,23 +209,23 @@ export class DHCPService extends Service {
       .map(([k, networkInterface]) => {
         return {
           "hw-address": k,
-          "ip-address": networkInterface.networkAddress(n => n.family === "IPv4").address,
+          "ip-address": networkInterface.networkAddress(
+            n => n.family === "IPv4"
+          ).address,
           hostname: networkInterface.hostName
         };
       })
       .sort((a, b) => a.hostname.localeCompare(b.hostname));
 
     const listenInterfaces = filter =>
-      this.endpoints
-        .filter(
-          endpoint =>
-            endpoint.type === "dhcp" &&
-            filter(endpoint.rawAddress) &&
-            endpoint.networkInterface.kind !== "loopback"
-        )
-        .map(
-          endpoint => `${endpoint.networkInterface.name}/${endpoint.rawAddress}`
-        );
+      this.endpoints(
+        endpoint =>
+          endpoint.type === "dhcp" &&
+          filter(endpoint.address) &&
+          endpoint.networkInterface.kind !== "loopback"
+      ).map(
+        endpoint => `${endpoint.networkInterface.name}/${endpoint.address}`
+      );
 
     const dhcp4 = {
       Dhcp4: {
@@ -244,8 +244,8 @@ export class DHCPService extends Service {
           {
             name: "domain-name-servers",
             data: dnsServerEndpoints
-              .filter(endpoint => isIPv4(endpoint.rawAddress))
-              .map(endpoint => endpoint.rawAddress)
+              .filter(endpoint => isIPv4(endpoint.address))
+              .map(endpoint => endpoint.address)
               .join(",")
           },
           {
@@ -263,7 +263,7 @@ export class DHCPService extends Service {
               "option-data": [
                 {
                   name: "routers",
-                  data: network.gateway.rawAddress
+                  data: network.gateway.address
                 }
               ],
               reservations
@@ -288,8 +288,8 @@ export class DHCPService extends Service {
           {
             name: "dns-servers",
             data: dnsServerEndpoints
-              .filter(endpoint => isIPv6(endpoint.rawAddress))
-              .map(endpoint => endpoint.rawAddress)
+              .filter(endpoint => isIPv6(endpoint.address))
+              .map(endpoint => endpoint.address)
               .join(",")
           }
         ],
