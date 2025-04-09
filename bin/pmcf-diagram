@@ -10,7 +10,7 @@ function q(str) {
   return str.match(/^\w+$/) ? str : `"${str}"`;
 }
 function id(str) {
-  return str.replaceAll(/-/g, "");
+  return q(str.replaceAll(/-/g, ""));
 }
 
 console.log("graph G {");
@@ -40,7 +40,7 @@ for await (const network of location.networks()) {
       }
     }
   }
-  
+
   for await (const na of network.networkAddresses(
     na =>
       na.networkInterface.network === network &&
