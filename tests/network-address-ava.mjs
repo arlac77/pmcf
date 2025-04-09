@@ -30,19 +30,18 @@ test("NetworkAddress filter", t => {
     networkInterface: eth0,
     domainNames,
     subnet: s1,
-    address: "10.0.0.2"
+    address: "10.0.0.2",
+    family: "IPv4"
   };
   const a2 = {
     networkInterface: eth0,
     domainNames,
     subnet: s2,
-    address: "fe80::1e57:3eff:fe22:9a8f"
+    address: "fe80::1e57:3eff:fe22:9a8f",
+    family: "IPv6"
   };
 
   t.deepEqual([...h2.networkAddresses()], [a1, a2]);
 
-  t.deepEqual(
-    [...h2.networkAddresses(n => n.networkInterface.network.name !== "n1")],
-    []
-  );
+  t.deepEqual([...h2.networkAddresses(n => n.family === "IPv4")], [a1]);
 });

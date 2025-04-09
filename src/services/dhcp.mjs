@@ -209,7 +209,7 @@ export class DHCPService extends Service {
       .map(([k, networkInterface]) => {
         return {
           "hw-address": k,
-          "ip-address": networkInterface.rawIPv4Address,
+          "ip-address": networkInterface.networkAddress(n => n.family === "IPv4").address,
           hostname: networkInterface.hostName
         };
       })

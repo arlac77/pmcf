@@ -3,7 +3,8 @@ import {
   isIPv6,
   formatCIDR,
   hasWellKnownSubnet,
-  normalizeIP
+  normalizeIP,
+  familyIP
 } from "ip-utilties";
 import { Base } from "./base.mjs";
 import { Subnet } from "./subnet.mjs";
@@ -18,6 +19,7 @@ import { addType } from "./types.mjs";
  * @typedef {object} NetworkAddress
  * @property {NetworkInterface} networkInterface
  * @property {string|Uint8Array|Uint16Array} address
+ * @property {string} family
  * @property {Subnet} subnet
  * @property {Set<string>} domainNames
  */
@@ -72,35 +74,34 @@ class SkeletonNetworkInterface extends Base {
   }
 
   /**
-   * 
+   *
    * @param {object} filter
-   * @return {Iterable<NetworkAddress>} 
+   * @return {Iterable<NetworkAddress>}
    */
-  *networkAddresses(filter=(n)=>true) {
+  *networkAddresses(filter = n => true) {
     for (const [address, subnet] of this.ipAddresses) {
       const networkAddress = {
         networkInterface: this,
         domainNames: this.domainNames,
         address,
+        family: familyIP(address),
         subnet
       };
 
-      if(filter(networkAddress)) {
+      if (filter(networkAddress)) {
         yield networkAddress;
       }
     }
   }
 
+  networkAddress(filter) {
+    for (const a of this.networkAddresses(filter)) {
+      return a;
+    }
+  }
+
   get rawAddress() {
     return this.rawAddresses[0];
-  }
-
-  get rawIPv4Address() {
-    return this.rawAddresses.filter(a => isIPv4(a))[0];
-  }
-
-  get rawIPv6Address() {
-    return this.rawAddresses.filter(a => isIPv6(a))[0];
   }
 
   get cidrAddress() {
@@ -109,18 +110,6 @@ class SkeletonNetworkInterface extends Base {
 
   get rawAddresses() {
     return [...this.ipAddresses].map(([address]) => address);
-  }
-
-  get rawIPv4Addresses() {
-    return [...this.ipAddresses]
-      .filter(([address]) => isIPv4(address))
-      .map(([address]) => address);
-  }
-
-  get rawIPv6Addresses() {
-    return [...this.ipAddresses]
-      .filter(([address]) => isIPv6(address))
-      .map(([address]) => address);
   }
 
   get cidrAddresses() {
