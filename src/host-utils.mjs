@@ -2,6 +2,7 @@ import { writeFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { writeLines, sectionLines } from "../src/utils.mjs";
 import { addHook } from "./hooks.mjs";
+import { cidrAddresses } from "./network-support.mjs";
 
 export async function generateMachineInfo(host, packageData) {
   const etcDir = join(packageData.dir, "etc");
@@ -40,7 +41,7 @@ export async function generateNetworkDefs(host, packageData) {
 
     const networkSections = [sectionLines("Match", { Name: ni.name })];
 
-    for (const Address of ni.cidrAddresses) {
+    for (const Address of cidrAddresses(ni.networkAddresses())) {
       networkSections.push(
         "",
         sectionLines("Address", {

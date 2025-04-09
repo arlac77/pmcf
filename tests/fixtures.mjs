@@ -62,7 +62,6 @@ export function root1(root, filter) {
         network: L1n1,
         metric: 1010,
         rawAddresses: ["192.168.1.1"],
-        cidrAddresses: ["192.168.1.1/24"]
       }
     },
     services: {
@@ -85,7 +84,6 @@ export function root1(root, filter) {
         metric: 1010,
         ssid: "ID2",
         rawAddresses: ["192.168.1.2"],
-        cidrAddresses: ["192.168.1.2/24"],
         kind: "wlan"
       }
     },

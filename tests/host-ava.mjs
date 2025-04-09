@@ -1,5 +1,5 @@
 import test from "ava";
-import { Root, Host, Network, Subnet } from "pmcf";
+import { Root, Host, Network, Subnet, cidrAddresses } from "pmcf";
 import { assertObject, assertObjects } from "./util.mjs";
 import { root1 } from "./fixtures.mjs";
 
@@ -220,11 +220,11 @@ test("Host addresses", t => {
         new Subnet(n1, "fe80::1e57:3eff:fe22:9a8f/64")
       ]
     ],
-    cidrAddress: "10.0.0.2/16",
+    /*cidrAddress: "10.0.0.2/16",
     cidrAddresses: [
       "10.0.0.2/16",
       "fe80::1e57:3eff:fe22:9a8f/64"
-    ],
+    ],*/
     rawAddress: "10.0.0.2",
     rawAddresses: ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f"]
   });
@@ -243,7 +243,7 @@ test("Host addresses", t => {
     "10.0.0.2",
     "fe80::1e57:3eff:fe22:9a8f"
   ]);
-  t.deepEqual(h1.cidrAddresses, [
+  t.deepEqual(cidrAddresses(h1.networkAddresses()), [
     "127.0.0.1/8",
     "::1/128",
     "10.0.0.2/16",
@@ -283,7 +283,7 @@ test("Host addresses with network", t => {
     "10.0.0.2",
     "fe80::1e57:3eff:fe22:9a8f"
   ]);
-  t.deepEqual(h1.cidrAddresses, [
+  t.deepEqual(cidrAddresses(h1.networkAddresses()), [
     "10.0.0.2/16",
     "fe80::1e57:3eff:fe22:9a8f/64"
   ]);

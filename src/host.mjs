@@ -435,16 +435,6 @@ export class Host extends Base {
     return [...this.networkAddresses()].map(na => na.address);
   }
 
-  get cidrAddress() {
-    return this.cidrAddresses[0];
-  }
-
-  get cidrAddresses() {
-    return [...this.networkAddresses()].map(({ address, subnet }) =>
-      formatCIDR(address, subnet.prefixLength)
-    );
-  }
-
   async publicKey(type = "ed25519") {
     return readFile(join(this.directory, `ssh_host_${type}_key.pub`), "utf8");
   }

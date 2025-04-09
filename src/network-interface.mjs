@@ -104,18 +104,8 @@ class SkeletonNetworkInterface extends Base {
     return this.rawAddresses[0];
   }
 
-  get cidrAddress() {
-    return this.cidrAddresses[0];
-  }
-
   get rawAddresses() {
     return [...this.ipAddresses].map(([address]) => address);
-  }
-
-  get cidrAddresses() {
-    return [...this.ipAddresses].map(([address, subnet]) =>
-      formatCIDR(address, subnet.prefixLength)
-    );
   }
 }
 

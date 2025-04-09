@@ -1,3 +1,5 @@
+import { formatCIDR } from "ip-utilties";
+
 export const networkProperties = {
   scope: {
     type: "string",
@@ -23,7 +25,12 @@ export const networkProperties = {
   metric: { type: "number", collection: false, writeable: true, default: 1004 },
   MTU: { type: "number", collection: false, writeable: true, default: 1500 },
   gateway: { type: "host", collection: false, writeable: true },
-  multicastDNS: { type: "boolean", collection: false, writeable: true, default: false }
+  multicastDNS: {
+    type: "boolean",
+    collection: false,
+    writeable: true,
+    default: false
+  }
 };
 
 export const networkAddressProperties = {
@@ -33,3 +40,9 @@ export const networkAddressProperties = {
   rawAddresses: { type: "string", collection: true, writeable: false },
   rawAddress: { type: "string", collection: false, writeable: false }
 };
+
+export function cidrAddresses(networkAddresses) {
+  return [...networkAddresses].map(na =>
+    formatCIDR(na.address, na.subnet.prefixLength)
+  );
+}
