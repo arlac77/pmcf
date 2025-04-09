@@ -17,26 +17,41 @@ console.log("graph G {");
 console.log("  node [shape=record];");
 for await (const host of location.hosts()) {
   console.log(
-    `  ${id(host.name)} [label="${host.name}|{${
-      host.networkInterfaces.values()
-      .map((ni) => `<${id(ni.name)}> ${ni.name}`)
+    `  ${id(host.name)} [label="${host.name}|{${[
+      ...host.networkInterfaces.values()
+    ]
+      .filter(ni => !ni.isTemplate && ni.kind !== "loopback")
+      .map(ni => `<${id(ni.name)}> ${ni.name}`)
       .join("|")}}"];`
   );
 }
 
 for await (const network of location.networks()) {
   console.log(
-    `  ${id(network.name)} [label="${network.name}\\n${
-      network.ipv4
-    }" shape=circle];`
+    `  ${id(network.name)} [label="${network.name}\\n${[...network.subnets()]
+      .map(s => s.address)
+      .join(" ")}" shape=circle];`
   );
 
-  for await (const host of network.hosts()) {
-    for (const ni of host.networkInterfaces.values()) {
-      if (ni.network === network) {
-        console.log(`  ${id(network.name)} -- ${id(host.name)}:${id(ni.name)};`);
+  if (network.bridge) {
+    for (const n of network.bridge) {
+      if (n !== network) {
+        console.log(`  ${id(network.name)} -- ${id(n.name)};`);
       }
     }
+  }
+  
+  for await (const na of network.networkAddresses(
+    na =>
+      na.networkInterface.network === network &&
+      !na.networkInterface.isTemplate &&
+      na.networkInterface.kind !== "loopback"
+  )) {
+    console.log(
+      `  ${id(network.name)} -- ${id(na.networkInterface.host.name)}:${id(
+        na.networkInterface.name
+      )}[label="${na.address}"];`
+    );
   }
 }
 
