@@ -24,9 +24,9 @@ export function sortZoneRecords(a, b) {
     const toNum = a => {
       const s = a.split(".");
       s.pop();s.pop();s.pop();
-      return s.reverse().reduce((a, c) => parseInt(c) + 256 * a, 0);
+      return s.reverse().reduce((a, c) => BigInt(parseInt(c,16)) + 256n * 256n * a, 0n);
     };
-    return toNum(a.key) - toNum(b.key);
+    return Number(toNum(a.key) - toNum(b.key));
   }
   order = a.key.localeCompare(b.key);
   if(order) {
