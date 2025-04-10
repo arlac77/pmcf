@@ -1,14 +1,51 @@
 import { decodeIPv4, decodeIPv6 } from "ip-utilties";
 import { asIterator } from "./utils.mjs";
 
+const typeOrder = {
+  SOA: 0,
+  NS: 1,
+  MX: 2,
+  A: 3,
+  AAAA: 3,
+  CNAME: 4,
+  PTR: 5,
+  HTTPS: 6,
+  SRV: 7,
+  TXT: 8
+};
+
+export function sortZoneRecords(a, b) {
+  let order = typeOrder[a.type] - typeOrder[b.type];
+  if (order) {
+    return order;
+  }
+
+  if (a.type === "PTR") {
+    const toNum = a => {
+      const s = a.split(".");
+      s.pop();s.pop();s.pop();
+      return s.reverse().reduce((a, c) => parseInt(c) + 256 * a, 0);
+    };
+    return toNum(a.key) - toNum(b.key);
+  }
+  order = a.key.localeCompare(b.key);
+  if(order) {
+    return order;
+  }
+
+  return a.values[0] - b.values[0];
+}
+
 export function dnsFullName(name) {
   return name.endsWith(".") ? name : name + ".";
 }
 
 export function dnsRecordTypeForAddressFamily(family) {
-  switch(family) {
-    case 'IPv4': return "A";
-    case 'IPv6': return "AAAA";
+  switch (family) {
+    case "IPv4":
+      return "A";
+    case "IPv6":
+      return "AAAA";
   }
 }
 
@@ -33,7 +70,9 @@ export function DNSRecord(key, type, ...values) {
   );
 
   return {
+    type,
     key,
+    values,
     toString: (maxKeyLength = 0, ttl = "1W") =>
       `${key.padEnd(maxKeyLength, " ")} ${ttl} IN ${type.padEnd(
         5,

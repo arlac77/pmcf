@@ -6,7 +6,8 @@ import { writeLines } from "../utils.mjs";
 import {
   DNSRecord,
   dnsFullName,
-  dnsRecordTypeForAddressFamily
+  dnsRecordTypeForAddressFamily,
+  sortZoneRecords
 } from "../dns-utils.mjs";
 import { addType } from "../types.mjs";
 import { ServiceTypeDefinition, serviceAddresses } from "../service.mjs";
@@ -481,7 +482,9 @@ async function generateZoneDefs(dns, location, packageData) {
       await writeLines(
         join(packageData.dir, "var/lib/named"),
         zone.file,
-        [...zone.records].map(r => r.toString(maxKeyLength, ttl))
+        [...zone.records]
+          .sort(sortZoneRecords)
+          .map(r => r.toString(maxKeyLength, ttl))
       );
     }
 
