@@ -52,17 +52,16 @@ export class DHCPService extends Service {
   }
 
   endpoints(filter) {
-    const l0 = this.server.findNetworkInterface({ scope: "host" });
+    const endpoints = super.endpoints(filter);
 
-    if (l0) {
-      return [
-        ...super.endpoints(filter),
-        new Endpoint(this, l0, controlAgentEndpoint),
-        new Endpoint(this, l0, ddnsEndpoint)
-      ];
+    for (const na of this.server.networkAddresses(
+      na => na.networkInterface.kind === "localhost"
+    )) {
+      endpoints.push(new Endpoint(this, na, controlAgentEndpoint));
+      endpoints.push(new Endpoint(this, na, ddnsEndpoint));
     }
 
-    return super.endpoints(filter);
+    return endpoints;
   }
 
   async *preparePackages(dir) {
@@ -256,7 +255,7 @@ export class DHCPService extends Service {
           }
         ],
         subnet4: [...subnets]
-          .filter(s => s.family==='IPv4')
+          .filter(s => s.family === "IPv4")
           .map((subnet, index) => {
             return {
               id: index + 1,

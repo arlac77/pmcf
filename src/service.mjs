@@ -189,12 +189,11 @@ export class Service extends Base {
     ];
 
     const result = [...this.server.networkAddresses()]
-      .map(sa =>
+      .map(na =>
         data.map(
           d =>
-            new Endpoint(this, sa.networkInterface, {
+            new Endpoint(this, na, {
               ...d,
-              address: sa.address,
               ...local
             })
         )

@@ -1,9 +1,7 @@
-import { familyIP } from "ip-utilties";
-
 export class Endpoint {
-  constructor(service, networkInterface, data) {
+  constructor(service, networkAddress, data) {
     this.service = service;
-    this.networkInterface = networkInterface;
+    this.networkAddress = networkAddress;
     Object.assign(this, data);
   }
 
@@ -16,13 +14,13 @@ export class Endpoint {
   }
 
   get hostName() {
-    return this.networkInterface.hostName;
+    return this.networkAddress.networkInterface.hostName;
   }
 
   #address;
 
   get address() {
-    return this.#address ?? this.networkInterface.address;
+    return this.#address ?? this.networkAddress.address;
   }
 
   set address(value) {
@@ -30,6 +28,10 @@ export class Endpoint {
   }
 
   get family() {
-    return familyIP(this.address);
+    return this.networkAddress.family;
+  }
+
+  get networkInterface() {
+    return this.networkAddress.networkInterface;
   }
 }

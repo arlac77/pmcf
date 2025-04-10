@@ -7,14 +7,14 @@ test("kea basics", t => {
   const h1 = new Host(owner, {
     name: "h1",
     networkInterfaces: {
-      l0: { ipAddresses: "127.0.0.1", scope: "host" },
+      l0: { ipAddresses: "127.0.0.1", kind: "loopback" },
       eth0: { ipAddresses: "10.0.0.1/16" }
     }
   });
   owner.addObject(h1);
 
-  const l0 = h1.networkInterfaces.get("l0");
-  const eth0 = h1.networkInterfaces.get("eth0");
+  const la = h1.networkAddresses(na => na.networkInterface.kind === "loopback");
+  const ea = h1.networkAddresses(na => na.networkInterface.kind !== "loopback");
 
   const kea = new DHCPService(h1, {
     name: "kea",
@@ -32,29 +32,39 @@ test("kea basics", t => {
   h1.services = kea;
 
   t.deepEqual(kea.endpoints(), [
-    new Endpoint(kea, l0, {
-      type: "dhcp",
-      port: 547,
-      protocol: "udp",
-      tls: false
-    }),
-    new Endpoint(kea, eth0, {
-      type: "dhcp",
-      port: 547,
-      protocol: "udp",
-      tls: false
-    }),
-    new Endpoint(kea, l0, {
-      type: "kea-control-agent",
-      port: 8000,
-      protocol: "tcp",
-      tls: false
-    }),
-    new Endpoint(kea, l0, {
-      type: "kea-ddns",
-      port: 53001,
-      protocol: "tcp",
-      tls: false
-    })
+    ...la.map(
+      a =>
+        new Endpoint(kea, a, {
+          type: "dhcp",
+          port: 547,
+          protocol: "udp",
+          tls: false
+        })
+    ),
+    ...ea.map(
+      a =>
+        new Endpoint(kea, a, {
+          type: "dhcp",
+          port: 547,
+          protocol: "udp",
+          tls: false
+        })
+    ),
+    ...[...la]
+      .map(a => [
+        new Endpoint(kea, a, {
+          type: "kea-control-agent",
+          port: 8000,
+          protocol: "tcp",
+          tls: false
+        }),
+        new Endpoint(kea, a, {
+          type: "kea-ddns",
+          port: 53001,
+          protocol: "tcp",
+          tls: false
+        })
+      ])
+      .flat()
   ]);
 });

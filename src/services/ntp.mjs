@@ -85,10 +85,14 @@ export class NTPService extends ExtraSourceService {
     };
 
     const lines = [
-      ...serviceEndpoints(this, {
-        ...NTP_SERVICE_FILTER,
-        priority: ">=10"
-      }).map(
+      ...serviceEndpoints(
+        this,
+        {
+          ...NTP_SERVICE_FILTER,
+          priority: ">=10"
+        },
+        e => e.family === 'IPv4' && e.networkInterface.kind !== "loopback"
+      ).map(
         endpoint =>
           `${endpoint.service.isPool ? "pool" : "server"} ${
             endpoint.address

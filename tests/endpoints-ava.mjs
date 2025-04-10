@@ -14,8 +14,8 @@ test("Service basics", t => {
   });
   root.addObject(h1);
 
-  const l0 = h1.networkInterfaces.get("l0");
-  const eth0 = h1.networkInterfaces.get("eth0");
+  const loa = h1.networkAddresses(n => n.networkInterface.kind === "loopback");
+  const etha = h1.networkAddresses(n => n.networkInterface.kind !== "loopback");
 
   const s1 = new Service(h1, {
     name: "dns",
@@ -27,28 +27,33 @@ test("Service basics", t => {
   h1.services = s1;
 
   t.deepEqual(s1.endpoints(), [
-    new Endpoint(s1, l0, {
-      address: "127.0.0.1",
-      type: "dns",
-      port: 53,
-      protocol: "udp",
-      tls: false
-    }),
-    new Endpoint(s1, l0, {
-      address: "::1",
-      type: "dns",
-      port: 53,
-      protocol: "udp",
-      tls: false
-    }),
-    new Endpoint(s1, eth0, {
-      type: "dns",
-      port: 53,
-      protocol: "udp",
-      tls: false
-    })
+    ...loa.map(
+      na =>
+        new Endpoint(s1, na, {
+          address: "127.0.0.1",
+          type: "dns",
+          port: 53,
+          protocol: "udp",
+          tls: false
+        })
+    ),
+    ...etha.map(
+      na =>
+        new Endpoint(s1, na, {
+          type: "dns",
+          port: 53,
+          protocol: "udp",
+          tls: false
+        })
+    )
   ]);
 
-  t.is(s1.endpoints(e => e.networkInterface === l0)[0].hostName, "localhost");
-  t.is(s1.endpoints(e => e.networkInterface === eth0)[0].hostName, "h1");
+  t.is(
+    s1.endpoints(e => e.networkInterface.kind === "loopback")[0].hostName,
+    "localhost"
+  );
+  t.is(
+    s1.endpoints(e => e.networkInterface.kind !== "loopback")[0].hostName,
+    "h1"
+  );
 });

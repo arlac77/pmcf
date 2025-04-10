@@ -20,8 +20,12 @@ test("Service basics", t => {
   });
   l1.addObject(h1);
 
-  const l0 = h1.networkInterfaces.get("l0");
-  const eth0 = h1.networkInterfaces.get("eth0");
+  const lna = h1.networkAddresses(
+    na => na.networkInterface.kind === "loopback" && na.family === 'IPv4'
+  );
+  const ena = h1.networkAddresses(
+    na => na.networkInterface.kind !== "loopback"
+  );
 
   const s1 = new Service(h1, {
     name: "dns",
@@ -35,18 +39,24 @@ test("Service basics", t => {
   t.deepEqual(
     s1.endpoints(e => e.family === "IPv4"),
     [
-      new Endpoint(s1, l0, {
-        type: "dns",
-        port: 53,
-        protocol: "udp",
-        tls: false
-      }),
-      new Endpoint(s1, eth0, {
-        type: "dns",
-        port: 53,
-        protocol: "udp",
-        tls: false
-      })
+      ...lna.map(
+        a =>
+          new Endpoint(s1, a, {
+            type: "dns",
+            port: 53,
+            protocol: "udp",
+            tls: false
+          })
+      ),
+      ...ena.map(
+        a =>
+          new Endpoint(s1, a, {
+            type: "dns",
+            port: 53,
+            protocol: "udp",
+            tls: false
+          })
+      )
     ]
   );
 
@@ -166,7 +176,7 @@ test("Service without protocol", t => {
   });
   root.addObject(h1);
 
-  const eth0 = h1.networkInterfaces.get("eth0");
+  const na = h1.networkAddresses();
 
   const s1 = new Service(h1, {
     name: "xyz",
@@ -180,11 +190,14 @@ test("Service without protocol", t => {
   ]);
 
   t.deepEqual(s1.endpoints(), [
-    new Endpoint(s1, eth0, {
-      type: "xyz",
-      port: 555,
-      tls: false
-    })
+    ...na.map(
+      a =>
+        new Endpoint(s1, a, {
+          type: "xyz",
+          port: 555,
+          tls: false
+        })
+    )
   ]);
 });
 
