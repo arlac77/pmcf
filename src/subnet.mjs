@@ -1,10 +1,9 @@
 import {
   normalizeCIDR,
   isLinkLocal,
-  isIPv4,
-  isIPv6,
   rangeIP,
-  decodeIP
+  decodeIP,
+  familyIP
 } from "ip-utilties";
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
@@ -45,6 +44,7 @@ export class Subnet extends Base {
     this.prefix = prefix;
     this.prefixLength = prefixLength;
     this.longPrefix = longPrefix;
+    this.family = familyIP(address);
   }
 
   get fullName() {
@@ -57,14 +57,6 @@ export class Subnet extends Base {
 
   get isLinkLocal() {
     return isLinkLocal(this.address);
-  }
-
-  get isIPv4() {
-    return isIPv4(this.address);
-  }
-
-  get isIPv6() {
-    return isIPv6(this.address);
   }
 
   get addressRange() {

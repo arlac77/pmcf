@@ -40,8 +40,7 @@ test("Subnet ipv6", t => {
 
   t.is(s1.name, "fe80::/64");
   t.is(s1.prefixLength, 64);
-  t.false(s1.isIPv4);
-  t.true(s1.isIPv6);
+  t.is(s1.family, "IPv6");
 
   t.true(s1.matchesAddress("fe80::1e57:3eff:fe22:9a8f"));
   t.false(s1.matchesAddress("fe81:0000:0000:0000:1e57:3eff:fe22:9a8f"));
@@ -58,8 +57,7 @@ function st(t, address, expected) {
     "address",
     "longAddress",
     "prefixLength",
-    "isIPv4",
-    "isIPv6",
+    "family",
     "isLinkLocal",
     "addressRange"
   ]) {
@@ -92,8 +90,7 @@ test(st, "127.0.0.1/8", {
   address: "127/8",
   longAddress: "127.0.0.0/8",
   prefixLength: 8,
-  //isIPv4: true,
-  isIPv6: false,
+  family: "IPv4",
   isLinkLocal: false,
   matches: ["127.0.01"],
   notMatches: ["10.2.0.77"]
@@ -104,8 +101,7 @@ test(st, "10.0.0.77/16", {
   address: "10.0/16",
   longAddress: "10.0.0.0/16",
   prefixLength: 16,
-  isIPv4: true,
-  isIPv6: false,
+  family: "IPv4",
   isLinkLocal: false,
   matches: ["10.0.0.77"],
   notMatches: ["10.2.0.77"],
@@ -116,8 +112,7 @@ test(st, "192.168.1/24", {
   address: "192.168.1/24",
   longAddress: "192.168.1.0/24",
   prefixLength: 24,
-  isIPv4: true,
-  isIPv6: false,
+  family: "IPv4",
   isLinkLocal: false,
   matches: ["192.168.1.77"],
   notMatches: ["192.168.2.77"],
@@ -128,8 +123,7 @@ test(st, "192.168.1.61/30", {
   address: "192.168.1.60/30",
   longAddress: "192.168.1.60/30",
   prefixLength: 30,
-  isIPv4: true,
-  isIPv6: false,
+  family: "IPv4",
   isLinkLocal: false,
   // matches: ["192.168.1.62/30"],
   notMatches: ["192.168.2.77"],

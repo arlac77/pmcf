@@ -1,6 +1,5 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
-import { isIPv4, isIPv6 } from "ip-utilties";
 import {
   Service,
   ServiceTypeDefinition,
@@ -73,10 +72,14 @@ export class DHCPService extends Service {
 
     console.log("kea", host.name, network.name);
 
-    const dnsServerEndpoints = serviceEndpoints(network, {
-      type: "dns",
-      priority: "<10"
-    }).filter(endpoint => endpoint.networkInterface.kind !== "loopback");
+    const dnsServerEndpoints = serviceEndpoints(
+      network,
+      {
+        type: "dns",
+        priority: "<10"
+      },
+      endpoint => endpoint.networkInterface.kind !== "loopback"
+    );
 
     const packageData = {
       dir,
@@ -147,7 +150,7 @@ export class DHCPService extends Service {
         return {
           name: domain,
           "dns-servers": dnsServerEndpoints
-            .filter(endpoint => isIPv4(endpoint.address))
+            .filter(endpoint => endpoint.family === "IPv4")
             .map(endpoint => {
               return { "ip-address": endpoint.address };
             })
@@ -191,7 +194,6 @@ export class DHCPService extends Service {
         subnets.add(subnet);
       }
     }
-    //console.log([...subnets].filter(s => s.isIPv4).map(s => s.address));
 
     const hwmap = new Map();
     const hostNames = new Set();
@@ -217,11 +219,11 @@ export class DHCPService extends Service {
       })
       .sort((a, b) => a.hostname.localeCompare(b.hostname));
 
-    const listenInterfaces = filter =>
+    const listenInterfaces = family =>
       this.endpoints(
         endpoint =>
           endpoint.type === "dhcp" &&
-          filter(endpoint.address) &&
+          endpoint.family === family &&
           endpoint.networkInterface.kind !== "loopback"
       ).map(
         endpoint => `${endpoint.networkInterface.name}/${endpoint.address}`
@@ -231,7 +233,7 @@ export class DHCPService extends Service {
       Dhcp4: {
         ...commonConfig,
         "interfaces-config": {
-          interfaces: listenInterfaces(isIPv4)
+          interfaces: listenInterfaces("IPv4")
         },
         "multi-threading": {
           "enable-multi-threading": false
@@ -244,7 +246,7 @@ export class DHCPService extends Service {
           {
             name: "domain-name-servers",
             data: dnsServerEndpoints
-              .filter(endpoint => isIPv4(endpoint.address))
+              .filter(endpoint => endpoint.family === "IPv4")
               .map(endpoint => endpoint.address)
               .join(",")
           },
@@ -254,7 +256,7 @@ export class DHCPService extends Service {
           }
         ],
         subnet4: [...subnets]
-          .filter(s => s.isIPv4)
+          .filter(s => s.family==='IPv4')
           .map((subnet, index) => {
             return {
               id: index + 1,
@@ -277,7 +279,7 @@ export class DHCPService extends Service {
       Dhcp6: {
         ...commonConfig,
         "interfaces-config": {
-          interfaces: listenInterfaces(isIPv6)
+          interfaces: listenInterfaces("IPv6")
         },
         "control-socket": {
           "socket-type": "unix",
@@ -288,7 +290,7 @@ export class DHCPService extends Service {
           {
             name: "dns-servers",
             data: dnsServerEndpoints
-              .filter(endpoint => isIPv6(endpoint.address))
+              .filter(endpoint => endpoint.family === "IPv6")
               .map(endpoint => endpoint.address)
               .join(",")
           }
