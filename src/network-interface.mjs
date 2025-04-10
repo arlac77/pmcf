@@ -5,7 +5,11 @@ import {
   formatCIDR
 } from "ip-utilties";
 import { Base } from "./base.mjs";
-import { Subnet } from "./subnet.mjs";
+import {
+  Subnet,
+  SUBNET_LOCALHOST_IPV4,
+  SUBNET_LOCALHOST_IPV6
+} from "./subnet.mjs";
 import {
   networkProperties,
   networkAddressProperties
@@ -314,8 +318,8 @@ const LoopbackNetworkInterfaceTypeDefinition = {
 };
 
 const _localAddresses = new Map([
-  ["127.0.0.1", { address: "127.0.0/8", prefix: "127.0.0", prefixLength: 8 }], // TODO
-  ["::1", { address: "::1/128", prefix: "::1", prefixLength: 128 }]
+  ["127.0.0.1", SUBNET_LOCALHOST_IPV4],
+  ["::1", SUBNET_LOCALHOST_IPV6]
 ]);
 
 export class LoopbackNetworkInterface extends SkeletonNetworkInterface {

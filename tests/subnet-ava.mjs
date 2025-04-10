@@ -1,5 +1,11 @@
 import test from "ava";
-import { Root, Network, Subnet } from "pmcf";
+import {
+  Root,
+  Network,
+  Subnet,
+  SUBNET_LOCALHOST_IPV4,
+  SUBNET_LOCALHOST_IPV6
+} from "pmcf";
 import { asArray } from "../src/utils.mjs";
 
 test("Subnet owner", t => {
@@ -50,8 +56,8 @@ test("Subnet ipv6", t => {
 });
 
 function st(t, address, expected) {
-  const root = new Root("/");
-  const subnet = new Subnet(root, address);
+  const subnet =
+    address instanceof Subnet ? address : new Subnet(new Root("/"), address);
 
   for (const property of [
     "address",
@@ -86,7 +92,7 @@ function st(t, address, expected) {
 st.title = (providedTitle = "subnet", address, expected) =>
   `${providedTitle} ${address} => ${JSON.stringify(expected)}`.trim();
 
-test(st, "127.0.0.1/8", {
+test(st, SUBNET_LOCALHOST_IPV4, {
   address: "127/8",
   longAddress: "127.0.0.0/8",
   prefixLength: 8,
@@ -94,6 +100,17 @@ test(st, "127.0.0.1/8", {
   isLinkLocal: false,
   matches: ["127.0.01"],
   notMatches: ["10.2.0.77"]
+  // addressRange: ["10.0.0.0", "10.0.255.255"]
+});
+
+test(st, SUBNET_LOCALHOST_IPV6, {
+  address: "::1/128",
+  longAddress: "::1/128",
+  prefixLength: 128,
+  family: "IPv6",
+  isLinkLocal: false
+  //matches: ["127.0.01"],
+  //notMatches: ["10.2.0.77"]
   // addressRange: ["10.0.0.0", "10.0.255.255"]
 });
 
