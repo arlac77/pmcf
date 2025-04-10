@@ -36,7 +36,7 @@ export class NetworkAddress {
   }
 
   get domainNames() {
-    this.networkInterface.domainNames;
+    return this.networkInterface.domainNames;
   }
 
   get family() {

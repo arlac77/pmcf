@@ -5,6 +5,13 @@ export function dnsFullName(name) {
   return name.endsWith(".") ? name : name + ".";
 }
 
+export function dnsRecordTypeForAddressFamily(family) {
+  switch(family) {
+    case 'IPv4': return "A";
+    case 'IPv6': return "AAAA";
+  }
+}
+
 export function DNSRecord(key, type, ...values) {
   let pad = "";
 

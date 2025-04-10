@@ -1,9 +1,13 @@
 import { join } from "node:path";
 import { createHmac } from "node:crypto";
 import { FileContentProvider } from "npm-pkgbuild";
-import { isIPv6, isLinkLocal, reverseArpa } from "ip-utilties";
+import { isLinkLocal, reverseArpa } from "ip-utilties";
 import { writeLines } from "../utils.mjs";
-import { DNSRecord, dnsFullName } from "../dns-utils.mjs";
+import {
+  DNSRecord,
+  dnsFullName,
+  dnsRecordTypeForAddressFamily
+} from "../dns-utils.mjs";
 import { addType } from "../types.mjs";
 import { ServiceTypeDefinition, serviceAddresses } from "../service.mjs";
 import {
@@ -299,7 +303,7 @@ async function generateZoneDefs(dns, location, packageData) {
         na => na.networkInterface.kind != "loopback"
       )) {
         zone.records.add(
-          DNSRecord("@", na.family === "IPv6" ? "AAAA" : "A", na.address)
+          DNSRecord("@", dnsRecordTypeForAddressFamily(na.family), na.address)
         );
       }
     }
@@ -364,7 +368,8 @@ async function generateZoneDefs(dns, location, packageData) {
       address,
       subnet,
       networkInterface,
-      domainNames
+      domainNames,
+      family
     } of location.networkAddresses()) {
       if (
         !dns.exclude.has(networkInterface.network) &&
@@ -381,7 +386,7 @@ async function generateZoneDefs(dns, location, packageData) {
             zone.records.add(
               DNSRecord(
                 dnsFullName(domainName),
-                isIPv6(address) ? "AAAA" : "A",
+                dnsRecordTypeForAddressFamily(family),
                 address
               )
             );
