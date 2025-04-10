@@ -332,7 +332,7 @@ export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
   }
 
   get kind() {
-    return "loopback";
+    return LoopbackNetworkInterfaceTypeDefinition.name;
   }
 
   get scope() {
@@ -345,5 +345,32 @@ export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
 
   get ipAddresses() {
     return _localAddresses;
+  }
+}
+
+const WireguardNetworkInterfaceTypeDefinition = {
+  name: "wireguard",
+  specializationOf: NetworkInterfaceTypeDefinition,
+  owners: NetworkInterfaceTypeDefinition.owners,
+  extends: NetworkInterfaceTypeDefinition,
+  priority: 0.1,
+  properties: {}
+};
+
+export class WireguardNetworkInterface extends SkeletonNetworkInterface {
+  static {
+    addType(this);
+  }
+
+  static get typeDefinition() {
+    return WireguardNetworkInterfaceTypeDefinition;
+  }
+
+  get kind() {
+    return WireguardNetworkInterfaceTypeDefinition.name;
+  }
+
+  get ipAddresses() {
+    return new Map();
   }
 }
