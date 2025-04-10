@@ -5,7 +5,7 @@ import {
   ServiceTypeDefinition,
   Endpoint,
   serviceEndpoints
-} from "../service.mjs";
+} from "pmcf";
 import { addType } from "../types.mjs";
 import { writeLines } from "../utils.mjs";
 

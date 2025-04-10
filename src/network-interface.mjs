@@ -1,52 +1,16 @@
+import { hasWellKnownSubnet, normalizeIP } from "ip-utilties";
 import {
-  hasWellKnownSubnet,
-  normalizeIP,
-  familyIP,
-  formatCIDR
-} from "ip-utilties";
-import { Base } from "./base.mjs";
-import {
-  Subnet,
+  NetworkAddress,
+  Base,
   SUBNET_LOCALHOST_IPV4,
   SUBNET_LOCALHOST_IPV6
-} from "./subnet.mjs";
+} from "pmcf";
 import {
   networkProperties,
   networkAddressProperties
 } from "./network-support.mjs";
 import { asArray } from "./utils.mjs";
 import { addType } from "./types.mjs";
-
-/**
- * @property {NetworkInterface} networkInterface
- * @property {string|Uint8Array|Uint16Array} address
- * @property {string} family
- * @property {Subnet} subnet
- * @property {Set<string>} domainNames
- */
-export class NetworkAddress {
-  /** @type {Subnet} */ subnet;
-  /** @type {NetworkInterface} */ networkInterface;
-  /** @type {string|Uint8Array|Uint16Array} */ address;
-
-  constructor(networkInterface, address, subnet) {
-    this.networkInterface = networkInterface;
-    this.address = address;
-    this.subnet = subnet;
-  }
-
-  get domainNames() {
-    return this.networkInterface.domainNames;
-  }
-
-  get family() {
-    return familyIP(this.address);
-  }
-
-  get cidrAddress() {
-    return formatCIDR(this.address, this.subnet.prefixLength);
-  }
-}
 
 class SkeletonNetworkInterface extends Base {
   _extends = [];
