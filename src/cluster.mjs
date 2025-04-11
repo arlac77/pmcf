@@ -4,7 +4,6 @@ import { Owner } from "./owner.mjs";
 import { Host } from "./host.mjs";
 import { addType } from "./types.mjs";
 import { writeLines } from "./utils.mjs";
-import { cidrAddresses } from "./network-support.mjs";
 
 const ClusterTypeDefinition = {
   name: "cluster",
