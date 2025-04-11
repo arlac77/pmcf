@@ -19,7 +19,6 @@ const DHCPServiceTypeDefinition = {
 };
 
 const controlAgentEndpoint = {
-  // extends: ["http"],
   type: "kea-control-agent",
   port: 8000,
   protocol: "tcp",
@@ -294,30 +293,29 @@ export class DHCPService extends Service {
               .join(",")
           }
         ],
-        subnet6: [
-          {
-            id: 1,
-            subnet: "2001:db8:1::/64",
-            pools: [
-              {
-                pool: "2001:db8:1::/80"
-              }
-            ],
-            "pd-pools": [
-              {
-                prefix: "2001:db8:8::",
-                "prefix-len": 56,
-                "delegated-len": 64
-              }
-            ],
-            reservations: [
-              {
-                duid: "01:02:03:04:05:0A:0B:0C:0D:0E",
-                "ip-addresses": ["2001:db8:1::100"]
-              }
-            ]
-          }
-        ],
+        subnet6: [...subnets]
+          .filter(s => s.family === "IPv6")
+          .map((subnet, index) => {
+            return {
+              id: index + 1,
+              subnet: subnet.longAddress,
+              pools: [{ pool: subnet.addressRange.join(" - ") }],
+
+              "pd-pools": [
+                {
+                  prefix: "2001:db8:8::",
+                  "prefix-len": 56,
+                  "delegated-len": 64
+                }
+              ],
+              reservations: [
+                {
+                  duid: "01:02:03:04:05:0A:0B:0C:0D:0E",
+                  "ip-addresses": ["2001:db8:1::100"]
+                }
+              ]
+            };
+          }),
         "dhcp-ddns": dhcpServerDdns,
         loggers
       }
