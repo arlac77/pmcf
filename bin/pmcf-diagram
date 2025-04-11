@@ -45,7 +45,11 @@ for await (const network of location.networks()) {
 }
 
 for await (const cluster of location.clusters()) {
-  console.log(` ${[...cluster.members].map(b => `${q(b.host.name)}:${b.name}`).join(" -- ")};`);
+  console.log(`  subgraph cluster_${cluster.name} {`);
+
+  console.log(`   ${[...cluster.members].map(b => `${q(b.host.name)}:${b.name}`).join(" -- ")};`);
+
+  console.log("  } [label=\"${cluster.name}\"];");
 }
 
 for (const bridge of location.bridges) {

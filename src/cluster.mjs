@@ -40,6 +40,7 @@ export class Cluster extends Host {
 
   set masters(value) {
     this._masters.add(value);
+    value.cluster = this;
   }
 
   get masters() {
@@ -48,6 +49,8 @@ export class Cluster extends Host {
 
   set backups(value) {
     this._backups.add(value);
+
+    value.cluster = this;
   }
 
   get backups() {
