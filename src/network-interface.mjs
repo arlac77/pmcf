@@ -133,8 +133,6 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   _ipAddresses = new Map();
   _scope;
   _metric;
-  _ssid;
-  _psk;
   _kind;
   _hostName;
   _hwaddr;
@@ -247,6 +245,40 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     return this.extendedProperty("_class") ?? this.network?.class;
   }
 
+  set kind(value) {
+    this._kind = value;
+  }
+
+  get kind() {
+    return this.extendedProperty("_kind") ?? this.network?.kind;
+  }
+}
+
+const WLANNetworkInterfaceTypeDefinition = {
+  name: "wlan",
+  specializationOf: NetworkInterfaceTypeDefinition,
+  owners: NetworkInterfaceTypeDefinition.owners,
+  extends: NetworkInterfaceTypeDefinition,
+  priority: 0.1,
+  properties: {}
+};
+
+export class WLANNetworkInterface extends NetworkInterface {
+  _ssid;
+  _psk;
+
+  static {
+    addType(this);
+  }
+
+  static get typeDefinition() {
+    return WLANNetworkInterfaceTypeDefinition;
+  }
+
+  /*get kind() {
+    return WLANNetworkInterfaceTypeDefinition.name;
+  }*/
+
   set ssid(value) {
     this._ssid = value;
   }
@@ -261,14 +293,6 @@ export class NetworkInterface extends SkeletonNetworkInterface {
 
   get psk() {
     return this.extendedProperty("_psk") ?? this.network?.psk;
-  }
-
-  set kind(value) {
-    this._kind = value;
-  }
-
-  get kind() {
-    return this.extendedProperty("_kind") ?? this.network?.kind;
   }
 }
 

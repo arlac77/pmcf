@@ -3,6 +3,7 @@
   "extends": "/model/m1",
   "networkInterfaces": {
     "wlan0": {
+      "kind": "wlan",
       "hostName": "wlan-1",
       "ipAddresses": "192.168.1.2/24"
     }

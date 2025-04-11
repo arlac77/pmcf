@@ -102,10 +102,6 @@ export async function generateNetworkDefs(host, packageData) {
     await writeLines(networkDir, `${ni.name}.network`, networkSections);
 
     switch (ni?.kind) {
-      case "wireguard":
-        {
-        }
-        break;
       case "wifi": {
         const d = join(packageData.dir, "etc/wpa_supplicant");
         await mkdir(d, { recursive: true });
