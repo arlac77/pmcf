@@ -2,6 +2,7 @@
   "os": "linux",
   "networkInterfaces": {
     "eth0": {
+      "kind": "ethernet",
       "ipAddresses": "192.168.1.1"
     }
   },
