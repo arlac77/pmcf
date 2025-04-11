@@ -9,37 +9,26 @@ const location = await root.load(args[0]);
 function q(str) {
   return str.match(/^\w+$/) ? str : `"${str}"`;
 }
-function id(str) {
-  return q(str.replaceAll(/-/g, ""));
-}
 
 console.log("graph G {");
 console.log("  node [shape=record];");
 for await (const host of location.hosts()) {
   console.log(
-    `  ${id(host.name)} [label="${host.name}|{${[
+    `  ${q(host.name)} [label="${host.name}|{${[
       ...host.networkInterfaces.values()
     ]
       .filter(ni => !ni.isTemplate && ni.kind !== "loopback")
-      .map(ni => `<${id(ni.name)}> ${ni.name}`)
+      .map(ni => `<${q(ni.name)}> ${ni.name}`)
       .join("|")}}"];`
   );
 }
 
 for await (const network of location.networks()) {
   console.log(
-    `  ${id(network.name)} [label="${network.name}\\n${[...network.subnets()]
+    `  ${q(network.name)} [label="${network.name}\\n${[...network.subnets()]
       .map(s => s.address)
       .join(" ")}" shape=circle];`
   );
-
-  if (network.bridge) {
-    for (const n of network.bridge) {
-      if (n !== network) {
-        console.log(`  ${id(network.name)} -- ${id(n.name)};`);
-      }
-    }
-  }
 
   for await (const na of network.networkAddresses(
     na =>
@@ -48,11 +37,15 @@ for await (const network of location.networks()) {
       na.networkInterface.kind !== "loopback"
   )) {
     console.log(
-      `  ${id(network.name)} -- ${id(na.networkInterface.host.name)}:${id(
+      `  ${q(network.name)} -- ${q(na.networkInterface.host.name)}:${q(
         na.networkInterface.name
       )}[label="${na.address}"];`
     );
   }
+}
+
+for (const bridge of location.bridges) {
+  console.log(` ${[...bridge].map(b => q(b.name)).join(" -- ")};`);
 }
 
 console.log("}");
