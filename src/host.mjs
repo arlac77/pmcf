@@ -324,6 +324,18 @@ export class Host extends Base {
     }
   }
 
+  get clusters() {
+    const clusters = new Set();
+
+    for (const ni of this.networkInterfaces.values()) {
+      if (ni.cluster) {
+        clusters.add(ni.cluster);
+      }
+    }
+
+    return clusters;
+  }
+
   get host() {
     return this;
   }

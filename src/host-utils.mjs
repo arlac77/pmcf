@@ -26,6 +26,8 @@ export async function generateNetworkDefs(host, packageData) {
   const networkDir = join(packageData.dir, "etc/systemd/network");
 
   for (const ni of host.networkInterfaces.values()) {
+    await ni.systemdDefinitions(packageData);
+
     switch (ni.kind) {
       case "loopback":
         continue;
@@ -101,7 +103,7 @@ export async function generateNetworkDefs(host, packageData) {
 
     await writeLines(networkDir, `${ni.name}.network`, networkSections);
 
-    switch (ni?.kind) {
+    switch (ni.kind) {
       case "wifi": {
         const d = join(packageData.dir, "etc/wpa_supplicant");
         await mkdir(d, { recursive: true });

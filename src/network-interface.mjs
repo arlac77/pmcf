@@ -89,6 +89,8 @@ class SkeletonNetworkInterface extends Base {
   get addresses() {
     return [...this.ipAddresses].map(([address]) => address);
   }
+
+  async systemdDefinitions(packageData) {}
 }
 
 export const NetworkInterfaceTypeDefinition = {

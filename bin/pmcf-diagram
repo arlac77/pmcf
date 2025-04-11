@@ -13,14 +13,16 @@ function q(str) {
 console.log("graph G {");
 console.log("  node [shape=record];");
 for await (const host of location.hosts()) {
-  console.log(
-    `  ${q(host.name)} [label="${host.name}|{${[
-      ...host.networkInterfaces.values()
-    ]
-      .filter(ni => !ni.isTemplate && ni.kind !== "loopback")
-      .map(ni => `<${q(ni.name)}> ${ni.name}`)
-      .join("|")}}"];`
-  );
+  if (host.clusters.size === 0) {
+    console.log(
+      `  ${q(host.name)} [label="${host.name}|{${[
+        ...host.networkInterfaces.values()
+      ]
+        .filter(ni => !ni.isTemplate && ni.kind !== "loopback")
+        .map(ni => `<${q(ni.name)}> ${ni.name}`)
+        .join("|")}}"];`
+    );
+  }
 }
 
 for await (const network of location.networks()) {
@@ -47,9 +49,27 @@ for await (const network of location.networks()) {
 for await (const cluster of location.clusters()) {
   console.log(`  subgraph cluster_${cluster.name} {`);
 
-  console.log(`   ${[...cluster.members].map(b => `${q(b.host.name)}:${b.name}`).join(" -- ")};`);
+  for (const ni of cluster.members) {
+    const host = ni.host;
+    console.log(
+      `    ${q(host.name)} [label="${host.name}|{${[
+        ...host.networkInterfaces.values()
+      ]
+        .filter(ni => !ni.isTemplate && ni.kind !== "loopback")
+        .map(ni => `<${q(ni.name)}> ${ni.name}`)
+        .join("|")}}"];`
+    );
+  }
 
-  console.log("  } [label=\"${cluster.name}\"];");
+  /*
+  console.log(
+    `   ${[...cluster.members]
+      .map(b => `${q(b.host.name)}:${b.name}`)
+      .join(" -- ")};`
+      
+  );*/
+
+  console.log(`  } [label="${cluster.name}"];`);
 }
 
 for (const bridge of location.bridges) {
