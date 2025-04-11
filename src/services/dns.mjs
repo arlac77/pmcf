@@ -9,6 +9,7 @@ import {
   dnsRecordTypeForAddressFamily,
   sortZoneRecords
 } from "../dns-utils.mjs";
+import { Endpoint, serviceEndpoints } from "pmcf";
 import { addType } from "../types.mjs";
 import { ServiceTypeDefinition, serviceAddresses } from "../service.mjs";
 import {
@@ -69,6 +70,20 @@ const DNSServiceTypeDefinition = {
   }
 };
 
+const rdncEndpoint = {
+  type: "rdnc",
+  port: 953,
+  protocol: "tcp",
+  tls: false
+};
+
+const statisticsEndpoint = {
+  type: "bind-statistics",
+  port: 19521,
+  protocol: "tcp",
+  tls: false
+};
+
 const DNS_SERVICE_FILTER = { type: DNSServiceTypeDefinition.name };
 
 function addressList(objects) {
@@ -121,6 +136,19 @@ export class DNSService extends ExtraSourceService {
 
   get type() {
     return DNSServiceTypeDefinition.name;
+  }
+
+  endpoints(filter) {
+    const endpoints = super.endpoints(filter);
+
+    for (const na of this.server.networkAddresses(
+      na => na.networkInterface.kind === "localhost"
+    )) {
+      endpoints.push(new Endpoint(this, na, rdncEndpoint));
+      endpoints.push(new Endpoint(this, na, statisticsEndpoint));
+    }
+
+    return endpoints;
   }
 
   get soaUpdates() {
@@ -202,15 +230,15 @@ export class DNSService extends ExtraSourceService {
       }
     };
 
-    const options = addressesStatement(
-      "forwarders",
-      serviceAddresses(this.source, DNS_SERVICE_FILTER)
+    const forwarders = new Set(
+      serviceEndpoints(this.source, DNS_SERVICE_FILTER).map(e => e.address)
     );
-    if (options.length > 2) {
+
+    if (forwarders.size) {
       await writeLines(
         join(p1, "etc/named/options"),
         `forwarders.conf`,
-        options
+        addressesStatement("forwarders", forwarders)
       );
     }
 
@@ -223,7 +251,7 @@ export class DNSService extends ExtraSourceService {
     if (acls.length) {
       await writeLines(join(p1, "etc/named"), `0-acl-${name}.conf`, acls);
     }
-    if (options.length || acls.length) {
+    if (forwarders.size || acls.length) {
       yield packageData;
     }
 
