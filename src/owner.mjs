@@ -214,6 +214,11 @@ export class Owner extends Base {
     return this.typeList("cluster");
   }
 
+  get bridges()
+  {
+    return this._bridges;
+  }
+
   addBridge(network, destinationNetworks) {
     if (destinationNetworks) {
       let bridge;
