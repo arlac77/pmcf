@@ -424,7 +424,7 @@ async function generateZoneDefs(dns, location, packageData) {
 
           for (const foreignDomainName of host.foreignDomainNames) {
             zone.records.add(
-              DNSRecord("external", "PTR", dnsFullName(foreignDomainName))
+              DNSRecord("outfacing", "PTR", dnsFullName(foreignDomainName))
             );
           }
 
