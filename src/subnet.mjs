@@ -3,7 +3,8 @@ import {
   isLinkLocal,
   rangeIP,
   decodeIP,
-  familyIP
+  familyIP,
+  matchPrefixIP
 } from "ip-utilties";
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
@@ -52,7 +53,13 @@ export class Subnet extends Base {
   }
 
   matchesAddress(address) {
-    return address.startsWith(this.prefix);
+    try {
+      return matchPrefixIP(this.address, this.prefixLength, address);
+    } catch (e) {
+      console.error(e, address, this.address, this.prefixLength);
+    }
+
+    return false;
   }
 
   get isLinkLocal() {
