@@ -1,7 +1,6 @@
 import { normalizeCIDR } from "ip-utilties";
 import { asIterator } from "./utils.mjs";
-import { Base } from "./base.mjs";
-import { Subnet } from "./subnet.mjs";
+import { Base, Subnet } from "pmcf";
 import { addType, types } from "./types.mjs";
 const OwnerTypeDefinition = {
   name: "owner",
