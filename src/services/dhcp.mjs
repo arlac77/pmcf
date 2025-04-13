@@ -96,6 +96,9 @@ export class DHCPService extends Service {
         type: "memfile",
         "lfc-interval": 3600
       },
+      "multi-threading": {
+        "enable-multi-threading": false
+      },
       "expired-leases-processing": {
         "reclaim-timer-wait-time": 10,
         "flush-reclaimed-timer-wait-time": 25,
@@ -232,9 +235,6 @@ export class DHCPService extends Service {
         ...commonConfig,
         "interfaces-config": {
           interfaces: listenInterfaces("IPv4")
-        },
-        "multi-threading": {
-          "enable-multi-threading": false
         },
         "control-socket": {
           "socket-type": "unix",
