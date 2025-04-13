@@ -20,14 +20,21 @@
 
 ### Table of Contents
 
-*   [NetworkAddress](#networkaddress)
+*   [networkAddresses](#networkaddresses)
     *   [Parameters](#parameters)
-    *   [Properties](#properties)
+*   [NetworkAddress](#networkaddress)
+    *   [Parameters](#parameters-1)
     *   [subnet](#subnet)
     *   [networkInterface](#networkinterface)
     *   [address](#address)
-*   [networkAddresses](#networkaddresses)
-    *   [Parameters](#parameters-1)
+
+## networkAddresses
+
+### Parameters
+
+*   `filter` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
+
+Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
 
 ## NetworkAddress
 
@@ -36,14 +43,6 @@
 *   `networkInterface` &#x20;
 *   `address` &#x20;
 *   `subnet` &#x20;
-
-### Properties
-
-*   `networkInterface` **NetworkInterface**&#x20;
-*   `address` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array) | [Uint16Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array))**&#x20;
-*   `family` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
-*   `subnet` **Subnet**&#x20;
-*   `domainNames` **[Set](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
 
 ### subnet
 
@@ -56,14 +55,6 @@ Type: NetworkInterface
 ### address
 
 Type: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array) | [Uint16Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array))
-
-## networkAddresses
-
-### Parameters
-
-*   `filter` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
-
-Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
 
 # install
 
