@@ -190,7 +190,7 @@ export class Base {
             assign(property, value);
           } else {
             const factory =
-              property.type.factoryFor?.(value) || property.type.clazz;
+              property.type.factoryFor?.(this,value) || property.type.clazz;
 
             assign(
               property,

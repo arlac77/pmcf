@@ -7,7 +7,7 @@ test("Service basics", t => {
   const h1 = new Host(root, {
     name: "h1",
     networkInterfaces: {
-      l0: { ipAddresses: "127.0.0.1", kind: "loopback", scope: "host" },
+      l0: { kind: "loopback" },
       eth0: { ipAddresses: "10.0.0.1/16" }
     },
     priority: 19

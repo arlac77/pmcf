@@ -7,12 +7,8 @@ import { domainFromDominName, domainName } from "./utils.mjs";
 import { objectFilter } from "./filter.mjs";
 import { addType, types } from "./types.mjs";
 import { loadHooks } from "./hooks.mjs";
-import {
-  generateNetworkDefs,
-  generateMachineInfo,
-  generateKnownHosts
-} from "./host-utils.mjs";
-import { NetworkInterfaceTypeDefinition } from "./network-interface.mjs";
+import { generateMachineInfo, generateKnownHosts } from "./host-utils.mjs";
+import { NetworkInterfaceTypeDefinition } from "./network-interfaces/network-interface.mjs";
 
 const HostTypeDefinition = {
   name: "host",
@@ -45,12 +41,17 @@ const HostTypeDefinition = {
     weight: { type: "number", collection: false, writeable: true },
     serial: { type: "string", collection: false, writeable: true },
     vendor: { type: "string", collection: false, writeable: true },
-    chassis: { type: "string", collection: false, writeable: true },
+    chassis: {
+      type: "string",
+      collection: false,
+      writeable: true,
+      values: ["phone", "tablet", "router", "desktop", "server"]
+    },
     architecture: {
       type: "string",
       collection: false,
       writeable: true,
-      values: ["x86", "aarch64", "armv7"]
+      values: ["x86", "x86_64", "aarch64", "armv7"]
     },
     replaces: { type: "string", collection: true, writeable: true },
     depends: { type: "string", collection: true, writeable: true },
@@ -483,7 +484,10 @@ export class Host extends Base {
       }
     };
 
-    await generateNetworkDefs(this, packageData);
+    for (const ni of this.networkInterfaces.values()) {
+      await ni.systemdDefinitions(packageData);
+    }
+
     await generateMachineInfo(this, packageData);
     await generateKnownHosts(this.owner.hosts(), join(dir, "root", ".ssh"));
 

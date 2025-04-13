@@ -93,7 +93,7 @@ export const ServiceTypeDefinition = {
   priority: 0.4,
   extends: Base.typeDefinition,
   specializations: {},
-  factoryFor(value) {
+  factoryFor(owner,value) {
     const type = value.type ?? value.name;
     const t = ServiceTypeDefinition.specializations[type];
 

@@ -184,8 +184,10 @@ test("Host addresses", t => {
   const lo = h1.typeNamed("network_interface", "lo");
 
   t.is(lo.name, "lo");
+  t.is(lo.typeName, "network_interface");
 
   const eth0 = h1.typeNamed("network_interface", "eth0");
+  t.is(eth0.typeName, "network_interface");
 
   t.is(h1.named("eth0"), eth0);
   t.is(h1.typeNamed("network_interface", "eth0"), eth0);
@@ -309,6 +311,7 @@ test("clone NetworkInterface", t => {
     extends: [h1],
     networkInterfaces: {
       eth0: {
+        kind: "ethernet",
         network: n1,
         ipAddresses: ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f"]
       }
