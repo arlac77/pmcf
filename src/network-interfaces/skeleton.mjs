@@ -56,6 +56,11 @@ export class SkeletonNetworkInterface extends Base {
     this._network = network;
   }
 
+  *subnets ()
+  {
+    yield *this.ipAddresses.values();
+  }
+
   get ipAddresses() {
     return new Map();
   }

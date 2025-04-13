@@ -447,6 +447,12 @@ export class Host extends Base {
     return addresses(this.networkAddresses());
   }
 
+  *subnets() {
+    for (const networkInterface of this.networkInterfaces.values()) {
+      yield* networkInterface.subnets;
+    }
+  }
+
   async publicKey(type = "ed25519") {
     return readFile(join(this.directory, `ssh_host_${type}_key.pub`), "utf8");
   }

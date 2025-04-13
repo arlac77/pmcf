@@ -1,5 +1,13 @@
 import test from "ava";
-import { Root, Host, Network, Subnet, cidrAddresses } from "pmcf";
+import {
+  Root,
+  Host,
+  Network,
+  Subnet,
+  cidrAddresses,
+  SUBNET_LOCALHOST_IPV4,
+  SUBNET_LOCALHOST_IPV6
+} from "pmcf";
 import { assertObject, assertObjects } from "./util.mjs";
 import { root1 } from "./fixtures.mjs";
 
@@ -185,6 +193,10 @@ test("Host addresses", t => {
 
   t.is(lo.name, "lo");
   t.is(lo.typeName, "network_interface");
+  t.deepEqual(
+    new Set(lo.subnets()),
+    new Set([SUBNET_LOCALHOST_IPV4, SUBNET_LOCALHOST_IPV6])
+  );
 
   const eth0 = h1.typeNamed("network_interface", "eth0");
   t.is(eth0.typeName, "network_interface");
@@ -276,10 +288,7 @@ test("Host addresses with network", t => {
   t.is(s2.name, "fe80::/64");
   t.is(s2.prefixLength, 64);
 
-  t.deepEqual(h1.addresses, [
-    "10.0.0.2",
-    "fe80::1e57:3eff:fe22:9a8f"
-  ]);
+  t.deepEqual(h1.addresses, ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f"]);
   t.deepEqual(cidrAddresses(h1.networkAddresses()), [
     "10.0.0.2/16",
     "fe80::1e57:3eff:fe22:9a8f/64"
@@ -328,8 +337,5 @@ test("clone NetworkInterface", t => {
   t.is(ni.hwaddr, "00:01:02:03:04:05");
   t.is(ni.kind, "ethernet");
 
-  t.deepEqual(ni.addresses, [
-    "10.0.0.2",
-    "fe80::1e57:3eff:fe22:9a8f"
-  ]);
+  t.deepEqual(ni.addresses, ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f"]);
 });
