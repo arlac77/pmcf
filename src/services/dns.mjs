@@ -207,7 +207,7 @@ export class DNSService extends ExtraSourceService {
           ...DNS_SERVICE_FILTER,
           priority: ">=10"
         }).join(" "),
-        Domains: [...this.domains].join(" "),
+        Domains: [...this.localDomains].join(" "),
         DNSSEC: "no",
         MulticastDNS: this.network.multicastDNS ? "yes" : "no",
         LLMNR: "no"
