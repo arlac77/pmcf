@@ -13,8 +13,8 @@ test("Service basics", t => {
   const h1 = new Host(l1, {
     name: "h1",
     networkInterfaces: {
-      l0: { ipAddresses: "127.0.0.1", kind: "loopback" },
-      eth0: { ipAddresses: "10.0.0.1/16" }
+      l0: {  kind: "loopback", ipAddresses: "127.0.0.1" },
+      eth0: { kind: "ethernet", ipAddresses: "10.0.0.1/16" }
     },
     priority: 19
   });
@@ -85,7 +85,7 @@ test("Service basics", t => {
   const h2 = new Host(l1, {
     name: "h2",
     priority: 3,
-    networkInterfaces: { eth0: { ipAddresses: "10.0.0.2" } }
+    networkInterfaces: { eth0: { kind: "ethernet", ipAddresses: "10.0.0.2" } }
   });
 
   const s2 = s1.forOwner(h2);
@@ -172,7 +172,7 @@ test("Service without protocol", t => {
 
   const h1 = new Host(root, {
     name: "h1",
-    networkInterfaces: { eth0: { ipAddresses: "10.0.0.1" } }
+    networkInterfaces: { eth0: { kind: "ethernet", ipAddresses: "10.0.0.1" } }
   });
   root.addObject(h1);
 
@@ -206,7 +206,7 @@ test("Service load", t => {
 
   const h1 = new Host(root, {
     name: "h1",
-    networkInterfaces: { eth0: { ipAddresses: "10.0.0.1" } },
+    networkInterfaces: { eth0: { kind: "ethernet", ipAddresses: "10.0.0.1" } },
     services: {
       dns: {}
     }
@@ -233,7 +233,7 @@ test("Service owner", t => {
     priority: 8,
     weight: 7,
     networkInterfces: {
-      eth0: { ipAddresses: "10.0.0.1" }
+      eth0: { kind: "ethernet", ipAddresses: "10.0.0.1" }
     }
   });
   root.addObject(h2);
