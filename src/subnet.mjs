@@ -56,9 +56,8 @@ export class Subnet extends Base {
     try {
       return matchPrefixIP(this.address, this.prefixLength, address);
     } catch (e) {
-      console.error(e, address, this.address, this.prefixLength);
+      console.error(e, this.toString(), address);
     }
-
     return false;
   }
 
@@ -92,6 +91,7 @@ export class Subnet extends Base {
 
 const _owner = { addObject() {} };
 export const SUBNET_GLOBAL_IPV4 = new Subnet(_owner, "0.0.0.0/0");
+export const SUBNET_GLOBAL_IPV6 = new Subnet(_owner, "::0/0");
 export const SUBNET_LOCALHOST_IPV4 = new Subnet(_owner, "127.0.0.1/8");
 export const SUBNET_LOCALHOST_IPV6 = new Subnet(_owner, "::1/128");
 
