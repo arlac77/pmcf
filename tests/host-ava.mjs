@@ -280,6 +280,7 @@ test("Host addresses with network", t => {
     name: "h1",
     networkInterfaces: {
       eth0: {
+        kind: "ethernet",
         network: n1,
         ipAddresses: ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f"]
       }
