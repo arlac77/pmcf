@@ -2,7 +2,7 @@
   "priority": 1,
   "routerId": 77,
   "masters": "/L1/host1/eth0",
-  "backups": "/L1/n1/host2/eth0",
+  "backups": "/L1/n1/host2/wlan0",
   "authentication": {
     "type": "PASS",
     "password": "pass1234"
@@ -17,7 +17,7 @@
   "services": {
     "dns": {
       "source": "/GLOBAL",
-      "protected": "/L1",
+      "protected": "/L1/n1",
       "trusted": ["/LOCAL"],
       "allowedUpdates": ["trusted"],
       "recordTTL": "1W"
