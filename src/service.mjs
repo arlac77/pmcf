@@ -89,11 +89,11 @@ export const EndpointTypeDefinition = {
 
 export const ServiceTypeDefinition = {
   name: "service",
-  owners: ["host", "cluster"],
+  owners: ["host", "cluster", "network_interface"],
   priority: 0.4,
   extends: Base.typeDefinition,
   specializations: {},
-  factoryFor(owner,value) {
+  factoryFor(owner, value) {
     const type = value.type ?? value.name;
     const t = ServiceTypeDefinition.specializations[type];
 
@@ -145,15 +145,15 @@ export class Service extends Base {
   }
 
   get network() {
-    return this.server.network;
+    return this.host.network;
   }
 
-  get server() {
+  get host() {
     return this.owner;
   }
 
   get domainName() {
-    return this.server.domainName;
+    return this.host.domainName;
   }
 
   get ipAddressOrDomainName() {
@@ -165,7 +165,7 @@ export class Service extends Base {
   }
 
   get address() {
-    return this._ipAddresses?.[0] ?? this.server.address;
+    return this._ipAddresses?.[0] ?? this.host.address;
   }
 
   set ipAddresses(value) {
@@ -173,7 +173,7 @@ export class Service extends Base {
   }
 
   get networks() {
-    return this.server.networks;
+    return this.host.networks;
   }
 
   endpoints(filter) {
@@ -188,7 +188,7 @@ export class Service extends Base {
       }
     ];
 
-    const result = [...this.server.networkAddresses()]
+    const result = [...this.host.networkAddresses()]
       .map(na =>
         data.map(
           d =>

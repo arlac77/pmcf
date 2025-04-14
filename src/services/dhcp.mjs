@@ -53,7 +53,7 @@ export class DHCPService extends Service {
   endpoints(filter) {
     const endpoints = super.endpoints(filter);
 
-    for (const na of this.server.networkAddresses(
+    for (const na of this.host.networkAddresses(
       na => na.networkInterface.kind === "localhost"
     )) {
       endpoints.push(new Endpoint(this, na, controlAgentEndpoint));
@@ -65,7 +65,7 @@ export class DHCPService extends Service {
 
   async *preparePackages(dir) {
     const network = this.network;
-    const host = this.server;
+    const host = this.host;
     const name = host.name;
 
     console.log("kea", host.name, network.name);

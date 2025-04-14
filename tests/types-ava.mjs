@@ -25,7 +25,7 @@ test("types", t => {
   t.is(types.network.clazz, Network);
   t.is(types.subnet.clazz, Subnet);
   t.is(types.service.clazz, Service);
-  t.deepEqual(types.service.owners, [types.host, types.cluster]);
+  t.deepEqual(types.service.owners, [types.host, types.cluster, types.network_interface]);
   t.is(types.host.clazz, Host);
   t.deepEqual(types.host.owners, [types.owner, types.network, types.root]);
 

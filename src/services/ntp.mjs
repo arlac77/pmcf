@@ -67,7 +67,7 @@ export class NTPService extends ExtraSourceService {
 
   async *preparePackages(dir) {
     const network = this.network;
-    const host = this.server;
+    const host = this.host;
     const name = host.name;
 
     console.log("chrony", host.name, network.name);
