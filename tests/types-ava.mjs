@@ -42,6 +42,6 @@ test("types", t => {
   t.deepEqual(types.cluster.extends, types.host);
   t.deepEqual(types.subnet.identifier, types.subnet.properties.address);
 
-  t.deepEqual(types.owner.properties.hosts.type, types.host);
-  t.deepEqual(types.owner.properties.networks.type, types.network);
+  t.deepEqual(types.owner.properties.hosts.type, [types.host]);
+  t.deepEqual(types.owner.properties.networks.type, [types.network]);
 });

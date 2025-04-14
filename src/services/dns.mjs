@@ -19,6 +19,8 @@ import {
 import { subnets } from "../subnet.mjs";
 import { addHook } from "../hooks.mjs";
 
+const address_types = ["network", "host", "network_interface"];
+
 const DNSServiceTypeDefinition = {
   name: "dns",
   specializationOf: ServiceTypeDefinition,
@@ -26,9 +28,13 @@ const DNSServiceTypeDefinition = {
   extends: ExtraSourceServiceTypeDefinition,
   priority: 0.1,
   properties: {
-    trusted: { type: "network", collection: true, writeable: true },
-    protected: { type: "network", collection: true, writeable: true },
-    open: { type: "network", collection: true, writeable: true },
+    trusted: {
+      type: address_types,
+      collection: true,
+      writeable: true
+    },
+    protected: { type: address_types, collection: true, writeable: true },
+    open: { type: address_types, collection: true, writeable: true },
     hasSVRRecords: {
       type: "boolean",
       collection: false,
@@ -53,7 +59,7 @@ const DNSServiceTypeDefinition = {
       writeable: true
     },
 
-    exclude: { type: "network", collection: true, writeable: true },
+    exclude: { type: address_types, collection: true, writeable: true },
     notify: {
       type: "boolean",
       collection: false,

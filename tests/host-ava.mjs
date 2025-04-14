@@ -36,6 +36,13 @@ test("Host basics", async t => {
 test("Host all", async t => {
   const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
   await root.loadAll();
+
+  /*
+  const host2 = await root.named("/L1/n1/host2");
+  const wlan0 = host2.typeNamed("network_interface", "wlan0");
+  console.log(wlan0.constructor.name);
+  */
+
   await assertObjects(
     t,
     root.hosts(),

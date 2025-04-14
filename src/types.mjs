@@ -1,9 +1,11 @@
+import { asArray } from "./utils.mjs";
+
 export const types = {};
 
 export function addType(clazz) {
   const type = clazz.typeDefinition;
 
-  if(type.specializationOf) {
+  if (type.specializationOf) {
     type.specializationOf.specializations[type.name] = type;
   }
 
@@ -26,6 +28,32 @@ export function resolveTypeLinks() {
         type.identifier = property;
       }
 
+      const ts = [];
+
+      for (const type of asArray(property.type)) {
+        if (typeof type === "string") {
+          if (primitives.has(type)) {
+            ts.push(type);
+          } else {
+            const t = types[type];
+            if (t) {
+              ts.push(t);
+            } else {
+              console.error(
+                "Unknown type",
+                property.type,
+                type.name,
+                property.name
+              );
+            }
+          }
+        } else {
+          ts.push(type);
+        }
+      }
+      property.type = ts;
+
+      /*
       if (typeof property.type === "string") {
         if (!primitives.has(property.type)) {
           const type = types[property.type];
@@ -41,6 +69,9 @@ export function resolveTypeLinks() {
           }
         }
       }
+
+      property.type = asArray(property.type);
+      */
     }
   }
 

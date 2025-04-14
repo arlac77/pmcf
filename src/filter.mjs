@@ -52,7 +52,7 @@ export function* objectFilter(type, objects, filter) {
       };
       for (let t = type; t; t = t.extends) {
         for (const property of Object.values(t.properties)) {
-          switch (property.type) {
+          switch (property.type[0]) {
             case "boolean":
               if (
                 filter[property.name] !== undefined &&

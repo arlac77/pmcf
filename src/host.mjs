@@ -449,7 +449,7 @@ export class Host extends Base {
 
   *subnets() {
     for (const networkInterface of this.networkInterfaces.values()) {
-      yield* networkInterface.subnets;
+      yield* networkInterface.subnets();
     }
   }
 
