@@ -9,7 +9,7 @@
   },
   "networkInterfaces": {
     "eth0": {
-      "kind": "etherenet",
+      "kind": "ethernet",
       "network": "/L1/n1",
       "ipAddresses": "192.168.1.11"
     }
