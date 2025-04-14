@@ -1,0 +1,21 @@
+{
+  "domain": "localhost",
+  "networkInterfaces": {
+    "lo": {
+      "kind": "loopback"
+    }
+  },
+  "packaging": "arch",
+  "services": {
+    "dns": {
+      "recordTTL": "1M",
+      "refresh": "12H",
+      "retry": "15M",
+      "expire": "1W",
+      "minimum": "1D",
+      "hasSVRRecords": false,
+      "hasCatalog": false,
+      "notify": false
+    }
+  }
+}

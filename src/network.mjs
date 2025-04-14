@@ -39,6 +39,12 @@ export class Network extends Owner {
     return this;
   }
 
+  get address() {
+    for(const subnet of this.subnets()) {
+      return subnet.address;
+    }
+  }
+
   networkNamed(name) {
     if (this.isNamed(name)) {
       return this;

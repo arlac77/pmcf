@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import { createHmac } from "node:crypto";
 import { FileContentProvider } from "npm-pkgbuild";
-import { isLinkLocal, reverseArpa } from "ip-utilties";
+import { isLinkLocal, reverseArpa, decodeIP } from "ip-utilties";
 import { writeLines } from "../utils.mjs";
 import {
   DNSRecord,
@@ -16,7 +16,7 @@ import {
   ExtraSourceService,
   ExtraSourceServiceTypeDefinition
 } from "../extra-source-service.mjs";
-import { subnets } from "../subnet.mjs";
+import { addresses } from "../network-support.mjs";
 import { addHook } from "../hooks.mjs";
 
 const address_types = ["network", "host", "network_interface"];
@@ -93,9 +93,18 @@ const statisticsEndpoint = {
 const DNS_SERVICE_FILTER = { type: DNSServiceTypeDefinition.name };
 
 function addressList(objects) {
-  return Array.from(objects).map(object =>
-    typeof object === "string" ? object : object.name
-  );
+  return Array.from(objects).map(object => {
+    switch (typeof object) {
+      case "string":
+        return object;
+      case "object":
+        if (object.name) {
+          return object.name;
+        }
+
+        return decodeIP(object);
+    }
+  });
 }
 
 function addressesStatement(prefix, objects, generateEmpty = false) {
@@ -147,7 +156,7 @@ export class DNSService extends ExtraSourceService {
   endpoints(filter) {
     const endpoints = super.endpoints(filter);
 
-    for (const na of this.server.networkAddresses(
+    for (const na of this.owner.networkAddresses(
       na => na.networkInterface.kind === "localhost"
     )) {
       endpoints.push(new Endpoint(this, na, rdncEndpoint));
@@ -249,9 +258,9 @@ export class DNSService extends ExtraSourceService {
     }
 
     const acls = [
-      addressesStatement("acl trusted", subnets(this.trusted)),
-      addressesStatement("acl protected", subnets(this.protected)),
-      addressesStatement("acl open", subnets(this.open), true)
+      addressesStatement("acl trusted", addresses(this.trusted)),
+      addressesStatement("acl protected", addresses(this.protected)),
+      addressesStatement("acl open", addresses(this.open), true)
     ].flat();
 
     if (acls.length) {

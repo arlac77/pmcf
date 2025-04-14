@@ -18,7 +18,7 @@
     "dns": {
       "source": "/GLOBAL",
       "protected": "/L1/n1",
-      "trusted": ["/LOCAL"],
+      "trusted": ["/LOCAL", "/L1/n1"],
       "allowedUpdates": ["trusted"],
       "recordTTL": "1W"
     },

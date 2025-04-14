@@ -1,5 +1,6 @@
 import test from "ava";
 import { Root } from "pmcf";
+import { addresses } from "../src/network-support.mjs";
 
 test("DNS basics", async t => {
   const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
@@ -18,8 +19,7 @@ test("DNS basics", async t => {
 
   t.deepEqual(dns.systemdConfig[1], {
     DNS: "192.168.1.1 192.168.1.11",
-    FallbackDNS:
-      "1.1.1.1 2606:4700:4700::1111 8.8.8.8 2001:4860:4860::8888",
+    FallbackDNS: "1.1.1.1 2606:4700:4700::1111 8.8.8.8 2001:4860:4860::8888",
     Domains: "mydomain.com",
     DNSSEC: "no",
     MulticastDNS: "yes",
@@ -34,4 +34,6 @@ test("DNS named", async t => {
   const dns = await root.named("/L1/C1/dns");
 
   t.is(dns.fullName, "/L1/C1/dns");
+
+  t.deepEqual(addresses(dns.trusted), ["192.168.1/24", "127.0.0.1"]);
 });
