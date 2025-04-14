@@ -45,7 +45,20 @@ const HostTypeDefinition = {
       type: "string",
       collection: false,
       writeable: true,
-      values: ["phone", "tablet", "router", "desktop", "server"]
+      values: [
+        "phone",
+        "tablet",
+        "router",
+        "gateway",
+        "desktop",
+        "notebook",
+        "server",
+        "monitor",
+        "camera",
+        "inverter",
+        "battery",
+        "virtual"
+      ]
     },
     architecture: {
       type: "string",
