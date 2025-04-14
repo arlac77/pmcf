@@ -1,8 +1,8 @@
-import { familyIP, formatCIDR,decodeIP } from "ip-utilties";
+import { familyIP, formatCIDR, decodeIP } from "ip-utilties";
 import { Subnet } from "./subnet.mjs";
 
 /**
- * 
+ *
  */
 export class NetworkAddress {
   /** @type {Subnet} */ subnet;
@@ -27,9 +27,7 @@ export class NetworkAddress {
     return formatCIDR(this.address, this.subnet.prefixLength);
   }
 
-
-  toString()
-  {
+  toString() {
     return `${this.networkInterface.fullName} ${decodeIP(this.address)}`;
   }
 }
