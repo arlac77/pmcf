@@ -1,7 +1,7 @@
-import { normalizeCIDR } from "ip-utilties";
+import { normalizeCIDR, familyIP } from "ip-utilties";
 import { asIterator } from "./utils.mjs";
 import { Base } from "./base.mjs";
-import { Subnet } from "./subnet.mjs";
+import { Subnet, SUBNET_GLOBAL_IPV4, SUBNET_GLOBAL_IPV6 } from "./subnet.mjs";
 import { addType, types } from "./types.mjs";
 const OwnerTypeDefinition = {
   name: "owner",
@@ -182,19 +182,25 @@ export class Owner extends Base {
   }
 
   addSubnet(address) {
-    const { cidr } = normalizeCIDR(address);
+    const { cidr, prefixLength } = normalizeCIDR(address);
 
-    if (cidr) {
+    if (cidr && prefixLength !== 0) {
       return this.subnetNamed(cidr) || new Subnet(this, cidr);
     }
 
-    const subnet = this.subnetForAddress(address);
+    let subnet = this.subnetForAddress(address);
+  
     if (!subnet) {
+      subnet =  familyIP(address) === 'IPv4' ?  SUBNET_GLOBAL_IPV4 : SUBNET_GLOBAL_IPV6;
+
+      /*
       this.error(
         `Address without subnet ${address}`,
         [...this.subnets()].map(s => s.address)
       );
+      */
     }
+  
     return subnet;
   }
 
