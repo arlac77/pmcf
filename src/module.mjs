@@ -3,7 +3,6 @@ export * from "./cluster.mjs";
 export * from "./owner.mjs";
 export * from "./location.mjs";
 export * from "./root.mjs";
-export * from "./address.mjs";
 export * from "./subnet.mjs";
 export * from "./network.mjs";
 export * from "./network-address.mjs";
