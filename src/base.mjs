@@ -75,12 +75,12 @@ export class Base {
   }
 
   ownerFor(property, data) {
-    for (const type of property.type.owners) {
+    for (const type of property.type[0].owners) {
       if (this.typeName === type?.name) {
         return this;
       }
     }
-    for (const type of property.type.owners) {
+    for (const type of property.type[0].owners) {
       const owner = this[type?.name];
       if (owner) {
         return owner;
@@ -133,7 +133,7 @@ export class Base {
     };
 
     const instantiateAndAssign = (property, value) => {
-      if (primitives.has(property.type)) {
+      if (primitives.has(property.type[0])) {
         assign(property, value);
         return;
       }
@@ -151,13 +151,21 @@ export class Base {
         case "string":
           {
             value = this.expand(value);
-            let object = this.typeNamed(property.type.name, value);
+
+            let object;
+
+            for (const type of property.type) {
+              object = this.typeNamed(type.name, value);
+              if (object) {
+                break;
+              }
+            }
 
             if (object) {
               assign(property, object);
             } else {
-              if (property.type.constructWithIdentifierOnly) {
-                object = new property.type.clazz(
+              if (property.type[0].constructWithIdentifierOnly) {
+                object = new property.type[0].clazz(
                   this.ownerFor(property, value),
                   value
                 );
@@ -165,32 +173,36 @@ export class Base {
               } else {
                 this.finalize(() => {
                   value = this.expand(value);
-                  const object =
-                    this.typeNamed(property.type.name, value) ||
-                    this.owner.typeNamed(property.type.name, value) ||
-                    this.root.typeNamed(property.type.name, value); // TODO
 
-                  if (object) {
-                    assign(property, object);
-                  } else {
-                    this.error(
-                      "Not found",
-                      property.name,
-                      property.type.name,
-                      value
-                    );
+                  for (const type of property.type) {
+                    const object =
+                      this.typeNamed(type.name, value) ||
+                      this.owner.typeNamed(type.name, value) ||
+                      this.root.typeNamed(type.name, value); // TODO
+
+                    if (object) {
+                      assign(property, object);
+                      return;
+                    }
                   }
+
+                  this.error(
+                    "Not found",
+                    property.name,
+                    property.type.map(t => t.name),
+                    value
+                  );
                 });
               }
             }
           }
           break;
         case "object":
-          if (value instanceof property.type.clazz) {
+          if (value instanceof property.type[0].clazz) {
             assign(property, value);
           } else {
             const factory =
-              property.type.factoryFor?.(this, value) || property.type.clazz;
+              property.type[0].factoryFor?.(this, value) || property.type[0].clazz;
 
             assign(
               property,
@@ -570,7 +582,7 @@ export function extractFrom(
               value = [...value];
             }
 
-            value = extractFrom(value, def.type);
+            value = extractFrom(value, def.type[0]);
             if (value !== undefined) {
               json[name] = value;
             }
