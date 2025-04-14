@@ -20,9 +20,9 @@ export const NetworkInterfaceTypeDefinition = {
     const kind = value.kind;
     const t = NetworkInterfaceTypeDefinition.specializations[kind];
 
-    if (!t) {
+    /*if (!t) {
       console.warn("FACTORY", owner.name, value, t?.name);
-    }
+    }*/
     if (t) {
       delete value.type;
       delete value.kind;
