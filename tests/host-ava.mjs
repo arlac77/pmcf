@@ -51,7 +51,7 @@ test("Host extends", t => {
     distribution: "suse",
     aliases: "e1a",
     deployment: "production",
-    chassis: "chassis e1",
+    chassis: "phone",
     vendor: "vendor e1",
     architecture: "aarch64",
     serial: "123",
@@ -86,7 +86,7 @@ test("Host extends", t => {
   t.is(h1.os, "linux");
   t.is(h1.distribution, "suse");
   t.is(h1.deployment, "production");
-  t.is(h1.chassis, "chassis e1");
+  t.is(h1.chassis, "phone");
   t.is(h1.vendor, "vendor e1");
   t.is(h1.architecture, "aarch64");
   t.is(h1.serial, "123");
