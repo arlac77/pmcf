@@ -208,6 +208,7 @@ export class Host extends Base {
     return this.extends.find(h => h.isModel);
   }
 
+
   set aliases(value) {
     if (value instanceof Set) {
       this._aliases = this._aliases.union(value);
@@ -352,6 +353,10 @@ export class Host extends Base {
 
   get host() {
     return this;
+  }
+
+  *hosts() {
+    yield this;
   }
 
   get services() {
