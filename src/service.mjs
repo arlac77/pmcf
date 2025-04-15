@@ -81,7 +81,7 @@ export const endpointProperties = {
 
 export const EndpointTypeDefinition = {
   name: "endpoint",
-  owners: ["service"],
+  owners: ["service", "network-interface"],
   priority: 0.4,
   specializations: {},
   properties: endpointProperties
@@ -151,9 +151,9 @@ export class Service extends Base {
   get host() {
     return this.owner;
   }
-  
-  * hosts() {
-    yield *this.owner.hosts();
+
+  *hosts() {
+    yield* this.owner.hosts();
   }
 
   get domainName() {
