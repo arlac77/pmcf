@@ -1,7 +1,7 @@
 import { readFile, glob } from "node:fs/promises";
 import { join } from "node:path";
 import { Location } from "./location.mjs";
-import { addType, types, resolveTypeLinks } from "./types.mjs";
+import { addType, types, resolveTypeLinks, typeFactory } from "./types.mjs";
 
 const RootTypeDefinition = {
   name: "root",
@@ -49,8 +49,7 @@ export class Root extends Location {
     const fullName = this.fullName + "/" + name;
     data.name = fullName.substring(owner.fullName.length + 1);
 
-    const object = new type.clazz(owner, data);
-
+    const object = typeFactory(type, owner, data);
     this.addTypeObject(type.clazz.typeName, name, object);
     return object;
   }

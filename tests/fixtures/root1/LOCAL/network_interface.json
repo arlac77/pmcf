@@ -1,13 +1,10 @@
 {
   "domain": "localhost",
-  "networkInterfaces": {
-    "lo": {
-      "kind": "loopback"
-    }
-  },
+  "kind": "loopback",
   "packaging": "arch",
   "services": {
     "dns": {
+      "serves": "/LOCAL",
       "recordTTL": "1M",
       "refresh": "12H",
       "retry": "15M",

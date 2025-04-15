@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import { allOutputs } from "npm-pkgbuild";
 import { getAttribute } from "pacc";
-import { addType, primitives } from "./types.mjs";
+import { addType, primitives, typeFactory } from "./types.mjs";
 
 const BaseTypeDefinition = {
   name: "base",
@@ -201,12 +201,13 @@ export class Base {
           if (value instanceof property.type[0].clazz) {
             assign(property, value);
           } else {
-            const factory =
-              property.type[0].factoryFor?.(this, value) || property.type[0].clazz;
-
             assign(
               property,
-              new factory(this.ownerFor(property, value), value)
+              typeFactory(
+                property.type[0],
+                this.ownerFor(property, value),
+                value
+              )
             );
           }
           break;

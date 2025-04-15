@@ -83,3 +83,8 @@ export function resolveTypeLinks() {
     }
   }
 }
+
+export function typeFactory(type, owner, data) {
+  const factory = type.factoryFor?.(owner, data) || type.clazz;
+  return new factory(owner, data);
+}
