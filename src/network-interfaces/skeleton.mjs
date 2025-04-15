@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { writeLines, sectionLines } from "../utils.mjs";
-import { NetworkAddress } from "pmcf";
+import { NetworkAddress, Host } from "pmcf";
 import { ServiceOwner } from "../service-owner.mjs";
 import { cidrAddresses } from "../network-support.mjs";
 
@@ -29,7 +29,9 @@ export class SkeletonNetworkInterface extends ServiceOwner {
   }
 
   get host() {
-    return this.owner;
+    if(this.owner instanceof Host) {
+      return this.owner;
+    }
   }
 
   *hosts() {
