@@ -1,5 +1,5 @@
 import { isLocalhost } from "ip-utilties";
-import { Base, Endpoint } from "pmcf";
+import { Base, Host, Endpoint } from "pmcf";
 import { addType } from "./types.mjs";
 import { asArray } from "./utils.mjs";
 import { networkAddressProperties } from "./network-support.mjs";
@@ -149,7 +149,9 @@ export class Service extends Base {
   }
 
   get host() {
-    return this.owner;
+    if(this.owner instanceof Host) {
+      return this.owner;
+    }
   }
 
   *hosts() {
