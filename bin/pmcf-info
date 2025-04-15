@@ -5,7 +5,7 @@ const { root, args, options } = await prepare({
     type: "string"
   },
   address: {
-    type: "string"
+    type: "boolean"
   }
 });
 
