@@ -13,7 +13,7 @@ test("Service basics", t => {
   const h1 = new Host(l1, {
     name: "h1",
     networkInterfaces: {
-      l0: {  kind: "loopback", ipAddresses: "127.0.0.1" },
+      l0: {  kind: "loopback" },
       eth0: { kind: "ethernet", ipAddresses: "10.0.0.1/16" }
     },
     priority: 19

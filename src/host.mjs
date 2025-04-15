@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
-import { Base } from "./base.mjs";
+import { ServiceOwner, Base } from "pmcf";
 import { networkAddressProperties, addresses } from "./network-support.mjs";
 import { domainFromDominName, domainName } from "./utils.mjs";
 import { objectFilter } from "./filter.mjs";
@@ -75,8 +75,7 @@ const HostTypeDefinition = {
   }
 };
 
-export class Host extends Base {
-  _services = [];
+export class Host extends ServiceOwner {
   _extends = [];
   _aliases = new Set();
   _networkInterfaces = new Map();
@@ -143,10 +142,6 @@ export class Host extends Base {
       for (const ni of this.networkInterfaces.values()) {
         ni._traverse(...args);
       }
-      for (const service of this._services) {
-        service._traverse(...args);
-      }
-
       return true;
     }
     return false;
@@ -207,7 +202,6 @@ export class Host extends Base {
   get model() {
     return this.extends.find(h => h.isModel);
   }
-
 
   set aliases(value) {
     if (value instanceof Set) {
@@ -359,22 +353,6 @@ export class Host extends Base {
     yield this;
   }
 
-  get services() {
-    return this._services;
-  }
-
-  set services(service) {
-    const present = this._services.find(s => s.name === service.name);
-
-    if (!present) {
-      this._services.push(service);
-    }
-  }
-
-  *findServices(filter) {
-    yield* objectFilter(types.service, this._services, filter);
-  }
-
   typeNamed(typeName, name) {
     if (typeName === NetworkInterfaceTypeDefinition.name) {
       const ni = this._networkInterfaces.get(name);
@@ -382,13 +360,6 @@ export class Host extends Base {
         return ni;
       }
     }
-    if (typeName === "service") {
-      const service = this.services.find(s => s.name === name);
-      if (service) {
-        return service;
-      }
-    }
-
     return super.typeNamed(typeName, name);
   }
 
@@ -397,10 +368,8 @@ export class Host extends Base {
     if (ni) {
       return ni;
     }
-    const service = this.services.find(s => s.name === name);
-    if (service) {
-      return service;
-    }
+
+    return super.named(name);
   }
 
   get network() {

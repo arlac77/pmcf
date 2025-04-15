@@ -4,6 +4,7 @@ export * from "./owner.mjs";
 export * from "./location.mjs";
 export * from "./root.mjs";
 export * from "./subnet.mjs";
+export * from "./service-owner.mjs";
 export * from "./network.mjs";
 export * from "./network-address.mjs";
 export * from "./network-support.mjs";

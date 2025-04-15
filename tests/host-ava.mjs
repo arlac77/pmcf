@@ -183,9 +183,7 @@ test("Host addresses", t => {
     name: "h1",
     networkInterfaces: {
       lo: {
-        kind: "loopback",
-        scope: "host",
-        ipAddresses: ["127.0.0.1", "::1"]
+        kind: "loopback"
       },
       eth0: {
         kind: "ethernet",

@@ -34,6 +34,8 @@ export const NetworkInterfaceTypeDefinition = {
   properties: {
     ...networkProperties,
     ...networkAddressProperties,
+
+    services: { type: "service", collection: true, writeable: true },
     hostName: { type: "string", collection: false, writeable: true },
     ipAddresses: { type: "string", collection: true, writeable: true },
 

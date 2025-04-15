@@ -8,4 +8,7 @@ test("localhost", async t => {
   const local = root.named("/LOCAL");
   t.is(local.name, "LOCAL");
   t.is(local.constructor, LoopbackNetworkInterface);
+
+  const dns = Array.from(local.findServices({ type: "dns" }))[0]
+  t.is(dns.name, "dns");
 });

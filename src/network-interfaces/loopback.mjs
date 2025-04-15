@@ -26,6 +26,11 @@ export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
     return LoopbackNetworkInterfaceTypeDefinition;
   }
 
+  constructor(owner, data) {
+    super(owner, data);
+    this.read(data, NetworkInterfaceTypeDefinition);
+  }
+
   get kind() {
     return LoopbackNetworkInterfaceTypeDefinition.name;
   }

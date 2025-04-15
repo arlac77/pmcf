@@ -1,9 +1,10 @@
 import { join } from "node:path";
-import { NetworkAddress, Base } from "pmcf";
 import { writeLines, sectionLines } from "../utils.mjs";
+import { NetworkAddress } from "pmcf";
+import { ServiceOwner } from "../service-owner.mjs";
 import { cidrAddresses } from "../network-support.mjs";
 
-export class SkeletonNetworkInterface extends Base {
+export class SkeletonNetworkInterface extends ServiceOwner {
   _extends = [];
   _network;
 
@@ -31,6 +32,10 @@ export class SkeletonNetworkInterface extends Base {
     return this.owner;
   }
 
+  *hosts() {
+    yield* this.owner.hosts();
+  }
+
   get network_interface() {
     return this;
   }
@@ -56,9 +61,8 @@ export class SkeletonNetworkInterface extends Base {
     this._network = network;
   }
 
-  *subnets ()
-  {
-    yield *this.ipAddresses.values();
+  *subnets() {
+    yield* this.ipAddresses.values();
   }
 
   get ipAddresses() {

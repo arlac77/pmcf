@@ -367,7 +367,9 @@ async function generateZoneDefs(dns, location, packageData) {
     );
   }
 
-  for (const domain of dns.localDomains) {
+  console.log("LOCAL DOMAINS", location.localDomains, location.domain, location.toString());
+
+  for (const domain of location.localDomains) {
     const locationName = location.name;
     const reverseZones = new Map();
 
@@ -408,6 +410,7 @@ async function generateZoneDefs(dns, location, packageData) {
     const hosts = new Set();
     const addresses = new Set();
 
+    console.log("LIST", location.toString());
     for await (const {
       address,
       subnet,
@@ -415,6 +418,8 @@ async function generateZoneDefs(dns, location, packageData) {
       domainNames,
       family
     } of location.networkAddresses()) {
+      console.log("ADDRESS",address);
+
       if (
         !dns.exclude.has(networkInterface.network) &&
         !dns.excludeInterfaceKinds.has(networkInterface.kind)

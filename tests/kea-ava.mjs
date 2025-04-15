@@ -7,7 +7,7 @@ test("kea basics", t => {
   const h1 = new Host(owner, {
     name: "h1",
     networkInterfaces: {
-      l0: { ipAddresses: "127.0.0.1", kind: "loopback" },
+      l0: { kind: "loopback" },
       eth0: { ipAddresses: "10.0.0.1/16" }
     }
   });
