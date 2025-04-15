@@ -147,7 +147,7 @@ export class Cluster extends Host {
           cfg.push(`  protocol ${service.protocol.toUpperCase()}`);
 
           for (const member of this.members) {
-            const memberService = member.findService({ type: service.type });
+            const memberService = member.findService({ type: service.type }) || member.host.findService({ type: service.type }); // TODO
 
             cfg.push(`  real_server ${member.address} ${memberService.port} {`);
             cfg.push(`    weight ${memberService.weight}`);
