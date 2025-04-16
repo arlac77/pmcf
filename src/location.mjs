@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { Owner } from "./owner.mjs";
 import { addType } from "./types.mjs";
@@ -72,8 +71,8 @@ export class Location extends Owner {
 
     const configs = [
       { type: "dns" },
-      { type: "ntp" },
-      { type: "systemd-journald" }
+      { type: "systemd-timesyncd" },
+      { type: "systemd-journal" }
     ];
 
     for (const cfg of configs) {

@@ -1,8 +1,8 @@
 import { Service, ServiceTypeDefinition } from "pmcf";
 import { addType } from "../types.mjs";
 
-const SystemdJournaldServiceTypeDefinition = {
-  name: "systemd-journald",
+const SystemdJournalServiceTypeDefinition = {
+  name: "systemd-journal",
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
@@ -10,26 +10,26 @@ const SystemdJournaldServiceTypeDefinition = {
   properties: {}
 };
 
-export class SystemdJournaldService extends Service {
+export class SystemdJournalService extends Service {
   static {
     addType(this);
   }
 
   static get typeDefinition() {
-    return SystemdJournaldServiceTypeDefinition;
+    return SystemdJournalServiceTypeDefinition;
   }
 
   constructor(owner, data) {
     super(owner, data);
-    this.read(data, SystemdJournaldServiceTypeDefinition);
+    this.read(data, SystemdJournalServiceTypeDefinition);
   }
 
   get type() {
-    return SystemdJournaldServiceTypeDefinition.name;
+    return SystemdJournalServiceTypeDefinition.name;
   }
 
   get systemdServices() {
-    return SystemdJournaldServiceTypeDefinition.name;
+    return SystemdJournalServiceTypeDefinition.name;
   }
 
   systemdConfig(name) {

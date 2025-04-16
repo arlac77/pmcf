@@ -22,6 +22,9 @@
       "allowedUpdates": ["trusted"],
       "recordTTL": "1W"
     },
+    "systemd-timesyncd": {},
+    "systemd-journal": {},
+    "systemd-resolvd": {},
     "ntp": {
       "source": "/GLOBAL"
     }

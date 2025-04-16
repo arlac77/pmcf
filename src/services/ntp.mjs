@@ -1,11 +1,7 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { addType } from "../types.mjs";
-import {
-  ServiceTypeDefinition,
-  serviceAddresses,
-  serviceEndpoints
-} from "../service.mjs";
+import { ServiceTypeDefinition, serviceEndpoints } from "../service.mjs";
 import {
   ExtraSourceService,
   ExtraSourceServiceTypeDefinition
@@ -46,26 +42,6 @@ export class NTPService extends ExtraSourceService {
 
   get type() {
     return NTPServiceTypeDefinition.name;
-  }
-
-  systemdConfig(name) {
-    return {
-      name: `etc/systemd/timesyncd.conf.d/${name}.conf`,
-      content: [
-        "Time",
-        {
-          NTP: serviceAddresses(
-            this,
-            {
-              ...NTP_SERVICE_FILTER,
-              priority: "<20"
-            },
-            "domainName",
-            () => true
-          ).join(" ")
-        }
-      ]
-    };
   }
 
   async *preparePackages(dir) {
