@@ -12,7 +12,7 @@ test("systemd-timesyncd basics", async t => {
     content: [
       "Time",
       {
-        NTP: "C1.mydomain.com" // "2.arch.pool.ntp.org"
+        NTP: "C1.mydomain.com 2.arch.pool.ntp.org"
       }
     ]
   });

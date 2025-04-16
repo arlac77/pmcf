@@ -1,6 +1,5 @@
-import { Service, ServiceTypeDefinition } from "pmcf";
+import { ExtraSourceService, ServiceTypeDefinition } from "pmcf";
 import { serviceAddresses } from "../service.mjs";
-
 import { addType } from "../types.mjs";
 
 const SystemdTimesyncdServiceTypeDefinition = {
@@ -12,7 +11,7 @@ const SystemdTimesyncdServiceTypeDefinition = {
   properties: {}
 };
 
-export class SystemdTimesyncdService extends Service {
+export class SystemdTimesyncdService extends ExtraSourceService {
   static {
     addType(this);
   }

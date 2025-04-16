@@ -3,7 +3,12 @@ import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { ServiceOwner, Base } from "pmcf";
 import { networkAddressProperties, addresses } from "./network-support.mjs";
-import { domainFromDominName, domainName } from "./utils.mjs";
+import {
+  domainFromDominName,
+  domainName,
+  writeLines,
+  sectionLines
+} from "./utils.mjs";
 import { objectFilter } from "./filter.mjs";
 import { addType, types } from "./types.mjs";
 import { loadHooks } from "./hooks.mjs";
@@ -483,6 +488,13 @@ export class Host extends ServiceOwner {
 
     await generateMachineInfo(this, packageData);
     await generateKnownHosts(this.owner.hosts(), join(dir, "root", ".ssh"));
+
+    for (const service of this.services) {
+      if (service.systemdConfig) {
+        const { name, content } = service.systemdConfig(this.name);
+        await writeLines(dir, name, sectionLines(...content));
+      }
+    }
 
     yield packageData;
   }

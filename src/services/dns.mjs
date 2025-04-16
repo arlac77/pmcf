@@ -9,13 +9,10 @@ import {
   dnsRecordTypeForAddressFamily,
   sortZoneRecords
 } from "../dns-utils.mjs";
-import { Endpoint, serviceEndpoints } from "pmcf";
+import { ExtraSourceService, Endpoint, serviceEndpoints } from "pmcf";
 import { addType } from "../types.mjs";
-import { ServiceTypeDefinition, serviceAddresses } from "../service.mjs";
-import {
-  ExtraSourceService,
-  ExtraSourceServiceTypeDefinition
-} from "../extra-source-service.mjs";
+import { ServiceTypeDefinition } from "../service.mjs";
+import { ExtraSourceServiceTypeDefinition } from "../extra-source-service.mjs";
 import { addresses } from "../network-support.mjs";
 import { addHook } from "../hooks.mjs";
 
@@ -208,29 +205,6 @@ export class DNSService extends ExtraSourceService {
 
   get excludeInterfaceKinds() {
     return this._excludeInterfaceKinds;
-  }
-
-  systemdConfig(name) {
-    return {
-      name: `etc/systemd/resolved.conf.d/${name}.conf`,
-      content: [
-        "Resolve",
-        {
-          DNS: serviceAddresses(this, {
-            ...DNS_SERVICE_FILTER,
-            priority: "<10"
-          }).join(" "),
-          FallbackDNS: serviceAddresses(this, {
-            ...DNS_SERVICE_FILTER,
-            priority: ">=10"
-          }).join(" "),
-          Domains: [...this.localDomains].join(" "),
-          DNSSEC: "no",
-          MulticastDNS: this.network.multicastDNS ? "yes" : "no",
-          LLMNR: "no"
-        }
-      ]
-    };
   }
 
   async *preparePackages(dir) {

@@ -1,7 +1,6 @@
 import { FileContentProvider } from "npm-pkgbuild";
-import { Owner } from "./owner.mjs";
+import { Owner } from "pmcf";
 import { addType } from "./types.mjs";
-import { writeLines, sectionLines } from "./utils.mjs";
 import { loadHooks } from "./hooks.mjs";
 
 const LocationTypeDefinition = {
@@ -68,21 +67,6 @@ export class Location extends Owner {
         )
       }
     };
-
-    const configs = [
-      { type: "dns" },
-      { type: "systemd-timesyncd" },
-      { type: "systemd-journal" }
-    ];
-
-    for (const cfg of configs) {
-      const service = this.findService(cfg);
-
-      if (service) {
-        const { name, content } = service.systemdConfig(this.name);
-        await writeLines(dir, name, sectionLines(...content));
-      }
-    }
 
     yield packageData;
   }
