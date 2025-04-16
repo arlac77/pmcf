@@ -17,13 +17,20 @@ test("DNS basics", async t => {
 
   const dns = await root.named("/L1/C1/dns");
 
-  t.deepEqual(dns.systemdConfig[1], {
-    DNS: "192.168.1.1 192.168.1.11",
-    FallbackDNS: "1.1.1.1 2606:4700:4700::1111 8.8.8.8 2001:4860:4860::8888",
-    Domains: "mydomain.com",
-    DNSSEC: "no",
-    MulticastDNS: "yes",
-    LLMNR: "no"
+  t.deepEqual(dns.systemdConfig("ABC"), {
+    name: "etc/systemd/resolved.conf.d/ABC.conf",
+    content: [
+      "Resolve",
+      {
+        DNS: "192.168.1.1 192.168.1.11",
+        FallbackDNS:
+          "1.1.1.1 2606:4700:4700::1111 8.8.8.8 2001:4860:4860::8888",
+        Domains: "mydomain.com",
+        DNSSEC: "no",
+        MulticastDNS: "yes",
+        LLMNR: "no"
+      }
+    ]
   });
 });
 

@@ -210,24 +210,27 @@ export class DNSService extends ExtraSourceService {
     return this._excludeInterfaceKinds;
   }
 
-  get systemdConfig() {
-    return [
-      "Resolve",
-      {
-        DNS: serviceAddresses(this, {
-          ...DNS_SERVICE_FILTER,
-          priority: "<10"
-        }).join(" "),
-        FallbackDNS: serviceAddresses(this, {
-          ...DNS_SERVICE_FILTER,
-          priority: ">=10"
-        }).join(" "),
-        Domains: [...this.localDomains].join(" "),
-        DNSSEC: "no",
-        MulticastDNS: this.network.multicastDNS ? "yes" : "no",
-        LLMNR: "no"
-      }
-    ];
+  systemdConfig(name) {
+    return {
+      name: `etc/systemd/resolved.conf.d/${name}.conf`,
+      content: [
+        "Resolve",
+        {
+          DNS: serviceAddresses(this, {
+            ...DNS_SERVICE_FILTER,
+            priority: "<10"
+          }).join(" "),
+          FallbackDNS: serviceAddresses(this, {
+            ...DNS_SERVICE_FILTER,
+            priority: ">=10"
+          }).join(" "),
+          Domains: [...this.localDomains].join(" "),
+          DNSSEC: "no",
+          MulticastDNS: this.network.multicastDNS ? "yes" : "no",
+          LLMNR: "no"
+        }
+      ]
+    };
   }
 
   async *preparePackages(dir) {
@@ -367,7 +370,12 @@ async function generateZoneDefs(dns, location, packageData) {
     );
   }
 
-  console.log("LOCAL DOMAINS", location.localDomains, location.domain, location.toString());
+  console.log(
+    "LOCAL DOMAINS",
+    location.localDomains,
+    location.domain,
+    location.toString()
+  );
 
   for (const domain of location.localDomains) {
     const locationName = location.name;
@@ -418,7 +426,7 @@ async function generateZoneDefs(dns, location, packageData) {
       domainNames,
       family
     } of location.networkAddresses()) {
-      console.log("ADDRESS",address);
+      console.log("ADDRESS", address);
 
       if (
         !dns.exclude.has(networkInterface.network) &&

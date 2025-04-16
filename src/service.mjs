@@ -11,6 +11,9 @@ import {
 } from "./dns-utils.mjs";
 
 const ServiceTypes = {
+  "systemd-resolved": { endpoints: [] },
+  "systemd-timesyncd": { endpoints: [] },
+  "systemd-journald": { endpoints: [] },
   ntp: { endpoints: [{ protocol: "udp", port: 123, tls: false }] },
   dns: { endpoints: [{ protocol: "udp", port: 53, tls: false }] },
   ldap: { endpoints: [{ protocol: "tcp", port: 389, tls: false }] },
@@ -149,7 +152,7 @@ export class Service extends Base {
   }
 
   get host() {
-    if(this.owner instanceof Host) {
+    if (this.owner instanceof Host) {
       return this.owner;
     }
   }

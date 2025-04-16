@@ -7,7 +7,13 @@ test("NTP basics", async t => {
 
   const ntp = await root.named("/L1/C1/ntp");
 
-  t.deepEqual(ntp.systemdConfig[1], {
-    NTP: "C1.mydomain.com 2.arch.pool.ntp.org"
+  t.deepEqual(ntp.systemdConfig("ABC"), {
+    name: "etc/systemd/timesyncd.conf.d/ABC.conf",
+    content: [
+      "Time",
+      {
+        NTP: "C1.mydomain.com 2.arch.pool.ntp.org"
+      }
+    ]
   });
 });

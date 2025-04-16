@@ -70,27 +70,20 @@ export class Location extends Owner {
       }
     };
 
-    await writeLines(
-      join(dir, "etc/systemd/resolved.conf.d"),
-      `${this.name}.conf`,
-      sectionLines(...this.findService({ type: "dns" }).systemdConfig)
-    );
+    const configs = [
+      { type: "dns" },
+      { type: "ntp" },
+      { type: "systemd-journald" }
+    ];
 
-    await writeLines(
-      join(dir, "etc/systemd/journald.conf.d"),
-      `${this.name}.conf`,
-      sectionLines("Journal", {
-        Compress: "yes",
-        SystemMaxUse: "500M",
-        SyncIntervalSec: "15m"
-      })
-    );
+    for (const cfg of configs) {
+      const service = this.findService(cfg);
 
-    await writeLines(
-      join(dir, "etc/systemd/timesyncd.conf.d"),
-      `${this.name}.conf`,
-      sectionLines(...this.findService({ type: "ntp" }).systemdConfig)
-    );
+      if (service) {
+        const { name, content } = service.systemdConfig(this.name);
+        await writeLines(dir, name, sectionLines(...content));
+      }
+    }
 
     yield packageData;
   }

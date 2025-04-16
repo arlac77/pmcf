@@ -48,21 +48,24 @@ export class NTPService extends ExtraSourceService {
     return NTPServiceTypeDefinition.name;
   }
 
-  get systemdConfig() {
-    return [
-      "Time",
-      {
-        NTP: serviceAddresses(
-          this,
-          {
-            ...NTP_SERVICE_FILTER,
-            priority: "<20"
-          },
-          "domainName",
-          () => true
-        ).join(" ")
-      }
-    ];
+  systemdConfig(name) {
+    return {
+      name: `etc/systemd/timesyncd.conf.d/${name}.conf`,
+      content: [
+        "Time",
+        {
+          NTP: serviceAddresses(
+            this,
+            {
+              ...NTP_SERVICE_FILTER,
+              priority: "<20"
+            },
+            "domainName",
+            () => true
+          ).join(" ")
+        }
+      ]
+    };
   }
 
   async *preparePackages(dir) {
@@ -91,7 +94,7 @@ export class NTPService extends ExtraSourceService {
           ...NTP_SERVICE_FILTER,
           priority: ">=10"
         },
-        e => e.family === 'IPv4' && e.networkInterface.kind !== "loopback"
+        e => e.family === "IPv4" && e.networkInterface.kind !== "loopback"
       ).map(
         endpoint =>
           `${endpoint.service.isPool ? "pool" : "server"} ${
