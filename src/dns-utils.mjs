@@ -85,7 +85,7 @@ export function dnsFormatParameters(parameters) {
   return Object.entries(parameters)
     .map(([name, value]) =>
       value !== undefined && [...asIterator(value)].length > 0
-        ? `${name}="${[...asIterator(value)].join(",")}"`
+        ? `${name}="${[...asIterator(value)].sort().join(",")}"`
         : name
     )
     .sort((a, b) => a[0].localeCompare(b[0]))
