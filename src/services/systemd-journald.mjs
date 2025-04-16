@@ -28,6 +28,10 @@ export class SystemdJournaldService extends Service {
     return SystemdJournaldServiceTypeDefinition.name;
   }
 
+  get systemdServices() {
+    return SystemdJournaldServiceTypeDefinition.name;
+  }
+
   systemdConfig(name) {
     return {
       name: `etc/systemd/journal.conf.d/${name}.conf`,
