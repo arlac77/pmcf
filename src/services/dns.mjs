@@ -418,7 +418,6 @@ async function generateZoneDefs(dns, location, packageData) {
     const hosts = new Set();
     const addresses = new Set();
 
-    console.log("LIST", location.toString());
     for await (const {
       address,
       subnet,
@@ -426,8 +425,6 @@ async function generateZoneDefs(dns, location, packageData) {
       domainNames,
       family
     } of location.networkAddresses()) {
-      console.log("ADDRESS", address);
-
       if (
         !dns.exclude.has(networkInterface.network) &&
         !dns.excludeInterfaceKinds.has(networkInterface.kind)
