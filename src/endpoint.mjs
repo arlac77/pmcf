@@ -17,14 +17,8 @@ export class Endpoint {
     return this.networkAddress.networkInterface.hostName;
   }
 
-  #address;
-
   get address() {
-    return this.#address ?? this.networkAddress.address;
-  }
-
-  set address(value) {
-    this.#address = value;
+    return this.networkAddress.address;
   }
 
   get family() {

@@ -30,7 +30,6 @@ test("Service basics", t => {
     ...loa.map(
       na =>
         new Endpoint(s1, na, {
-          address: "127.0.0.1",
           type: "dns",
           port: 53,
           protocol: "udp",
