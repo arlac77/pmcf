@@ -17,6 +17,10 @@ export class Endpoint {
     return this.networkAddress.networkInterface.hostName;
   }
 
+  get domainName() {
+    return this.networkAddress.networkInterface.domainName;
+  }
+
   get address() {
     return this.networkAddress.address;
   }

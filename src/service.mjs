@@ -322,26 +322,15 @@ export class Service extends Base {
 
 export const sortByPriority = (a, b) => a.priority - b.priority;
 
-export function serviceAddresses(
-  sources,
-  filter,
-  addressType = "addresses",
-  addressFilter = a => !isLocalhost(a)
-) {
-  return asArray(sources)
-    .map(ft => Array.from(ft.findServices(filter)))
+export function serviceEndpoints(sources, options = {}) {
+  const all = asArray(sources)
+    .map(ft => Array.from(ft.findServices(options.services)))
     .flat()
     .sort(sortByPriority)
-    .map(s => s[addressType])
-    .flat()
-    .filter(addressFilter);
-}
-
-export function serviceEndpoints(sources, filter, endpointFilter) {
-  return asArray(sources)
-    .map(ft => Array.from(ft.findServices(filter)))
-    .flat()
-    .sort(sortByPriority)
-    .map(service => service.endpoints(endpointFilter))
+    .map(service => service.endpoints(options.endpoints))
     .flat();
+
+  const res = new Set(options.select ? all.map(options.select) : all);
+
+  return options.join ? [...res].join(options.join) : res;
 }

@@ -42,6 +42,10 @@ export class SkeletonNetworkInterface extends ServiceOwner {
     return this;
   }
 
+  get domainName() {
+    return this.host?.domainName;
+  }
+
   get domainNames() {
     return new Set();
   }

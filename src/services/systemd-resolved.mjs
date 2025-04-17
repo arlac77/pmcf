@@ -1,5 +1,8 @@
-import { ExtraSourceService, ServiceTypeDefinition } from "pmcf";
-import { serviceAddresses } from "../service.mjs";
+import {
+  ExtraSourceService,
+  ServiceTypeDefinition,
+  serviceEndpoints
+} from "pmcf";
 import { addType } from "../types.mjs";
 
 const SystemdResolvedServiceTypeDefinition = {
@@ -34,19 +37,22 @@ export class SystemdResolvedService extends ExtraSourceService {
   }
 
   systemdConfig(name) {
+    const options = priority => {
+      return {
+        services: { type: "dns", priority },
+        endpoints: e => e.networkInterface.kind !== "loopback",
+        select: endpoint => endpoint.address,
+        join: " "
+      };
+    };
+
     return {
       name: `etc/systemd/resolved.conf.d/${name}.conf`,
       content: [
         "Resolve",
         {
-          DNS: serviceAddresses(this, {
-            type: "dns",
-            priority: "<10"
-          }).join(" "),
-          FallbackDNS: serviceAddresses(this, {
-            type: "dns",
-            priority: ">=10"
-          }).join(" "),
+          DNS: serviceEndpoints(this, options("<10")),
+          FallbackDNS: serviceEndpoints(this, options(">=10")),
           Domains: [...this.localDomains].join(" "),
           DNSSEC: "no",
           MulticastDNS: this.network.multicastDNS ? "yes" : "no",

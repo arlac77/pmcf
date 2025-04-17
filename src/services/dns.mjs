@@ -87,8 +87,6 @@ const statisticsEndpoint = {
   tls: false
 };
 
-const DNS_SERVICE_FILTER = { type: DNSServiceTypeDefinition.name };
-
 function addressList(objects) {
   return Array.from(objects).map(object => {
     switch (typeof object) {
@@ -222,9 +220,10 @@ export class DNSService extends ExtraSourceService {
       }
     };
 
-    const forwarders = new Set(
-      serviceEndpoints(this.source, DNS_SERVICE_FILTER).map(e => e.address)
-    );
+    const forwarders = serviceEndpoints(this.source, {
+      services: { type: "dns", priority: ">=10" },
+      select: e => e.address
+    });
 
     if (forwarders.size) {
       await writeLines(
@@ -283,7 +282,7 @@ export class DNSService extends ExtraSourceService {
 
 async function generateZoneDefs(dns, location, packageData) {
   const ttl = dns.recordTTL;
-  const nameService = dns.findService(DNS_SERVICE_FILTER);
+  const nameService = dns.findService({ type: "dns", priority: "<10" });
   const rname = dns.administratorEmail.replace(/@/, ".");
 
   const SOARecord = DNSRecord(

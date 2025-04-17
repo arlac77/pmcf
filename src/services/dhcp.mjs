@@ -70,14 +70,13 @@ export class DHCPService extends Service {
 
     console.log("kea", host.name, network.name);
 
-    const dnsServerEndpoints = serviceEndpoints(
-      network,
-      {
+    const dnsServerEndpoints = serviceEndpoints(network, {
+      services: {
         type: "dns",
         priority: "<10"
       },
-      endpoint => endpoint.networkInterface.kind !== "loopback"
-    );
+      endpoints: endpoint => endpoint.networkInterface.kind !== "loopback"
+    });
 
     const packageData = {
       dir,

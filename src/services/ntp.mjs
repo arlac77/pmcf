@@ -64,19 +64,19 @@ export class NTPService extends ExtraSourceService {
     };
 
     const lines = [
-      ...serviceEndpoints(
-        this,
-        {
+      ...serviceEndpoints(this, {
+        services: {
           ...NTP_SERVICE_FILTER,
           priority: ">=10"
         },
-        e => e.family === "IPv4" && e.networkInterface.kind !== "loopback"
-      ).map(
-        endpoint =>
+        endpoints: e =>
+          e.family === "IPv4" && e.networkInterface.kind !== "loopback",
+
+        select: endpoint =>
           `${endpoint.service.isPool ? "pool" : "server"} ${
             endpoint.address
           } iburst`
-      ),
+      }),
       `mailonchange ${this.administratorEmail} 0.5`,
       "local stratum 10",
       "leapsectz right/UTC",

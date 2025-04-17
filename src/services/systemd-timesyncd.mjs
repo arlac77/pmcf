@@ -1,5 +1,8 @@
-import { ExtraSourceService, ServiceTypeDefinition } from "pmcf";
-import { serviceAddresses } from "../service.mjs";
+import {
+  ExtraSourceService,
+  ServiceTypeDefinition,
+  serviceEndpoints
+} from "pmcf";
 import { addType } from "../types.mjs";
 
 const SystemdTimesyncdServiceTypeDefinition = {
@@ -39,15 +42,16 @@ export class SystemdTimesyncdService extends ExtraSourceService {
       content: [
         "Time",
         {
-          NTP: serviceAddresses(
-            this,
-            {
+          NTP: serviceEndpoints(this, {
+            services: {
               type: "ntp",
               priority: "<20"
             },
-            "domainName",
-            () => true
-          ).join(" ")
+            endpoints: endpoint =>
+              endpoint.networkInterface.kind !== "loopback",
+            select: endpoint => endpoint.domainName,
+            join: " "
+          })
         }
       ]
     };
