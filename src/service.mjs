@@ -10,11 +10,6 @@ import {
 } from "./dns-utils.mjs";
 
 const ServiceTypes = {
-  "systemd-resolved": { endpoints: [] },
-  "systemd-timesyncd": { endpoints: [] },
-  "systemd-journal": { endpoints: [] },
-  "systemd-journal-remote": { endpoints: [] },
-  "systemd-journal-upload": { endpoints: [] },
   ntp: { endpoints: [{ protocol: "udp", port: 123, tls: false }] },
   dns: { endpoints: [{ protocol: "udp", port: 53, tls: false }] },
   ldap: { endpoints: [{ protocol: "tcp", port: 389, tls: false }] },

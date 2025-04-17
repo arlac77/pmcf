@@ -1,5 +1,5 @@
 {
-  "priority": 1,
+  "priority": 11,
   "os": "linux",
   "depends": ["d1", "d2-${os}"],
   "replaces": ["r1", "r2-${os}"],

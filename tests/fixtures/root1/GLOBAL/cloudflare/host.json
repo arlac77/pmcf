@@ -5,6 +5,6 @@
     }
   },
   "services": {
-    "dns": { "type": "dns", "priority": 10 }
+    "dns": { "type": "dns", "priority": 20 }
   }
 }

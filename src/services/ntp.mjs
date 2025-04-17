@@ -65,7 +65,7 @@ export class NTPService extends ExtraSourceService {
       ...serviceEndpoints(this, {
         services: {
           type: "ntp",
-          priority: ">=10"
+          priority: ">=20"
         },
         endpoints: e =>
           e.family === "IPv4" && e.networkInterface.kind !== "loopback",

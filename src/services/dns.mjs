@@ -221,7 +221,7 @@ export class DNSService extends ExtraSourceService {
     };
 
     const forwarders = serviceEndpoints(this.source, {
-      services: { type: "dns", priority: ">=10" },
+      services: { type: "dns", priority: ">=20" },
       select: e => e.address
     });
 
