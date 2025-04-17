@@ -1,5 +1,12 @@
 import test from "ava";
-import { Root, Location, Host, Service, Endpoint } from "pmcf";
+import {
+  Root,
+  Location,
+  Host,
+  Service,
+  Endpoint,
+  DomainNameEndpoint
+} from "pmcf";
 
 test("Service basics", t => {
   const root = new Root("/somwhere");
@@ -13,7 +20,7 @@ test("Service basics", t => {
   const h1 = new Host(l1, {
     name: "h1",
     networkInterfaces: {
-      l0: {  kind: "loopback" },
+      l0: { kind: "loopback" },
       eth0: { kind: "ethernet", ipAddresses: "10.0.0.1/16" }
     },
     priority: 19
@@ -21,7 +28,7 @@ test("Service basics", t => {
   l1.addObject(h1);
 
   const lna = h1.networkAddresses(
-    na => na.networkInterface.kind === "loopback" && na.family === 'IPv4'
+    na => na.networkInterface.kind === "loopback" && na.family === "IPv4"
   );
   const ena = h1.networkAddresses(
     na => na.networkInterface.kind !== "loopback"
@@ -252,10 +259,11 @@ test("Service owner", t => {
   t.is(s1b.weight, 7);
 
   t.deepEqual(s1b.endpoints(), [
-    /*new Endpoint(s1b, unknown,{
+    new DomainNameEndpoint(s1b, "h2", {
+      type: "dns",
       port: 53,
       protocol: "udp",
       tls: false
-    })*/
+    })
   ]);
 });

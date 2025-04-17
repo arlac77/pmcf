@@ -1,5 +1,4 @@
-import { isLocalhost } from "ip-utilties";
-import { Base, Host, Endpoint } from "pmcf";
+import { Base, Host, Endpoint, DomainNameEndpoint } from "pmcf";
 import { addType } from "./types.mjs";
 import { asArray } from "./utils.mjs";
 import { networkAddressProperties } from "./network-support.mjs";
@@ -199,7 +198,7 @@ export class Service extends Base {
       }
     ];
 
-    const result = [...this.host.networkAddresses()]
+    let result = [...this.host.networkAddresses()]
       .map(na =>
         data.map(
           d =>
@@ -210,6 +209,12 @@ export class Service extends Base {
         )
       )
       .flat();
+
+    if (result.length === 0) {
+      result = data.map(
+        d => new DomainNameEndpoint(this, this.domainName, { ...d, ...local })
+      );
+    }
 
     return filter ? result.filter(filter) : result;
   }

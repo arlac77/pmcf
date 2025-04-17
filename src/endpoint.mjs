@@ -33,3 +33,23 @@ export class Endpoint {
     return this.networkAddress.networkInterface;
   }
 }
+
+export class DomainNameEndpoint {
+  constructor(service, domainName, data) {
+    this.service = service;
+    this.domainName = domainName;
+    Object.assign(this, data);
+  }
+
+  get networkInterface() {
+    return {};
+  }
+
+  get address() {
+    return this.domainName;
+  }
+
+  toString() {
+    return `${this.address}[${this.port}]`;
+  }
+}

@@ -24,8 +24,6 @@ const NTPServiceTypeDefinition = {
   }
 };
 
-const NTP_SERVICE_FILTER = { type: NTPServiceTypeDefinition.name };
-
 export class NTPService extends ExtraSourceService {
   static {
     addType(this);
@@ -66,7 +64,7 @@ export class NTPService extends ExtraSourceService {
     const lines = [
       ...serviceEndpoints(this, {
         services: {
-          ...NTP_SERVICE_FILTER,
+          type: "ntp",
           priority: ">=10"
         },
         endpoints: e =>
