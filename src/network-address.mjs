@@ -31,3 +31,17 @@ export class NetworkAddress {
     return `${this.networkInterface.fullName} ${decodeIP(this.address)}`;
   }
 }
+
+export function addresses(networkAddresses) {
+  return [
+    ...new Set(
+      [...networkAddresses].map(object =>
+        /*object?.name ||*/ decodeIP(object.address)
+      )
+    )
+  ];
+}
+
+export function cidrAddresses(networkAddresses) {
+  return [...networkAddresses].map(na => na.cidrAddress);
+}

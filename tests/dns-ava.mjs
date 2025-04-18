@@ -1,6 +1,5 @@
 import test from "ava";
-import { Root } from "pmcf";
-import { addresses } from "../src/network-support.mjs";
+import { Root, addresses } from "pmcf";
 
 test("DNS named", async t => {
   const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);

@@ -1,13 +1,12 @@
 import { join } from "node:path";
 import { hasWellKnownSubnet, normalizeIP } from "ip-utilties";
-import { Base } from "pmcf";
+import { Base, cidrAddresses } from "pmcf";
 import {
   networkProperties,
   networkAddressProperties
 } from "../network-support.mjs";
 import { asArray, writeLines, sectionLines } from "../utils.mjs";
 import { addType } from "../types.mjs";
-import { cidrAddresses } from "../network-support.mjs";
 import { SkeletonNetworkInterface } from "./skeleton.mjs";
 
 export const NetworkInterfaceTypeDefinition = {

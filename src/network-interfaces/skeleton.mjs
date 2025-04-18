@@ -1,8 +1,7 @@
 import { join } from "node:path";
 import { writeLines, sectionLines } from "../utils.mjs";
-import { NetworkAddress, Host } from "pmcf";
+import { NetworkAddress, Host, cidrAddresses } from "pmcf";
 import { ServiceOwner } from "../service-owner.mjs";
-import { cidrAddresses } from "../network-support.mjs";
 
 export class SkeletonNetworkInterface extends ServiceOwner {
   _extends = [];

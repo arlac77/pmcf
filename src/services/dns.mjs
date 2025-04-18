@@ -1,19 +1,23 @@
 import { join } from "node:path";
 import { createHmac } from "node:crypto";
 import { FileContentProvider } from "npm-pkgbuild";
-import { isLinkLocal, reverseArpa, decodeIP } from "ip-utilties";
-import { writeLines } from "../utils.mjs";
+import { isLinkLocal, reverseArpa } from "ip-utilties";
+import { writeLines, asArray } from "../utils.mjs";
 import {
   DNSRecord,
   dnsFullName,
   dnsRecordTypeForAddressFamily,
   sortZoneRecords
 } from "../dns-utils.mjs";
-import { ExtraSourceService, Endpoint, serviceEndpoints } from "pmcf";
+import {
+  ExtraSourceService,
+  Endpoint,
+  serviceEndpoints,
+  addresses
+} from "pmcf";
 import { addType } from "../types.mjs";
 import { ServiceTypeDefinition } from "../service.mjs";
 import { ExtraSourceServiceTypeDefinition } from "../extra-source-service.mjs";
-import { addresses } from "../network-support.mjs";
 import { addHook } from "../hooks.mjs";
 
 const address_types = ["network", "host", "network_interface"];
@@ -87,23 +91,8 @@ const statisticsEndpoint = {
   tls: false
 };
 
-function addressList(objects) {
-  return Array.from(objects).map(object => {
-    switch (typeof object) {
-      case "string":
-        return object;
-      case "object":
-        if (object.name) {
-          return object.name;
-        }
-
-        return decodeIP(object);
-    }
-  });
-}
-
 function addressesStatement(prefix, objects, generateEmpty = false) {
-  const body = addressList(objects).map(name => `  ${name};`);
+  const body = asArray(objects).map(name => `  ${name};`);
 
   if (body.length || generateEmpty) {
     return [`${prefix} {`, body, "};"];
@@ -235,8 +224,11 @@ export class DNSService extends ExtraSourceService {
 
     const acls = [
       addressesStatement("acl trusted", addresses(this.trusted)),
-      addressesStatement("acl protected", addresses(this.protected)),
-      addressesStatement("acl open", addresses(this.open), true)
+      addressesStatement("acl open", addresses(this.open), true),
+      addressesStatement("acl protected", [
+        ...addresses(this.protected),
+        "!open"
+      ])
     ].flat();
 
     if (acls.length) {
