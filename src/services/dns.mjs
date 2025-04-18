@@ -234,8 +234,8 @@ export class DNSService extends ExtraSourceService {
         true
       ),
       addressesStatement("acl protected", [
-        ...addresses(this.protected, { aggregate: true }),
-        "!open"
+        "!open",
+        ...addresses(this.protected, { aggregate: true })
       ])
     ].flat();
 
