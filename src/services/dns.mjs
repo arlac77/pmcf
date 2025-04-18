@@ -214,7 +214,7 @@ export class DNSService extends ExtraSourceService {
       select: e => e.address
     });
 
-    if (forwarders.size) {
+    if (forwarders.length) {
       await writeLines(
         join(p1, "etc/named/options"),
         `forwarders.conf`,
@@ -234,7 +234,7 @@ export class DNSService extends ExtraSourceService {
     if (acls.length) {
       await writeLines(join(p1, "etc/named"), `0-acl-${name}.conf`, acls);
     }
-    if (forwarders.size || acls.length) {
+    if (forwarders.length || acls.length) {
       yield packageData;
     }
 

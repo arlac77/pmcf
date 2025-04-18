@@ -316,7 +316,7 @@ export function serviceEndpoints(sources, options = {}) {
     .map(service => service.endpoints(options.endpoints))
     .flat();
 
-  const res = new Set(options.select ? all.map(options.select) : all);
+  const res = [...new Set(options.select ? all.map(options.select) : all)];
 
-  return options.join ? [...res].join(options.join) : res;
+  return options.join ? res.join(options.join) : res;
 }
