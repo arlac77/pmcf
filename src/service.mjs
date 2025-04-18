@@ -106,7 +106,6 @@ export const ServiceTypeDefinition = {
   properties: {
     ...networkAddressProperties,
     ...endpointProperties,
-    ipAddresses: { type: "string", collection: true, writeable: true },
     alias: { type: "string", collection: false, writeable: true },
     weight: { type: "number", collection: false, writeable: true, default: 1 },
     systemd: { type: "string", collection: true, writeable: true }
@@ -118,7 +117,6 @@ export class Service extends Base {
   _weight;
   _type;
   _port;
-  _ipAddresses;
   _systemd;
   _extends = [];
 
@@ -163,18 +161,6 @@ export class Service extends Base {
 
   get ipAddressOrDomainName() {
     return this.address ?? this.domainName;
-  }
-
-  get addresses() {
-    return this._ipAddresses ?? this.owner.addresses;
-  }
-
-  get address() {
-    return this._ipAddresses?.[0] ?? this.host.address;
-  }
-
-  set ipAddresses(value) {
-    this._ipAddresses = value;
   }
 
   get networks() {

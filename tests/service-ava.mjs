@@ -80,7 +80,10 @@ test("Service basics", t => {
   t.is(s1.port, 53);
   t.is(s1.protocol, "udp");
 
-  t.deepEqual(s1.addresses, ["127.0.0.1", "::1", "10.0.0.1"]);
+  t.deepEqual(
+    [...s1.endpoints()].map(e => e.address),
+    ["127.0.0.1", "::1", "10.0.0.1"]
+  );
 
   t.deepEqual(
     [...s1.endpoints(e => e.family == "IPv4")].map(e => e.socketAddress),
@@ -109,7 +112,11 @@ test("Service basics", t => {
     ["_dns._udp.example.com. 1W IN SRV     3   5  53 h2."]
   );
 
-  t.deepEqual(s2.addresses, ["10.0.0.2"]);
+  t.deepEqual(
+    [...s2.endpoints()].map(e => e.address),
+    [ "10.0.0.2"]
+  );
+
   t.deepEqual(
     [...s2.endpoints()].map(e => e.socketAddress),
     ["10.0.0.2:53"]
