@@ -318,5 +318,9 @@ export function serviceEndpoints(sources, options = {}) {
 
   const res = [...new Set(options.select ? all.map(options.select) : all)];
 
+  if(options.limit < res.length) {
+    res.length = options.limit;
+  }
+  
   return options.join ? res.join(options.join) : res;
 }

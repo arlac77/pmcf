@@ -42,7 +42,8 @@ export class SystemdResolvedService extends ExtraSourceService {
         services: { type: "dns", priority },
         endpoints: e => e.networkInterface.kind !== "loopback",
         select: endpoint => endpoint.address,
-        join: " "
+        join: " ",
+        limit: 5
       };
     };
 
