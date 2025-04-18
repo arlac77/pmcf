@@ -1,8 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
-import { ServiceOwner, Base } from "pmcf";
-import { networkAddressProperties, addresses } from "./network-support.mjs";
+import { ServiceOwner, Base, addresses } from "pmcf";
+import { networkAddressProperties } from "./network-support.mjs";
 import {
   domainFromDominName,
   domainName,
