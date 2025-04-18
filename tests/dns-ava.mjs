@@ -9,5 +9,9 @@ test("DNS named", async t => {
 
   t.is(dns.fullName, "/L1/C1/dns");
 
-  t.deepEqual(addresses(dns.trusted), ["192.168.1/24", "127.0.0.1"]);
+  t.deepEqual(addresses(dns.trusted, { aggregate: true }), [
+    "192.168.1/24",
+    "127.0.0.1",
+    "::1"
+  ]);
 });

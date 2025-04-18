@@ -224,10 +224,17 @@ export class DNSService extends ExtraSourceService {
     }
 
     const acls = [
-      addressesStatement("acl trusted", addresses(this.trusted)),
-      addressesStatement("acl open", addresses(this.open), true),
+      addressesStatement(
+        "acl trusted",
+        addresses(this.trusted, { aggregate: true })
+      ),
+      addressesStatement(
+        "acl open",
+        addresses(this.open, { aggregate: true }),
+        true
+      ),
       addressesStatement("acl protected", [
-        ...addresses(this.protected),
+        ...addresses(this.protected, { aggregate: true }),
         "!open"
       ])
     ].flat();

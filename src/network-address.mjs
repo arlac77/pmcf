@@ -1,5 +1,6 @@
 import { familyIP, formatCIDR, decodeIP } from "ip-utilties";
 import { Subnet } from "./subnet.mjs";
+import { Owner } from "pmcf";
 
 /**
  *
@@ -32,12 +33,21 @@ export class NetworkAddress {
   }
 }
 
-export function addresses(networkAddresses) {
+export function addresses(sources, options) {
   return [
     ...new Set(
-      [...networkAddresses].map(object =>
-        /*object?.name ||*/ decodeIP(object.address)
-      )
+      [...sources]
+        .map(s => {
+          if (options?.aggregate && s instanceof Owner && s.subnets) {
+            return [...s.subnets()];
+          }
+
+          return s.networkAddresses
+            ? [...s.networkAddresses(options?.filter)]
+            : s;
+        })
+        .flat()
+        .map(object => decodeIP(object.address))
     )
   ];
 }
