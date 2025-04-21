@@ -10,6 +10,9 @@ import {
 } from "./dns-utils.mjs";
 
 const ServiceTypes = {
+  "pacman-repo": {
+    extends: ["https"]
+  },
   ntp: { endpoints: [{ protocol: "udp", port: 123, tls: false }] },
   dns: { endpoints: [{ protocol: "udp", port: 53, tls: false }] },
   ldap: { endpoints: [{ protocol: "tcp", port: 389, tls: false }] },
@@ -22,7 +25,6 @@ const ServiceTypes = {
   http3: {
     extends: ["https"],
     type: "https",
-    endpoints: [{ protocol: "tcp", port: 443, tls: true }],
     dnsRecord: {
       type: "HTTPS",
       parameters: { "no-default-alpn": undefined, alpn: "h3" }
@@ -60,6 +62,23 @@ const ServiceTypes = {
     }
   }
 };
+
+function serviceTypeEndpoints(type) {
+  let st = ServiceTypes[type];
+  if (st) {
+    if (st.extends) {
+      let ste = ServiceTypes[st.extends];
+
+      if (ste.endpoints) {
+        return st.endpoints
+          ? [...st.endpoints, ...ste.endpoints]
+          : ste.endpoints;
+      }
+    }
+
+    return st.endpoints;
+  }
+}
 
 export const endpointProperties = {
   port: { type: "number", collection: false, writeable: true },
@@ -173,7 +192,7 @@ export class Service extends Base {
         ? { type: this.type }
         : { type: this.type, port: this._port };
 
-    const data = ServiceTypes[this.type]?.endpoints || [
+    const data = serviceTypeEndpoints(this.type) || [
       {
         tls: false
       }
@@ -318,9 +337,9 @@ export function serviceEndpoints(sources, options = {}) {
 
   const res = [...new Set(options.select ? all.map(options.select) : all)];
 
-  if(options.limit < res.length) {
+  if (options.limit < res.length) {
     res.length = options.limit;
   }
-  
+
   return options.join ? res.join(options.join) : res;
 }

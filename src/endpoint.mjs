@@ -53,3 +53,12 @@ export class DomainNameEndpoint {
     return `${this.address}[${this.port}]`;
   }
 }
+
+export class HTTPEndpoint {
+  constructor(service, url, data) {
+    this.service = service;
+    this.url = url;
+    Object.assign(this, data);
+  }
+
+}
