@@ -1,5 +1,4 @@
 import { parseArgs } from "node:util";
-import { resolve } from "node:path";
 import { argv, cwd, env } from "node:process";
 import { Root } from "./module.mjs";
 
@@ -17,25 +16,14 @@ export async function prepare(options = {}) {
         type: "boolean",
         default: false
       },
-      publish: {
-        type: "string"
-      },
       root: {
         type: "string",
         short: "r",
         default: env.PMCF_ROOT || cwd()
-      },
-      output: {
-        type: "string",
-        short: "o"
       }
     },
     allowPositionals: true
   });
-
-  if (values.output) {
-    values.output = resolve(cwd(), values.output);
-  }
 
   const root = new Root(values.root);
 

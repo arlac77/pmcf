@@ -1,19 +1,27 @@
 #!/usr/bin/env node
 
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { readFile, mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { env } from "node:process";
+import { cwd, env } from "node:process";
 import { packageDirectory } from "pkg-dir";
 import { createPublishingDetails } from "npm-pkgbuild";
 import { prepare } from "../src/cli.mjs";
 import { asArray } from "../src/utils.mjs";
 
-const { root, args, options } = await prepare();
+const { root, args, options } = await prepare({
+  publish: {
+    type: "string"
+  },
+  output: {
+    type: "string",
+    short: "o"
+  }
+});
 
-if (!options.output) {
-  options.output = await mkdtemp(join(tmpdir(), "pmcf"));
-}
+options.output = options.output
+  ? resolve(cwd(), options.output)
+  : await mkdtemp(join(tmpdir(), "pmcf"));
 
 const pkgDir = await packageDirectory({ cwd: options.root });
 const pkg = JSON.parse(await readFile(join(pkgDir, "package.json"), "utf8"));
@@ -43,7 +51,7 @@ for (const name of args) {
       const output = new outputFactory(properties);
 
       const artifact = await output.create(
-        sources.map(source=>source[Symbol.asyncIterator]()),
+        sources.map(source => source[Symbol.asyncIterator]()),
         [],
         publishingDetails,
         options
