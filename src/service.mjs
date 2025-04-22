@@ -67,13 +67,10 @@ function serviceTypeEndpoints(type) {
   let st = ServiceTypes[type];
   if (st) {
     if (st.extends) {
-      let ste = ServiceTypes[st.extends];
-
-      if (ste.endpoints) {
-        return st.endpoints
-          ? [...st.endpoints, ...ste.endpoints]
-          : ste.endpoints;
-      }
+      return st.extends.reduce(
+        (a, c) => [...a, ...(ServiceTypes[c]?.endpoints||[])],
+        st.endpoints || []
+      );
     }
 
     return st.endpoints;
