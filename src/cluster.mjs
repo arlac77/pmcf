@@ -2,6 +2,7 @@ import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { Owner } from "./owner.mjs";
 import { Host } from "./host.mjs";
+import { serviceEndpoints } from "pmcf";
 import { addType } from "./types.mjs";
 import { writeLines } from "./utils.mjs";
 
@@ -139,20 +140,25 @@ export class Cluster extends Host {
         cfg.push("}");
         cfg.push("");
 
-        for (const service of cluster.findServices({ type: "http" })) {
-          cfg.push(`virtual_server ${cluster.address} ${service.port} {`);
+        for (const endpoint of serviceEndpoints(cluster, {
+          services: { type: "http" },
+          endpoints: e => e.networkInterface.kind !== "loopback"
+        })) {
+          cfg.push(`virtual_server ${cluster.address} ${endpoint.port} {`);
           cfg.push(`  delay_loop ${cluster.checkInterval}`);
           cfg.push("  lb_algo wlc");
           cfg.push("  persistence_timeout 600");
-          cfg.push(`  protocol ${service.protocol.toUpperCase()}`);
+          cfg.push(`  protocol ${endpoint.protocol.toUpperCase()}`);
 
           for (const member of this.members) {
-            const memberService = member.findService({ type: service.type }) || member.host.findService({ type: service.type }); // TODO
+            const memberService =
+              member.findService({ type: endpoint.type }) ||
+              member.host.findService({ type: endpoint.type }); // TODO
 
             cfg.push(`  real_server ${member.address} ${memberService.port} {`);
             cfg.push(`    weight ${memberService.weight}`);
 
-            switch (service.type) {
+            switch (endpoint.type) {
               case "dns":
                 cfg.push(`    DNS_CHECK {`);
                 cfg.push("      type A");
@@ -165,7 +171,7 @@ export class Cluster extends Host {
                 break;
 
               default:
-                switch (service.protocol) {
+                switch (endpoint.protocol) {
                   case "tcp":
                     cfg.push(`    TCP_CHECK {`);
                     cfg.push("      connect_timeout 10");

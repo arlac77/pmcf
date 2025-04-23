@@ -1,7 +1,7 @@
 import test from "ava";
 import { Root, Host, Service, Endpoint } from "pmcf";
 
-test("Service basics", t => {
+test("Endpoint from Service basics", t => {
   const root = new Root("/somwhere");
 
   const h1 = new Host(root, {
@@ -26,12 +26,11 @@ test("Service basics", t => {
 
   h1.services = s1;
 
+  console.log(s1.endpoints().map(e => e.toString()));
   t.deepEqual(s1.endpoints(), [
     ...loa.map(
       na =>
         new Endpoint(s1, na, {
-          type: "dns",
-          port: 53,
           protocol: "udp",
           tls: false
         })
@@ -39,8 +38,6 @@ test("Service basics", t => {
     ...etha.map(
       na =>
         new Endpoint(s1, na, {
-          type: "dns",
-          port: 53,
           protocol: "udp",
           tls: false
         })
@@ -51,8 +48,12 @@ test("Service basics", t => {
     s1.endpoints(e => e.networkInterface.kind === "loopback")[0].hostName,
     "localhost"
   );
-  t.is(
-    s1.endpoints(e => e.networkInterface.kind !== "loopback")[0].hostName,
-    "h1"
-  );
+
+  const e1 = s1.endpoints(e => e.networkInterface.kind !== "loopback")[0];
+  t.is(e1.hostName, "h1");
+  t.is(e1.type, "dns");
+  t.is(e1.protocol, "udp");
+  t.is(e1.port, 53);
+  t.is(e1.family, "IPv4");
+  t.is(e1.toString(), "dns/10.0.0.1[53]");
 });

@@ -24,7 +24,6 @@ const ServiceTypes = {
   },
   http3: {
     extends: ["https"],
-    type: "https",
     dnsRecord: {
       type: "HTTPS",
       parameters: { "no-default-alpn": undefined, alpn: "h3" }
@@ -48,7 +47,6 @@ const ServiceTypes = {
   "dhcpv6-server": { endpoints: [{ port: 547, tls: false }] },
   smb: { endpoints: [{ protocol: "tcp", port: 445, tls: false }] },
   timemachine: {
-    type: "adisk",
     extends: ["smb"],
     endpoints: [{ protocol: "tcp", port: 445, tls: false }],
     dnsRecord: {
@@ -68,13 +66,19 @@ function serviceTypeEndpoints(type) {
   if (st) {
     if (st.extends) {
       return st.extends.reduce(
-        (a, c) => [...a, ...(ServiceTypes[c]?.endpoints||[])],
+        (a, c) => [...a, ...(ServiceTypes[c]?.endpoints || [])],
         st.endpoints || []
       );
     }
 
     return st.endpoints;
   }
+
+  return [
+    {
+      tls: false
+    }
+  ];
 }
 
 export const endpointProperties = {
@@ -96,7 +100,7 @@ export const endpointProperties = {
 
 export const EndpointTypeDefinition = {
   name: "endpoint",
-  owners: ["service", "network-interface"],
+  owners: ["service", "network_interface"],
   priority: 0.4,
   specializations: {},
   properties: endpointProperties
@@ -149,6 +153,10 @@ export class Service extends Base {
     this.read(data, ServiceTypeDefinition);
   }
 
+  toString() {
+    return `${this.type}`;
+  }
+
   set extends(value) {
     this._extends.push(value);
   }
@@ -184,32 +192,16 @@ export class Service extends Base {
   }
 
   endpoints(filter) {
-    const local =
-      this._port === undefined
-        ? { type: this.type }
-        : { type: this.type, port: this._port };
+    const data = serviceTypeEndpoints(this.type);
 
-    const data = serviceTypeEndpoints(this.type) || [
-      {
-        tls: false
-      }
-    ];
-
+    const l = this._port === undefined ? {} : { port: this._port };
     let result = [...this.host.networkAddresses()]
-      .map(na =>
-        data.map(
-          d =>
-            new Endpoint(this, na, {
-              ...d,
-              ...local
-            })
-        )
-      )
+      .map(na => data.map(d => new Endpoint(this, na, { ...d, ...l })))
       .flat();
 
     if (result.length === 0) {
       result = data.map(
-        d => new DomainNameEndpoint(this, this.domainName, { ...d, ...local })
+        d => new DomainNameEndpoint(this, this.domainName, { ...d, ...l })
       );
     }
 
@@ -229,7 +221,7 @@ export class Service extends Base {
   }
 
   get port() {
-    return this.endpoints()[0].port;
+    return this._port ?? this.endpoints()[0].port;
   }
 
   set weight(value) {
@@ -264,11 +256,7 @@ export class Service extends Base {
       )) {
         records.push(
           DNSRecord(
-            dnsFullName(
-              `_${ServiceTypes[this.type]?.type ?? this.type}._${
-                ep.protocol
-              }.${domainName}`
-            ),
+            dnsFullName(`_${this.type}._${ep.protocol}.${domainName}`),
             "SRV",
             this.priority ?? 10,
             this.weight,
@@ -305,7 +293,12 @@ export class Service extends Base {
         );
       } else {
         records.push(
-          DNSRecord("@", dnsRecord.type, this.priority ?? 10, dnsFullName(domainName))
+          DNSRecord(
+            "@",
+            dnsRecord.type,
+            this.priority ?? 10,
+            dnsFullName(domainName)
+          )
         );
       }
     }
@@ -317,9 +310,9 @@ export class Service extends Base {
 export const sortByPriority = (a, b) => a.priority - b.priority;
 
 /**
- * 
- * @param {*} sources 
- * @param {Object} [options] 
+ *
+ * @param {*} sources
+ * @param {Object} [options]
  * @param {Function} [options.services] filter for services
  * @param {Function} [options.endpoints] filter for endpoints
  * @param {Function} [options.select] mapper from Endpoint into result

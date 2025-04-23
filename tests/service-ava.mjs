@@ -43,14 +43,14 @@ test("Service basics", t => {
 
   h1.services = s1;
 
+  console.log(s1.endpoints().map(e => e.toString()));
+
   t.deepEqual(
     s1.endpoints(e => e.family === "IPv4"),
     [
       ...lna.map(
         a =>
           new Endpoint(s1, a, {
-            type: "dns",
-            port: 53,
             protocol: "udp",
             tls: false
           })
@@ -58,13 +58,18 @@ test("Service basics", t => {
       ...ena.map(
         a =>
           new Endpoint(s1, a, {
-            type: "dns",
-            port: 53,
             protocol: "udp",
             tls: false
           })
       )
     ]
+  );
+
+  t.is(
+    s1.endpoints(
+      e => e.family === "IPv4" && e.networkInterface.kind !== "loopback"
+    )[0].port,
+    53
   );
 
   t.deepEqual(
@@ -112,7 +117,7 @@ test("Service basics", t => {
 
   t.deepEqual(
     [...s2.endpoints()].map(e => e.address),
-    [ "10.0.0.2"]
+    ["10.0.0.2"]
   );
 
   t.deepEqual(
@@ -169,7 +174,7 @@ test("Service basics", t => {
   t.deepEqual(
     s3.dnsRecordsForDomainName("example.com", true).map(r => r.toString()),
     [
-      "_https._tcp.example.com. 1W IN SRV     0   0 443 h1.",
+      "_http3._tcp.example.com. 1W IN SRV     0   0 443 h1.",
       'example.com. 1W IN HTTPS   0 . alpn="h3" no-default-alpn'
     ]
   );
@@ -201,8 +206,6 @@ test("Service without protocol", t => {
     ...na.map(
       a =>
         new Endpoint(s1, a, {
-          type: "xyz",
-          port: 555,
           tls: false
         })
     )
@@ -261,8 +264,8 @@ test("Service owner", t => {
 
   t.deepEqual(s1b.endpoints(), [
     new DomainNameEndpoint(s1b, "h2", {
-      type: "dns",
-      port: 53,
+      //   type: "dns",
+      //   port: 53,
       protocol: "udp",
       tls: false
     })

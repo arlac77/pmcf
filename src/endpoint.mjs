@@ -1,12 +1,37 @@
-export class Endpoint {
-  constructor(service, networkAddress, data) {
+class _Endpoint {
+  #port;
+  #type;
+  constructor(service, data) {
     this.service = service;
-    this.networkAddress = networkAddress;
+    if (data.port) {
+      this.#port = data.port;
+      delete data.port;
+    }
+
+    if (data.type) {
+      this.#type = data.type;
+      delete data.type;
+    }
     Object.assign(this, data);
   }
 
+  get type() {
+    return this.#type ?? this.service.type;
+  }
+
+  get port() {
+    return this.#port ?? this.service._port;
+  }
+
   toString() {
-    return `${this.address}[${this.port}]`;
+    return `${this.type}/${this.address}[${this.port}]`;
+  }
+}
+
+export class Endpoint extends _Endpoint {
+  constructor(service, networkAddress, data) {
+    super(service, data);
+    this.networkAddress = networkAddress;
   }
 
   get socketAddress() {
@@ -34,11 +59,10 @@ export class Endpoint {
   }
 }
 
-export class DomainNameEndpoint {
+export class DomainNameEndpoint extends _Endpoint {
   constructor(service, domainName, data) {
-    this.service = service;
+    super(service, data);
     this.domainName = domainName;
-    Object.assign(this, data);
   }
 
   get networkInterface() {
@@ -48,17 +72,15 @@ export class DomainNameEndpoint {
   get address() {
     return this.domainName;
   }
-
-  toString() {
-    return `${this.address}[${this.port}]`;
-  }
 }
 
-export class HTTPEndpoint {
+export class HTTPEndpoint extends _Endpoint {
   constructor(service, url, data) {
-    this.service = service;
+    super(service, data);
     this.url = url;
-    Object.assign(this, data);
   }
 
+  get address() {
+    return this.url;
+  }
 }
