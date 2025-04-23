@@ -335,11 +335,10 @@ async function generateZoneDefs(dns, location, packageData) {
     addHook(
       packageData.properties.hooks,
       "post_upgrade",
-      //  `rm -f ${foreignZones.map(zone => `/var/lib/named/${zone.file}.jnl`)}\n` +
-      //    "systemctl try-reload-or-restart named\n" +
-      `/usr/bin/named-hostname-info ${foreignZones
-        .map(zone => zone.id)
-        .join(" ")}|/usr/bin/named-hostname-update`
+      `rm -f ${foreignZones.map(zone => `/var/lib/named/${zone.file}.jnl`)}\n` +
+        `/usr/bin/named-hostname-info ${foreignZones
+          .map(zone => zone.id)
+          .join(" ")}|/usr/bin/named-hostname-update`
     );
   }
 
