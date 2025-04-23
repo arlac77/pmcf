@@ -175,10 +175,6 @@ export class Owner extends Base {
       yield* this.owner.subnets();
     }
     yield* this.typeList("subnet");
-
-    /* for (const network of this.networks()) {
-      yield* network.subnets();
-    }*/
   }
 
   addSubnet(address) {
