@@ -313,7 +313,7 @@ export class Service extends Base {
         );
       } else {
         records.push(
-          DNSRecord("@", dnsRecord.type, this.priority, dnsFullName(domainName))
+          DNSRecord("@", dnsRecord.type, this.priority ?? 10, dnsFullName(domainName))
         );
       }
     }
