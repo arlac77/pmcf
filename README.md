@@ -27,6 +27,8 @@
     *   [subnet](#subnet)
     *   [networkInterface](#networkinterface)
     *   [address](#address)
+*   [serviceEndpoints](#serviceendpoints)
+    *   [Parameters](#parameters-2)
 
 ## networkAddresses
 
@@ -55,6 +57,21 @@ Type: NetworkInterface
 ### address
 
 Type: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array) | [Uint16Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array))
+
+## serviceEndpoints
+
+### Parameters
+
+*   `sources` **any**&#x20;
+*   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?**  (optional, default `{}`)
+
+    *   `options.services` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?** filter for services
+    *   `options.endpoints` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?** filter for endpoints
+    *   `options.select` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?** mapper from Endpoint into result
+    *   `options.limit` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** upper limit of # result items
+    *   `options.join` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** jount result into a string
+
+Returns **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | any)**&#x20;
 
 # install
 
