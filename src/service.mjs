@@ -324,6 +324,17 @@ export class Service extends Base {
 
 export const sortByPriority = (a, b) => a.priority - b.priority;
 
+/**
+ * 
+ * @param {*} sources 
+ * @param {Object} [options] 
+ * @param {Function} [options.services] filter for services
+ * @param {Function} [options.endpoints] filter for endpoints
+ * @param {Function} [options.select] mapper from Endpoint into result
+ * @param {number} [options.limit] upper limit of # result items
+ * @param {string} [options.join] jount result into a string
+ * @returns {string|any}
+ */
 export function serviceEndpoints(sources, options = {}) {
   const all = asArray(sources)
     .map(ft => Array.from(ft.findServices(options.services)))
