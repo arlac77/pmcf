@@ -232,14 +232,6 @@ export class Service extends Base {
     return this.endpoints()[0].port;
   }
 
-  get protocol() {
-    return this.endpoints()[0].protocol;
-  }
-
-  get tls() {
-    return this.endpoints()[0].tls;
-  }
-
   set weight(value) {
     this._weight = value;
   }

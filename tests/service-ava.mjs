@@ -78,7 +78,6 @@ test("Service basics", t => {
   t.is(s1.priority, 3);
   t.is(s1.weight, 5);
   t.is(s1.port, 53);
-  t.is(s1.protocol, "udp");
 
   t.deepEqual(
     [...s1.endpoints()].map(e => e.address),
@@ -105,7 +104,6 @@ test("Service basics", t => {
   t.is(s2.priority, 3);
   t.is(s2.weight, 5);
   t.is(s2.port, 53);
-  t.is(s2.protocol, "udp");
 
   t.deepEqual(
     s2.dnsRecordsForDomainName("example.com", true).map(r => r.toString()),
@@ -131,10 +129,6 @@ test("Service basics", t => {
   ]);
   t.deepEqual(Array.from(l1.findServices({ type: "dns", name: "dnsx" })), []);
   t.deepEqual(Array.from(l1.findServices({ type: "dns", name: "dns|http" })), [
-    s1,
-    s2
-  ]);
-  t.deepEqual(Array.from(l1.findServices({ type: "dns", protocol: "udp" })), [
     s1,
     s2
   ]);
