@@ -1,7 +1,5 @@
 {
-  "domain": "localhost",
   "kind": "loopback",
-  "packaging": "arch",
   "services": {
     "dns": {
       "recordTTL": "1M",
@@ -10,6 +8,7 @@
       "expire": "1W",
       "minimum": "1D",
       "hasSVRRecords": false,
+      "hasLocationRecord" : false,
       "hasCatalog": false,
       "notify": false
     }

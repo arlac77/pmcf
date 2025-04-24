@@ -54,6 +54,12 @@ const DNSServiceTypeDefinition = {
       writeable: true,
       default: false
     },
+    hasLocationRecord: {
+      type: "boolean",
+      collection: false,
+      writeable: true,
+      default: true
+    },
     excludeInterfaceKinds: {
       type: "string",
       collection: true,
@@ -107,6 +113,7 @@ export class DNSService extends ExtraSourceService {
   hasSVRRecords = true;
   hasCatalog = true;
   hasLinkLocalAdresses = true;
+  hasLocationRecord = true;
   notify = true;
   _trusted = [];
   _protected = [];
@@ -274,249 +281,253 @@ export class DNSService extends ExtraSourceService {
       )
     ];
 
-    await generateZoneDefs(this, location, packageData);
+    await this.generateZoneDefs(location, packageData);
 
     yield packageData;
   }
-}
 
-async function generateZoneDefs(dns, location, packageData) {
-  const ttl = dns.recordTTL;
-  const nameService = dns.findService({ type: "dns", priority: "<10" });
-  const rname = dns.administratorEmail.replace(/@/, ".");
+  async generateZoneDefs(location, packageData) {
+    const ttl = this.recordTTL;
+    const nameService = this.findService({ type: "dns", priority: "<10" });
+    const rname = this.administratorEmail.replace(/@/, ".");
 
-  const SOARecord = DNSRecord(
-    "@",
-    "SOA",
-    dnsFullName(nameService.domainName),
-    dnsFullName(rname),
-    `(${[...dns.soaUpdates].join(" ")})`
-  );
+    const SOARecord = DNSRecord(
+      "@",
+      "SOA",
+      dnsFullName(nameService.domainName),
+      dnsFullName(rname),
+      `(${[...this.soaUpdates].join(" ")})`
+    );
 
-  const NSRecord = DNSRecord(
-    "@",
-    "NS",
-    dnsFullName(nameService.ipAddressOrDomainName)
-  );
+    const NSRecord = DNSRecord(
+      "@",
+      "NS",
+      dnsFullName(nameService.ipAddressOrDomainName)
+    );
 
-  console.log(`${nameService}`, nameService.ipAddressOrDomainName);
+    console.log(`${nameService}`, nameService.ipAddressOrDomainName);
 
-  const configs = [];
+    const configs = [];
 
-  for (const host of location.hosts()) {
-    for (const domain of host.foreignDomainNames) {
-      const zone = {
-        id: domain,
-        file: `FOREIGN/${domain}.zone`,
-        records: new Set([SOARecord, NSRecord])
-      };
+    for (const host of location.hosts()) {
+      for (const domain of host.foreignDomainNames) {
+        const zone = {
+          id: domain,
+          file: `FOREIGN/${domain}.zone`,
+          records: new Set([SOARecord, NSRecord])
+        };
+
+        const config = {
+          name: `${domain}.zone.conf`,
+          zones: [zone]
+        };
+        configs.push(config);
+
+        if (this.hasLocationRecord) {
+          zone.records.add(DNSRecord("location", "TXT", host.location.name));
+        }
+
+        for (const na of host.networkAddresses(
+          na => na.networkInterface.kind != "loopback"
+        )) {
+          zone.records.add(
+            DNSRecord("@", dnsRecordTypeForAddressFamily(na.family), na.address)
+          );
+        }
+      }
+    }
+
+    const foreignZones = configs.map(c => c.zones).flat();
+
+    if (foreignZones.length) {
+      addHook(
+        packageData.properties.hooks,
+        "post_upgrade",
+        `rm -f ${foreignZones.map(
+          zone => `/var/lib/named/${zone.file}.jnl`
+        )}\n` +
+          `/usr/bin/named-hostname-info ${foreignZones
+            .map(zone => zone.id)
+            .join(" ")}|/usr/bin/named-hostname-update`
+      );
+    }
+
+    console.log(
+      "LOCAL DOMAINS",
+      location.localDomains,
+      location.domain,
+      location.toString()
+    );
+
+    for (const domain of location.localDomains) {
+      const locationName = location.name;
+      const reverseZones = new Map();
 
       const config = {
         name: `${domain}.zone.conf`,
-        zones: [zone]
+        zones: []
       };
       configs.push(config);
 
-      zone.records.add(DNSRecord("location", "TXT", host.location.name));
+      const locationRecord = DNSRecord("location", "TXT", locationName);
 
-      for (const na of host.networkAddresses(
-        na => na.networkInterface.kind != "loopback"
-      )) {
-        zone.records.add(
-          DNSRecord("@", dnsRecordTypeForAddressFamily(na.family), na.address)
-        );
+      const zone = {
+        id: domain,
+        file: `${locationName}/${domain}.zone`,
+        records: new Set([SOARecord, NSRecord, locationRecord])
+      };
+      config.zones.push(zone);
+
+      if (this.hasCatalog) {
+        const catalogConfig = {
+          name: `catalog.${domain}.zone.conf`,
+          zones: []
+        };
+        configs.push(catalogConfig);
+
+        zone.catalogZone = {
+          id: `catalog.${domain}`,
+          file: `${locationName}/catalog.${domain}.zone`,
+          records: new Set([
+            SOARecord,
+            NSRecord,
+            DNSRecord(dnsFullName(`version.catalog.${domain}`), "TXT", '"1"')
+          ])
+        };
+        catalogConfig.zones.push(zone.catalogZone);
       }
-    }
-  }
 
-  const foreignZones = configs.map(c => c.zones).flat();
+      const hosts = new Set();
+      const addresses = new Set();
 
-  if (foreignZones.length) {
-    addHook(
-      packageData.properties.hooks,
-      "post_upgrade",
-      `rm -f ${foreignZones.map(zone => `/var/lib/named/${zone.file}.jnl`)}\n` +
-        `/usr/bin/named-hostname-info ${foreignZones
-          .map(zone => zone.id)
-          .join(" ")}|/usr/bin/named-hostname-update`
-    );
-  }
-
-  console.log(
-    "LOCAL DOMAINS",
-    location.localDomains,
-    location.domain,
-    location.toString()
-  );
-
-  for (const domain of location.localDomains) {
-    const locationName = location.name;
-    const reverseZones = new Map();
-
-    const config = {
-      name: `${domain}.zone.conf`,
-      zones: []
-    };
-    configs.push(config);
-
-    const locationRecord = DNSRecord("location", "TXT", locationName);
-
-    const zone = {
-      id: domain,
-      file: `${locationName}/${domain}.zone`,
-      records: new Set([SOARecord, NSRecord, locationRecord])
-    };
-    config.zones.push(zone);
-
-    if (dns.hasCatalog) {
-      const catalogConfig = {
-        name: `catalog.${domain}.zone.conf`,
-        zones: []
-      };
-      configs.push(catalogConfig);
-
-      zone.catalogZone = {
-        id: `catalog.${domain}`,
-        file: `${locationName}/catalog.${domain}.zone`,
-        records: new Set([
-          SOARecord,
-          NSRecord,
-          DNSRecord(dnsFullName(`version.catalog.${domain}`), "TXT", '"1"')
-        ])
-      };
-      catalogConfig.zones.push(zone.catalogZone);
-    }
-
-    const hosts = new Set();
-    const addresses = new Set();
-
-    for await (const {
-      address,
-      subnet,
-      networkInterface,
-      domainNames,
-      family
-    } of location.networkAddresses()) {
-      if (
-        !dns.exclude.has(networkInterface.network) &&
-        !dns.excludeInterfaceKinds.has(networkInterface.kind)
-      ) {
-        const host = networkInterface.host;
+      for await (const {
+        address,
+        subnet,
+        networkInterface,
+        domainNames,
+        family
+      } of location.networkAddresses()) {
         if (
-          !addresses.has(address) &&
-          (dns.hasLinkLocalAdresses || !isLinkLocal(address))
+          !this.exclude.has(networkInterface.network) &&
+          !this.excludeInterfaceKinds.has(networkInterface.kind)
         ) {
-          addresses.add(address);
+          const host = networkInterface.host;
+          if (
+            !addresses.has(address) &&
+            (this.hasLinkLocalAdresses || !isLinkLocal(address))
+          ) {
+            addresses.add(address);
 
-          for (const domainName of domainNames) {
-            zone.records.add(
-              DNSRecord(
-                dnsFullName(domainName),
-                dnsRecordTypeForAddressFamily(family),
-                address
-              )
-            );
-          }
-          if (subnet && host.domain === domain) {
-            let reverseZone = reverseZones.get(subnet.address);
-
-            if (!reverseZone) {
-              const id = reverseArpa(subnet.prefix);
-              reverseZone = {
-                id,
-                type: "plain",
-                file: `${locationName}/${id}.zone`,
-                records: new Set([SOARecord, NSRecord])
-              };
-              config.zones.push(reverseZone);
-              reverseZones.set(subnet.address, reverseZone);
-            }
-
-            for (const domainName of host.domainNames) {
-              reverseZone.records.add(
+            for (const domainName of domainNames) {
+              zone.records.add(
                 DNSRecord(
-                  dnsFullName(reverseArpa(address)),
-                  "PTR",
-                  dnsFullName(domainName)
+                  dnsFullName(domainName),
+                  dnsRecordTypeForAddressFamily(family),
+                  address
                 )
               );
             }
+            if (subnet && host.domain === domain) {
+              let reverseZone = reverseZones.get(subnet.address);
+
+              if (!reverseZone) {
+                const id = reverseArpa(subnet.prefix);
+                reverseZone = {
+                  id,
+                  type: "plain",
+                  file: `${locationName}/${id}.zone`,
+                  records: new Set([SOARecord, NSRecord])
+                };
+                config.zones.push(reverseZone);
+                reverseZones.set(subnet.address, reverseZone);
+              }
+
+              for (const domainName of host.domainNames) {
+                reverseZone.records.add(
+                  DNSRecord(
+                    dnsFullName(reverseArpa(address)),
+                    "PTR",
+                    dnsFullName(domainName)
+                  )
+                );
+              }
+            }
           }
-        }
 
-        if (!hosts.has(host)) {
-          hosts.add(host);
+          if (!hosts.has(host)) {
+            hosts.add(host);
 
-          for (const foreignDomainName of host.foreignDomainNames) {
-            zone.records.add(
-              DNSRecord("outfacing", "PTR", dnsFullName(foreignDomainName))
-            );
-          }
+            for (const foreignDomainName of host.foreignDomainNames) {
+              zone.records.add(
+                DNSRecord("outfacing", "PTR", dnsFullName(foreignDomainName))
+              );
+            }
 
-          for (const service of host.findServices()) {
-            for (const record of service.dnsRecordsForDomainName(
-              host.domainName,
-              dns.hasSVRRecords
-            )) {
-              zone.records.add(record);
+            for (const service of host.findServices()) {
+              for (const record of service.dnsRecordsForDomainName(
+                host.domainName,
+                this.hasSVRRecords
+              )) {
+                zone.records.add(record);
+              }
             }
           }
         }
       }
     }
-  }
 
-  for (const config of configs) {
-    console.log(`config: ${config.name}`);
+    for (const config of configs) {
+      console.log(`config: ${config.name}`);
 
-    const content = [];
-    for (const zone of config.zones) {
-      console.log(`  file: ${zone.file}`);
+      const content = [];
+      for (const zone of config.zones) {
+        console.log(`  file: ${zone.file}`);
 
-      if (zone.catalogZone) {
-        const hash = createHmac("md5", zone.id).digest("hex");
-        zone.catalogZone.records.add(
-          DNSRecord(
-            `${hash}.zones.catalog.${zone.id}.`,
-            "PTR",
-            dnsFullName(zone.id)
-          )
+        if (zone.catalogZone) {
+          const hash = createHmac("md5", zone.id).digest("hex");
+          zone.catalogZone.records.add(
+            DNSRecord(
+              `${hash}.zones.catalog.${zone.id}.`,
+              "PTR",
+              dnsFullName(zone.id)
+            )
+          );
+        }
+
+        content.push(`zone \"${zone.id}\" {`);
+        content.push(`  type master;`);
+        content.push(`  file \"${zone.file}\";`);
+
+        content.push(
+          `  allow-update { ${
+            this.allowedUpdates.length ? this.allowedUpdates.join(";") : "none"
+          }; };`
+        );
+        content.push(`  notify ${this.notify ? "yes" : "no"};`);
+        content.push(`};`);
+        content.push("");
+
+        let maxKeyLength = 0;
+        for (const r of zone.records) {
+          if (r.key.length > maxKeyLength) {
+            maxKeyLength = r.key.length;
+          }
+        }
+
+        await writeLines(
+          join(packageData.dir, "var/lib/named"),
+          zone.file,
+          [...zone.records]
+            .sort(sortZoneRecords)
+            .map(r => r.toString(maxKeyLength, ttl))
         );
       }
 
-      content.push(`zone \"${zone.id}\" {`);
-      content.push(`  type master;`);
-      content.push(`  file \"${zone.file}\";`);
-
-      content.push(
-        `  allow-update { ${
-          dns.allowedUpdates.length ? dns.allowedUpdates.join(";") : "none"
-        }; };`
-      );
-      content.push(`  notify ${dns.notify ? "yes" : "no"};`);
-      content.push(`};`);
-      content.push("");
-
-      let maxKeyLength = 0;
-      for (const r of zone.records) {
-        if (r.key.length > maxKeyLength) {
-          maxKeyLength = r.key.length;
-        }
-      }
-
       await writeLines(
-        join(packageData.dir, "var/lib/named"),
-        zone.file,
-        [...zone.records]
-          .sort(sortZoneRecords)
-          .map(r => r.toString(maxKeyLength, ttl))
+        join(packageData.dir, "etc/named/zones"),
+        config.name,
+        content
       );
     }
-
-    await writeLines(
-      join(packageData.dir, "etc/named/zones"),
-      config.name,
-      content
-    );
   }
 }
