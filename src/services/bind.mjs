@@ -22,7 +22,7 @@ import { addHook } from "../hooks.mjs";
 
 const address_types = ["network", "host", "network_interface"];
 
-const DNSServiceTypeDefinition = {
+const BINDServiceTypeDefinition = {
   name: "dns",
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
@@ -107,7 +107,7 @@ function addressesStatement(prefix, objects, generateEmpty = false) {
   return [];
 }
 
-export class DNSService extends ExtraSourceService {
+export class BINDService extends ExtraSourceService {
   allowedUpdates = [];
   recordTTL = "1W";
   hasSVRRecords = true;
@@ -132,23 +132,23 @@ export class DNSService extends ExtraSourceService {
   }
 
   static get typeDefinition() {
-    return DNSServiceTypeDefinition;
+    return BINDServiceTypeDefinition;
   }
 
   constructor(owner, data) {
     super(owner, data);
-    this.read(data, DNSServiceTypeDefinition);
+    this.read(data, BINDServiceTypeDefinition);
   }
 
   get type() {
-    return DNSServiceTypeDefinition.name;
+    return BINDServiceTypeDefinition.name;
   }
 
   endpoints(filter) {
     const endpoints = super.endpoints(filter);
 
     for (const na of this.owner.networkAddresses(
-      na => na.networkInterface.kind === "localhost"
+      na => na.networkInterface.kind === "loopback"
     )) {
       endpoints.push(new Endpoint(this, na, rdncEndpoint));
       endpoints.push(new Endpoint(this, na, statisticsEndpoint));

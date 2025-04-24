@@ -9,7 +9,7 @@ import {
   Service,
   Subnet,
   Owner,
-  DNSService,
+  BINDService,
   NTPService,
   types,
   resolveTypeLinks
@@ -29,7 +29,7 @@ test("types", t => {
   t.is(types.host.clazz, Host);
   t.deepEqual(types.host.owners, [types.owner, types.network, types.root]);
 
-  t.is(types.dns.clazz, DNSService);
+  t.is(types.dns.clazz, BINDService);
   t.is(types.ntp.clazz, NTPService);
 
   t.is(types.cluster.clazz, Cluster);

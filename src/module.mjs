@@ -17,7 +17,7 @@ export * from "./host.mjs";
 export * from "./service.mjs";
 export * from "./extra-source-service.mjs";
 export * from "./endpoint.mjs";
-export * from "./services/dns.mjs";
+export * from "./services/bind.mjs";
 export * from "./services/ntp.mjs";
 export * from "./services/dhcp.mjs";
 export * from "./services/systemd-journal.mjs";

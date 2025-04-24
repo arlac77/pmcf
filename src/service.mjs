@@ -14,6 +14,7 @@ const ServiceTypes = {
     extends: ["https"]
   },
   ntp: { endpoints: [{ protocol: "udp", port: 123, tls: false }] },
+  //bind: { extends: ["dns"] },
   dns: { endpoints: [{ protocol: "udp", port: 53, tls: false }] },
   ldap: { endpoints: [{ protocol: "tcp", port: 389, tls: false }] },
   ldaps: { endpoints: [{ protocol: "tcp", port: 636, tls: true }] },
