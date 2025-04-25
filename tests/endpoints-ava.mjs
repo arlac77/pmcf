@@ -23,7 +23,7 @@ test("Endpoint from Service basics", t => {
 
   h1.services = s1;
 
-  console.log(s1.endpoints().map(e => e.toString()));
+  //console.log(s1.endpoints().map(e => e.toString()));
 
   const nas = h1.networkAddresses();
   const eps = s1.endpoints();
