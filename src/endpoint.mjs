@@ -13,10 +13,6 @@ class _Endpoint {
       delete data.type;
     }
     Object.assign(this, data);
-
-    if(this.port === undefined) {
-      throw new Error(`${this.toString()}: has no port`);
-    }
   }
 
   get type() {

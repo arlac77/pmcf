@@ -255,24 +255,16 @@ export class Service extends Base {
       for (const ep of this.endpoints(
         e => e.protocol && e.networkInterface.kind !== "loopback"
       )) {
-        if (ep.port === undefined) {
-          console.error(
-            "Endpoint without port",
-            ep.toString(),
-            ep.networkInterface?.kind
-          );
-        } else {
-          records.push(
-            DNSRecord(
-              dnsFullName(`_${this.type}._${ep.protocol}.${domainName}`),
-              "SRV",
-              this.priority ?? 10,
-              this.weight,
-              ep.port,
-              dnsFullName(this.domainName)
-            )
-          );
-        }
+        records.push(
+          DNSRecord(
+            dnsFullName(`_${this.type}._${ep.protocol}.${domainName}`),
+            "SRV",
+            this.priority ?? 10,
+            this.weight,
+            ep.port,
+            dnsFullName(this.domainName)
+          )
+        );
       }
     }
 
