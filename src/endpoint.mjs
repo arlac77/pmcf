@@ -3,16 +3,20 @@ class _Endpoint {
   #type;
   constructor(service, data) {
     this.service = service;
-    if (data.port) {
+    if (data.port !== undefined) {
       this.#port = data.port;
       delete data.port;
     }
 
-    if (data.type) {
+    if (data.type !== undefined) {
       this.#type = data.type;
       delete data.type;
     }
     Object.assign(this, data);
+
+    if(this.port === undefined) {
+      throw new Error(`${this.toString()}: has no port`);
+    }
   }
 
   get type() {
@@ -20,7 +24,7 @@ class _Endpoint {
   }
 
   get port() {
-    return this.#port ?? this.service._port;
+    return this.#port ?? this.service.port;
   }
 
   toString() {
@@ -47,7 +51,7 @@ export class Endpoint extends _Endpoint {
   }
 
   get address() {
-    return this.networkAddress.address;
+    return this.networkAddress?.address;
   }
 
   get family() {

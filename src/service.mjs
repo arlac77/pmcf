@@ -222,7 +222,7 @@ export class Service extends Base {
   }
 
   get port() {
-    return this._port ?? this.endpoints()[0].port;
+    return this._port ?? serviceTypeEndpoints(this.type)[0].port;
   }
 
   set weight(value) {

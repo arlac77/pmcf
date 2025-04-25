@@ -14,9 +14,6 @@ test("Endpoint from Service basics", t => {
   });
   root.addObject(h1);
 
-  const loa = h1.networkAddresses(n => n.networkInterface.kind === "loopback");
-  const etha = h1.networkAddresses(n => n.networkInterface.kind !== "loopback");
-
   const s1 = new Service(h1, {
     name: "dns",
     weight: 5,
@@ -27,15 +24,12 @@ test("Endpoint from Service basics", t => {
   h1.services = s1;
 
   console.log(s1.endpoints().map(e => e.toString()));
-  t.deepEqual(s1.endpoints(), [
-    ...loa.map(
-      na =>
-        new Endpoint(s1, na, {
-          protocol: "udp",
-          tls: false
-        })
-    ),
-    ...etha.map(
+
+  const nas = h1.networkAddresses();
+  const eps = s1.endpoints();
+
+  t.deepEqual(eps, [
+    ...nas.map(
       na =>
         new Endpoint(s1, na, {
           protocol: "udp",
