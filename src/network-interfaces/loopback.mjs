@@ -39,6 +39,10 @@ export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
     return "host";
   }
 
+  get localDomains() {
+    return new Set(["localhost"]);
+  }
+
   get hostName() {
     return "localhost";
   }
