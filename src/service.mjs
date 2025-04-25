@@ -256,7 +256,11 @@ export class Service extends Base {
         e => e.protocol && e.networkInterface.kind !== "loopback"
       )) {
         if (ep.port === undefined) {
-          console.error("Endpoint without port", ep.toString());
+          console.error(
+            "Endpoint without port",
+            ep.toString(),
+            ep.networkInterface?.kind
+          );
         } else {
           records.push(
             DNSRecord(
