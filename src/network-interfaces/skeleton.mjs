@@ -28,13 +28,16 @@ export class SkeletonNetworkInterface extends ServiceOwner {
   }
 
   get host() {
-    if(this.owner instanceof Host) {
+    if (this.owner instanceof Host) {
       return this.owner;
     }
   }
 
   *hosts() {
-    yield* this.owner.hosts();
+    const host = this.host;
+    if (host) {
+      yield host;
+    }
   }
 
   get network_interface() {

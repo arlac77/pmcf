@@ -29,6 +29,12 @@ const BINDServiceTypeDefinition = {
   extends: ExtraSourceServiceTypeDefinition,
   priority: 0.1,
   properties: {
+    addresses: {
+      type: ["network", "host", "network_interface", "location", "owner"],
+      collection: true,
+      writeable: true
+    },
+
     trusted: {
       type: address_types,
       collection: true,
@@ -115,6 +121,7 @@ export class BINDService extends ExtraSourceService {
   hasLinkLocalAdresses = true;
   hasLocationRecord = true;
   notify = true;
+  _addresses = [];
   _trusted = [];
   _protected = [];
   _open = [];
@@ -161,6 +168,14 @@ export class BINDService extends ExtraSourceService {
     return [this.serial, this.refresh, this.retry, this.expire, this.minimum];
   }
 
+  set addresses(value) {
+    this._addresses.push(value);
+  }
+
+  get addresses() {
+    return this._addresses;
+  }
+
   set protected(value) {
     this._protected.push(value);
   }
@@ -202,8 +217,10 @@ export class BINDService extends ExtraSourceService {
   }
 
   async *preparePackages(dir) {
-    const location = this.owner.owner;
-    const name = location.name;
+    const sources = this.addresses.length ? this.addresses : [this.owner];
+    const names = sources.map(a => a.fullName).join(" ");
+
+    const name = this.owner.owner.name;
     const p1 = join(dir, "p1") + "/";
     const packageData = {
       dir: p1,
@@ -211,7 +228,7 @@ export class BINDService extends ExtraSourceService {
       outputs: this.outputs,
       properties: {
         name: `named-${name}`,
-        description: `named definitions for ${location.fullName}`,
+        description: `named definitions for ${names}`,
         access: "private"
       }
     };
@@ -258,7 +275,7 @@ export class BINDService extends ExtraSourceService {
     packageData.dir = p2;
     packageData.properties = {
       name: `named-zones-${name}`,
-      description: `zone definitions for ${location.fullName}`,
+      description: `zone definitions for ${names}`,
       dependencies: ["mf-named"],
       replaces: ["mf-named-zones"],
       access: "private",
@@ -281,13 +298,12 @@ export class BINDService extends ExtraSourceService {
       )
     ];
 
-    await this.generateZoneDefs(location, packageData);
+    await this.generateZoneDefs(sources, packageData);
 
     yield packageData;
   }
 
-  async generateZoneDefs(location, packageData) {
-    const ttl = this.recordTTL;
+  async generateZoneDefs(sources, packageData) {
     const nameService = this.findService({ type: "dns", priority: "<10" });
     const rname = this.administratorEmail.replace(/@/, ".");
 
@@ -309,31 +325,9 @@ export class BINDService extends ExtraSourceService {
 
     const configs = [];
 
-    for (const host of location.hosts()) {
-      for (const domain of host.foreignDomainNames) {
-        const zone = {
-          id: domain,
-          file: `FOREIGN/${domain}.zone`,
-          records: new Set([SOARecord, NSRecord])
-        };
-
-        const config = {
-          name: `${domain}.zone.conf`,
-          zones: [zone]
-        };
-        configs.push(config);
-
-        if (this.hasLocationRecord) {
-          zone.records.add(DNSRecord("location", "TXT", host.location.name));
-        }
-
-        for (const na of host.networkAddresses(
-          na => na.networkInterface.kind != "loopback"
-        )) {
-          zone.records.add(
-            DNSRecord("@", dnsRecordTypeForAddressFamily(na.family), na.address)
-          );
-        }
+    for (const source of sources) {
+      for (const host of source.hosts()) {
+        configs.push(...this.foreignDomainZones(host, [SOARecord, NSRecord]));
       }
     }
 
@@ -343,132 +337,143 @@ export class BINDService extends ExtraSourceService {
       addHook(
         packageData.properties.hooks,
         "post_upgrade",
-        `rm -f ${foreignZones.map(
+        /*        `rm -f ${foreignZones.map(
           zone => `/var/lib/named/${zone.file}.jnl`
-        )}\n` +
-          `/usr/bin/named-hostname-info ${foreignZones
-            .map(zone => zone.id)
-            .join(" ")}|/usr/bin/named-hostname-update`
+        )}\n` + */
+        `/usr/bin/named-hostname-info ${foreignZones
+          .map(zone => zone.id)
+          .join(" ")}|/usr/bin/named-hostname-update`
       );
     }
 
-    console.log(
-      "LOCAL DOMAINS",
-      location.localDomains,
-      location.domain,
-      location.toString()
-    );
+    for (const source of sources) {
+      console.log(
+        "LOCAL DOMAINS",
+        source.localDomains,
+        source.domain,
+        source.toString()
+      );
 
-    for (const domain of location.localDomains) {
-      const locationName = location.name;
-      const reverseZones = new Map();
+      for (const domain of source.localDomains) {
+        const locationName = source.name;
+        const reverseZones = new Map();
 
-      const config = {
-        name: `${domain}.zone.conf`,
-        zones: []
-      };
-      configs.push(config);
-
-      const locationRecord = DNSRecord("location", "TXT", locationName);
-
-      const zone = {
-        id: domain,
-        file: `${locationName}/${domain}.zone`,
-        records: new Set([SOARecord, NSRecord, locationRecord])
-      };
-      config.zones.push(zone);
-
-      if (this.hasCatalog) {
-        const catalogConfig = {
-          name: `catalog.${domain}.zone.conf`,
+        const config = {
+          name: `${domain}.zone.conf`,
           zones: []
         };
-        configs.push(catalogConfig);
+        configs.push(config);
 
-        zone.catalogZone = {
-          id: `catalog.${domain}`,
-          file: `${locationName}/catalog.${domain}.zone`,
-          records: new Set([
-            SOARecord,
-            NSRecord,
-            DNSRecord(dnsFullName(`version.catalog.${domain}`), "TXT", '"1"')
-          ])
+        const locationRecord = DNSRecord("location", "TXT", locationName);
+
+        const zone = {
+          id: domain,
+          file: `${locationName}/${domain}.zone`,
+          records: new Set([SOARecord, NSRecord, locationRecord])
         };
-        catalogConfig.zones.push(zone.catalogZone);
-      }
+        config.zones.push(zone);
 
-      const hosts = new Set();
-      const addresses = new Set();
+        if (this.hasCatalog) {
+          const catalogConfig = {
+            name: `catalog.${domain}.zone.conf`,
+            zones: []
+          };
+          configs.push(catalogConfig);
 
-      for await (const {
-        address,
-        subnet,
-        networkInterface,
-        domainNames,
-        family
-      } of location.networkAddresses()) {
-        if (
-          !this.exclude.has(networkInterface.network) &&
-          !this.excludeInterfaceKinds.has(networkInterface.kind)
-        ) {
-          const host = networkInterface.host;
+          zone.catalogZone = {
+            id: `catalog.${domain}`,
+            file: `${locationName}/catalog.${domain}.zone`,
+            records: new Set([
+              SOARecord,
+              NSRecord,
+              DNSRecord(dnsFullName(`version.catalog.${domain}`), "TXT", '"1"')
+            ])
+          };
+          catalogConfig.zones.push(zone.catalogZone);
+        }
+
+        const hosts = new Set();
+        const addresses = new Set();
+
+        for await (const {
+          address,
+          subnet,
+          networkInterface,
+          domainNames,
+          family
+        } of source.networkAddresses()) {
           if (
-            !addresses.has(address) &&
-            (this.hasLinkLocalAdresses || !isLinkLocal(address))
+            !this.exclude.has(networkInterface.network) &&
+            !this.excludeInterfaceKinds.has(networkInterface.kind)
           ) {
-            addresses.add(address);
+            const host = networkInterface.host;
+            if (host) {
+              if (
+                !addresses.has(address) &&
+                (this.hasLinkLocalAdresses || !isLinkLocal(address))
+              ) {
+                addresses.add(address);
 
-            for (const domainName of domainNames) {
-              zone.records.add(
-                DNSRecord(
-                  dnsFullName(domainName),
-                  dnsRecordTypeForAddressFamily(family),
-                  address
-                )
-              );
-            }
-            if (subnet && host.domain === domain) {
-              let reverseZone = reverseZones.get(subnet.address);
+                for (const domainName of domainNames) {
+                  zone.records.add(
+                    DNSRecord(
+                      dnsFullName(domainName),
+                      dnsRecordTypeForAddressFamily(family),
+                      address
+                    )
+                  );
+                }
+                if (subnet && host?.domain === domain) {
+                  let reverseZone = reverseZones.get(subnet.address);
 
-              if (!reverseZone) {
-                const id = reverseArpa(subnet.prefix);
-                reverseZone = {
-                  id,
-                  type: "plain",
-                  file: `${locationName}/${id}.zone`,
-                  records: new Set([SOARecord, NSRecord])
-                };
-                config.zones.push(reverseZone);
-                reverseZones.set(subnet.address, reverseZone);
+                  if (!reverseZone) {
+                    const id = reverseArpa(subnet.prefix);
+                    reverseZone = {
+                      id,
+                      type: "plain",
+                      file: `${locationName}/${id}.zone`,
+                      records: new Set([SOARecord, NSRecord])
+                    };
+                    config.zones.push(reverseZone);
+                    reverseZones.set(subnet.address, reverseZone);
+                  }
+
+                  for (const domainName of host.domainNames) {
+                    reverseZone.records.add(
+                      DNSRecord(
+                        dnsFullName(reverseArpa(address)),
+                        "PTR",
+                        dnsFullName(domainName)
+                      )
+                    );
+                  }
+                }
               }
 
-              for (const domainName of host.domainNames) {
-                reverseZone.records.add(
-                  DNSRecord(
-                    dnsFullName(reverseArpa(address)),
-                    "PTR",
-                    dnsFullName(domainName)
-                  )
-                );
-              }
-            }
-          }
+              if (!hosts.has(host)) {
+                hosts.add(host);
 
-          if (!hosts.has(host)) {
-            hosts.add(host);
+                for (const foreignDomainName of host.foreignDomainNames) {
+                  zone.records.add(
+                    DNSRecord(
+                      "outfacing",
+                      "PTR",
+                      dnsFullName(foreignDomainName)
+                    )
+                  );
+                }
 
-            for (const foreignDomainName of host.foreignDomainNames) {
-              zone.records.add(
-                DNSRecord("outfacing", "PTR", dnsFullName(foreignDomainName))
-              );
-            }
+                //   console.log(host._services.map(s=>s.name));
+                for (const service of host._services) {
+                  for (const record of service.dnsRecordsForDomainName(
+                    host.domainName,
+                    this.hasSVRRecords
+                  )) {
+                    //console.log("SERVICE",service.toString(),record.toString())
 
-            for (const service of host.findServices()) {
-              for (const record of service.dnsRecordsForDomainName(
-                host.domainName,
-                this.hasSVRRecords
-              )) {
-                zone.records.add(record);
+                    zone.records.add(record);
+                  }
+                }
               }
             }
           }
@@ -476,6 +481,37 @@ export class BINDService extends ExtraSourceService {
       }
     }
 
+    await this.writeZones(packageData, configs);
+  }
+
+  foreignDomainZones(host, records) {
+    return host.foreignDomainNames.map(domain => {
+      const zone = {
+        id: domain,
+        file: `FOREIGN/${domain}.zone`,
+        records: new Set(records)
+      };
+      const config = {
+        name: `${domain}.zone.conf`,
+        zones: [zone]
+      };
+
+      if (this.hasLocationRecord) {
+        zone.records.add(DNSRecord("location", "TXT", host.location.name));
+      }
+      for (const na of host.networkAddresses(
+        na => na.networkInterface.kind != "loopback"
+      )) {
+        zone.records.add(
+          DNSRecord("@", dnsRecordTypeForAddressFamily(na.family), na.address)
+        );
+      }
+
+      return config;
+    });
+  }
+
+  async writeZones(packageData, configs) {
     for (const config of configs) {
       console.log(`config: ${config.name}`);
 
@@ -519,7 +555,7 @@ export class BINDService extends ExtraSourceService {
           zone.file,
           [...zone.records]
             .sort(sortZoneRecords)
-            .map(r => r.toString(maxKeyLength, ttl))
+            .map(r => r.toString(maxKeyLength, this.recordTTL))
         );
       }
 
