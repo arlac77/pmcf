@@ -221,10 +221,10 @@ export class BINDService extends ExtraSourceService {
     const names = sources.map(a => a.fullName).join(" ");
 
     const name = this.owner.owner.name;
-    const p1 = join(dir, "p1") + "/";
+    const configPackageDir = join(dir, "config") + "/";
     const packageData = {
-      dir: p1,
-      sources: [new FileContentProvider(p1)],
+      dir: configPackageDir,
+      sources: [new FileContentProvider(configPackageDir)],
       outputs: this.outputs,
       properties: {
         name: `named-${name}`,
@@ -241,7 +241,7 @@ export class BINDService extends ExtraSourceService {
 
     if (forwarders.length) {
       await writeLines(
-        join(p1, "etc/named/options"),
+        join(configPackageDir, "etc/named/options"),
         `forwarders.conf`,
         addressesStatement("forwarders", forwarders)
       );
@@ -264,15 +264,15 @@ export class BINDService extends ExtraSourceService {
     ].flat();
 
     if (acls.length) {
-      await writeLines(join(p1, "etc/named"), `0-acl-${name}.conf`, acls);
+      await writeLines(join(configPackageDir, "etc/named"), `0-acl-${name}.conf`, acls);
     }
     if (forwarders.length || acls.length) {
       yield packageData;
     }
 
-    const p2 = join(dir, "p2") + "/";
+    const zonesPackageDir = join(dir, "zones") + "/";
 
-    packageData.dir = p2;
+    packageData.dir = zonesPackageDir;
     packageData.properties = {
       name: `named-zones-${name}`,
       description: `zone definitions for ${names}`,
@@ -284,7 +284,7 @@ export class BINDService extends ExtraSourceService {
 
     packageData.sources = [
       new FileContentProvider(
-        p2,
+        zonesPackageDir,
         {
           mode: 0o644,
           owner: "named",
@@ -300,34 +300,44 @@ export class BINDService extends ExtraSourceService {
 
     await this.generateZoneDefs(sources, packageData);
 
+    const foreignZonesPackageDir = join(dir, "foreignZones") + "/";
+
+    packageData.dir = foreignZonesPackageDir;
+    packageData.properties = {
+      name: `named-foreign-zones-${name}`,
+      description: `foreign zone definitions for ${names}`,
+      dependencies: [`named-zones-${name}`],
+      access: "private",
+      hooks: {}
+    };
+
+    packageData.sources = [
+      new FileContentProvider(
+        foreignZonesPackageDir,
+        {
+          mode: 0o644,
+          owner: "named",
+          group: "named"
+        },
+        {
+          mode: 0o755,
+          owner: "named",
+          group: "named"
+        }
+      )
+    ];
+
+    await this.generateForeignDefs(sources, packageData);
+
     yield packageData;
   }
 
-  async generateZoneDefs(sources, packageData) {
-    const nameService = this.findService({ type: "dns", priority: "<10" });
-    const rname = this.administratorEmail.replace(/@/, ".");
-
-    const SOARecord = DNSRecord(
-      "@",
-      "SOA",
-      dnsFullName(nameService.domainName),
-      dnsFullName(rname),
-      `(${[...this.soaUpdates].join(" ")})`
-    );
-
-    const NSRecord = DNSRecord(
-      "@",
-      "NS",
-      dnsFullName(nameService.ipAddressOrDomainName)
-    );
-
-    console.log(`${nameService}`, nameService.ipAddressOrDomainName);
-
+  async generateForeignDefs(sources, packageData) {
     const configs = [];
 
     for (const source of sources) {
       for (const host of source.hosts()) {
-        configs.push(...this.foreignDomainZones(host, [SOARecord, NSRecord]));
+        configs.push(...this.foreignDomainZones(host, this.defaultRecords));
       }
     }
 
@@ -337,14 +347,17 @@ export class BINDService extends ExtraSourceService {
       addHook(
         packageData.properties.hooks,
         "post_upgrade",
-        /*        `rm -f ${foreignZones.map(
-          zone => `/var/lib/named/${zone.file}.jnl`
-        )}\n` + */
         `/usr/bin/named-hostname-info ${foreignZones
           .map(zone => zone.id)
           .join(" ")}|/usr/bin/named-hostname-update`
       );
     }
+
+    await this.writeZones(packageData, configs);
+  }
+
+  async generateZoneDefs(sources, packageData) {
+    const configs = [];
 
     for (const source of sources) {
       console.log(
@@ -369,7 +382,7 @@ export class BINDService extends ExtraSourceService {
         const zone = {
           id: domain,
           file: `${locationName}/${domain}.zone`,
-          records: new Set([SOARecord, NSRecord, locationRecord])
+          records: new Set([...this.defaultRecords, locationRecord])
         };
         config.zones.push(zone);
 
@@ -384,8 +397,7 @@ export class BINDService extends ExtraSourceService {
             id: `catalog.${domain}`,
             file: `${locationName}/catalog.${domain}.zone`,
             records: new Set([
-              SOARecord,
-              NSRecord,
+              ...this.defaultRecords,
               DNSRecord(dnsFullName(`version.catalog.${domain}`), "TXT", '"1"')
             ])
           };
@@ -432,7 +444,7 @@ export class BINDService extends ExtraSourceService {
                       id,
                       type: "plain",
                       file: `${locationName}/${id}.zone`,
-                      records: new Set([SOARecord, NSRecord])
+                      records: new Set(this.defaultRecords)
                     };
                     config.zones.push(reverseZone);
                     reverseZones.set(subnet.address, reverseZone);
@@ -509,6 +521,27 @@ export class BINDService extends ExtraSourceService {
 
       return config;
     });
+  }
+
+  get defaultRecords() {
+    const nameService = this.findService({ type: "dns", priority: "<10" });
+    const rname = this.administratorEmail.replace(/@/, ".");
+
+    const SOARecord = DNSRecord(
+      "@",
+      "SOA",
+      dnsFullName(nameService.domainName),
+      dnsFullName(rname),
+      `(${[...this.soaUpdates].join(" ")})`
+    );
+
+    const NSRecord = DNSRecord(
+      "@",
+      "NS",
+      dnsFullName(nameService.ipAddressOrDomainName)
+    );
+
+    return [SOARecord, NSRecord];
   }
 
   async writeZones(packageData, configs) {
