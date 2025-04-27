@@ -12,7 +12,13 @@
   "description": "Poor mans configuration management",
   "keywords": [
     "config",
-    "config management"
+    "config management",
+    "keepalived",
+    "kea",
+    "dhcp",
+    "dns",
+    "bind",
+    "systemd"
   ],
   "contributors": [
     {
@@ -52,7 +58,7 @@
     "typescript": "^5.8.3"
   },
   "engines": {
-    "node": ">=22.14.0"
+    "node": ">=22.15.0"
   },
   "repository": {
     "type": "git",
