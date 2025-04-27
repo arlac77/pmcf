@@ -9,7 +9,9 @@ test("localhost", async t => {
   t.is(local.name, "LOCAL");
   t.is(local.constructor, LoopbackNetworkInterface);
   t.deepEqual(local.localDomains, new Set(["localhost"]));
+  t.is(local.host, undefined);
+  t.deepEqual([...local.hosts()], []);
 
-  const dns = Array.from(local.findServices({ type: "dns" }))[0]
+  const dns = Array.from(local.findServices({ type: "dns" }))[0];
   t.is(dns.name, "dns");
 });
