@@ -11,13 +11,13 @@
   },
   "description": "Poor mans configuration management",
   "keywords": [
+    "bind",
     "config",
     "config management",
-    "keepalived",
-    "kea",
     "dhcp",
     "dns",
-    "bind",
+    "kea",
+    "keepalived",
     "systemd"
   ],
   "contributors": [
