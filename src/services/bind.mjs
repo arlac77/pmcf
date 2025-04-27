@@ -298,7 +298,7 @@ export class BINDService extends ExtraSourceService {
       )
     ];
 
-    await this.generateZoneDefs(sources, packageData);
+    yield this.generateZoneDefs(sources, packageData);
 
     const foreignZonesPackageDir = join(dir, "foreignZones") + "/";
 
@@ -327,9 +327,7 @@ export class BINDService extends ExtraSourceService {
       )
     ];
 
-    await this.generateForeignDefs(sources, packageData);
-
-    yield packageData;
+    yield this.generateForeignDefs(sources, packageData);
   }
 
   async generateForeignDefs(sources, packageData) {
@@ -354,6 +352,8 @@ export class BINDService extends ExtraSourceService {
     }
 
     await this.writeZones(packageData, configs);
+
+    return packageData;
   }
 
   async generateZoneDefs(sources, packageData) {
@@ -494,6 +494,8 @@ export class BINDService extends ExtraSourceService {
     }
 
     await this.writeZones(packageData, configs);
+
+    return packageData;
   }
 
   foreignDomainZones(host, records) {
