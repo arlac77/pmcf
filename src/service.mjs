@@ -155,7 +155,7 @@ export class Service extends Base {
   }
 
   toString() {
-    return `${this.type}`;
+    return `${super.toString()}[${this.type}]`;
   }
 
   set extends(value) {

@@ -12,7 +12,6 @@ export class ServiceOwner extends Base {
   set services(service) {
     const present = this._services.find(s => s.name === service.name);
 
-   // console.log("SET SERVICE", service.name);
     if (!present) {
       this._services.push(service);
     }
