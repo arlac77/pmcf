@@ -306,7 +306,7 @@ export class BINDService extends ExtraSourceService {
     packageData.properties = {
       name: `named-zones-${name}-OUTFACING`,
       description: `outfacing zone definitions for ${names}`,
-      replaces: [`named-foreign-zones-${name}`],
+      replaces: [`named-foreign-zones-${name}`,`named-zones-${name}-FOREIGN`],
       access: "private",
       hooks: {}
     };
