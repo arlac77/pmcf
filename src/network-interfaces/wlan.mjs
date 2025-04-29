@@ -51,7 +51,21 @@ export class WLANNetworkInterface extends EthernetNetworkInterface {
 
   async systemdDefinitions(packageData) {
     await super.systemdDefinitions(packageData);
+    const d = join(packageData.dir, "var/lib/iwd/");
+    await mkdir(d, { recursive: true });
 
+    /*
+    writeFile(
+      join(d, `${this.network.name}.psk`),
+      `[Security]
+Passphrase=
+SAE-PT-Group19=
+SAE-PT-Group20=
+`,
+      "utf8"
+    );
+*/
+    /*
     const d = join(packageData.dir, "etc/wpa_supplicant");
     await mkdir(d, { recursive: true });
     writeFile(
@@ -73,5 +87,7 @@ network={
       "post_install",
       `systemctl enable wpa_supplicant@${this.name}.service`
     );
+
+  */
   }
 }
