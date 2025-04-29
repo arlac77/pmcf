@@ -18,7 +18,8 @@
     "dns",
     "kea",
     "keepalived",
-    "systemd"
+    "systemd",
+    "iwd"
   ],
   "contributors": [
     {

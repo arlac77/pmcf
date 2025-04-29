@@ -300,12 +300,12 @@ export class BINDService extends ExtraSourceService {
 
     yield this.generateZoneDefs(sources, packageData);
 
-    const foreignZonesPackageDir = join(dir, "foreignZones") + "/";
+    const outfacingZonesPackageDir = join(dir, "outfacingZones") + "/";
 
-    packageData.dir = foreignZonesPackageDir;
+    packageData.dir = outfacingZonesPackageDir;
     packageData.properties = {
-      name: `named-zones-${name}-FOREIGN`,
-      description: `foreign zone definitions for ${names}`,
+      name: `named-zones-${name}-OUTFACING`,
+      description: `outfacing zone definitions for ${names}`,
       replaces: [`named-foreign-zones-${name}`],
       access: "private",
       hooks: {}
@@ -313,7 +313,7 @@ export class BINDService extends ExtraSourceService {
 
     packageData.sources = [
       new FileContentProvider(
-        foreignZonesPackageDir,
+        outfacingZonesPackageDir,
         {
           mode: 0o644,
           owner: "named",
@@ -327,25 +327,25 @@ export class BINDService extends ExtraSourceService {
       )
     ];
 
-    yield this.generateForeignDefs(sources, packageData);
+    yield this.generateOutfacingDefs(sources, packageData);
   }
 
-  async generateForeignDefs(sources, packageData) {
+  async generateOutfacingDefs(sources, packageData) {
     const configs = [];
 
     for (const source of sources) {
       for (const host of source.hosts()) {
-        configs.push(...this.foreignDomainZones(host, this.defaultRecords));
+        configs.push(...this.outfacingZones(host, this.defaultRecords));
       }
     }
 
-    const foreignZones = configs.map(c => c.zones).flat();
+    const outfacingZones = configs.map(c => c.zones).flat();
 
-    if (foreignZones.length) {
+    if (outfacingZones.length) {
       addHook(
         packageData.properties.hooks,
         "post_upgrade",
-        `/usr/bin/named-hostname-info ${foreignZones
+        `/usr/bin/named-hostname-info ${outfacingZones
           .map(zone => zone.id)
           .join(" ")}|/usr/bin/named-hostname-update`
       );
@@ -498,11 +498,11 @@ export class BINDService extends ExtraSourceService {
     return packageData;
   }
 
-  foreignDomainZones(host, records) {
+  outfacingZones(host, records) {
     return host.foreignDomainNames.map(domain => {
       const zone = {
         id: domain,
-        file: `FOREIGN/${domain}.zone`,
+        file: `OUTFACING/${domain}.zone`,
         records: new Set(records)
       };
       const config = {
