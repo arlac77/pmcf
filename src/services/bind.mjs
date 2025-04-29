@@ -304,9 +304,9 @@ export class BINDService extends ExtraSourceService {
 
     packageData.dir = foreignZonesPackageDir;
     packageData.properties = {
-      name: `named-foreign-zones-${name}`,
+      name: `named-zones-${name}-foreign`,
       description: `foreign zone definitions for ${names}`,
-      dependencies: [`named-zones-${name}`],
+      replaces: [`named-foreign-zones-${name}`],
       access: "private",
       hooks: {}
     };
