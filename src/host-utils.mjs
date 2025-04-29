@@ -27,7 +27,9 @@ export async function generateKnownHosts(hosts, dir) {
 
       keys.push(`${host.domainName} ${alg} ${key}`);
 
-      for await (const addr of host.networkAddresses()) {
+      for await (const addr of host.networkAddresses(
+        na => na.networkInterface.kind !== "loopback"
+      )) {
         keys.push(`${addr.address} ${alg} ${key}`);
       }
     } catch {}
