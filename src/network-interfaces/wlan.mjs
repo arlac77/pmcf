@@ -54,6 +54,8 @@ export class WLANNetworkInterface extends EthernetNetworkInterface {
     const d = join(packageData.dir, "var/lib/iwd/");
     await mkdir(d, { recursive: true });
 
+    packageData.properties.requires.push("iwd", "impala");
+
     /*
     writeFile(
       join(d, `${this.network.name}.psk`),

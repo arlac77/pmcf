@@ -461,7 +461,8 @@ export class Host extends ServiceOwner {
           { base: this.directory, pattern: "*_key" },
           { destination: "/etc/ssh/", mode: 0o600 }
         ),
-        new FileContentProvider(dir + "/")
+        new FileContentProvider(dir + "/"),
+        new FileContentProvider(join(this.directory, "extra") + "/")
       ],
       outputs: this.outputs,
       properties: {
@@ -474,6 +475,7 @@ export class Host extends ServiceOwner {
         ],
         provides: [...this.provides],
         replaces: [`mf-${this.hostName}`, ...this.replaces],
+        requires: [],
         backup: "root/.ssh/known_hosts",
         hooks: await loadHooks(
           {},
