@@ -86,12 +86,13 @@ export class Cluster extends Host {
         }
       };
 
+
       const cfg = [
         "global_defs {",
         "   notification_email {",
         "    " + this.administratorEmail,
         "  }",
-        `  smtp_server ${this.smtp.address}`,
+        `  smtp_server ${this.smtp.address()}`,
         `  notification_email_from keepalived@${host.domainName}`,
         "  enable_script_security",
         "  script_user root",

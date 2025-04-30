@@ -209,6 +209,17 @@ export class Service extends Base {
     return filter ? result.filter(filter) : result;
   }
 
+  address(options = { select: e => e.address, limit: 1 }) {
+    const all = this.endpoints(options.endpoints);
+    const res = [...new Set(options.select ? all.map(options.select) : all)];
+
+    if (options.limit < res.length) {
+      res.length = options.limit;
+    }
+
+    return options.join ? res.join(options.join) : res;
+  }
+
   set alias(value) {
     this._alias = value;
   }
