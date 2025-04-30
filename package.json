@@ -16,10 +16,10 @@
     "config management",
     "dhcp",
     "dns",
+    "iwd",
     "kea",
     "keepalived",
-    "systemd",
-    "iwd"
+    "systemd"
   ],
   "contributors": [
     {
