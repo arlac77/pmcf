@@ -34,7 +34,8 @@ export class SystemdJournalService extends Service {
 
   systemdConfig(name) {
     return {
-      name: `etc/systemd/journal.conf.d/${name}.conf`,
+      serviceName: "systemd-journald",  
+      configFileName: `etc/systemd/journal.conf.d/${name}.conf`,
       content: [
         "Journal",
         {

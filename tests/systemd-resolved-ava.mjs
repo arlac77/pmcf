@@ -8,7 +8,8 @@ test("systemd-resolved basics", async t => {
   const resolved = await root.named("/L1/C1/systemd-resolved");
 
   t.deepEqual(resolved.systemdConfig("ABC"), {
-    name: "etc/systemd/resolved.conf.d/ABC.conf",
+    serviceName: "systemd-resolved",
+    configFileName: "etc/systemd/resolved.conf.d/ABC.conf",
     content: [
       "Resolve",
       {

@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { ServiceOwner, Base, addresses } from "pmcf";
 import { networkAddressProperties } from "./network-support.mjs";
+import { addHook } from "./hooks.mjs";
 import {
   domainFromDominName,
   domainName,
@@ -492,9 +493,15 @@ export class Host extends ServiceOwner {
     await generateKnownHosts(this.owner.hosts(), join(dir, "root", ".ssh"));
 
     for (const service of this.services) {
-      if (service.systemdConfig) {
-        const { name, content } = service.systemdConfig(this.name);
-        await writeLines(dir, name, sectionLines(...content));
+      if (service.systemdConfig) {  
+        const { serviceName, configFileName, content } = service.systemdConfig(this.name);
+        await writeLines(dir, configFileName, sectionLines(...content));
+
+        addHook(
+          packageData.properties.hooks,
+          "post_install",
+          `systemctl enable ${serviceName}.service`
+        );
       }
     }
 

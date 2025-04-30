@@ -48,7 +48,8 @@ export class SystemdResolvedService extends ExtraSourceService {
     };
 
     return {
-      name: `etc/systemd/resolved.conf.d/${name}.conf`,
+      serviceName: "systemd-resolved",  
+      configFileName: `etc/systemd/resolved.conf.d/${name}.conf`,
       content: [
         "Resolve",
         {
