@@ -119,6 +119,8 @@ export class Host extends ServiceOwner {
         }
       });
     }
+
+    this.extra = data.extra;
   }
 
   _applyExtends(host) {
@@ -451,7 +453,7 @@ export class Host extends ServiceOwner {
   }
 
   async *preparePackages(dir) {
-    const packageData = {
+    let packageData = {
       dir,
       sources: [
         new FileContentProvider(
@@ -462,8 +464,7 @@ export class Host extends ServiceOwner {
           { base: this.directory, pattern: "*_key" },
           { destination: "/etc/ssh/", mode: 0o600 }
         ),
-        new FileContentProvider(dir + "/"),
-        new FileContentProvider(join(this.directory, "extra") + "/")
+        new FileContentProvider(dir + "/")
       ],
       outputs: this.outputs,
       properties: {
@@ -493,8 +494,10 @@ export class Host extends ServiceOwner {
     await generateKnownHosts(this.owner.hosts(), join(dir, "root", ".ssh"));
 
     for (const service of this.services) {
-      if (service.systemdConfig) {  
-        const { serviceName, configFileName, content } = service.systemdConfig(this.name);
+      if (service.systemdConfig) {
+        const { serviceName, configFileName, content } = service.systemdConfig(
+          this.name
+        );
         await writeLines(dir, configFileName, sectionLines(...content));
 
         addHook(
@@ -506,5 +509,21 @@ export class Host extends ServiceOwner {
     }
 
     yield packageData;
+
+    if (this.extra) {
+      packageData = {
+        dir,
+        sources: [new FileContentProvider(join(this.directory, "extra") + "/")],
+        outputs: this.outputs,
+        properties: {
+          name: `${this.typeName}-extra-${this.owner.name}-${this.name}`,
+          description: `additional files for ${this.fullName}`,
+          access: "private",
+          dependencies: [`${this.typeName}-${this.owner.name}-${this.name}`]
+        }
+      };
+
+      yield packageData;
+    }
   }
 }
