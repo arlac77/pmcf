@@ -527,20 +527,19 @@ export class BINDService extends ExtraSourceService {
 
   get defaultRecords() {
     const nameService = this.findService({ type: "dns", priority: "<10" });
-    const rname = this.administratorEmail.replace(/@/, ".");
 
     const SOARecord = DNSRecord(
       "@",
       "SOA",
       dnsFullName(nameService.domainName),
-      dnsFullName(rname),
+      dnsFullName(this.administratorEmail.replace(/@/, ".")),
       `(${[...this.soaUpdates].join(" ")})`
     );
 
     const NSRecord = DNSRecord(
       "@",
       "NS",
-      dnsFullName(nameService.ipAddressOrDomainName)
+      dnsFullName(nameService.address())
     );
 
     return [SOARecord, NSRecord];
