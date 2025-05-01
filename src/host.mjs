@@ -47,6 +47,7 @@ const HostTypeDefinition = {
     weight: { type: "number", collection: false, writeable: true },
     serial: { type: "string", collection: false, writeable: true },
     vendor: { type: "string", collection: false, writeable: true },
+    keymap: { type: "string", collection: false, writeable: true },
     chassis: {
       type: "string",
       collection: false,
@@ -95,6 +96,7 @@ export class Host extends ServiceOwner {
   _vendor;
   _architecture;
   _serial;
+  _keymap;
 
   static {
     addType(this);
@@ -185,6 +187,14 @@ export class Host extends ServiceOwner {
 
   get vendor() {
     return this.extendedProperty("_vendor");
+  }
+
+  set keymap(value) {
+    this._keymap = value;
+  }
+
+  get keymap() {
+    return this.extendedProperty("_keymap");
   }
 
   set architecture(value) {
@@ -488,6 +498,10 @@ export class Host extends ServiceOwner {
 
     for (const ni of this.networkInterfaces.values()) {
       await ni.systemdDefinitions(packageData);
+    }
+
+    if (this.keymap) {
+      await writeLines(dir, "etc/vconsole.conf", `KEYMAP=${this.keymap}`);
     }
 
     await generateMachineInfo(this, packageData);
