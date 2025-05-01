@@ -184,10 +184,6 @@ export class Service extends Base {
     return this.host.domainName;
   }
 
-  get ipAddressOrDomainName() {
-    return this.address ?? this.domainName;
-  }
-
   get networks() {
     return this.host.networks;
   }
@@ -209,7 +205,14 @@ export class Service extends Base {
     return filter ? result.filter(filter) : result;
   }
 
-  address(options = { select: e => e.address, limit: 1 }) {
+  address(
+    options = {
+      endpoints: e => e.networkInterface?.kind !== "loopbak",
+      select: e => e.domainName||e.address,
+      limit: 1,
+      join: ""
+    }
+  ) {
     const all = this.endpoints(options.endpoints);
     const res = [...new Set(options.select ? all.map(options.select) : all)];
 
@@ -217,7 +220,7 @@ export class Service extends Base {
       res.length = options.limit;
     }
 
-    return options.join ? res.join(options.join) : res;
+    return options.join !== undefined ? res.join(options.join) : res;
   }
 
   set alias(value) {
