@@ -81,8 +81,7 @@ export class Cluster extends Host {
           name,
           description: `${this.typeName} definitions for ${this.fullName}`,
           access: "private",
-          dependencies: ["keepalived>=2.3.3"],
-          replaces: [`keepalived-${host.name}`]
+          dependencies: ["keepalived>=2.3.3"]
         }
       };
 
