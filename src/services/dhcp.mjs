@@ -60,7 +60,7 @@ export class DHCPService extends Service {
       endpoints.push(new Endpoint(this, na, ddnsEndpoint));
     }
 
-    return endpoints;
+    return filter ? endpoints.filter(filter) : endpoints;
   }
 
   async *preparePackages(dir) {

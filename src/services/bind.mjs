@@ -161,7 +161,7 @@ export class BINDService extends ExtraSourceService {
       endpoints.push(new Endpoint(this, na, statisticsEndpoint));
     }
 
-    return endpoints.filter(filter);
+    return filter ? endpoints.filter(filter) : endpoints;
   }
 
   get soaUpdates() {
