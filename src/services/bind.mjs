@@ -161,7 +161,7 @@ export class BINDService extends ExtraSourceService {
       endpoints.push(new Endpoint(this, na, statisticsEndpoint));
     }
 
-    return endpoints;
+    return endpoints.filter(filter);
   }
 
   get soaUpdates() {
@@ -264,7 +264,11 @@ export class BINDService extends ExtraSourceService {
     ].flat();
 
     if (acls.length) {
-      await writeLines(join(configPackageDir, "etc/named"), `0-acl-${name}.conf`, acls);
+      await writeLines(
+        join(configPackageDir, "etc/named"),
+        `0-acl-${name}.conf`,
+        acls
+      );
     }
     if (forwarders.length || acls.length) {
       yield packageData;
@@ -306,7 +310,7 @@ export class BINDService extends ExtraSourceService {
     packageData.properties = {
       name: `named-zones-${name}-OUTFACING`,
       description: `outfacing zone definitions for ${names}`,
-      replaces: [`named-foreign-zones-${name}`,`named-zones-${name}-FOREIGN`],
+      replaces: [`named-foreign-zones-${name}`, `named-zones-${name}-FOREIGN`],
       access: "private",
       hooks: {}
     };
@@ -536,11 +540,7 @@ export class BINDService extends ExtraSourceService {
       `(${[...this.soaUpdates].join(" ")})`
     );
 
-    const NSRecord = DNSRecord(
-      "@",
-      "NS",
-      dnsFullName(nameService.address())
-    );
+    const NSRecord = DNSRecord("@", "NS", dnsFullName(nameService.address()));
 
     return [SOARecord, NSRecord];
   }
