@@ -53,12 +53,7 @@ export class Subnet extends Base {
   }
 
   matchesAddress(address) {
-    try {
-      return matchPrefixIP(this.address, this.prefixLength, address);
-    } catch (e) {
-      console.error(e, this.toString(), address);
-    }
-    return false;
+    return matchPrefixIP(this.address, this.prefixLength, address);
   }
 
   get isLinkLocal() {
