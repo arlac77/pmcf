@@ -188,6 +188,10 @@ export class Service extends Base {
     return this.host.networks;
   }
 
+  get subnets() {
+    return this.host.subnets;
+  }
+
   endpoints(filter) {
     const data = serviceTypeEndpoints(this.type);
 

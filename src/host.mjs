@@ -452,10 +452,16 @@ export class Host extends ServiceOwner {
     return addresses(this.networkAddresses());
   }
 
-  *subnets() {
+  get subnets() {
+    const sn = new Set();
+
     for (const networkInterface of this.networkInterfaces.values()) {
-      yield* networkInterface.subnets();
+      for (const s of networkInterface.subnets()) {
+        sn.add(s);
+      }
     }
+
+    return sn;
   }
 
   async publicKey(type = "ed25519") {

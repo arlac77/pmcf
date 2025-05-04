@@ -4,7 +4,9 @@ import {
   Service,
   ServiceTypeDefinition,
   Endpoint,
-  serviceEndpoints
+  serviceEndpoints,
+  SUBNET_LOCALHOST_IPV4,
+  SUBNET_LOCALHOST_IPV6
 } from "pmcf";
 import { addType } from "../types.mjs";
 import { writeLines } from "../utils.mjs";
@@ -187,14 +189,6 @@ export class DHCPService extends Service {
       "ncr-format": "JSON"
     };
 
-    const subnets = new Set();
-
-    for (const network of this.networks) {
-      for (const subnet of network.subnets()) {
-        subnets.add(subnet);
-      }
-    }
-
     const hwmap = new Map();
     const hostNames = new Set();
 
@@ -229,6 +223,7 @@ export class DHCPService extends Service {
         endpoint => `${endpoint.networkInterface.name}/${endpoint.address}`
       );
 
+    const subnets = [...this.subnets].filter(s => s !== SUBNET_LOCALHOST_IPV4 && s !== SUBNET_LOCALHOST_IPV6/* s.address !== "127/8"*/); // TODO no localhost
     const dhcp4 = {
       Dhcp4: {
         ...commonConfig,
@@ -252,7 +247,7 @@ export class DHCPService extends Service {
             data: [...this.domains].join(",")
           }
         ],
-        subnet4: [...subnets]
+        subnet4: subnets
           .filter(s => s.family === "IPv4")
           .map((subnet, index) => {
             return {
@@ -292,7 +287,7 @@ export class DHCPService extends Service {
               .join(",")
           }
         ],
-        subnet6: [...subnets]
+        subnet6: subnets
           .filter(s => s.family === "IPv6")
           .map((subnet, index) => {
             return {
