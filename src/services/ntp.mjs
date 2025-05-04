@@ -65,14 +65,14 @@ export class NTPService extends ExtraSourceService {
       ...serviceEndpoints(this, {
         services: {
           type: "ntp",
-          priority: ">=20"
+          priority: "<10"
         },
         endpoints: e =>
           e.family === "IPv4" && e.networkInterface.kind !== "loopback",
 
         select: endpoint =>
           `${endpoint.service.isPool ? "pool" : "server"} ${
-            endpoint.address
+            endpoint.domainName
           } iburst`
       }),
       `mailonchange ${this.administratorEmail} 0.5`,
