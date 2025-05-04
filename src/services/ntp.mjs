@@ -68,7 +68,9 @@ export class NTPService extends ExtraSourceService {
           priority: "<10"
         },
         endpoints: e =>
-          e.family === "IPv4" && e.networkInterface.kind !== "loopback",
+          e.service.host !== host &&
+          e.family === "IPv4" &&
+          e.networkInterface.kind !== "loopback",
 
         select: endpoint =>
           `${endpoint.service.isPool ? "pool" : "server"} ${
