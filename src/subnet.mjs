@@ -89,6 +89,7 @@ export const SUBNET_GLOBAL_IPV4 = new Subnet(_owner, "0.0.0.0/0");
 export const SUBNET_GLOBAL_IPV6 = new Subnet(_owner, "::0/0");
 export const SUBNET_LOCALHOST_IPV4 = new Subnet(_owner, "127.0.0.1/8");
 export const SUBNET_LOCALHOST_IPV6 = new Subnet(_owner, "::1/128");
+export const SUBNET_LINK_LOCAL_IPV6 = new Subnet(_owner, "fe80::/64");
 
 export function subnets(sources) {
   const all = new Set();
