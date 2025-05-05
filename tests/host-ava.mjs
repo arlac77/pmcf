@@ -206,6 +206,11 @@ test("Host addresses", t => {
   const eth0 = h1.typeNamed("network_interface", "eth0");
   t.is(eth0.typeName, "network_interface");
 
+  t.deepEqual(
+    h1.subnets,
+    new Set([SUBNET_LOCALHOST_IPV4, SUBNET_LOCALHOST_IPV6, ...eth0.subnets()])
+  );
+
   t.is(h1.named("eth0"), eth0);
   t.is(h1.typeNamed("network_interface", "eth0"), eth0);
   t.is(n1.typeNamed("network_interface", "h1/eth0"), eth0);
