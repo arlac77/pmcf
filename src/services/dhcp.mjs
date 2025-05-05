@@ -295,18 +295,18 @@ export class DHCPService extends Service {
               subnet: subnet.longAddress,
               pools: [{ pool: subnet.addressRange.join(" - ") }],
 
-              "pd-pools": [
+              /*"pd-pools": [
                 {
                   prefix: "2001:db8:8::",
                   "prefix-len": 56,
                   "delegated-len": 64
                 }
-              ],
+              ],*/
               reservations: [
-                {
+                /*{
                   duid: "01:02:03:04:05:0A:0B:0C:0D:0E",
                   "ip-addresses": ["2001:db8:1::100"]
-                }
+                }*/
               ]
             };
           }),
