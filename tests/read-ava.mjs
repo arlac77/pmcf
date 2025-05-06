@@ -9,7 +9,9 @@ const MyTypeDefinition = {
   extends: Base.typeDefinition,
   properties: {
     aString: { type: "string", collection: false, writeable: true },
-    strings: { type: "string", collection: true, writeable: true }
+    arrayStrings: { type: "string", collection: true, writeable: true },
+    undefStrings: { type: "string", collection: true, writeable: true },
+    setStrings: { type: "string", collection: true, writeable: true }
   }
 };
 
@@ -22,6 +24,8 @@ export class MyType extends Base {
     return MyTypeDefinition;
   }
 
+  arrayStrings = [];
+  setStrings = new Set();
   constructor(owner, data) {
     super(owner, data);
     this.read(data, MyTypeDefinition);
@@ -30,7 +34,14 @@ export class MyType extends Base {
 
 test("read basics", t => {
   const root = new Root("/");
-  const m1 = new MyType(root, { aString: "s1", strings: "s2" });
+  const m1 = new MyType(root, {
+    aString: "s1",
+    undefStrings: "s2",
+    arrayStrings: "s3",
+    setStrings: ["s41", "s42"]
+  });
   t.is(m1.aString, "s1");
-//  t.is(m1.strings, ["s2"]);
+  t.deepEqual(m1.undefStrings, ["s2"]);
+  t.deepEqual(m1.arrayStrings, ["s3"]);
+ // t.deepEqual(m1.setStrings, ["s41", "s42"]);
 });

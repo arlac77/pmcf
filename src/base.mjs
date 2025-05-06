@@ -2,6 +2,7 @@ import { join } from "node:path";
 import { allOutputs } from "npm-pkgbuild";
 import { getAttribute } from "pacc";
 import { addType, primitives, typeFactory } from "./types.mjs";
+import { asArray } from "./utils.mjs";
 
 const BaseTypeDefinition = {
   name: "base",
@@ -104,13 +105,17 @@ export class Base {
 
           switch (typeof current) {
             case "undefined":
-              this[property.name] = value;
+              this[property.name] = asArray(value);
               break;
             case "object":
               if (Array.isArray(current)) {
                 current.push(value);
               } else {
-                if (current instanceof Map || current instanceof Set) {
+                if(current instanceof Set) {
+                  // TODO
+                  this[property.name] = value;
+                }
+                else if (current instanceof Map) {
                   // TODO
                   this[property.name] = value;
                 } else {
