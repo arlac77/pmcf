@@ -208,6 +208,10 @@ export class Service extends Base {
 
     return filter ? result.filter(filter) : result;
   }
+  
+  endpoint(filter) {
+    return this.endpoints(filter)[0];
+  }
 
   address(
     options = {

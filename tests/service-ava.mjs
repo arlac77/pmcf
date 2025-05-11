@@ -43,7 +43,17 @@ test("Service basics", t => {
 
   h1.services = s1;
 
-  console.log(s1.endpoints().map(e => e.toString()));
+  //console.log(s1.endpoints().map(e => e.toString()));
+
+  /*t.deepEqual(
+    s1.endpoint(
+      e => e.networkInterface.kind === "loopback" && e.family === "IPv4"
+    ),
+    new Endpoint(s1, [...lna][0], {
+      protocol: "udp",
+      tls: false
+    })
+  );*/
 
   t.deepEqual(
     s1.endpoints(e => e.family === "IPv4"),

@@ -1,22 +1,35 @@
-class _Endpoint {
-  #port;
+class BaseEndpoint {
   #type;
+
   constructor(service, data) {
     this.service = service;
-    if (data.port !== undefined) {
-      this.#port = data.port;
-      delete data.port;
-    }
 
     if (data.type !== undefined) {
       this.#type = data.type;
       delete data.type;
     }
-    Object.assign(this, data);
   }
 
   get type() {
     return this.#type ?? this.service.type;
+  }
+
+  toString() {
+    return `${this.type}`;
+  }
+}
+
+class PortEndpoint extends BaseEndpoint {
+  #port;
+  constructor(service, data) {
+    super(service, data);
+
+    if (data.port !== undefined) {
+      this.#port = data.port;
+      delete data.port;
+    }
+
+    Object.assign(this, data);
   }
 
   get port() {
@@ -28,7 +41,7 @@ class _Endpoint {
   }
 }
 
-export class Endpoint extends _Endpoint {
+export class Endpoint extends PortEndpoint {
   constructor(service, networkAddress, data) {
     super(service, data);
     this.networkAddress = networkAddress;
@@ -59,7 +72,7 @@ export class Endpoint extends _Endpoint {
   }
 }
 
-export class DomainNameEndpoint extends _Endpoint {
+export class DomainNameEndpoint extends PortEndpoint {
   constructor(service, domainName, data) {
     super(service, data);
     this.domainName = domainName;
@@ -74,7 +87,7 @@ export class DomainNameEndpoint extends _Endpoint {
   }
 }
 
-export class HTTPEndpoint extends _Endpoint {
+export class HTTPEndpoint extends PortEndpoint {
   constructor(service, url, data) {
     super(service, data);
     this.url = url;
@@ -82,5 +95,20 @@ export class HTTPEndpoint extends _Endpoint {
 
   get address() {
     return this.url;
+  }
+}
+
+export class UnixEndpoint extends BaseEndpoint {
+  constructor(service, path, data) {
+    super(service, data);
+    this.path = path;
+  }
+
+  get family() {
+    return "unix";
+  }
+
+  get address() {
+    return this.path;
   }
 }
