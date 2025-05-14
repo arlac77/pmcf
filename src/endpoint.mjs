@@ -37,7 +37,7 @@ class PortEndpoint extends BaseEndpoint {
   }
 
   toString() {
-    return `${this.type}/${this.address}[${this.port}]`;
+    return `${this.type}:${this.family}/${this.address}[${this.port}]`;
   }
 }
 
@@ -96,6 +96,10 @@ export class HTTPEndpoint extends PortEndpoint {
   get address() {
     return this.url;
   }
+
+  toString() {
+    return `${this.type}:${this.url}`;
+  }
 }
 
 export class UnixEndpoint extends BaseEndpoint {
@@ -108,7 +112,15 @@ export class UnixEndpoint extends BaseEndpoint {
     return "unix";
   }
 
+  get host() {
+    return this.service.host;
+  }
+
   get address() {
     return this.path;
+  }
+
+  toString() {
+    return `${this.type}:${this.family}:${this.path}`;
   }
 }

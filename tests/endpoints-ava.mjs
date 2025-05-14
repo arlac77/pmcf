@@ -49,5 +49,5 @@ test("Endpoint from Service basics", t => {
   t.is(e1.protocol, "udp");
   t.is(e1.port, 53);
   t.is(e1.family, "IPv4");
-  t.is(e1.toString(), "dns/10.0.0.1[53]");
+  t.is(e1.toString(), "dns:IPv4/10.0.0.1[53]");
 });
