@@ -31,40 +31,43 @@ test("kea basics", t => {
 
   h1.services = kea;
 
-  t.deepEqual(kea.endpoints(), [
-    ...la.map(
-      a =>
-        new Endpoint(kea, a, {
-          type: "dhcp",
-          port: 547,
-          protocol: "udp",
-          tls: false
-        })
-    ),
-    ...ea.map(
-      a =>
-        new Endpoint(kea, a, {
-          type: "dhcp",
-          port: 547,
-          protocol: "udp",
-          tls: false
-        })
-    ),
-    ...[...la]
-      .map(a => [
-        new Endpoint(kea, a, {
-          type: "kea-control-agent",
-          port: 8000,
-          protocol: "tcp",
-          tls: false
-        }),
-        new Endpoint(kea, a, {
-          type: "kea-ddns",
-          port: 53001,
-          protocol: "tcp",
-          tls: false
-        })
-      ])
-      .flat()
-  ]);
+  t.deepEqual(
+    kea.endpoints(e => e.family !== "unix"),
+    [
+      ...la.map(
+        a =>
+          new Endpoint(kea, a, {
+         //   type: "dhcp",
+            port: 547,
+            protocol: "udp",
+            tls: false
+          })
+      ),
+      ...ea.map(
+        a =>
+          new Endpoint(kea, a, {
+         //   type: "dhcp",
+            port: 547,
+            protocol: "udp",
+            tls: false
+          })
+      ),
+      ...[...la]
+        .map(a => [
+          new Endpoint(kea, a, {
+            type: "kea-control-agent",
+            port: 8000,
+            protocol: "tcp",
+            tls: false
+          }),
+          new Endpoint(kea, a, {
+            type: "kea-ddns",
+            port: 53001,
+            protocol: "tcp",
+            tls: false
+          })
+        ])
+        .flat()
+    ]
+  );
 });

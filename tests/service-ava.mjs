@@ -62,6 +62,7 @@ test("Service basics", t => {
         a =>
           new Endpoint(s1, a, {
             protocol: "udp",
+            port: 53,
             tls: false
           })
       ),
@@ -69,6 +70,7 @@ test("Service basics", t => {
         a =>
           new Endpoint(s1, a, {
             protocol: "udp",
+            port: 53,
             tls: false
           })
       )
@@ -216,6 +218,7 @@ test("Service without protocol", t => {
     ...na.map(
       a =>
         new Endpoint(s1, a, {
+          port: 555,
           tls: false
         })
     )
@@ -274,8 +277,8 @@ test("Service owner", t => {
 
   t.deepEqual(s1b.endpoints(), [
     new DomainNameEndpoint(s1b, "h2", {
-      //   type: "dns",
-      //   port: 53,
+   //   type: "dns",
+      port: 53,
       protocol: "udp",
       tls: false
     })

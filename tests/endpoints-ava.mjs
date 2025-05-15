@@ -33,6 +33,7 @@ test("Endpoint from Service basics", t => {
       na =>
         new Endpoint(s1, na, {
           protocol: "udp",
+          port: 53,
           tls: false
         })
     )

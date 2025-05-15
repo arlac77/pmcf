@@ -1,17 +1,16 @@
 class BaseEndpoint {
-  #type;
+  _type;
 
   constructor(service, data) {
     this.service = service;
 
     if (data.type !== undefined) {
-      this.#type = data.type;
-      delete data.type;
+      this._type = data.type;
     }
   }
 
   get type() {
-    return this.#type ?? this.service.type;
+    return this._type ?? this.service.type;
   }
 
   toString() {
@@ -20,20 +19,23 @@ class BaseEndpoint {
 }
 
 class PortEndpoint extends BaseEndpoint {
-  #port;
+  _port;
   constructor(service, data) {
     super(service, data);
 
     if (data.port !== undefined) {
-      this.#port = data.port;
-      delete data.port;
+      this._port = data.port;
     }
-
-    Object.assign(this, data);
+    if (data.protocol !== undefined) {
+      this.protocol = data.protocol;
+    }
+    if (data.tls !== undefined) {
+      this.tls = data.tls;
+    }
   }
 
   get port() {
-    return this.#port ?? this.service.port;
+    return this._port ?? this.service.port;
   }
 
   toString() {

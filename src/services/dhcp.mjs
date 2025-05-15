@@ -4,6 +4,7 @@ import {
   Service,
   ServiceTypeDefinition,
   Endpoint,
+  UnixEndpoint,
   serviceEndpoints,
   SUBNET_LOCALHOST_IPV4,
   SUBNET_LOCALHOST_IPV6
@@ -34,6 +35,24 @@ const ddnsEndpoint = {
   tls: false
 };
 
+const control4Endpoint = {
+  type: "kea-control-dhcp4",
+  family: "unix",
+  path: "/run/kea/4-ctrl-socket"
+};
+
+const control6Endpoint = {
+  type: "kea-control-dhcp6",
+  family: "unix",
+  path: "/run/kea/6-ctrl-socket"
+};
+
+const controlDDNSEndpoint = {
+  type: "kea-control-ddns",
+  family: "unix",
+  path: "/run/kea/ddns-ctrl-socket"
+};
+
 export class DHCPService extends Service {
   static {
     addType(this);
@@ -62,6 +81,12 @@ export class DHCPService extends Service {
       endpoints.push(new Endpoint(this, na, ddnsEndpoint));
     }
 
+    endpoints.push(
+      new UnixEndpoint(this, control4Endpoint.path, control4Endpoint),
+      new UnixEndpoint(this, control6Endpoint.path, control6Endpoint),
+      new UnixEndpoint(this, controlDDNSEndpoint.path, controlDDNSEndpoint)
+    );
+
     return filter ? endpoints.filter(filter) : endpoints;
   }
 
@@ -70,7 +95,7 @@ export class DHCPService extends Service {
     const host = this.host;
     const name = host.name;
 
-    console.log("kea", host.name, network.name);
+    console.log("kea", name, network.name);
 
     const dnsServerEndpoints = serviceEndpoints(network, {
       services: {
@@ -85,7 +110,7 @@ export class DHCPService extends Service {
       sources: [new FileContentProvider(dir + "/")],
       outputs: this.outputs,
       properties: {
-        name: `kea-${this.location.name}-${host.name}`,
+        name: `kea-${this.location.name}-${name}`,
         description: `kea definitions for ${this.fullName}@${name}`,
         access: "private",
         dependencies: ["kea>=2.6.2"]
@@ -125,23 +150,21 @@ export class DHCPService extends Service {
       }
     ];
 
+    const toUnix = endpoint => {
+      return {
+        "socket-type": "unix",
+        "socket-name": endpoint?.path
+      };
+    };
+
     const ctrlAgent = {
       "Control-agent": {
         "http-host": "127.0.0.1",
         "http-port": 8000,
         "control-sockets": {
-          dhcp4: {
-            "socket-type": "unix",
-            "socket-name": "/run/kea/4-ctrl-socket"
-          },
-          dhcp6: {
-            "socket-type": "unix",
-            "socket-name": "/run/kea/6-ctrl-socket"
-          },
-          d2: {
-            "socket-type": "unix",
-            "socket-name": "/run/kea/ddns-ctrl-socket"
-          }
+          dhcp4: toUnix(this.endpoint(e => e.type === "kea-control-dhcp4")),
+          dhcp6: toUnix(this.endpoint(e => e.type === "kea-control-dhcp6")),
+          d2: toUnix(this.endpoint(e => e.type === "kea-control-ddns"))
         },
         loggers
       }
@@ -163,11 +186,13 @@ export class DHCPService extends Service {
       DhcpDdns: {
         "ip-address": "127.0.0.1",
         port: 53001,
-        "control-socket": {
+        "control-socket": toUnix(
+          this.endpoint(e => e.type === "kea-control-ddns")
+        ),
+        /* {
           "socket-type": "unix",
           "socket-name": "/run/kea/ddns-ctrl-socket"
-        },
-        "tsig-keys": [],
+        } */ "tsig-keys": [],
         "forward-ddns": {
           "ddns-domains": dnsServersSlot([...this.domains])
         },
@@ -223,7 +248,11 @@ export class DHCPService extends Service {
         endpoint => `${endpoint.networkInterface.name}/${endpoint.address}`
       );
 
-    const subnets = [...this.subnets].filter(s => s !== SUBNET_LOCALHOST_IPV4 && s !== SUBNET_LOCALHOST_IPV6/* s.address !== "127/8"*/); // TODO no localhost
+    const subnets = [...this.subnets].filter(
+      s =>
+        s !== SUBNET_LOCALHOST_IPV4 &&
+        s !== SUBNET_LOCALHOST_IPV6 /* s.address !== "127/8"*/
+    ); // TODO no localhost
     const dhcp4 = {
       Dhcp4: {
         ...commonConfig,
