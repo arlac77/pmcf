@@ -189,10 +189,7 @@ export class DHCPService extends Service {
         "control-socket": toUnix(
           this.endpoint(e => e.type === "kea-control-ddns")
         ),
-        /* {
-          "socket-type": "unix",
-          "socket-name": "/run/kea/ddns-ctrl-socket"
-        } */ "tsig-keys": [],
+        "tsig-keys": [],
         "forward-ddns": {
           "ddns-domains": dnsServersSlot([...this.domains])
         },
@@ -249,9 +246,7 @@ export class DHCPService extends Service {
       );
 
     const subnets = [...this.subnets].filter(
-      s =>
-        s !== SUBNET_LOCALHOST_IPV4 &&
-        s !== SUBNET_LOCALHOST_IPV6 /* s.address !== "127/8"*/
+      s => s !== SUBNET_LOCALHOST_IPV4 && s !== SUBNET_LOCALHOST_IPV6
     ); // TODO no localhost
     const dhcp4 = {
       Dhcp4: {
@@ -282,7 +277,7 @@ export class DHCPService extends Service {
             return {
               id: index + 1,
               subnet: subnet.longAddress,
-              pools: [{ pool: subnet.addressRange.join(" - ") }],
+              pools: [{ pool: subnet.dhcpUsableAddressRange.join(" - ") }],
               "option-data": [
                 {
                   name: "routers",
