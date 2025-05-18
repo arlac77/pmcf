@@ -1,5 +1,5 @@
 import test from "ava";
-import { Root, Host, Service, Endpoint } from "pmcf";
+import { Root, Host, Service, Endpoint, HTTPEndpoint } from "pmcf";
 
 test("Endpoint from Service basics", t => {
   const root = new Root("/somwhere");
@@ -51,4 +51,34 @@ test("Endpoint from Service basics", t => {
   t.is(e1.port, 53);
   t.is(e1.family, "IPv4");
   t.is(e1.toString(), "dns:IPv4/10.0.0.1[53]");
+});
+
+test("HTTPEndpoint basics", t => {
+  const root = new Root("/somwhere");
+
+  const h1 = new Host(root, {
+    name: "h1",
+    networkInterfaces: {
+      l0: { kind: "loopback" }
+    },
+    priority: 19
+  });
+  root.addObject(h1);
+
+  const s1 = new Service(h1, {
+    name: "dns",
+    weight: 5,
+    priority: 3
+  });
+
+  h1.services = s1;
+
+  const nas = h1.networkAddresses();
+
+  const ep = new HTTPEndpoint(s1, [...nas][0], { type: "http-control", port: 80, path: "/p1" });
+
+  t.is(ep.type, "http-control");
+  t.is(ep.port, 80);
+  t.is(ep.path, "/p1");
+  t.is(ep.url, "http://127.0.0.1:80/p1");
 });

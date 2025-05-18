@@ -90,9 +90,21 @@ export class DomainNameEndpoint extends PortEndpoint {
 }
 
 export class HTTPEndpoint extends PortEndpoint {
-  constructor(service, url, data) {
+  constructor(service, address, data) {
     super(service, data);
-    this.url = url;
+
+    for (const name of ["path"]) {
+      if (data[name] !== undefined) {
+        this[name] = data[name];
+      }
+    }
+
+    if (typeof address === "string") {
+      this.url = address;
+    } else {
+      this.url = "http://" + address.address + ":" + data.port + data.path;
+      this.host = address.address;
+    }
   }
 
   get address() {

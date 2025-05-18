@@ -5,6 +5,7 @@ import {
   ServiceTypeDefinition,
   Endpoint,
   UnixEndpoint,
+  HTTPEndpoint,
   serviceEndpoints,
   SUBNET_LOCALHOST_IPV4,
   SUBNET_LOCALHOST_IPV6
@@ -24,6 +25,8 @@ const DHCPServiceTypeDefinition = {
 const controlAgentEndpoint = {
   type: "kea-control-agent",
   port: 8000,
+  path: "/",
+  method: "get",
   protocol: "tcp",
   tls: false
 };
@@ -75,10 +78,12 @@ export class DHCPService extends Service {
     const endpoints = super.endpoints(filter);
 
     for (const na of this.host.networkAddresses(
-      na => na.networkInterface.kind === "localhost"
+      na => na.networkInterface.kind === "loopback"
     )) {
-      endpoints.push(new Endpoint(this, na, controlAgentEndpoint));
-      endpoints.push(new Endpoint(this, na, ddnsEndpoint));
+      endpoints.push(
+        new HTTPEndpoint(this, na, controlAgentEndpoint),
+        new Endpoint(this, na, ddnsEndpoint)
+      );
     }
 
     endpoints.push(
@@ -117,6 +122,10 @@ export class DHCPService extends Service {
       }
     };
 
+        const ctrlAgentEndpoint = this.endpoint(
+      e => e.type === "kea-control-agent"
+    );
+
     const commonConfig = {
       "lease-database": {
         type: "memfile",
@@ -135,7 +144,35 @@ export class DHCPService extends Service {
       },
       "renew-timer": 900,
       "rebind-timer": 1800,
-      "valid-lifetime": 3600
+      "valid-lifetime": 3600,
+      "hooks-libraries": [
+        {
+          library: "/usr/lib/kea/hooks/libdhcp_lease_cmds.so"
+        },
+        {
+          library: "/usr/lib/kea/hooks/libdhcp_ha.so",
+          parameters: {
+            "high-availability": [
+              {
+                "this-server-name": name,
+                mode: "hot-standby",
+                peers: [
+                  {
+                    name: name,
+                    url: ctrlAgentEndpoint.url,
+                    role: "primary"
+                  } /*,
+                  {
+                    name: "server2",
+                    url: "http://172.28.0.254:8000/",
+                    role: "standby"
+                  }*/
+                ]
+              }
+            ]
+          }
+        }
+      ]
     };
 
     const loggers = [
@@ -159,8 +196,8 @@ export class DHCPService extends Service {
 
     const ctrlAgent = {
       "Control-agent": {
-        "http-host": "127.0.0.1",
-        "http-port": 8000,
+        "http-host": ctrlAgentEndpoint?.host,
+        "http-port": ctrlAgentEndpoint?.port,
         "control-sockets": {
           dhcp4: toUnix(this.endpoint(e => e.type === "kea-control-dhcp4")),
           dhcp6: toUnix(this.endpoint(e => e.type === "kea-control-dhcp6")),
@@ -247,7 +284,7 @@ export class DHCPService extends Service {
 
     const subnets = [...this.subnets].filter(
       s => s !== SUBNET_LOCALHOST_IPV4 && s !== SUBNET_LOCALHOST_IPV6
-    ); // TODO no localhost
+    );
     const dhcp4 = {
       Dhcp4: {
         ...commonConfig,
