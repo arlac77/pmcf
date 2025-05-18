@@ -275,7 +275,7 @@ export class Service extends Base {
 
     if (hasSVRRecords) {
       for (const ep of this.endpoints(
-        e => e.protocol && e.networkInterface.kind !== "loopback"
+        e => e.protocol && e.networkInterface && e.networkInterface.kind !== "loopback"
       )) {
         records.push(
           DNSRecord(
