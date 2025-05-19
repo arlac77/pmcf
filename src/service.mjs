@@ -38,7 +38,7 @@ const ServiceTypes = {
   ssh: { endpoints: [{ protocol: "tcp", port: 22, tls: false }] },
   imap: { endpoints: [{ protocol: "tcp", port: 143, tls: false }] },
   imaps: { endpoints: [{ protocol: "tcp", port: 993, tls: true }] },
-  dhcp: { endpoints: [{ port: 547, protocol: "udp", tls: false }] },
+  dhcp: { endpoints: [{ protocol: "udp", port: 547, tls: false }] },
   "dhcpv6-client": {
     endpoints: [
       { protocol: "tcp", port: 546, tls: false },
@@ -208,7 +208,7 @@ export class Service extends Base {
 
     return filter ? result.filter(filter) : result;
   }
-  
+
   endpoint(filter) {
     return this.endpoints(filter)[0];
   }
@@ -216,7 +216,7 @@ export class Service extends Base {
   address(
     options = {
       endpoints: e => e.networkInterface?.kind !== "loopbak",
-      select: e => e.domainName||e.address,
+      select: e => e.domainName || e.address,
       limit: 1,
       join: ""
     }
@@ -275,7 +275,10 @@ export class Service extends Base {
 
     if (hasSVRRecords) {
       for (const ep of this.endpoints(
-        e => e.protocol && e.networkInterface && e.networkInterface.kind !== "loopback"
+        e =>
+          e.protocol &&
+          e.networkInterface &&
+          e.networkInterface.kind !== "loopback"
       )) {
         records.push(
           DNSRecord(
