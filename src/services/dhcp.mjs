@@ -143,45 +143,7 @@ export class DHCPService extends Service {
         };
       });
 
-      peers.length = 2;
-      
-    const commonConfig = {
-      "lease-database": {
-        type: "memfile",
-        "lfc-interval": 3600
-      },
-      "multi-threading": {
-        "enable-multi-threading": false
-      },
-      "expired-leases-processing": {
-        "reclaim-timer-wait-time": 10,
-        "flush-reclaimed-timer-wait-time": 25,
-        "hold-reclaimed-time": 3600,
-        "max-reclaim-leases": 100,
-        "max-reclaim-time": 250,
-        "unwarned-reclaim-cycles": 5
-      },
-      "renew-timer": 900,
-      "rebind-timer": 1800,
-      "valid-lifetime": 3600,
-      "hooks-libraries": [
-        {
-          library: "/usr/lib/kea/hooks/libdhcp_lease_cmds.so"
-        },
-        {
-          library: "/usr/lib/kea/hooks/libdhcp_ha.so",
-          parameters: {
-            "high-availability": [
-              {
-                "this-server-name": name,
-                mode: "hot-standby",
-                peers
-              }
-            ]
-          }
-        }
-      ]
-    };
+    peers.length = 2;
 
     const loggers = [
       {
@@ -194,6 +156,54 @@ export class DHCPService extends Service {
         debuglevel: 0
       }
     ];
+
+    const commonConfig = family => {
+      return {
+        "interfaces-config": {
+          interfaces: listenInterfaces(`IPv${family}`)
+        },
+        "control-socket": toUnix(
+          this.endpoint(e => e.type === `kea-control-dhcp${family}`)
+        ),
+        "lease-database": {
+          type: "memfile",
+          "lfc-interval": 3600
+        },
+        "multi-threading": {
+          "enable-multi-threading": false
+        },
+        "expired-leases-processing": {
+          "reclaim-timer-wait-time": 10,
+          "flush-reclaimed-timer-wait-time": 25,
+          "hold-reclaimed-time": 3600,
+          "max-reclaim-leases": 100,
+          "max-reclaim-time": 250,
+          "unwarned-reclaim-cycles": 5
+        },
+        "renew-timer": 900,
+        "rebind-timer": 1800,
+        "valid-lifetime": 3600,
+        "hooks-libraries": [
+          {
+            library: "/usr/lib/kea/hooks/libdhcp_lease_cmds.so"
+          },
+          {
+            library: "/usr/lib/kea/hooks/libdhcp_ha.so",
+            parameters: {
+              "high-availability": [
+                {
+                  "this-server-name": name,
+                  mode: "hot-standby",
+                  peers
+                }
+              ]
+            }
+          }
+        ],
+        "dhcp-ddns": dhcpServerDdns,
+        loggers
+      };
+    };
 
     const toUnix = endpoint => {
       return {
@@ -297,14 +307,7 @@ export class DHCPService extends Service {
     );
     const dhcp4 = {
       Dhcp4: {
-        ...commonConfig,
-        "interfaces-config": {
-          interfaces: listenInterfaces("IPv4")
-        },
-        "control-socket": {
-          "socket-type": "unix",
-          "socket-name": "/run/kea/4-ctrl-socket"
-        },
+        ...commonConfig("4"),
         "option-data": [
           {
             name: "domain-name-servers",
@@ -333,21 +336,12 @@ export class DHCPService extends Service {
               ],
               reservations
             };
-          }),
-        "dhcp-ddns": dhcpServerDdns,
-        loggers
+          })
       }
     };
     const dhcp6 = {
       Dhcp6: {
-        ...commonConfig,
-        "interfaces-config": {
-          interfaces: listenInterfaces("IPv6")
-        },
-        "control-socket": {
-          "socket-type": "unix",
-          "socket-name": "/run/kea/6-ctrl-socket"
-        },
+        ...commonConfig("6"),
         "preferred-lifetime": 3000,
         "option-data": [
           {
@@ -380,9 +374,7 @@ export class DHCPService extends Service {
                 }*/
               ]
             };
-          }),
-        "dhcp-ddns": dhcpServerDdns,
-        loggers
+          })
       }
     };
 
