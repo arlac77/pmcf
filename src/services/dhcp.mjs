@@ -77,13 +77,12 @@ export class DHCPService extends Service {
   endpoints(filter) {
     const endpoints = super.endpoints(filter);
 
-    for (const na of this.host.networkAddresses(
-      na => na.networkInterface.kind === "loopback"
-    )) {
-      endpoints.push(
-        new HTTPEndpoint(this, na, controlAgentEndpoint),
-        new Endpoint(this, na, ddnsEndpoint)
-      );
+    for (const na of this.host.networkAddresses()) {
+      endpoints.push(new HTTPEndpoint(this, na, controlAgentEndpoint));
+
+      if (na.networkInterface.kind === "loopback") {
+        endpoints.push(new Endpoint(this, na, ddnsEndpoint));
+      }
     }
 
     endpoints.push(
@@ -122,9 +121,23 @@ export class DHCPService extends Service {
       }
     };
 
-        const ctrlAgentEndpoint = this.endpoint(
+    const ctrlAgentEndpoint = this.endpoint(
       e => e.type === "kea-control-agent"
     );
+
+    const peers = (
+      await Array.fromAsync(network.findServices({ type: "dhcp" }))
+    ).map(dhcp => {
+      const ctrlAgentEndpoint = dhcp.endpoint(
+        e => e.type === "kea-control-agent"
+      );
+
+      return {
+        name: dhcp.host.name,
+        role: dhcp.priority < 10 ? "primary" : "standby",
+        url: ctrlAgentEndpoint?.url
+      };
+    });
 
     const commonConfig = {
       "lease-database": {
@@ -156,18 +169,7 @@ export class DHCPService extends Service {
               {
                 "this-server-name": name,
                 mode: "hot-standby",
-                peers: [
-                  {
-                    name: name,
-                    url: ctrlAgentEndpoint.url,
-                    role: "primary"
-                  } /*,
-                  {
-                    name: "server2",
-                    url: "http://172.28.0.254:8000/",
-                    role: "standby"
-                  }*/
-                ]
+                peers
               }
             ]
           }
@@ -219,10 +221,12 @@ export class DHCPService extends Service {
         };
       });
 
+    const ddnsEndpoint = this.endpoint(e => e.type === "kea-ddns");
+
     const ddns = {
       DhcpDdns: {
-        "ip-address": "127.0.0.1",
-        port: 53001,
+        "ip-address": ddnsEndpoint.address,
+        port: ddnsEndpoint.port,
         "control-socket": toUnix(
           this.endpoint(e => e.type === "kea-control-ddns")
         ),
@@ -241,8 +245,8 @@ export class DHCPService extends Service {
 
     const dhcpServerDdns = {
       "enable-updates": true,
-      "server-ip": "127.0.0.1",
-      "server-port": ddns.DhcpDdns.port,
+      "ip-address": ddnsEndpoint.address,
+      port: ddnsEndpoint.port,
       "max-queue-size": 64,
       "ncr-protocol": "UDP",
       "ncr-format": "JSON"
