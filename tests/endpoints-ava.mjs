@@ -70,6 +70,15 @@ test("HTTPEndpoint basics", t => {
 
   t.is(ep.type, "http-control");
   t.is(ep.port, 80);
-  t.is(ep.path, "/p1");
-  t.is(ep.url, "http://127.0.0.1:80/p1");
+  t.is(ep.pathname, "/p1");
+  t.is(ep.url.toString(), "http://127.0.0.1/p1");
+});
+
+test("HTTPEndpoint from URL", t => {
+  const { h1, s1 } = prepare();
+
+  const ep = new HTTPEndpoint(s1, "https://somwhere/aPath", { type: "http-control" });
+
+  t.is(ep.type, "http-control");
+  t.is(ep.url.toString(), "https://somwhere/aPath");
 });

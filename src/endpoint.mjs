@@ -93,18 +93,30 @@ export class HTTPEndpoint extends PortEndpoint {
   constructor(service, address, data) {
     super(service, data);
 
-    for (const name of ["path"]) {
-      if (data[name] !== undefined) {
-        this[name] = data[name];
-      }
-    }
-
     if (typeof address === "string") {
+      this.url = new URL(address);
+    } else if (address instanceof URL) {
       this.url = address;
     } else {
-      this.url = "http://" + address.address + ":" + data.port + data.path;
-      this.host = address.address;
+      this.url = new URL(
+        "http://" +
+          (address.family === "IPv6"
+            ? "[" + address.address + "]"
+            : address.address) +
+          ":" +
+          data.port +
+          data.path
+      );
+      this.hostname = address.address;
     }
+  }
+
+  get port() {
+    return this.url.port || 80;
+  }
+
+  get pathname() {
+    return this.url.pathname;
   }
 
   get address() {
