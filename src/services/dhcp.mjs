@@ -245,8 +245,8 @@ export class DHCPService extends Service {
 
     const dhcpServerDdns = {
       "enable-updates": true,
-      "ip-address": ddnsEndpoint.address,
-      port: ddnsEndpoint.port,
+      "server-address": ddnsEndpoint.address,
+      "server-port": ddnsEndpoint.port,
       "max-queue-size": 64,
       "ncr-protocol": "UDP",
       "ncr-format": "JSON"
