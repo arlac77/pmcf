@@ -1,7 +1,9 @@
 import test from "ava";
 import { Root, Host, Service, Endpoint, HTTPEndpoint } from "pmcf";
 
-test("Endpoint from Service basics", t => {
+
+function prepare()
+{
   const root = new Root("/somwhere");
 
   const h1 = new Host(root, {
@@ -22,6 +24,12 @@ test("Endpoint from Service basics", t => {
   });
 
   h1.services = s1;
+
+  return { h1, s1 };
+}
+
+test("Endpoint from Service basics", t => {
+  const { h1, s1 } = prepare();
 
   //console.log(s1.endpoints().map(e => e.toString()));
 
@@ -54,24 +62,7 @@ test("Endpoint from Service basics", t => {
 });
 
 test("HTTPEndpoint basics", t => {
-  const root = new Root("/somwhere");
-
-  const h1 = new Host(root, {
-    name: "h1",
-    networkInterfaces: {
-      l0: { kind: "loopback" }
-    },
-    priority: 19
-  });
-  root.addObject(h1);
-
-  const s1 = new Service(h1, {
-    name: "dns",
-    weight: 5,
-    priority: 3
-  });
-
-  h1.services = s1;
+  const { h1, s1 } = prepare();
 
   const nas = h1.networkAddresses();
 
