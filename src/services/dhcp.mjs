@@ -126,19 +126,25 @@ export class DHCPService extends Service {
     );
 
     const peers = (
-      await Array.fromAsync(network.findServices({ type: "dhcp" }))
-    ).map(dhcp => {
-      const ctrlAgentEndpoint = dhcp.endpoint(
-        e => e.type === "kea-control-agent"
-      );
+      await Array.fromAsync(
+        network.findServices({ type: "dhcp", priority: ">10" })
+      )
+    )
+      .sort((a, b) => (a.host === host ? -1 : 1))
+      .map((dhcp, i) => {
+        const ctrlAgentEndpoint = dhcp.endpoint(
+          e => e.type === "kea-control-agent"
+        );
 
-      return {
-        name: dhcp.host.name,
-        role: dhcp.priority < 10 ? "primary" : "standby",
-        url: ctrlAgentEndpoint?.url
-      };
-    });
+        return {
+          name: dhcp.host.name,
+          role: i === 0 ? "primary" : "standby",
+          url: ctrlAgentEndpoint?.url
+        };
+      });
 
+      peers.length = 2;
+      
     const commonConfig = {
       "lease-database": {
         type: "memfile",
