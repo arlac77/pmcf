@@ -64,10 +64,11 @@ export class Subnet extends Base {
     return rangeIP(this.prefix, this.prefixLength, 1, 1).map(a => decodeIP(a));
   }
 
-  get dhcpUsableAddressRange()
-  {
+  get dhcpPools() {
     /* TODO where to take values from ? */
-    return rangeIP(this.prefix, this.prefixLength, 51, 6).map(a => decodeIP(a));
+    return [
+      rangeIP(this.prefix, this.prefixLength, 51, 6).map(a => decodeIP(a))
+    ];
   }
 
   get address() {

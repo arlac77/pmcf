@@ -24,7 +24,7 @@ const DHCPServiceTypeDefinition = {
 
 const controlAgentEndpoint = {
   type: "kea-control-agent",
-  port: 8000,
+  port: 53002,
   path: "/",
   method: "get",
   protocol: "tcp",
@@ -183,6 +183,21 @@ export class DHCPService extends Service {
         "renew-timer": 900,
         "rebind-timer": 1800,
         "valid-lifetime": 3600,
+        "preferred-lifetime": 3000,
+
+        "option-data": [
+          {
+            name: "dns-servers",
+            data: dnsServerEndpoints
+              .filter(endpoint => endpoint.family === `IPv${family}`)
+              .map(endpoint => endpoint.address)
+              .join(",")
+          },
+          {
+            name: "domain-search",
+            data: [...this.domains].join(",")
+          }
+        ],
         "hooks-libraries": [
           {
             library: "/usr/lib/kea/hooks/libdhcp_lease_cmds.so"
@@ -308,26 +323,15 @@ export class DHCPService extends Service {
     const dhcp4 = {
       Dhcp4: {
         ...commonConfig("4"),
-        "option-data": [
-          {
-            name: "domain-name-servers",
-            data: dnsServerEndpoints
-              .filter(endpoint => endpoint.family === "IPv4")
-              .map(endpoint => endpoint.address)
-              .join(",")
-          },
-          {
-            name: "domain-search",
-            data: [...this.domains].join(",")
-          }
-        ],
         subnet4: subnets
           .filter(s => s.family === "IPv4")
           .map((subnet, index) => {
             return {
               id: index + 1,
               subnet: subnet.longAddress,
-              pools: [{ pool: subnet.dhcpUsableAddressRange.join(" - ") }],
+              pools: subnet.dhcpPools.map(range => {
+                return { pool: range.join(" - ") };
+              }),
               "option-data": [
                 {
                   name: "routers",
@@ -342,23 +346,15 @@ export class DHCPService extends Service {
     const dhcp6 = {
       Dhcp6: {
         ...commonConfig("6"),
-        "preferred-lifetime": 3000,
-        "option-data": [
-          {
-            name: "dns-servers",
-            data: dnsServerEndpoints
-              .filter(endpoint => endpoint.family === "IPv6")
-              .map(endpoint => endpoint.address)
-              .join(",")
-          }
-        ],
         subnet6: subnets
           .filter(s => s.family === "IPv6")
           .map((subnet, index) => {
             return {
               id: index + 1,
               subnet: subnet.longAddress,
-              pools: [{ pool: subnet.addressRange.join(" - ") }],
+              pools: subnet.dhcpPools.map(range => {
+                return { pool: range.join(" - ") };
+              }),
 
               /*"pd-pools": [
                 {
