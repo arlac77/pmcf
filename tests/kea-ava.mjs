@@ -48,24 +48,12 @@ test("kea basics", t => {
       type: "kea-control-agent",
       port: 53002,
       tls: false
+    }),
+    new HTTPEndpoint(kea, a1, {
+      type: "kea-ha-4",
+      port: 53003,
+      tls: false
     })
-
-    /*        new Endpoint(kea, a1, {
-          type: "kea-ddns",
-          port: 53001,
-          protocol: "tcp",
-          tls: false
-        })
-      .map(a => [
-        new Endpoint(kea, a, {
-          type: "kea-ddns",
-          port: 53001,
-          protocol: "tcp",
-          tls: false
-        })
-      ])
-      .flat()
-      */
   ];
   //console.log([...la].map(a => a.toString()));
   //console.log(result.map(na => na.toString()));

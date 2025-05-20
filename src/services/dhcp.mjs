@@ -2,6 +2,7 @@ import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import {
   Service,
+  sortInverseByPriority,
   ServiceTypeDefinition,
   Endpoint,
   UnixEndpoint,
@@ -22,18 +23,33 @@ const DHCPServiceTypeDefinition = {
   properties: {}
 };
 
-const controlAgentEndpoint = {
-  type: "kea-control-agent",
-  port: 53002,
-  pathname: "/",
-  method: "get",
+const ddnsEndpoint = {
+  type: "kea-ddns",
+  port: 53001,
   protocol: "tcp",
   tls: false
 };
 
-const ddnsEndpoint = {
-  type: "kea-ddns",
-  port: 53001,
+const controlAgentEndpoint = {
+  type: "kea-control-agent",
+  port: 53002,
+  pathname: "/",
+  protocol: "tcp",
+  tls: false
+};
+
+const ha4Endpoint = {
+  type: "kea-ha-4",
+  port: 53003,
+  pathname: "/",
+  protocol: "tcp",
+  tls: false
+};
+
+const ha6Endpoint = {
+  type: "kea-ha-6",
+  port: 53004,
+  pathname: "/",
   protocol: "tcp",
   tls: false
 };
@@ -79,6 +95,7 @@ export class DHCPService extends Service {
 
     for (const na of this.host.networkAddresses()) {
       endpoints.push(new HTTPEndpoint(this, na, controlAgentEndpoint));
+      endpoints.push(new HTTPEndpoint(this, na, na.family === 'IPv4' ? ha4Endpoint : ha6Endpoint));
 
       if (na.networkInterface.kind === "loopback") {
         endpoints.push(new Endpoint(this, na, ddnsEndpoint));
@@ -125,25 +142,24 @@ export class DHCPService extends Service {
       e => e.type === "kea-control-agent"
     );
 
-    const peers = (
+    const peers = async (family) => (
       await Array.fromAsync(
-        network.findServices({ type: "dhcp", priority: ">10" })
+        network.findServices({ type: "dhcp", priority: "<20" })
       )
     )
-      .sort((a, b) => (a.host === host ? -1 : 1))
+      .sort(sortInverseByPriority)
       .map((dhcp, i) => {
         const ctrlAgentEndpoint = dhcp.endpoint(
-          e => e.type === "kea-control-agent"
+          e => e.type === `kea-ha-${family}`
         );
 
         return {
           name: dhcp.host.name,
-          role: i === 0 ? "primary" : "standby",
-          url: ctrlAgentEndpoint?.url
+          role: i === 0 ? "primary" : i > 1 ? "backup" : "standby",
+          url: ctrlAgentEndpoint.url,
+          "auto-failover": i <= 1
         };
       });
-
-    peers.length = 2;
 
     const loggers = [
       {
@@ -157,7 +173,7 @@ export class DHCPService extends Service {
       }
     ];
 
-    const commonConfig = family => {
+    const commonConfig = async (family) => {
       return {
         "interfaces-config": {
           interfaces: listenInterfaces(`IPv${family}`)
@@ -194,7 +210,13 @@ export class DHCPService extends Service {
                 {
                   "this-server-name": name,
                   mode: "hot-standby",
-                  peers
+                  "multi-threading": {
+                    "enable-multi-threading": true,
+                    "http-dedicated-listener": true,
+                    "http-listener-threads": 2,
+                    "http-client-threads": 2
+                  },
+                  peers: await peers(family)
                 }
               ]
             }
@@ -310,7 +332,8 @@ export class DHCPService extends Service {
         endpoint =>
           endpoint.type === "dhcp" &&
           endpoint.family === family &&
-          endpoint.networkInterface.kind !== "loopback"
+          endpoint.networkInterface.kind !== "loopback" &&
+          endpoint.networkInterface.kind !== "wlan"
       ).map(
         endpoint => `${endpoint.networkInterface.name}/${endpoint.address}`
       );
@@ -320,7 +343,7 @@ export class DHCPService extends Service {
     );
     const dhcp4 = {
       Dhcp4: {
-        ...commonConfig("4"),
+        ...(await commonConfig("4")),
         subnet4: subnets
           .filter(s => s.family === "IPv4")
           .map((subnet, index) => {
@@ -343,7 +366,7 @@ export class DHCPService extends Service {
     };
     const dhcp6 = {
       Dhcp6: {
-        ...commonConfig("6"),
+        ...(await commonConfig("6")),
         subnet6: subnets
           .filter(s => s.family === "IPv6")
           .map((subnet, index) => {

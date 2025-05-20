@@ -334,6 +334,7 @@ export class Service extends Base {
 }
 
 export const sortByPriority = (a, b) => a.priority - b.priority;
+export const sortInverseByPriority = (a, b) => b.priority - a.priority;
 
 /**
  *
