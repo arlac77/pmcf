@@ -183,7 +183,6 @@ export class DHCPService extends Service {
         "renew-timer": 900,
         "rebind-timer": 1800,
         "valid-lifetime": 3600,
-        "preferred-lifetime": 3000,
 
         "option-data": [
           {
