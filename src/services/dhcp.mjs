@@ -183,20 +183,6 @@ export class DHCPService extends Service {
         "renew-timer": 900,
         "rebind-timer": 1800,
         "valid-lifetime": 3600,
-
-        "option-data": [
-          {
-            name: "dns-servers",
-            data: dnsServerEndpoints
-              .filter(endpoint => endpoint.family === `IPv${family}`)
-              .map(endpoint => endpoint.address)
-              .join(",")
-          },
-          {
-            name: "domain-search",
-            data: [...this.domains].join(",")
-          }
-        ],
         "hooks-libraries": [
           {
             library: "/usr/lib/kea/hooks/libdhcp_lease_cmds.so"
@@ -215,7 +201,20 @@ export class DHCPService extends Service {
           }
         ],
         "dhcp-ddns": dhcpServerDdns,
-        loggers
+        loggers,
+        "option-data": [
+          {
+            name: "domain-name-servers",
+            data: dnsServerEndpoints
+              .filter(endpoint => endpoint.family === `IPv${family}`)
+              .map(endpoint => endpoint.address)
+              .join(",")
+          },
+          {
+            name: "domain-search",
+            data: [...this.domains].join(",")
+          }
+        ]
       };
     };
 
