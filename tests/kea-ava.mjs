@@ -7,7 +7,7 @@ test("kea basics", t => {
   const h1 = new Host(owner, {
     name: "h1",
     networkInterfaces: {
-     // l0: { kind: "loopback" },
+      // l0: { kind: "loopback" },
       eth0: { ipAddresses: "10.0.0.1/16" }
     }
   });
@@ -19,9 +19,7 @@ test("kea basics", t => {
   );
   */
 
-  const a1 = [...h1.networkAddresses(
-    na => na.family === "IPv4"
-  )][0];
+  const a1 = [...h1.networkAddresses(na => na.family === "IPv4")][0];
 
   const kea = new DHCPService(h1, {
     name: "kea",
@@ -41,24 +39,24 @@ test("kea basics", t => {
   const result = kea.endpoints(e => e.family === "IPv4");
 
   const expected = [
-        new Endpoint(kea, a1, {
-          port: 547,
-          protocol: "udp",
-          tls: false
-        }),
-/*        new Endpoint(kea, a1, {
+    new Endpoint(kea, a1, {
+      protocol: "udp",
+      port: 547,
+      tls: false
+    }),
+    new HTTPEndpoint(kea, a1, {
+      type: "kea-control-agent",
+      port: 53002,
+      tls: false
+    })
+
+    /*        new Endpoint(kea, a1, {
           type: "kea-ddns",
           port: 53001,
           protocol: "tcp",
           tls: false
-        })*/
-    /*
+        })
       .map(a => [
-        new HTTPEndpoint(kea, a, {
-          type: "kea-control-agent",
-          port: 8000,
-          tls: false
-        }),
         new Endpoint(kea, a, {
           type: "kea-ddns",
           port: 53001,

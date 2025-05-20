@@ -25,7 +25,7 @@ const DHCPServiceTypeDefinition = {
 const controlAgentEndpoint = {
   type: "kea-control-agent",
   port: 53002,
-  path: "/",
+  pathname: "/",
   method: "get",
   protocol: "tcp",
   tls: false

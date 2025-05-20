@@ -89,7 +89,7 @@ export class DomainNameEndpoint extends PortEndpoint {
   }
 }
 
-export class HTTPEndpoint extends PortEndpoint {
+export class HTTPEndpoint extends BaseEndpoint {
   constructor(service, address, data) {
     super(service, data);
 
@@ -98,21 +98,24 @@ export class HTTPEndpoint extends PortEndpoint {
     } else if (address instanceof URL) {
       this.url = address;
     } else {
+      this.family = address.family;
       this.url = new URL(
-        "http://" +
+        (data.tls ? "https://" : "http://") +
           (address.family === "IPv6"
             ? "[" + address.address + "]"
             : address.address) +
           ":" +
           data.port +
-          data.path
+          (data.pathname || "/")
       );
       this.hostname = address.address;
     }
   }
 
   get port() {
-    return this.url.port || 80;
+    return (
+      this.url.port || (this.url.toString().startsWith("https:") ? 443 : 80)
+    );
   }
 
   get pathname() {
@@ -121,6 +124,14 @@ export class HTTPEndpoint extends PortEndpoint {
 
   get address() {
     return this.url;
+  }
+
+  get protocol() {
+    return "tcp";
+  }
+
+  get tls() {
+    return this.url.toString().startsWith("https:");
   }
 
   toString() {
