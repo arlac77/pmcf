@@ -146,7 +146,7 @@ export class DHCPService extends Service {
         name: `kea-${this.location.name}-${name}`,
         description: `kea definitions for ${this.fullName}@${name}`,
         access: "private",
-        dependencies: ["kea>=${keaVersion}"]
+        dependencies: [`kea>=${keaVersion}`]
       }
     };
 
