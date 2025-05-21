@@ -61,7 +61,6 @@ test("Endpoint from Service basics", t => {
 
 test("HTTPEndpoint basics", t => {
   const { h1, s1 } = prepare();
-
   const nas = h1.networkAddresses();
 
   const ep = new HTTPEndpoint(s1, [...nas][0], {
@@ -90,4 +89,19 @@ test("HTTPEndpoint from URL", t => {
   t.is(ep.pathname, "/aPath");
   t.is(ep.tls, true);
   t.is(ep.url.toString(), "https://somwhere/aPath");
+});
+
+test("HTTPEndpoint from URL with port", t => {
+  const { s1 } = prepare();
+
+  const ep = new HTTPEndpoint(s1, "https://somwhere:1443/aPath", {
+    type: "http-control"
+  });
+
+  t.is(ep.type, "http-control");
+  t.is(ep.port, 1443);
+  t.is(typeof ep.port, "number");
+  t.is(ep.pathname, "/aPath");
+  t.is(ep.tls, true);
+  t.is(ep.url.toString(), "https://somwhere:1443/aPath");
 });
