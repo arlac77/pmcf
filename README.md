@@ -69,7 +69,7 @@ Type: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Glob
     *   `options.endpoints` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?** filter for endpoints
     *   `options.select` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?** mapper from Endpoint into result
     *   `options.limit` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** upper limit of # result items
-    *   `options.join` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** jount result into a string
+    *   `options.join` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** join result(s) into a string
 
 Returns **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | any)**&#x20;
 
