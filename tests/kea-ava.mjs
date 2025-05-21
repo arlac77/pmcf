@@ -1,5 +1,12 @@
 import test from "ava";
-import { Root, Host, DHCPService, Endpoint, HTTPEndpoint } from "pmcf";
+import {
+  Root,
+  Host,
+  DHCPService,
+  Endpoint,
+  HTTPEndpoint,
+  fetureHasHTTPEndpoints
+} from "pmcf";
 
 test("kea basics", t => {
   const owner = new Root("/");
@@ -48,13 +55,19 @@ test("kea basics", t => {
       type: "kea-control-agent",
       port: 53002,
       tls: false
-    }),
-    new HTTPEndpoint(kea, a1, {
-      type: "kea-ha-4",
-      port: 53003,
-      tls: false
     })
   ];
+
+  if (fetureHasHTTPEndpoints) {
+    expected.push(
+      new HTTPEndpoint(kea, a1, {
+        type: "kea-ha-4",
+        port: 53003,
+        tls: false
+      })
+    );
+  }
+
   //console.log([...la].map(a => a.toString()));
   //console.log(result.map(na => na.toString()));
   //console.log(expected.map(na => na.toString()));

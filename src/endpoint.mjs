@@ -113,9 +113,12 @@ export class HTTPEndpoint extends BaseEndpoint {
   }
 
   get port() {
-    return (
-      this.url.port || (this.url.toString().startsWith("https:") ? 443 : 80)
-    );
+
+    const port = this.url.port;
+    if(port.length) {
+      return parseInt(port);
+    }
+    return this.url.toString().startsWith("https:") ? 443 : 80;
   }
 
   get pathname() {

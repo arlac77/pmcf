@@ -72,6 +72,9 @@ const controlDDNSEndpoint = {
   path: "/run/kea/ddns-ctrl-socket"
 };
 
+const keaVersion = 2.6;
+export const fetureHasHTTPEndpoints = keaVersion > 2.7;
+
 export class DHCPService extends Service {
   static {
     addType(this);
@@ -95,7 +98,16 @@ export class DHCPService extends Service {
 
     for (const na of this.host.networkAddresses()) {
       endpoints.push(new HTTPEndpoint(this, na, controlAgentEndpoint));
-      endpoints.push(new HTTPEndpoint(this, na, na.family === 'IPv4' ? ha4Endpoint : ha6Endpoint));
+
+      if (fetureHasHTTPEndpoints) {
+        endpoints.push(
+          new HTTPEndpoint(
+            this,
+            na,
+            na.family === "IPv4" ? ha4Endpoint : ha6Endpoint
+          )
+        );
+      }
 
       if (na.networkInterface.kind === "loopback") {
         endpoints.push(new Endpoint(this, na, ddnsEndpoint));
@@ -134,7 +146,7 @@ export class DHCPService extends Service {
         name: `kea-${this.location.name}-${name}`,
         description: `kea definitions for ${this.fullName}@${name}`,
         access: "private",
-        dependencies: ["kea>=2.6.2"]
+        dependencies: ["kea>=${keaVersion}"]
       }
     };
 
@@ -142,24 +154,29 @@ export class DHCPService extends Service {
       e => e.type === "kea-control-agent"
     );
 
-    const peers = async (family) => (
-      await Array.fromAsync(
-        network.findServices({ type: "dhcp", priority: "<20" })
+    const peers = async family =>
+      (
+        await Array.fromAsync(
+          network.findServices({ type: "dhcp", priority: "<20" })
+        )
       )
-    )
-      .sort(sortInverseByPriority)
-      .map((dhcp, i) => {
-        const ctrlAgentEndpoint = dhcp.endpoint(
-          e => e.type === `kea-ha-${family}`
-        );
+        .sort(sortInverseByPriority)
+        .map((dhcp, i) => {
+          const ctrlAgentEndpoint = dhcp.endpoint(
+            e =>
+              e.type ===
+              (fetureHasHTTPEndpoints
+                ? `kea-ha-${family}`
+                : "kea-control-agent")
+          );
 
-        return {
-          name: dhcp.host.name,
-          role: i === 0 ? "primary" : i > 1 ? "backup" : "standby",
-          url: ctrlAgentEndpoint.url,
-          "auto-failover": i <= 1
-        };
-      });
+          return {
+            name: dhcp.host.name,
+            role: i === 0 ? "primary" : i > 1 ? "backup" : "standby",
+            url: ctrlAgentEndpoint.url,
+            "auto-failover": i <= 1
+          };
+        });
 
     const loggers = [
       {
@@ -173,7 +190,7 @@ export class DHCPService extends Service {
       }
     ];
 
-    const commonConfig = async (family) => {
+    const commonConfig = async family => {
       return {
         "interfaces-config": {
           interfaces: listenInterfaces(`IPv${family}`)
@@ -210,12 +227,14 @@ export class DHCPService extends Service {
                 {
                   "this-server-name": name,
                   mode: "hot-standby",
+
+                  /*
                   "multi-threading": {
                     "enable-multi-threading": true,
                     "http-dedicated-listener": true,
                     "http-listener-threads": 2,
                     "http-client-threads": 2
-                  },
+                  },*/
                   peers: await peers(family)
                 }
               ]
@@ -249,8 +268,8 @@ export class DHCPService extends Service {
 
     const ctrlAgent = {
       "Control-agent": {
-        "http-host": ctrlAgentEndpoint?.host,
-        "http-port": ctrlAgentEndpoint?.port,
+        "http-host": ctrlAgentEndpoint.hostname,
+        "http-port": ctrlAgentEndpoint.port,
         "control-sockets": {
           dhcp4: toUnix(this.endpoint(e => e.type === "kea-control-dhcp4")),
           dhcp6: toUnix(this.endpoint(e => e.type === "kea-control-dhcp6")),
@@ -395,14 +414,12 @@ export class DHCPService extends Service {
       }
     };
 
-    const files = {
+    for (const [name, data] of Object.entries({
       "kea-ctrl-agent": ctrlAgent,
       "kea-dhcp-ddns": ddns,
       "kea-dhcp4": dhcp4,
       "kea-dhcp6": dhcp6
-    };
-
-    for (const [name, data] of Object.entries(files)) {
+    })) {
       loggers[0].name = name;
       await writeLines(
         join(packageData.dir, "etc/kea"),
