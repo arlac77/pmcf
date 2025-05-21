@@ -227,7 +227,9 @@ export class DHCPService extends Service {
                 {
                   "this-server-name": name,
                   mode: "hot-standby",
-
+                  "heartbeat-delay": 60000,
+                  "max-response-delay": 240000,
+                  "max-ack-delay": 10000,
                   /*
                   "multi-threading": {
                     "enable-multi-threading": true,
