@@ -113,9 +113,8 @@ export class HTTPEndpoint extends BaseEndpoint {
   }
 
   get port() {
-
     const port = this.url.port;
-    if(port.length) {
+    if (port.length) {
       return parseInt(port);
     }
     return this.url.toString().startsWith("https:") ? 443 : 80;
