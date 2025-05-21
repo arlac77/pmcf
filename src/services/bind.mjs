@@ -479,16 +479,19 @@ export class BINDService extends ExtraSourceService {
                   );
                 }
 
-                //   console.log(host._services.map(s=>s.name));
+                const sm = new Map();
+
                 for (const service of host._services) {
                   for (const record of service.dnsRecordsForDomainName(
                     host.domainName,
                     this.hasSVRRecords
                   )) {
-                    //console.log("SERVICE",service.toString(),record.toString())
-
-                    zone.records.add(record);
+                    sm.set(record.toString(), record);
                   }
+                }
+
+                for (const r of sm.values()) {
+                  zone.records.add(r);
                 }
               }
             }
