@@ -344,7 +344,7 @@ export const sortInverseByPriority = (a, b) => b.priority - a.priority;
  * @param {Function} [options.endpoints] filter for endpoints
  * @param {Function} [options.select] mapper from Endpoint into result
  * @param {number} [options.limit] upper limit of # result items
- * @param {string} [options.join] jount result into a string
+ * @param {string} [options.join] join result(s) into a string
  * @returns {string|any}
  */
 export function serviceEndpoints(sources, options = {}) {
