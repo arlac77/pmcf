@@ -1,5 +1,6 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
+import { reverseArpa } from "ip-utilties";
 import {
   Service,
   sortInverseByPriority,
@@ -217,9 +218,9 @@ export class DHCPService extends Service {
         "rebind-timer": 1800,
         "valid-lifetime": 86400,
         "hooks-libraries": [
-          {
+          /*{
             library: "/usr/lib/kea/hooks/libdhcp_ddns_tuning.so"
-          },
+          },*/
           {
             library: "/usr/lib/kea/hooks/libdhcp_lease_cmds.so"
           },
@@ -284,10 +285,10 @@ export class DHCPService extends Service {
       }
     };
 
-    const dnsServersSlot = domains =>
-      domains.map(domain => {
+    const dnsServersSlot = names =>
+      names.map(name => {
         return {
-          name: domain,
+          name,
           "dns-servers": dnsServerEndpoints
             .filter(endpoint => endpoint.family === "IPv4")
             .map(endpoint => {
@@ -297,6 +298,12 @@ export class DHCPService extends Service {
       });
 
     const ddnsEndpoint = this.endpoint(e => e.type === "kea-ddns");
+
+    const subnetPrefixes = new Set(
+      [...this.subnets]
+        .filter(s => s != SUBNET_LOCALHOST_IPV4 && s != SUBNET_LOCALHOST_IPV6)
+        .map(s => s.prefix)
+    );
 
     const ddns = {
       DhcpDdns: {
@@ -310,7 +317,9 @@ export class DHCPService extends Service {
           "ddns-domains": dnsServersSlot([...this.domains])
         },
         "reverse-ddns": {
-          "ddns-domains": dnsServersSlot([...this.domains])
+          "ddns-domains": dnsServersSlot(
+            [...subnetPrefixes].map(prefix => reverseArpa(prefix))
+          )
         },
 
         loggers
