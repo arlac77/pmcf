@@ -218,6 +218,9 @@ export class DHCPService extends Service {
         "valid-lifetime": 86400,
         "hooks-libraries": [
           {
+            library: "/usr/lib/kea/hooks/libdhcp_ddns_tuning.so"
+          },
+          {
             library: "/usr/lib/kea/hooks/libdhcp_lease_cmds.so"
           },
           {
@@ -306,11 +309,10 @@ export class DHCPService extends Service {
         "forward-ddns": {
           "ddns-domains": dnsServersSlot([...this.domains])
         },
-        /*
         "reverse-ddns": {
-          "ddns-domains": dnsSlot()
+          "ddns-domains": dnsServersSlot([...this.domains])
         },
-        */
+
         loggers
       }
     };
@@ -343,7 +345,8 @@ export class DHCPService extends Service {
           "ip-address": networkInterface.networkAddress(
             n => n.family === "IPv4"
           ).address,
-          hostname: networkInterface.hostName
+          hostname: networkInterface.hostName,
+          "client-classes": ["SKIP_DDNS"]
         };
       })
       .sort((a, b) => a.hostname.localeCompare(b.hostname));
