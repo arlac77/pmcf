@@ -215,7 +215,7 @@ export class DHCPService extends Service {
         },
         "renew-timer": 900,
         "rebind-timer": 1800,
-        "valid-lifetime": 3600,
+        "valid-lifetime": 86400,
         "hooks-libraries": [
           {
             library: "/usr/lib/kea/hooks/libdhcp_lease_cmds.so"
