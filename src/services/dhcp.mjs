@@ -354,7 +354,7 @@ export class DHCPService extends Service {
           "ip-address": networkInterface.networkAddress(
             n => n.family === "IPv4"
           ).address,
-          hostname: networkInterface.hostName,
+          hostname: networkInterface.domainName,
           "client-classes": ["SKIP_DDNS"]
         };
       })
