@@ -157,8 +157,10 @@ export class BINDService extends ExtraSourceService {
     for (const na of this.owner.networkAddresses(
       na => na.networkInterface.kind === "loopback"
     )) {
-      endpoints.push(new Endpoint(this, na, rdncEndpoint));
-      endpoints.push(new Endpoint(this, na, statisticsEndpoint));
+      endpoints.push(
+        new Endpoint(this, na, rdncEndpoint),
+        new Endpoint(this, na, statisticsEndpoint)
+      );
     }
 
     return filter ? endpoints.filter(filter) : endpoints;
