@@ -15,8 +15,8 @@ import {
 import { addType } from "../types.mjs";
 import { writeLines } from "../utils.mjs";
 
-const DHCPServiceTypeDefinition = {
-  name: "dhcp",
+const KeaServiceTypeDefinition = {
+  name: "kea",
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
@@ -76,22 +76,22 @@ const controlDDNSEndpoint = {
 const keaVersion = 2.6;
 export const fetureHasHTTPEndpoints = keaVersion > 2.7;
 
-export class DHCPService extends Service {
+export class KeaService extends Service {
   static {
     addType(this);
   }
 
   static get typeDefinition() {
-    return DHCPServiceTypeDefinition;
+    return KeaServiceTypeDefinition;
   }
 
   constructor(owner, data) {
     super(owner, data);
-    this.read(data, DHCPServiceTypeDefinition);
+    this.read(data, KeaServiceTypeDefinition);
   }
 
   get type() {
-    return DHCPServiceTypeDefinition.name;
+    return "dhcp"; //KeaServiceTypeDefinition.name;
   }
 
   endpoints(filter) {

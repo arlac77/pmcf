@@ -9,8 +9,8 @@ import {
   Service,
   Subnet,
   Owner,
-  BINDService,
-  NTPService,
+  BindService,
+  ChronyService,
   types,
   resolveTypeLinks
 } from "pmcf";
@@ -29,8 +29,8 @@ test("types", t => {
   t.is(types.host.clazz, Host);
   t.deepEqual(types.host.owners, [types.owner, types.network, types.root]);
 
-  t.is(types.dns.clazz, BINDService);
-  t.is(types.ntp.clazz, NTPService);
+  t.is(types.bind.clazz, BindService);
+  t.is(types.chrony.clazz, ChronyService);
 
   t.is(types.cluster.clazz, Cluster);
   t.is(types.owner.clazz, Owner);

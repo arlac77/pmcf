@@ -8,8 +8,8 @@ import {
 } from "../extra-source-service.mjs";
 import { writeLines } from "../utils.mjs";
 
-const NTPServiceTypeDefinition = {
-  name: "ntp",
+const ChronyServiceTypeDefinition = {
+  name: "chrony",
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
   extends: ExtraSourceServiceTypeDefinition,
@@ -24,22 +24,22 @@ const NTPServiceTypeDefinition = {
   }
 };
 
-export class NTPService extends ExtraSourceService {
+export class ChronyService extends ExtraSourceService {
   static {
     addType(this);
   }
 
   static get typeDefinition() {
-    return NTPServiceTypeDefinition;
+    return ChronyServiceTypeDefinition;
   }
 
   constructor(owner, data) {
     super(owner, data);
-    this.read(data, NTPServiceTypeDefinition);
+    this.read(data, ChronyServiceTypeDefinition);
   }
 
   get type() {
-    return NTPServiceTypeDefinition.name;
+    return "ntp"; //ChronyServiceTypeDefinition.name;
   }
 
   async *preparePackages(dir) {

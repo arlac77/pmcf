@@ -13,7 +13,7 @@ const ServiceTypes = {
   "pacman-repo": {
     extends: ["https"]
   },
-  ntp: { endpoints: [{ protocol: "udp", port: 123, tls: false }] },
+  ntp: { endpoints: [{ protocol: "udp", port: 123, tls: false, isPool: false }] },
   //bind: { extends: ["dns"] },
   dns: { endpoints: [{ protocol: "udp", port: 53, tls: false }] },
   ldap: { endpoints: [{ protocol: "tcp", port: 389, tls: false }] },

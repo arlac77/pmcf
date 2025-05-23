@@ -2,7 +2,7 @@ import test from "ava";
 import {
   Root,
   Host,
-  DHCPService,
+  KeaService,
   Endpoint,
   HTTPEndpoint,
   fetureHasHTTPEndpoints
@@ -14,7 +14,6 @@ test("kea basics", t => {
   const h1 = new Host(owner, {
     name: "h1",
     networkInterfaces: {
-      // l0: { kind: "loopback" },
       eth0: { ipAddresses: "10.0.0.1/16" }
     }
   });
@@ -28,9 +27,8 @@ test("kea basics", t => {
 
   const a1 = [...h1.networkAddresses(na => na.family === "IPv4")][0];
 
-  const kea = new DHCPService(h1, {
+  const kea = new KeaService(h1, {
     name: "kea",
-
     subsystems: {
       "kea-control-agent": {
         port: 8000

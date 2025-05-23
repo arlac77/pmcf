@@ -22,8 +22,8 @@ import { addHook } from "../hooks.mjs";
 
 const address_types = ["network", "host", "network_interface"];
 
-const BINDServiceTypeDefinition = {
-  name: "dns",
+const BindServiceTypeDefinition = {
+  name: "bind",
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
   extends: ExtraSourceServiceTypeDefinition,
@@ -113,7 +113,7 @@ function addressesStatement(prefix, objects, generateEmpty = false) {
   return [];
 }
 
-export class BINDService extends ExtraSourceService {
+export class BindService extends ExtraSourceService {
   allowedUpdates = [];
   recordTTL = "1W";
   hasSVRRecords = true;
@@ -139,16 +139,16 @@ export class BINDService extends ExtraSourceService {
   }
 
   static get typeDefinition() {
-    return BINDServiceTypeDefinition;
+    return BindServiceTypeDefinition;
   }
 
   constructor(owner, data) {
     super(owner, data);
-    this.read(data, BINDServiceTypeDefinition);
+    this.read(data, BindServiceTypeDefinition);
   }
 
   get type() {
-    return BINDServiceTypeDefinition.name;
+    return "dns"; // BindServiceTypeDefinition.name;
   }
 
   endpoints(filter) {
