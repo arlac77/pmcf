@@ -62,7 +62,7 @@ export class Endpoint extends PortEndpoint {
   }
 
   get address() {
-    return this.networkAddress?.address;
+    return this.networkAddress.address;
   }
 
   get family() {
@@ -86,6 +86,11 @@ export class DomainNameEndpoint extends PortEndpoint {
 
   get address() {
     return this.domainName;
+  }
+
+  get isPool()
+  {
+    return this.domainName.indexOf('pool') >= 0; // TODO
   }
 }
 
