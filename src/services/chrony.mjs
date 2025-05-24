@@ -14,14 +14,7 @@ const ChronyServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ExtraSourceServiceTypeDefinition,
   priority: 0.1,
-  properties: {
-    isPool: {
-      type: "boolean",
-      collection: false,
-      writeable: true,
-      default: false
-    }
-  }
+  properties: {}
 };
 
 export class ChronyService extends ExtraSourceService {
@@ -69,24 +62,25 @@ export class ChronyService extends ExtraSourceService {
         },
         endpoints: e =>
           e.service.host !== host &&
-          e.family === "IPv4" &&
+          //e.family === "IPv4" &&
           e.networkInterface.kind !== "loopback",
 
         select: endpoint =>
-          `${endpoint.service.isPool ? "pool" : "server"} ${
-            endpoint.domainName
-          } iburst`
+          `${endpoint.isPool ? "pool" : "server"} ${endpoint.domainName} iburst`
       }),
       `mailonchange ${this.administratorEmail} 0.5`,
       "local stratum 10",
       "leapsectz right/UTC",
       "makestep 1.0 3",
       "ratelimit interval 3 burst 8",
-      "cmdratelimit interval -4 burst 16",
       "driftfile /var/lib/chrony/drift",
       "ntsdumpdir /var/lib/chrony",
       "dumpdir /var/lib/chrony",
-      "pidfile /run/chrony/chronyd.pid"
+      "pidfile /run/chrony/chronyd.pid",
+      [...this.subnets].map(s => `allow ${s.address}`),
+      "cmdratelimit interval -4 burst 16",
+      [...this.subnets].map(s => `cmdallow ${s.address}`)
+      //this.endpoints(e=>e.type === "ntp" && e.networkInterface.kind=='loopback').map(endpoint=>`alllow ${endpoint.address}`)
     ];
 
     await writeLines(join(dir, "etc"), "chrony.conf", lines);
