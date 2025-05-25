@@ -86,7 +86,7 @@ test("Service basics", t => {
 
   t.deepEqual(
     s1.dnsRecordsForDomainName("example.com", true).map(r => r.toString()),
-    ["_dns._udp.example.com. 1W IN SRV     3   5  53 h1."]
+    ["_dns._udp.example.com. 1W IN SRV   497   5  53 h1."]
   );
 
   t.is(s1.name, "dns");
@@ -124,7 +124,7 @@ test("Service basics", t => {
 
   t.deepEqual(
     s2.dnsRecordsForDomainName("example.com", true).map(r => r.toString()),
-    ["_dns._udp.example.com. 1W IN SRV     3   5  53 h2."]
+    ["_dns._udp.example.com. 1W IN SRV   497   5  53 h2."]
   );
 
   t.deepEqual(
@@ -186,8 +186,8 @@ test("Service basics", t => {
   t.deepEqual(
     s3.dnsRecordsForDomainName("example.com", true).map(r => r.toString()),
     [
-      "_http3._tcp.example.com. 1W IN SRV     0   0 443 h1.",
-      'example.com. 1W IN HTTPS   0 . alpn="h3" no-default-alpn'
+      "_http3._tcp.example.com. 1W IN SRV   500   0 443 h1.",
+      'example.com. 1W IN HTTPS 500 . alpn="h3" no-default-alpn'
     ]
   );
 });
