@@ -118,7 +118,7 @@ export class Cluster extends Host {
         cfg.push("  }");
         cfg.push(`  virtual_router_id ${cluster.routerId}`);
         cfg.push(
-          `  priority ${host.priority - (cluster.masters.has(ni) ? 0 : 5)}`
+          `  priority ${host.priority - 100 + (cluster.masters.has(ni) ? 0 : 5)}`
         );
         cfg.push("  smtp_alert");
         cfg.push("  advert_int 5");

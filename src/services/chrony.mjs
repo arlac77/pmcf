@@ -58,7 +58,7 @@ export class ChronyService extends ExtraSourceService {
       ...serviceEndpoints(this, {
         services: {
           type: "ntp",
-          priority: "<10"
+          priority: ">=200"
         },
         endpoints: e =>
           e.service.host !== host &&

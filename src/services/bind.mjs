@@ -236,7 +236,7 @@ export class BindService extends ExtraSourceService {
     };
 
     const forwarders = serviceEndpoints(this.source, {
-      services: { type: "dns", priority: ">=20" },
+      services: { type: "dns", priority: ">=300" },
       select: e => e.address,
       limit: 5
     });
@@ -535,7 +535,7 @@ export class BindService extends ExtraSourceService {
   }
 
   get defaultRecords() {
-    const nameService = this.findService({ type: "dns", priority: "<10" });
+    const nameService = this.findService({ type: "dns", priority: ">=300" });
 
     const SOARecord = DNSRecord(
       "@",

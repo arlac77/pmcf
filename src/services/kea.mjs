@@ -142,7 +142,7 @@ export class KeaService extends Service {
     const dnsServerEndpoints = serviceEndpoints(network, {
       services: {
         type: "dns",
-        priority: "<20"
+        priority: ">=300"
       },
       endpoints: endpoint => endpoint.networkInterface.kind !== "loopback"
     });
@@ -162,7 +162,7 @@ export class KeaService extends Service {
     const peers = async family =>
       (
         await Array.fromAsync(
-          network.findServices({ type: "dhcp", priority: "<30" })
+          network.findServices({ type: "dhcp", priority: ">=200" })
         )
       )
         .sort(sortInverseByPriority)

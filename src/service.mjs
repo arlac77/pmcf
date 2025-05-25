@@ -6,7 +6,8 @@ import {
   DNSRecord,
   dnsFullName,
   dnsFormatParameters,
-  dnsMergeParameters
+  dnsMergeParameters,
+  dnsPriority
 } from "./dns-utils.mjs";
 
 const ServiceTypes = {
@@ -268,7 +269,7 @@ export class Service extends Base {
 
   dnsRecordsForDomainName(domainName, hasSVRRecords) {
     const records = [];
-    if (this.priority <= 1 && this.alias) {
+    if (this.priority >= 390 && this.alias) {
       records.push(DNSRecord(this.alias, "CNAME", dnsFullName(domainName)));
     }
 
@@ -283,7 +284,7 @@ export class Service extends Base {
           DNSRecord(
             dnsFullName(`_${this.type}._${ep.protocol}.${domainName}`),
             "SRV",
-            this.priority ?? 10,
+            dnsPriority(this.priority),
             this.weight,
             ep.port,
             dnsFullName(this.domainName)
@@ -311,7 +312,7 @@ export class Service extends Base {
           DNSRecord(
             dnsFullName(domainName),
             dnsRecord.type,
-            this.priority ?? 10,
+            dnsPriority(this.priority),
             ".",
             dnsFormatParameters(parameters)
           )
@@ -321,7 +322,7 @@ export class Service extends Base {
           DNSRecord(
             "@",
             dnsRecord.type,
-            this.priority ?? 10,
+            dnsPriority(this.priority),
             dnsFullName(domainName)
           )
         );

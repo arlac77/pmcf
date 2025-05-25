@@ -23,13 +23,17 @@ export function sortZoneRecords(a, b) {
   if (a.type === "PTR") {
     const toNum = a => {
       const s = a.split(".");
-      s.pop();s.pop();s.pop();
-      return s.reverse().reduce((a, c) => BigInt(parseInt(c,16)) + 256n * 256n * a, 0n);
+      s.pop();
+      s.pop();
+      s.pop();
+      return s
+        .reverse()
+        .reduce((a, c) => BigInt(parseInt(c, 16)) + 256n * 256n * a, 0n);
     };
     return Number(toNum(a.key) - toNum(b.key));
   }
   order = a.key.localeCompare(b.key);
-  if(order) {
+  if (order) {
     return order;
   }
 
@@ -99,4 +103,8 @@ export function dnsMergeParameters(a, b) {
       new Set(asIterator(a[key])).union(new Set(asIterator(b[key])))
     ])
   );
+}
+
+export function dnsPriority(priority) {
+  return 500 - (priority ?? 10);
 }
