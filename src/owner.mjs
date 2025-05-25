@@ -3,6 +3,7 @@ import { asIterator } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { Subnet, SUBNET_GLOBAL_IPV4, SUBNET_GLOBAL_IPV6 } from "./subnet.mjs";
 import { addType, types } from "./types.mjs";
+
 const OwnerTypeDefinition = {
   name: "owner",
   owners: ["location", "owner", "root"],
@@ -55,6 +56,17 @@ export class Owner extends Base {
     }
 
     return false;
+  }
+
+  *find(pattern) {
+    for (const node of this.traverse(() => {})) {
+      for (const p of pattern) {
+        if (node.fullName.match(p)) {
+          yield node;
+          break;
+        }
+      }
+    }
   }
 
   named(name) {
@@ -185,9 +197,10 @@ export class Owner extends Base {
     }
 
     let subnet = this.subnetForAddress(address);
-  
+
     if (!subnet) {
-      subnet =  familyIP(address) === 'IPv4' ?  SUBNET_GLOBAL_IPV4 : SUBNET_GLOBAL_IPV6;
+      subnet =
+        familyIP(address) === "IPv4" ? SUBNET_GLOBAL_IPV4 : SUBNET_GLOBAL_IPV6;
 
       /*
       this.error(
@@ -196,7 +209,7 @@ export class Owner extends Base {
       );
       */
     }
-  
+
     return subnet;
   }
 
@@ -216,8 +229,7 @@ export class Owner extends Base {
     return this.typeList("cluster");
   }
 
-  get bridges()
-  {
+  get bridges() {
     return this._bridges;
   }
 

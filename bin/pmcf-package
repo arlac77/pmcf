@@ -30,8 +30,7 @@ const publishingDetails = createPublishingDetails(
   env
 );
 
-for (const name of args) {
-  const object = await root.load(name);
+for (const object of root.find(args)) {
   const stagingDir = join(options.output, object.fullName);
 
   for await (const { sources, outputs, properties } of object.preparePackages(

@@ -509,6 +509,7 @@ export class Base {
   traverse(visitor, ...args) {
     const visited = new Set();
     this._traverse(visited, visitor, ...args);
+    return visited;
   }
 
   _traverse(visited, visitor, ...args) {
