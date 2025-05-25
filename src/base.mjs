@@ -111,11 +111,10 @@ export class Base {
               if (Array.isArray(current)) {
                 current.push(value);
               } else {
-                if(current instanceof Set) {
+                if (current instanceof Set) {
                   // TODO
                   this[property.name] = value;
-                }
-                else if (current instanceof Map) {
+                } else if (current instanceof Map) {
                   // TODO
                   this[property.name] = value;
                 } else {
@@ -427,16 +426,7 @@ export class Base {
     return new Set(allOutputs.filter(o => this.packaging.has(o.name)));
   }
 
-  async *preparePackages(stagingDir) {
-    yield {
-      sources: [],
-      outputs: this.outputs,
-      properties: {
-        description: `${this.typeName} definitions for ${this.fullName}`,
-        access: "private"
-      }
-    };
-  }
+  async *preparePackages(stagingDir) {}
 
   get tags() {
     return this._tags;
