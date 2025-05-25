@@ -125,6 +125,14 @@ export class KeaService extends Service {
   }
 
   async *preparePackages(dir) {
+    const ctrlAgentEndpoint = this.endpoint(
+      e => e.type === "kea-control-agent"
+    );
+
+    if (!ctrlAgentEndpoint) {
+      return;
+    }
+
     const network = this.network;
     const host = this.host;
     const name = host.name;
@@ -151,10 +159,6 @@ export class KeaService extends Service {
       }
     };
 
-    const ctrlAgentEndpoint = this.endpoint(
-      e => e.type === "kea-control-agent"
-    );
-
     const peers = async family =>
       (
         await Array.fromAsync(
@@ -179,7 +183,8 @@ export class KeaService extends Service {
               "auto-failover": i <= 1
             };
           }
-        }).filter(p=>p!= null);
+        })
+        .filter(p => p != null);
 
     const loggers = [
       {
