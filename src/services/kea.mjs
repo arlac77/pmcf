@@ -171,13 +171,15 @@ export class KeaService extends Service {
                 : "kea-control-agent")
           );
 
-          return {
-            name: dhcp.host.name,
-            role: i === 0 ? "primary" : i > 1 ? "backup" : "standby",
-            url: ctrlAgentEndpoint.url,
-            "auto-failover": i <= 1
-          };
-        });
+          if (ctrlAgentEndpoint) {
+            return {
+              name: dhcp.host.name,
+              role: i === 0 ? "primary" : i > 1 ? "backup" : "standby",
+              url: ctrlAgentEndpoint.url,
+              "auto-failover": i <= 1
+            };
+          }
+        }).filter(p=>p!= null);
 
     const loggers = [
       {
