@@ -46,11 +46,12 @@ export class SystemdTimesyncdService extends ExtraSourceService {
           NTP: serviceEndpoints(this, {
             services: {
               type: "ntp",
-              priority: "<10"
+              priority: "[200:399]"
             },
             endpoints: endpoint =>
               endpoint.networkInterface.kind !== "loopback",
             select: endpoint => endpoint.domainName,
+            limit: 2,
             join: " "
           })
         }

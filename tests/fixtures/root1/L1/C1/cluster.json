@@ -1,5 +1,5 @@
 {
-  "priority": 1,
+  "priority": 390,
   "routerId": 77,
   "masters": "/L1/host1/eth0",
   "backups": "/L1/n1/host2/wlan0",

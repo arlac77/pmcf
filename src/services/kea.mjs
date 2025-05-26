@@ -3,7 +3,7 @@ import { FileContentProvider } from "npm-pkgbuild";
 import { reverseArpa } from "ip-utilties";
 import {
   Service,
-  sortInverseByPriority,
+  sortAscendingByPriority,
   ServiceTypeDefinition,
   Endpoint,
   UnixEndpoint,
@@ -165,7 +165,7 @@ export class KeaService extends Service {
           network.findServices({ type: "dhcp", priority: ">=200" })
         )
       )
-        .sort(sortInverseByPriority)
+        .sort(sortAscendingByPriority)
         .map((dhcp, i) => {
           const ctrlAgentEndpoint = dhcp.endpoint(
             e =>

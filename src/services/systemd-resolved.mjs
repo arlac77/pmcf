@@ -37,24 +37,24 @@ export class SystemdResolvedService extends ExtraSourceService {
   }
 
   systemdConfig(name) {
-    const options = priority => {
+    const options = (priority, limit) => {
       return {
         services: { type: "dns", priority },
         endpoints: e => e.networkInterface.kind !== "loopback",
         select: endpoint => endpoint.address,
         join: " ",
-        limit: 5
+        limit
       };
     };
 
     return {
-      serviceName: "systemd-resolved",  
+      serviceName: "systemd-resolved",
       configFileName: `etc/systemd/resolved.conf.d/${name}.conf`,
       content: [
         "Resolve",
         {
-          DNS: serviceEndpoints(this, options("<10")),
-          FallbackDNS: serviceEndpoints(this, options(">=20")),
+          DNS: serviceEndpoints(this, options(">=300", 2)),
+          FallbackDNS: serviceEndpoints(this, options("[100:199]", 4)),
           Domains: [...this.localDomains].join(" "),
           DNSSEC: "no",
           MulticastDNS: this.network.multicastDNS ? "yes" : "no",

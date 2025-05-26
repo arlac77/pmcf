@@ -373,10 +373,15 @@ export class Base {
     return this.findService({ type: "smtp" });
   }
 
+  /**
+   * 
+   * @param {any} filter 
+   * @returns service with the highest priority
+   */
   findService(filter) {
     let best;
     for (const service of this.findServices(filter)) {
-      if (!best || service.priority < best.priority) {
+      if (!best || service.priority > best.priority) {
         best = service;
       }
     }

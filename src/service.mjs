@@ -333,8 +333,8 @@ export class Service extends Base {
   }
 }
 
-export const sortByPriority = (a, b) => a.priority - b.priority;
-export const sortInverseByPriority = (a, b) => b.priority - a.priority;
+export const sortAscendingByPriority = (a, b) => a.priority - b.priority;
+export const sortDescendingByPriority = (a, b) => b.priority - a.priority;
 
 /**
  *
@@ -351,7 +351,7 @@ export function serviceEndpoints(sources, options = {}) {
   const all = asArray(sources)
     .map(ft => Array.from(ft.findServices(options.services)))
     .flat()
-    .sort(sortByPriority)
+    .sort(sortDescendingByPriority)
     .map(service => service.endpoints(options.endpoints))
     .flat();
 
