@@ -43,9 +43,16 @@ export function* objectFilter(type, objects, filter) {
           case "number":
             return filter[key] === object[key];
           case "string":
-            const m = filter[key].match(/^([=><!]+)(\d+)/);
+            let m = filter[key].match(/^([=><!]+)(\d+)/);
             if (m) {
               return compare(m[1], key, parseInt(m[2]));
+            }
+
+            m = filter[key].match(/^\[(\d+):(\d+)\]/);
+            if (m) {
+              const lower = parseInt(m[1]);
+              const upper = parseInt(m[2]);
+              return lower <= object[key] && upper >= object[key];
             }
         }
         return false;
