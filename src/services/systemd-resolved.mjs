@@ -53,7 +53,7 @@ export class SystemdResolvedService extends ExtraSourceService {
       content: [
         "Resolve",
         {
-          DNS: serviceEndpoints(this, options(">=300", 2)),
+          DNS: serviceEndpoints(this, options("[300:399]", 4)),
           FallbackDNS: serviceEndpoints(this, options("[100:199]", 4)),
           Domains: [...this.localDomains].join(" "),
           DNSSEC: "no",
