@@ -7,7 +7,9 @@ const SystemdJournalUploadServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
-  properties: {}
+  properties: {
+    url: { type: "string", collection: false, writeable: true }
+  }
 };
 
 export class SystemdJournalUploadService extends Service {
@@ -37,7 +39,7 @@ export class SystemdJournalUploadService extends Service {
       serviceName: "systemd-journal-upload",
       configFileName: `etc/systemd/journal-upload.conf.d/${name}.conf`,
       content: ["Upload", {
-        URL : ""
+        URL : this.url
       }]
     };
   }
