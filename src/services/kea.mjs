@@ -162,7 +162,7 @@ export class KeaService extends Service {
     const peers = async family =>
       (
         await Array.fromAsync(
-          network.findServices({ type: "dhcp", priority: ">=200" })
+          network.findServices({ type: "dhcp", priority: ">=100" })
         )
       )
         .sort(sortAscendingByPriority)
