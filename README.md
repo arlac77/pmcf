@@ -20,15 +20,25 @@
 
 ### Table of Contents
 
-*   [networkAddresses](#networkaddresses)
+*   [findService](#findservice)
     *   [Parameters](#parameters)
-*   [NetworkAddress](#networkaddress)
+*   [networkAddresses](#networkaddresses)
     *   [Parameters](#parameters-1)
+*   [NetworkAddress](#networkaddress)
+    *   [Parameters](#parameters-2)
     *   [subnet](#subnet)
     *   [networkInterface](#networkinterface)
     *   [address](#address)
 *   [serviceEndpoints](#serviceendpoints)
-    *   [Parameters](#parameters-2)
+    *   [Parameters](#parameters-3)
+
+## findService
+
+### Parameters
+
+*   `filter` **any**&#x20;
+
+Returns **any** service with the highest priority
 
 ## networkAddresses
 
