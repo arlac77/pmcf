@@ -354,18 +354,19 @@ export class KeaService extends Service {
       }
     }
 
-    const reservations = [...hwmap]
-      .map(([k, networkInterface]) => {
-        return {
-          "hw-address": k,
-          "ip-address": networkInterface.networkAddress(
-            n => n.family === "IPv4"
-          ).address,
-          hostname: networkInterface.domainName,
-          "client-classes": ["SKIP_DDNS"]
-        };
-      })
-      .sort((a, b) => a.hostname.localeCompare(b.hostname));
+    const reservations = family =>
+      [...hwmap]
+        .map(([k, networkInterface]) => {
+          return {
+            "hw-address": k,
+            "ip-address": networkInterface.networkAddress(
+              n => n.family === `IPv${family}`
+            )?.address,
+            hostname: networkInterface.domainName,
+            "client-classes": ["SKIP_DDNS"]
+          };
+        })
+        .sort((a, b) => a.hostname.localeCompare(b.hostname));
 
     const listenInterfaces = family =>
       this.endpoints(
@@ -399,7 +400,7 @@ export class KeaService extends Service {
                   data: network.gateway.address
                 }
               ],
-              reservations
+              reservations: reservations("4")
             };
           })
       }
@@ -424,12 +425,7 @@ export class KeaService extends Service {
                   "delegated-len": 64
                 }
               ],*/
-              reservations: [
-                /*{
-                  duid: "01:02:03:04:05:0A:0B:0C:0D:0E",
-                  "ip-addresses": ["2001:db8:1::100"]
-                }*/
-              ]
+              reservations: reservations("6")
             };
           })
       }
