@@ -40,12 +40,13 @@ export class Subnet extends Base {
   constructor(owner, address) {
     const { longPrefix, prefix, prefixLength, cidr } = normalizeCIDR(address);
     super(owner, cidr);
-    owner.addObject(this);
 
     this.prefix = prefix;
     this.prefixLength = prefixLength;
     this.longPrefix = longPrefix;
     this.family = familyIP(address);
+
+    owner.addObject(this);
   }
 
   get fullName() {
