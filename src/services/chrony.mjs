@@ -66,7 +66,9 @@ export class ChronyService extends ExtraSourceService {
           e.networkInterface.kind !== "loopback",
 
         select: endpoint =>
-          `${endpoint.isPool ? "pool" : "server"} ${endpoint.domainName} iburst`
+          `${endpoint.isPool ? "pool" : "server"} ${endpoint.domainName} iburst`,
+
+        limit: 7
       }),
       `mailonchange ${this.administratorEmail} 0.5`,
       "local stratum 10",
