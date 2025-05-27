@@ -360,17 +360,20 @@ export class KeaService extends Service {
     const reservations = (subnet, family) =>
       [...hwmap]
         .map(([k, networkInterface]) => {
+          let ip = {};
           let addr = networkInterface.networkAddress(
               n => n.family === `IPv${family}`
             )?.address;
 
-          if(!addr || !subnet.matchesAddress(addr)) {
-            addr = undefined;
+          if(addr && subnet.matchesAddress(addr)) {
+            ip = family === "6" ?
+              { "ip-addresses" : [addr]} :
+              { "ip-address" : addr };
           }
 
           return {
             "hw-address": k,
-            "ip-address": addr,
+            ...ip,
             hostname: networkInterface.domainName,
             "client-classes": ["SKIP_DDNS"]
           };
