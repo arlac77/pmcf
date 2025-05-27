@@ -36,7 +36,7 @@ export class SystemdResolvedService extends ExtraSourceService {
     return SystemdResolvedServiceTypeDefinition.name;
   }
 
-  systemdConfig(name) {
+  systemdConfigs(name) {
     const options = (priority, limit) => {
       return {
         services: { type: "dns", priority },
@@ -48,7 +48,7 @@ export class SystemdResolvedService extends ExtraSourceService {
     };
 
     return {
-      serviceName: "systemd-resolved",
+      serviceName: "systemd-resolved.service",
       configFileName: `etc/systemd/resolved.conf.d/${name}.conf`,
       content: [
         "Resolve",

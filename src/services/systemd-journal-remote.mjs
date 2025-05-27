@@ -32,11 +32,16 @@ export class SystemdJournalRemoteService extends Service {
     return SystemdJournalRemoteServiceTypeDefinition.name;
   }
 
-  systemdConfig(name) {
-    return {
-      serviceName: "systemd-journal-remote",
-      configFileName: `etc/systemd/journal-remote.conf.d/${name}.conf`,
-      content: ["Remote", {}]
-    };
+  systemdConfigs(name) {
+    return [
+      {
+        serviceName: "systemd-journal-remote.service",
+        configFileName: `etc/systemd/journal-remote.conf.d/${name}.conf`,
+        content: ["Remote", {}]
+      } /*,
+      {
+        serviceName: "systemd-journal-remote.socket"
+      }*/
+    ];
   }
 }

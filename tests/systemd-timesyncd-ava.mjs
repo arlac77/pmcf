@@ -7,8 +7,8 @@ test("systemd-timesyncd basics", async t => {
 
   const ntp = await root.named("/L1/C1/systemd-timesyncd");
 
-  t.deepEqual(ntp.systemdConfig("ABC"), {
-    serviceName: "systemd-timesyncd",
+  t.deepEqual(ntp.systemdConfigs("ABC"), {
+    serviceName: "systemd-timesyncd.service",
     configFileName: "etc/systemd/timesyncd.conf.d/ABC.conf",
     content: [
       "Time",

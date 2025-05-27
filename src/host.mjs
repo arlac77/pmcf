@@ -8,7 +8,8 @@ import {
   domainFromDominName,
   domainName,
   writeLines,
-  sectionLines
+  sectionLines,
+  asArray
 } from "./utils.mjs";
 import { objectFilter } from "./filter.mjs";
 import { addType, types } from "./types.mjs";
@@ -457,7 +458,7 @@ export class Host extends ServiceOwner {
 
     for (const networkInterface of this.networkInterfaces.values()) {
       for (const s of networkInterface.subnets()) {
-        sn.set(s.address,s);
+        sn.set(s.address, s);
       }
     }
 
@@ -514,17 +515,20 @@ export class Host extends ServiceOwner {
     await generateKnownHosts(this.owner.hosts(), join(dir, "root", ".ssh"));
 
     for (const service of this.services) {
-      if (service.systemdConfig) {
-        const { serviceName, configFileName, content } = service.systemdConfig(
-          this.name
-        );
-        await writeLines(dir, configFileName, sectionLines(...content));
+      if (service.systemdConfigs) {
+        for (const {
+          serviceName,
+          configFileName,
+          content
+        } of asArray(service.systemdConfigs(this.name))) {
+          await writeLines(dir, configFileName, sectionLines(...content));
 
-        addHook(
-          packageData.properties.hooks,
-          "post_install",
-          `systemctl enable ${serviceName}.service`
-        );
+          addHook(
+            packageData.properties.hooks,
+            "post_install",
+            `systemctl enable ${serviceName}`
+          );
+        }
       }
     }
 

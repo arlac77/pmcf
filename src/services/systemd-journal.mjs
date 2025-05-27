@@ -32,7 +32,7 @@ export class SystemdJournalService extends Service {
     return SystemdJournalServiceTypeDefinition.name;
   }
 
-  systemdConfig(name) {
+  systemdConfigs(name) {
     return {
       serviceName: "systemd-journald",  
       configFileName: `etc/systemd/journal.conf.d/${name}.conf`,

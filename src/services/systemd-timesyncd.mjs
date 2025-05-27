@@ -36,9 +36,9 @@ export class SystemdTimesyncdService extends ExtraSourceService {
     return SystemdTimesyncdServiceTypeDefinition.name;
   }
 
-  systemdConfig(name) {
+  systemdConfigs(name) {
     return {
-      serviceName: "systemd-timesyncd",
+      serviceName: "systemd-timesyncd.service",
       configFileName: `etc/systemd/timesyncd.conf.d/${name}.conf`,
       content: [
         "Time",
