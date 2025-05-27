@@ -162,7 +162,10 @@ export class KeaService extends Service {
     const peers = async family =>
       (
         await Array.fromAsync(
-          network.findServices({ type: "dhcp", priority: ">=" + (this.priority < 100 ? this.priority : 100) })
+          network.findServices({
+            type: "dhcp",
+            priority: ">=" + (this.priority < 100 ? this.priority : 100)
+          })
         )
       )
         .sort(sortDescendingByPriority)
@@ -354,14 +357,20 @@ export class KeaService extends Service {
       }
     }
 
-    const reservations = family =>
+    const reservations = (subnet, family) =>
       [...hwmap]
         .map(([k, networkInterface]) => {
+          let addr = networkInterface.networkAddress(
+              n => n.family === `IPv${family}`
+            )?.address;
+
+          if(!addr || !subnet.matchesAddress(addr)) {
+            addr = undefined;
+          }
+
           return {
             "hw-address": k,
-            "ip-address": networkInterface.networkAddress(
-              n => n.family === `IPv${family}`
-            )?.address,
+            "ip-address": addr,
             hostname: networkInterface.domainName,
             "client-classes": ["SKIP_DDNS"]
           };
@@ -400,7 +409,7 @@ export class KeaService extends Service {
                   data: network.gateway.address
                 }
               ],
-              reservations: reservations("4")
+              reservations: reservations(subnet, "4")
             };
           })
       }
@@ -425,7 +434,7 @@ export class KeaService extends Service {
                   "delegated-len": 64
                 }
               ],*/
-              reservations: reservations("6")
+              reservations: reservations(subnet, "6")
             };
           })
       }
