@@ -61,12 +61,12 @@ export class ChronyService extends ExtraSourceService {
           priority: ">=200"
         },
         endpoints: e =>
-          e.service.host !== host &&
-          //e.family === "IPv4" &&
-          e.networkInterface.kind !== "loopback",
+          e.service.host !== host && e.networkInterface.kind !== "loopback",
 
         select: endpoint =>
-          `${endpoint.isPool ? "pool" : "server"} ${endpoint.domainName} iburst`,
+          `${endpoint.isPool ? "pool" : "server"} ${
+            endpoint.domainName
+          } iburst`,
 
         limit: 7
       }),
