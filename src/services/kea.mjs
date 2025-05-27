@@ -261,7 +261,7 @@ export class KeaService extends Service {
         loggers,
         "option-data": [
           {
-            name: family === 4 ? "domain-name-servers" : "dns-servers",
+            name: family == 4 ? "domain-name-servers" : "dns-servers",
             data: dnsServerEndpoints
               .filter(endpoint => endpoint.family === `IPv${family}`)
               .map(endpoint => endpoint.address)
@@ -362,13 +362,14 @@ export class KeaService extends Service {
         .map(([k, networkInterface]) => {
           let ip = {};
           let addr = networkInterface.networkAddress(
-              n => n.family === `IPv${family}`
-            )?.address;
+            n => n.family === `IPv${family}`
+          )?.address;
 
-          if(addr && subnet.matchesAddress(addr)) {
-            ip = family === "6" ?
-              { "ip-addresses" : [addr]} :
-              { "ip-address" : addr };
+          if (addr && subnet.matchesAddress(addr)) {
+            ip =
+              family == 6
+                ? { "ip-addresses": [addr] }
+                : { "ip-address": addr };
           }
 
           return {
@@ -429,14 +430,6 @@ export class KeaService extends Service {
               pools: subnet.dhcpPools.map(range => {
                 return { pool: range.join(" - ") };
               }),
-
-              /*"pd-pools": [
-                {
-                  prefix: "2001:db8:8::",
-                  "prefix-len": 56,
-                  "delegated-len": 64
-                }
-              ],*/
               reservations: reservations(subnet, "6")
             };
           })
