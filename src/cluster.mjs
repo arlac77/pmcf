@@ -106,15 +106,22 @@ export class Cluster extends Host {
         cfg.push(`  state ${cluster.masters.has(ni) ? "MASTER" : "BACKUP"}`);
         cfg.push(`  interface ${ni.name}`);
 
-        cfg.push("  virtual_ipaddress {");
         for (const na of cluster.networkAddresses(
           na => na.networkInterface.kind !== "loopback"
         )) {
           cfg.push(
+            `  ${
+              na.family === "IPv4"
+                ? "virtual_ipaddress"
+                : "virtual_ipaddress_excluded"
+            } {`
+          );
+          cfg.push(
             `    ${na.cidrAddress} dev ${ni.name} label ${cluster.name}`
           );
+          cfg.push("  }");
         }
-        cfg.push("  }");
+
         cfg.push(`  virtual_router_id ${cluster.routerId}`);
         cfg.push(
           `  priority ${host.priority + (cluster.masters.has(ni) ? 0 : 5)}`
@@ -127,12 +134,8 @@ export class Cluster extends Host {
         cfg.push("  }");
 
         cfg.push(
-          `  notify_master "/usr/bin/systemctl start ${cluster.name}-master.target"`
-        );
-        cfg.push(
-          `  notify_backup "/usr/bin/systemctl start ${cluster.name}-backup.target"`
-        );
-        cfg.push(
+          `  notify_master "/usr/bin/systemctl start ${cluster.name}-master.target"`,
+          `  notify_backup "/usr/bin/systemctl start ${cluster.name}-backup.target"`,
           `  notify_fault "/usr/bin/systemctl start ${cluster.name}-fault.target"`
         );
 
