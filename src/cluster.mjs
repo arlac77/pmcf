@@ -139,8 +139,7 @@ export class Cluster extends Host {
           `  notify_fault "/usr/bin/systemctl start ${cluster.name}-fault.target"`
         );
 
-        cfg.push("}");
-        cfg.push("");
+        cfg.push("}", "");
 
         for (const endpoint of serviceEndpoints(cluster, {
           services: { type: "http" },
