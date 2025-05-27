@@ -261,7 +261,7 @@ export class KeaService extends Service {
         loggers,
         "option-data": [
           {
-            name: "domain-name-servers",
+            name: family === 4 ? "domain-name-servers" : "dns-servers",
             data: dnsServerEndpoints
               .filter(endpoint => endpoint.family === `IPv${family}`)
               .map(endpoint => endpoint.address)
