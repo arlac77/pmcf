@@ -20,31 +20,45 @@
 
 ### Table of Contents
 
-*   [findService](#findservice)
+*   [Base](#base)
     *   [Parameters](#parameters)
-*   [networkAddresses](#networkaddresses)
-    *   [Parameters](#parameters-1)
+    *   [findService](#findservice)
+        *   [Parameters](#parameters-1)
+*   [SkeletonNetworkInterface](#skeletonnetworkinterface)
+    *   [networkAddresses](#networkaddresses)
+        *   [Parameters](#parameters-2)
 *   [NetworkAddress](#networkaddress)
-    *   [Parameters](#parameters-2)
+    *   [Parameters](#parameters-3)
     *   [subnet](#subnet)
     *   [networkInterface](#networkinterface)
     *   [address](#address)
 *   [serviceEndpoints](#serviceendpoints)
-    *   [Parameters](#parameters-3)
+    *   [Parameters](#parameters-4)
 
-## findService
+## Base
 
 ### Parameters
+
+*   `owner` &#x20;
+*   `data` &#x20;
+
+### findService
+
+#### Parameters
 
 *   `filter` **any**&#x20;
 
 Returns **any** service with the highest priority
 
-## networkAddresses
+## SkeletonNetworkInterface
 
-### Parameters
+**Extends ServiceOwner**
 
-*   `filter` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
+### networkAddresses
+
+#### Parameters
+
+*   `filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
 
 Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
 
