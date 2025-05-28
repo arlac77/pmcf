@@ -30,6 +30,9 @@ const BaseTypeDefinition = {
   }
 };
 
+/**
+ * 
+ */
 export class Base {
   owner;
   description;

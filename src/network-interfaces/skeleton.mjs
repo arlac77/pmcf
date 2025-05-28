@@ -3,6 +3,9 @@ import { writeLines, sectionLines } from "../utils.mjs";
 import { NetworkAddress, Host, cidrAddresses } from "pmcf";
 import { ServiceOwner } from "../service-owner.mjs";
 
+/**
+ * 
+ */
 export class SkeletonNetworkInterface extends ServiceOwner {
   _extends = [];
   _network;
@@ -79,7 +82,7 @@ export class SkeletonNetworkInterface extends ServiceOwner {
 
   /**
    *
-   * @param {object} filter
+   * @param {Object} filter
    * @return {Iterable<NetworkAddress>}
    */
   *networkAddresses(filter = n => true) {
