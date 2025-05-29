@@ -184,8 +184,8 @@ export class Cluster extends Host {
             cfg.push("  }");
           }
 
-          cfg.push("}");
-          cfg.push("");
+          cfg.push("}", "");
+          break; // only one for now
         }
       }
 
