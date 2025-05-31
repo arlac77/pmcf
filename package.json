@@ -19,7 +19,8 @@
     "iwd",
     "kea",
     "keepalived",
-    "systemd"
+    "systemd",
+    "openldap"
   ],
   "contributors": [
     {
