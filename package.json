@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "ip-utilties": "^1.4.6",
-    "npm-pkgbuild": "^18.2.9",
+    "npm-pkgbuild": "^18.2.10",
     "pacc": "^3.4.4",
     "pkg-dir": "^8.0.0"
   },
