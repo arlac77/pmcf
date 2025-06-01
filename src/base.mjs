@@ -41,6 +41,7 @@ export class Base {
   _packaging = new Set();
   _directory;
   _finalize;
+  _properties;
 
   static {
     addType(this);
@@ -220,6 +221,10 @@ export class Base {
           break;
       }
     };
+
+    if(data?.properties) {
+      this._properties = data.properties;
+    }
 
     for (const property of Object.values(type.properties)) {
       if (property.writeable) {
@@ -452,6 +457,15 @@ export class Base {
     return false;
   }
 
+  property(name) {
+    const value = this._properties?.[name];
+    if(value === undefined && this.owner) {
+      return this.owner.property(name);
+    }
+
+    return value;
+  }
+
   expand(object) {
     if (this.isTemplate) {
       return object;
@@ -460,7 +474,7 @@ export class Base {
     switch (typeof object) {
       case "string":
         return object.replaceAll(/\$\{([^\}]*)\}/g, (match, m1) => {
-          return getAttribute(this, m1) ?? "${" + m1 + "}";
+          return this.property(m1) ?? getAttribute(this, m1) ?? "${" + m1 + "}";
         });
 
       case "object":
