@@ -483,7 +483,12 @@ export class Base {
           return object;
         }
         if (object instanceof Map) {
-          return object; // TODO
+          return new Map(
+            [...object].map(([k, v]) => [
+              this.expand(k),
+              this.expand(v)
+            ])
+          );
         }
 
         if (object instanceof Set) {

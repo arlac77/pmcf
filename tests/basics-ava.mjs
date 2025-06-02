@@ -25,6 +25,19 @@ test("expand", t => {
   t.is(h1.expand("${fullName}"), "/l1/h1");
   t.is(h1.expand("${owner.fullName}"), "/l1");
   t.is(h1.expand("${p1}"), "v1");
+  t.deepEqual(
+    h1.expand(
+      new Map([
+        ["k", "v"],
+        ["${p1}", "${fullName}"]
+      ])
+    ),
+    new Map([
+      ["k", "v"],
+      ["v1", "/l1/h1"]
+    ])
+  );
+
   //t.deepEqual(h1.expand("${owner.domains}"), new Set()); // TODO empty array ?
 });
 
