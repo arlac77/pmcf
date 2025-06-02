@@ -27,7 +27,7 @@ export class SkeletonNetworkInterface extends ServiceOwner {
   }
 
   get isTemplate() {
-    return this.name.indexOf("*") >= 0;
+    return this.name?.indexOf("*") >= 0;
   }
 
   get host() {
