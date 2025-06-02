@@ -400,6 +400,7 @@ export class BindService extends ExtraSourceService {
           configs.push(catalogConfig);
 
           zone.catalogZone = {
+            catalog: true,
             id: `catalog.${domain}`,
             file: `${locationName}/catalog.${domain}.zone`,
             records: new Set([
@@ -555,6 +556,8 @@ export class BindService extends ExtraSourceService {
       console.log(`config: ${config.name}`);
 
       const content = [];
+      const openContent = [];
+
       for (const zone of config.zones) {
         console.log(`  file: ${zone.file}`);
 
@@ -582,6 +585,14 @@ export class BindService extends ExtraSourceService {
         content.push(`};`);
         content.push("");
 
+        if (!zone.catalog) {
+          openContent.push(
+            `zone \"${zone.id}\" {`,
+            `  in-view protected;`,
+            "}"
+          );
+        }
+
         let maxKeyLength = 0;
         for (const r of zone.records) {
           if (r.key.length > maxKeyLength) {
@@ -603,6 +614,14 @@ export class BindService extends ExtraSourceService {
         config.name,
         content
       );
+
+      if (openContent.length) {
+        await writeLines(
+          join(packageData.dir, "etc/named/open"),
+          config.name,
+          openContent
+        );
+      }
     }
   }
 }
