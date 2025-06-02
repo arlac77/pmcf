@@ -589,7 +589,7 @@ export class BindService extends ExtraSourceService {
           openContent.push(
             `zone \"${zone.id}\" {`,
             `  in-view protected;`,
-            "}"
+            "};"
           );
         }
 
