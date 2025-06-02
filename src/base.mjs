@@ -142,11 +142,7 @@ export class Base {
 
     const instantiateAndAssign = (property, value) => {
       if (primitives.has(property.type[0])) {
-        if (value !== undefined) {
-          value = this.expand(value);
-          assign(property, value);
-          //console.log("A1",property.name,value);
-        }
+        assign(property, value);
         return;
       }
 
@@ -162,8 +158,6 @@ export class Base {
         case "number":
         case "string":
           {
-            value = this.expand(value);
-
             let object;
 
             for (const type of property.type) {
@@ -232,7 +226,8 @@ export class Base {
 
     for (const property of Object.values(type.properties)) {
       if (property.writeable) {
-        const value = data[property.name];
+        const value = this.expand(data[property.name]);
+
         if (property.collection) {
           if (typeof value === "object") {
             if (Array.isArray(value)) {
@@ -244,7 +239,9 @@ export class Base {
                 assign(property, value);
               } else {
                 for (const [objectName, objectData] of Object.entries(value)) {
-                  objectData[type.identifier.name] = objectName;
+                  if (typeof objectData === "object") {
+                    objectData[type.identifier.name] = objectName;
+                  }
                   instantiateAndAssign(property, objectData);
                 }
               }
@@ -482,17 +479,24 @@ export class Base {
         });
 
       case "object":
-        if (Array.isArray(object)) {
-          return object.map(e => this.expand(e));
+        if (object instanceof Base) {
+          return object;
+        }
+        if (object instanceof Map) {
+          return object; // TODO
         }
 
         if (object instanceof Set) {
           return new Set([...object].map(e => this.expand(e)));
         }
 
-      /*return Object.fromEntries(
+        if (Array.isArray(object)) {
+          return object.map(e => this.expand(e));
+        }
+
+        return Object.fromEntries(
           Object.entries(object).map(([k, v]) => [k, this.expand(v)])
-        );*/
+        );
     }
 
     return object;
