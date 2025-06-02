@@ -459,12 +459,7 @@ export class Base {
   }
 
   property(name) {
-    const value = this._properties?.[name];
-    if (value === undefined && this.owner) {
-      return this.owner.property(name);
-    }
-
-    return value;
+    return this._properties?.[name] ?? this.owner?.property(name);
   }
 
   expand(object) {
@@ -484,10 +479,7 @@ export class Base {
         }
         if (object instanceof Map) {
           return new Map(
-            [...object].map(([k, v]) => [
-              this.expand(k),
-              this.expand(v)
-            ])
+            [...object].map(([k, v]) => [this.expand(k), this.expand(v)])
           );
         }
 
