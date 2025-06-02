@@ -108,7 +108,10 @@ test("Host extends", t => {
 
 test("Host domains & aliases", t => {
   const owner = new Root("/");
-  const n1 = new Network(owner, { name: "n1", domain: "example.com" });
+  const n1 = new Network(owner, {
+    name: "n1",
+    domain: "example.com"
+  });
   owner.addObject(n1);
 
   const h1 = new Host(n1, {
@@ -176,7 +179,10 @@ test("Host domains & aliases", t => {
 
 test("Host addresses", t => {
   const owner = new Root("/");
-  const n1 = new Network(owner, { name: "n1" });
+  const n1 = new Network(owner, {
+    name: "n1",
+    properties: { "ipv4.prefix": "10.0" }
+  });
   owner.addObject(n1);
 
   const h1 = new Host(n1, {
@@ -188,7 +194,7 @@ test("Host addresses", t => {
       eth0: {
         kind: "ethernet",
         scope: "global",
-        ipAddresses: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
+        ipAddresses: ["${ipv4.prefix}.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
       }
     }
   });

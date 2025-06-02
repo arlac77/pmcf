@@ -31,7 +31,7 @@ const BaseTypeDefinition = {
 };
 
 /**
- * 
+ *
  */
 export class Base {
   owner;
@@ -142,7 +142,11 @@ export class Base {
 
     const instantiateAndAssign = (property, value) => {
       if (primitives.has(property.type[0])) {
-        assign(property, value);
+        if (value !== undefined) {
+          value = this.expand(value);
+          assign(property, value);
+          //console.log("A1",property.name,value);
+        }
         return;
       }
 
@@ -222,7 +226,7 @@ export class Base {
       }
     };
 
-    if(data?.properties) {
+    if (data?.properties) {
       this._properties = data.properties;
     }
 
@@ -382,8 +386,8 @@ export class Base {
   }
 
   /**
-   * 
-   * @param {any} filter 
+   *
+   * @param {any} filter
    * @returns service with the highest priority
    */
   findService(filter) {
@@ -459,7 +463,7 @@ export class Base {
 
   property(name) {
     const value = this._properties?.[name];
-    if(value === undefined && this.owner) {
+    if (value === undefined && this.owner) {
       return this.owner.property(name);
     }
 
