@@ -33,11 +33,22 @@ export class NetworkAddress {
   }
 }
 
+/**
+ * 
+ * @param {Iterable<Owner|string>} sources 
+ * @param {Object} options 
+ * @param {boolean} options.aggregate
+ * @param {Object} options.filter
+ * @returns {Iterable<string>} addresses
+ */
 export function addresses(sources, options) {
   return [
     ...new Set(
       [...sources]
         .map(s => {
+          if(typeof s === "string") {
+            return s;
+          }
           if (options?.aggregate && s instanceof Owner && s.subnets) {
             return [...s.subnets()];
           }
@@ -47,7 +58,7 @@ export function addresses(sources, options) {
             : s;
         })
         .flat()
-        .map(object => decodeIP(object.address))
+        .map(object => typeof object === "string" ? object : decodeIP(object.address))
     )
   ];
 }
