@@ -275,7 +275,7 @@ export class BindService extends ExtraSourceService {
       );
     }
 
-    if (acls.length) {
+    if (this.internal?.length) {
       await writeLines(
         join(configPackageDir, "etc/named"),
         `0-acl-${name}.conf`,
