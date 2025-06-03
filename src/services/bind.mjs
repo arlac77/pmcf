@@ -395,14 +395,13 @@ export class BindService extends ExtraSourceService {
         };
         configs.push(config);
 
-
         const zone = {
           id: domain,
           file: `${locationName}/${domain}.zone`,
           records: new Set(this.defaultRecords)
         };
 
-        if(this.hasLocationRecord) {
+        if (this.hasLocationRecord) {
           zone.records.add(DNSRecord("location", "TXT", locationName));
         }
 
@@ -460,7 +459,7 @@ export class BindService extends ExtraSourceService {
                     )
                   );
                 }
-                if (subnet && host?.domain === domain) {
+                if (subnet && host.domain === domain) {
                   let reverseZone = reverseZones.get(subnet.address);
 
                   if (!reverseZone) {
