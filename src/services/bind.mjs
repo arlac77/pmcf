@@ -41,7 +41,7 @@ const BindServiceTypeDefinition = {
       writeable: true
     },
     protected: { type: address_types, collection: true, writeable: true },
-    open: { type: address_types, collection: true, writeable: true },
+    internal: { type: address_types, collection: true, writeable: true },
     hasSVRRecords: {
       type: "boolean",
       collection: false,
@@ -123,8 +123,6 @@ export class BindService extends ExtraSourceService {
   notify = true;
   _addresses = [];
   _trusted = [];
-  _protected = [];
-  _open = [];
   _exclude = new Set([]);
   _excludeInterfaceKinds = new Set();
 
@@ -144,11 +142,24 @@ export class BindService extends ExtraSourceService {
 
   constructor(owner, data) {
     super(owner, data);
+
+    this.views = {};
+
+    for (const name of ["internal", "protected"]) {
+      this.views[name] = {
+        name,
+        access: []
+      };
+    }
+
+    this.views.protected.inView = this.views.internal;
+    this.views.protected.access = ["!internal"];
+
     this.read(data, BindServiceTypeDefinition);
   }
 
   get type() {
-    return "dns"; // BindServiceTypeDefinition.name;
+    return "dns";
   }
 
   endpoints(filter) {
@@ -179,11 +190,19 @@ export class BindService extends ExtraSourceService {
   }
 
   set protected(value) {
-    this._protected.push(value);
+    this.views.protected.access.push(value);
   }
 
   get protected() {
-    return this._protected;
+    return this.views.protected.access;
+  }
+
+  set internal(value) {
+    this.views.internal.access.push(value);
+  }
+
+  get internal() {
+    return this.views.internal.access;
   }
 
   set trusted(value) {
@@ -192,14 +211,6 @@ export class BindService extends ExtraSourceService {
 
   get trusted() {
     return this._trusted;
-  }
-
-  set open(value) {
-    this._open.push(value);
-  }
-
-  get open() {
-    return this._open;
   }
 
   set exclude(value) {
@@ -249,21 +260,20 @@ export class BindService extends ExtraSourceService {
       );
     }
 
-    const acls = [
-      addressesStatement(
-        "acl trusted",
-        addresses(this.trusted, { aggregate: true })
-      ),
-      addressesStatement(
-        "acl open",
-        addresses(this.open, { aggregate: true }),
-        true
-      ),
-      addressesStatement("acl protected", [
-        "!open",
-        ...addresses(this.protected, { aggregate: true })
-      ])
-    ].flat();
+    const acls = addressesStatement(
+      "acl trusted",
+      addresses(this.trusted, { aggregate: true })
+    );
+
+    for (const view of Object.values(this.views)) {
+      acls.push(
+        ...addressesStatement(
+          `acl ${view.name}`,
+          addresses(view.access, { aggregate: true }),
+          true
+        )
+      );
+    }
 
     if (acls.length) {
       await writeLines(
@@ -283,7 +293,6 @@ export class BindService extends ExtraSourceService {
       name: `named-zones-${name}`,
       description: `zone definitions for ${names}`,
       dependencies: ["mf-named"],
-      replaces: ["mf-named-zones"],
       access: "private",
       hooks: {}
     };
@@ -312,7 +321,6 @@ export class BindService extends ExtraSourceService {
     packageData.properties = {
       name: `named-zones-${name}-OUTFACING`,
       description: `outfacing zone definitions for ${names}`,
-      replaces: [`named-foreign-zones-${name}`, `named-zones-${name}-FOREIGN`],
       access: "private",
       hooks: {}
     };
@@ -341,7 +349,9 @@ export class BindService extends ExtraSourceService {
 
     for (const source of sources) {
       for (const host of source.hosts()) {
-        configs.push(...this.outfacingZones(host, this.defaultRecords));
+        configs.push(
+          ...this.outfacingZones(host, this.views.internal, this.defaultRecords)
+        );
       }
     }
 
@@ -378,7 +388,9 @@ export class BindService extends ExtraSourceService {
         const reverseZones = new Map();
 
         const config = {
+          view: this.views.internal,
           name: `${domain}.zone.conf`,
+          type: "master",
           zones: []
         };
         configs.push(config);
@@ -394,7 +406,9 @@ export class BindService extends ExtraSourceService {
 
         if (this.hasCatalog) {
           const catalogConfig = {
+            view: this.views.internal,
             name: `catalog.${domain}.zone.conf`,
+            type: "master",
             zones: []
           };
           configs.push(catalogConfig);
@@ -500,6 +514,12 @@ export class BindService extends ExtraSourceService {
             }
           }
         }
+        configs.push({
+          view: this.views.protected,
+          inView: this.views.protected.inView,
+          name: config.name,
+          zones: config.zones
+        });
       }
     }
 
@@ -508,7 +528,7 @@ export class BindService extends ExtraSourceService {
     return packageData;
   }
 
-  outfacingZones(host, records) {
+  outfacingZones(host, view, records) {
     return host.foreignDomainNames.map(domain => {
       const zone = {
         id: domain,
@@ -516,7 +536,9 @@ export class BindService extends ExtraSourceService {
         records: new Set(records)
       };
       const config = {
+        view,
         name: `${domain}.zone.conf`,
+        type: "master",
         zones: [zone]
       };
 
@@ -553,10 +575,9 @@ export class BindService extends ExtraSourceService {
 
   async writeZones(packageData, configs) {
     for (const config of configs) {
-      console.log(`config: ${config.name}`);
+      console.log(`config: ${config.view.name}/${config.name}`);
 
       const content = [];
-      const openContent = [];
 
       for (const zone of config.zones) {
         console.log(`  file: ${zone.file}`);
@@ -573,25 +594,22 @@ export class BindService extends ExtraSourceService {
         }
 
         content.push(`zone \"${zone.id}\" {`);
-        content.push(`  type master;`);
-        content.push(`  file \"${zone.file}\";`);
 
-        content.push(
-          `  allow-update { ${
-            this.allowedUpdates.length ? this.allowedUpdates.join(";") : "none"
-          }; };`
-        );
-        content.push(`  notify ${this.notify ? "yes" : "no"};`);
-        content.push(`};`);
-        content.push("");
-
-        if (!zone.catalog) {
-          openContent.push(
-            `zone \"${zone.id}\" {`,
-            `  in-view protected;`,
-            "};"
+        if (config.inView) {
+          content.push(`  in-view ${config.inView.name};`);
+        } else {
+          content.push(`  type ${config.type};`);
+          content.push(`  file \"${zone.file}\";`);
+          content.push(
+            `  allow-update { ${
+              this.allowedUpdates.length
+                ? this.allowedUpdates.join(";")
+                : "none"
+            }; };`
           );
+          content.push(`  notify ${this.notify ? "yes" : "no"};`);
         }
+        content.push(`};`, "");
 
         let maxKeyLength = 0;
         for (const r of zone.records) {
@@ -610,18 +628,10 @@ export class BindService extends ExtraSourceService {
       }
 
       await writeLines(
-        join(packageData.dir, "etc/named/zones"),
+        join(packageData.dir, `etc/named/${config.view.name}`),
         config.name,
         content
       );
-
-      if (openContent.length) {
-        await writeLines(
-          join(packageData.dir, "etc/named/open"),
-          config.name,
-          openContent
-        );
-      }
     }
   }
 }
