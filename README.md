@@ -32,8 +32,10 @@
     *   [subnet](#subnet)
     *   [networkInterface](#networkinterface)
     *   [address](#address)
-*   [serviceEndpoints](#serviceendpoints)
+*   [addresses](#addresses)
     *   [Parameters](#parameters-4)
+*   [serviceEndpoints](#serviceendpoints)
+    *   [Parameters](#parameters-5)
 
 ## Base
 
@@ -81,6 +83,18 @@ Type: NetworkInterface
 ### address
 
 Type: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array) | [Uint16Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array))
+
+## addresses
+
+### Parameters
+
+*   `sources` **Iterable<(Owner | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))>**&#x20;
+*   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**&#x20;
+
+    *   `options.aggregate` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
+    *   `options.filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**&#x20;
+
+Returns **Iterable<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** addresses
 
 ## serviceEndpoints
 
