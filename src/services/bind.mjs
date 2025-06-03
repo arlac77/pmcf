@@ -395,13 +395,17 @@ export class BindService extends ExtraSourceService {
         };
         configs.push(config);
 
-        const locationRecord = DNSRecord("location", "TXT", locationName);
 
         const zone = {
           id: domain,
           file: `${locationName}/${domain}.zone`,
-          records: new Set([...this.defaultRecords, locationRecord])
+          records: new Set(this.defaultRecords)
         };
+
+        if(this.hasLocationRecord) {
+          zone.records.add(DNSRecord("location", "TXT", locationName));
+        }
+
         config.zones.push(zone);
 
         if (this.hasCatalog) {
