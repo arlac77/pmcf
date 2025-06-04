@@ -44,10 +44,6 @@ for (const object of root.find(args)) {
         c => c.name + (c.email ? ` <${c.email}>` : "")
       );
 
-      if (properties.verbose) {
-        console.log(properties);
-      }
-
       const output = new outputFactory(properties);
 
       const artifact = await output.create(
@@ -56,6 +52,10 @@ for (const object of root.find(args)) {
         publishingDetails,
         options
       );
+
+      if (properties.verbose) {
+        console.log(artifact);
+      }
 
       if (!options.dry) {
         await Promise.all(

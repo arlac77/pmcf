@@ -282,7 +282,7 @@ export class BindService extends ExtraSourceService {
         acls
       );
     }
-    if (forwarders.length || acls.length) {
+    if (forwarders.length || this.internal?.length) {
       yield packageData;
     }
 
@@ -341,10 +341,10 @@ export class BindService extends ExtraSourceService {
       )
     ];
 
-    yield this.generateOutfacingDefs(sources, packageData);
+    yield* this.generateOutfacingDefs(sources, packageData);
   }
 
-  async generateOutfacingDefs(sources, packageData) {
+  async *generateOutfacingDefs(sources, packageData) {
     const configs = [];
 
     for (const source of sources) {
@@ -365,11 +365,11 @@ export class BindService extends ExtraSourceService {
           .map(zone => zone.id)
           .join(" ")}|/usr/bin/named-hostname-update`
       );
+
+      await this.writeZones(packageData, configs);
+
+      yield packageData;
     }
-
-    await this.writeZones(packageData, configs);
-
-    return packageData;
   }
 
   async generateZoneDefs(sources, packageData) {
