@@ -232,8 +232,8 @@ export class BindService extends ExtraSourceService {
   async *preparePackages(dir) {
     const sources = this.addresses.length ? this.addresses : [this.owner];
     const names = sources.map(a => a.fullName).join(" ");
+    const name = this.owner.owner.name || this.owner.name;
 
-    const name = this.owner.owner.name;
     const configPackageDir = join(dir, "config") + "/";
     const packageData = {
       dir: configPackageDir,
