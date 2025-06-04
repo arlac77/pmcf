@@ -14,6 +14,7 @@ const ServiceTypes = {
   "pacman-repo": {
     extends: ["https"]
   },
+  mqtt: { endpoints: [{ protocol: "tcp", port: 1883, tls: false }] },
   ntp: { endpoints: [{ protocol: "udp", port: 123, tls: false }] },
   dns: { endpoints: [{ protocol: "udp", port: 53, tls: false }] },
   ldap: { endpoints: [{ protocol: "tcp", port: 389, tls: false }] },
