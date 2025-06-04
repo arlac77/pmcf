@@ -17,6 +17,8 @@ const _localAddresses = new Map([
   ["::1", SUBNET_LOCALHOST_IPV6]
 ]);
 
+const _localDomains = new Set(["localhost"]);
+
 export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
   static {
     addType(this);
@@ -40,7 +42,11 @@ export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
   }
 
   get localDomains() {
-    return new Set(["localhost"]);
+    return _localDomains;
+  }
+
+  get domainNames() {
+    return _localDomains;
   }
 
   get hostName() {

@@ -442,77 +442,68 @@ export class BindService extends ExtraSourceService {
             !this.exclude.has(networkInterface.network) &&
             !this.excludeInterfaceKinds.has(networkInterface.kind)
           ) {
+            if (
+              !addresses.has(address) &&
+              (this.hasLinkLocalAdresses || !isLinkLocal(address))
+            ) {
+              addresses.add(address);
+
+              let reverseZone = reverseZones.get(subnet.address);
+
+              if (!reverseZone) {
+                const id = reverseArpa(subnet.prefix);
+                reverseZone = {
+                  id,
+                  type: "plain",
+                  file: `${locationName}/${id}.zone`,
+                  records: new Set(this.defaultRecords)
+                };
+                config.zones.push(reverseZone);
+                reverseZones.set(subnet.address, reverseZone);
+              }
+
+              for (const domainName of domainNames) {
+                zone.records.add(
+                  DNSRecord(
+                    dnsFullName(domainName),
+                    dnsRecordTypeForAddressFamily(family),
+                    address
+                  )
+                );
+
+                reverseZone.records.add(
+                  DNSRecord(
+                    dnsFullName(reverseArpa(address)),
+                    "PTR",
+                    dnsFullName(domainName)
+                  )
+                );
+              }
+            }
+
             const host = networkInterface.host;
-            if (host) {
-              if (
-                !addresses.has(address) &&
-                (this.hasLinkLocalAdresses || !isLinkLocal(address))
-              ) {
-                addresses.add(address);
+            if (host && !hosts.has(host)) {
+              hosts.add(host);
 
-                for (const domainName of domainNames) {
-                  zone.records.add(
-                    DNSRecord(
-                      dnsFullName(domainName),
-                      dnsRecordTypeForAddressFamily(family),
-                      address
-                    )
-                  );
-                }
-                if (subnet && host.domain === domain) {
-                  let reverseZone = reverseZones.get(subnet.address);
+              for (const foreignDomainName of host.foreignDomainNames) {
+                zone.records.add(
+                  DNSRecord("outfacing", "PTR", dnsFullName(foreignDomainName))
+                );
+              }
 
-                  if (!reverseZone) {
-                    const id = reverseArpa(subnet.prefix);
-                    reverseZone = {
-                      id,
-                      type: "plain",
-                      file: `${locationName}/${id}.zone`,
-                      records: new Set(this.defaultRecords)
-                    };
-                    config.zones.push(reverseZone);
-                    reverseZones.set(subnet.address, reverseZone);
-                  }
+              const sm = new Map();
 
-                  for (const domainName of host.domainNames) {
-                    reverseZone.records.add(
-                      DNSRecord(
-                        dnsFullName(reverseArpa(address)),
-                        "PTR",
-                        dnsFullName(domainName)
-                      )
-                    );
-                  }
+              for (const service of host._services) {
+                for (const record of service.dnsRecordsForDomainName(
+                  host.domainName,
+                  this.hasSVRRecords
+                )) {
+                  sm.set(record.toString(), record);
                 }
               }
 
-              if (!hosts.has(host)) {
-                hosts.add(host);
-
-                for (const foreignDomainName of host.foreignDomainNames) {
-                  zone.records.add(
-                    DNSRecord(
-                      "outfacing",
-                      "PTR",
-                      dnsFullName(foreignDomainName)
-                    )
-                  );
-                }
-
-                const sm = new Map();
-
-                for (const service of host._services) {
-                  for (const record of service.dnsRecordsForDomainName(
-                    host.domainName,
-                    this.hasSVRRecords
-                  )) {
-                    sm.set(record.toString(), record);
-                  }
-                }
-
-                for (const r of sm.values()) {
-                  zone.records.add(r);
-                }
+              for (const r of sm.values()) {
+                zone.records.add(r);
               }
             }
           }
