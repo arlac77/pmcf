@@ -22,6 +22,7 @@
 
 *   [Base](#base)
     *   [Parameters](#parameters)
+    *   [extends](#extends)
     *   [findService](#findservice)
         *   [Parameters](#parameters-1)
 *   [SkeletonNetworkInterface](#skeletonnetworkinterface)
@@ -43,6 +44,10 @@
 
 *   `owner` &#x20;
 *   `data` &#x20;
+
+### extends
+
+Returns **Iterable<[Base](#base)>**&#x20;
 
 ### findService
 
