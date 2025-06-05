@@ -264,6 +264,10 @@ export class Service extends Base {
     return this._type ?? this.name;
   }
 
+  get types() {
+    return new Set([...this._extendedPropertyIterator("type", new Set())]);
+  }
+
   get systemdServices() {
     return this.extendedProperty("_systemd");
   }

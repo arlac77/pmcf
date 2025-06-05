@@ -300,8 +300,26 @@ export class Base {
     return this.constructor.typeDefinition.name;
   }
 
+  /**
+   * @return {Iterable<Base>}
+   */
   get extends() {
     return [];
+  }
+
+  *_extendedPropertyIterator(propertyName, seen) {
+    if (!seen.has(this)) {
+      seen.add(this);
+
+      const value = this[propertyName];
+      if (value !== undefined) {
+        yield value;
+      }
+
+      for (const e of this.extends) {
+        yield* e._extendedPropertyIterator(propertyName, seen);
+      }
+    }
   }
 
   _extendedProperty(propertyName, seen) {
