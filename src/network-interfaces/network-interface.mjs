@@ -16,12 +16,16 @@ export const NetworkInterfaceTypeDefinition = {
   extends: Base.typeDefinition,
   specializations: {},
   factoryFor(owner, value) {
-    const kind = value.kind;
-    const t = NetworkInterfaceTypeDefinition.specializations[kind];
+    let t = NetworkInterfaceTypeDefinition.specializations[value.kind];
 
-    /*if (!t) {
-      console.warn("FACTORY", owner.name, value, t?.name);
-    }*/
+    if (!t) {
+      for (t of Object.values(NetworkInterfaceTypeDefinition.specializations)) {
+        if (t.clazz.isCommonName(value.name)) {
+          break;
+        }
+      }
+    }
+
     if (t) {
       delete value.type;
       delete value.kind;
@@ -51,6 +55,10 @@ export class NetworkInterface extends SkeletonNetworkInterface {
 
   static get typeDefinition() {
     return NetworkInterfaceTypeDefinition;
+  }
+
+  static isCommonName(name) {
+    false;
   }
 
   _ipAddresses = new Map();

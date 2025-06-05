@@ -26,6 +26,10 @@ export class EthernetNetworkInterface extends NetworkInterface {
     return EthernetNetworkInterfaceTypeDefinition;
   }
 
+  static isCommonName(name) {
+    return name.match(/eth\d+$/);
+  }
+
   constructor(owner, data) {
     super(owner, data);
     this.read(data, EthernetNetworkInterfaceTypeDefinition);

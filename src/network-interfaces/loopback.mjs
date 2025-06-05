@@ -28,6 +28,11 @@ export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
     return LoopbackNetworkInterfaceTypeDefinition;
   }
 
+  static isCommonName(name)
+  {
+    return name.match(/lo\d+$/);
+  }
+
   constructor(owner, data) {
     super(owner, data);
     this.read(data, NetworkInterfaceTypeDefinition);
