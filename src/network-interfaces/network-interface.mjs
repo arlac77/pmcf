@@ -20,7 +20,7 @@ export const NetworkInterfaceTypeDefinition = {
 
     if (!t) {
       for (t of Object.values(NetworkInterfaceTypeDefinition.specializations)) {
-        if (t.clazz.isCommonName(value.name)) {
+        if (t.clazz.isCommonName && t.clazz.isCommonName(value.name)) {
           break;
         }
       }
