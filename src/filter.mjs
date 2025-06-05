@@ -20,10 +20,7 @@ export function* objectFilter(type, objects, filter) {
       };
 
       const filterString = key => {
-        if (filter[key] === undefined) {
-          return true;
-        }
-        if (filter[key] === object[key]) {
+        if (filter[key] === undefined || filter[key] === object[key]) {
           return true;
         }
 
@@ -75,7 +72,14 @@ export function* objectFilter(type, objects, filter) {
               }
               break;
             case "string":
-              if (!filterString(property.name)) {
+              if (property.collection && filter[property.name] !== undefined) {
+                const value = object[property.name];
+
+                if (value instanceof Set && value.has(filter[property.name])) {
+                  break;
+                }
+                continue advance;
+              } else if (!filterString(property.name)) {
                 continue advance;
               }
               break;

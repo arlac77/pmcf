@@ -39,7 +39,7 @@ export class SystemdResolvedService extends ExtraSourceService {
   systemdConfigs(name) {
     const options = (priority, limit) => {
       return {
-        services: { type: "dns", priority },
+        services: { types: "dns", priority },
         endpoints: e => e.networkInterface.kind !== "loopback",
         select: endpoint => endpoint.address,
         join: " ",

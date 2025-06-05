@@ -16,7 +16,11 @@ import {
   addresses
 } from "pmcf";
 import { addType } from "../types.mjs";
-import { ServiceTypeDefinition } from "../service.mjs";
+import {
+  ServiceTypeDefinition,
+  Service,
+  serviceTypeEndpoints
+} from "../service.mjs";
 import { ExtraSourceServiceTypeDefinition } from "../extra-source-service.mjs";
 import { addHook } from "../hooks.mjs";
 
@@ -143,6 +147,7 @@ export class BindService extends ExtraSourceService {
   constructor(owner, data) {
     super(owner, data);
 
+    this._extends.push(new Service(owner, { name: this.name, type: "dns" }));
     this.views = {};
 
     for (const name of ["internal", "protected"]) {
@@ -159,7 +164,11 @@ export class BindService extends ExtraSourceService {
   }
 
   get type() {
-    return "dns";
+    return "bind";
+  }
+
+  get serviceTypeEndpoints() {
+    return serviceTypeEndpoints("dns");
   }
 
   endpoints(filter) {
@@ -247,7 +256,7 @@ export class BindService extends ExtraSourceService {
     };
 
     const forwarders = serviceEndpoints(this.source, {
-      services: { type: "dns", priority: ">=300" },
+      services: { types: "dns", priority: ">=300" },
       select: e => e.address,
       limit: 5
     });
@@ -552,7 +561,7 @@ export class BindService extends ExtraSourceService {
   }
 
   get defaultRecords() {
-    const nameService = this.findService({ type: "dns", priority: ">=300" });
+    const nameService = this.findService({ types: "dns", priority: ">=300" });
 
     const SOARecord = DNSRecord(
       "@",

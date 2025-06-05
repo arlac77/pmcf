@@ -118,6 +118,7 @@ test("Service basics", t => {
   h2.services = s2;
   t.is(s2.name, "dns");
   t.is(s2.type, "dns");
+  t.deepEqual(s2.types, new Set(["dns"]));
   t.is(s2.priority, 3);
   t.is(s2.weight, 5);
   t.is(s2.port, 53);
@@ -277,10 +278,30 @@ test("Service owner", t => {
 
   t.deepEqual(s1b.endpoints(), [
     new DomainNameEndpoint(s1b, "h2", {
-   //   type: "dns",
+      //   type: "dns",
       port: 53,
       protocol: "udp",
       tls: false
     })
   ]);
+});
+
+test("Service type extension", t => {
+  const root = new Root("/somwhere");
+
+  const h1 = new Host(root, {
+    name: "h1",
+    networkInterfaces: { eth0: { kind: "ethernet", ipAddresses: "10.0.0.1" } },
+    services: {
+      bind: {}
+    }
+  });
+  root.addObject(h1);
+
+  const s0 = h1.services[0];
+
+  t.is(s0.name, "bind");
+  t.deepEqual(s0.types, new Set(["bind", "dns"]));
+
+  t.is(h1.findService({ type: "bind" }), s0);
 });

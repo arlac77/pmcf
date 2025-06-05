@@ -63,7 +63,7 @@ const ServiceTypes = {
   }
 };
 
-function serviceTypeEndpoints(type) {
+export function serviceTypeEndpoints(type) {
   let st = ServiceTypes[type];
   if (st) {
     if (st.extends) {
@@ -92,6 +92,7 @@ export const endpointProperties = {
     values: ["tcp", "udp"]
   },
   type: { type: "string", collection: false, writeable: true },
+  types: { type: "string", collection: true, writeable: false },
   tls: {
     type: "boolean",
     collection: false,
@@ -191,6 +192,11 @@ export class Service extends Base {
 
   get subnets() {
     return this.host.subnets;
+  }
+
+  get serviceTypeEndpoints()
+  {
+      return serviceTypeEndpoints(this.type);
   }
 
   endpoints(filter) {
