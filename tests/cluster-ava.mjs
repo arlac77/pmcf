@@ -8,10 +8,9 @@ test("Cluster basics", async t => {
   await root.loadAll();
 
   const c1 = await root.named("/L1/C1");
-  console.log(c1);
 
   const p1eth0 = await root.named("/L1/host1/eth0");
-  t.true(c1.masters.has(p1eth0));
+  t.true(c1.masters.indexOf(p1eth0) >= 0);
 
   await assertObject(t, await root.named("/L1/C1"), root1(root, "/L1/C1"));
 });

@@ -21,8 +21,8 @@ const ClusterTypeDefinition = {
 };
 
 export class Cluster extends Host {
-  _masters = new Set();
-  _backups = new Set();
+  _masters = [];
+  _backups = [];
   routerId = 100;
   checkInterval = 60;
 
@@ -40,7 +40,7 @@ export class Cluster extends Host {
   }
 
   set masters(value) {
-    this._masters.add(value);
+    this._masters.push(value);
     value.cluster = this;
   }
 
@@ -49,7 +49,7 @@ export class Cluster extends Host {
   }
 
   set backups(value) {
-    this._backups.add(value);
+    this._backups.push(value);
 
     value.cluster = this;
   }
@@ -59,7 +59,7 @@ export class Cluster extends Host {
   }
 
   get members() {
-    return this.masters.union(this.backups);
+    return new Set(this.masters).union(new Set(this.backups));
   }
 
   async *preparePackages(stagingDir) {
@@ -103,7 +103,9 @@ export class Cluster extends Host {
         a.name.localeCompare(b.name)
       )) {
         cfg.push(`vrrp_instance ${cluster.name} {`);
-        cfg.push(`  state ${cluster.masters.has(ni) ? "MASTER" : "BACKUP"}`);
+        cfg.push(
+          `  state ${cluster.masters.indexOf(ni) >= 0 ? "MASTER" : "BACKUP"}`
+        );
         cfg.push(`  interface ${ni.name}`);
 
         for (const na of cluster.networkAddresses(
@@ -123,9 +125,7 @@ export class Cluster extends Host {
         }
 
         cfg.push(`  virtual_router_id ${cluster.routerId}`);
-        cfg.push(
-          `  priority ${host.priority + (cluster.masters.has(ni) ? 5 : 0)}`
-        );
+        cfg.push(`  priority ${host.priority - cluster.masters.indexOf(ni)}`);
         cfg.push("  smtp_alert");
         cfg.push("  advert_int 5");
         cfg.push("  authentication {");
