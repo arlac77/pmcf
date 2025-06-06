@@ -16,11 +16,8 @@ import {
   addresses
 } from "pmcf";
 import { addType } from "../types.mjs";
-import {
-  ServiceTypeDefinition,
-  Service,
-  serviceTypeEndpoints
-} from "../service.mjs";
+import { serviceTypeEndpoints } from "../service-types.mjs";
+import { Service, ServiceTypeDefinition } from "../service.mjs";
 import { ExtraSourceServiceTypeDefinition } from "../extra-source-service.mjs";
 import { addHook } from "../hooks.mjs";
 
@@ -90,6 +87,21 @@ const BindServiceTypeDefinition = {
     expire: { type: "string", collection: false, writeable: true },
     minimum: { type: "string", collection: false, writeable: true },
     allowedUpdates: { type: "string", collection: true, writeable: true }
+  }
+};
+
+const BindServiceTypes = {
+  "bind-statistics": {
+    endpoints: [
+      {
+        port: 19521,
+        protocol: "tcp",
+        tls: false
+      }
+    ]
+  },
+  rdnc: {
+    endpoints: [{ type: "rdnc", port: 953, protocol: "tcp", tls: false }]
   }
 };
 
