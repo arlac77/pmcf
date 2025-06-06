@@ -15,6 +15,7 @@ const ServiceTypes = {
     extends: ["https"]
   },
   mqtt: { endpoints: [{ protocol: "tcp", port: 1883, tls: false }] },
+  "secure-mqtt": { endpoints: [{ protocol: "tcp", port: 8883, tls: true }] },
   ntp: { endpoints: [{ protocol: "udp", port: 123, tls: false }] },
   dns: { endpoints: [{ protocol: "udp", port: 53, tls: false }] },
   ldap: { endpoints: [{ protocol: "tcp", port: 389, tls: false }] },
@@ -194,9 +195,8 @@ export class Service extends Base {
     return this.host.subnets;
   }
 
-  get serviceTypeEndpoints()
-  {
-      return serviceTypeEndpoints(this.type);
+  get serviceTypeEndpoints() {
+    return serviceTypeEndpoints(this.type);
   }
 
   endpoints(filter) {
