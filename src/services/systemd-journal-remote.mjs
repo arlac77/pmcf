@@ -12,7 +12,7 @@ const SystemdJournalRemoteServiceTypeDefinition = {
 };
 
 const SystemdJournalRemoteServiceTypes = {
-  "systemd-journal-remote": {
+  [SystemdJournalRemoteServiceTypeDefinition.name]: {
     extends: ["http"],
     endpoints: [
       {

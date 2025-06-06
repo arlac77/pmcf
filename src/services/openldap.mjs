@@ -31,7 +31,7 @@ export class OpenLDAPService extends Service {
   }
 
   get type() {
-    return "openldap";
+    return OpenLDAPServiceTypeDefinition.name;
   }
 
   async *preparePackages(dir) {

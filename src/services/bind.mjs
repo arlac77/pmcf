@@ -91,7 +91,7 @@ const BindServiceTypeDefinition = {
 };
 
 const BindServiceTypes = {
-  "bind": {
+  [BindServiceTypeDefinition.name]: {
     extends: ["dns"]
   },
   "bind-statistics": {
@@ -169,7 +169,7 @@ export class BindService extends ExtraSourceService {
   }
 
   get type() {
-    return "bind";
+    return BindServiceTypeDefinition.name;
   }
 
   get serviceTypeEndpoints() {
