@@ -16,7 +16,7 @@ import {
   addresses
 } from "pmcf";
 import { addType } from "../types.mjs";
-import { serviceTypeEndpoints } from "../service-types.mjs";
+import { serviceTypeEndpoints, addServiceTypes } from "../service-types.mjs";
 import { Service, ServiceTypeDefinition } from "../service.mjs";
 import { ExtraSourceServiceTypeDefinition } from "../extra-source-service.mjs";
 import { addHook } from "../hooks.mjs";
@@ -91,6 +91,9 @@ const BindServiceTypeDefinition = {
 };
 
 const BindServiceTypes = {
+  "bind": {
+    extends: ["dns"]
+  },
   "bind-statistics": {
     endpoints: [
       {
@@ -105,19 +108,8 @@ const BindServiceTypes = {
   }
 };
 
-const rdncEndpoint = {
-  type: "rdnc",
-  port: 953,
-  protocol: "tcp",
-  tls: false
-};
-
-const statisticsEndpoint = {
-  type: "bind-statistics",
-  port: 19521,
-  protocol: "tcp",
-  tls: false
-};
+const rdncEndpoint = BindServiceTypes.rdnc.endpoints[0];
+const statisticsEndpoint = BindServiceTypes["bind-statistics"].endpoints[0];
 
 function addressesStatement(prefix, objects, generateEmpty = false) {
   const body = asArray(objects).map(name => `  ${name};`);
@@ -150,6 +142,7 @@ export class BindService extends ExtraSourceService {
 
   static {
     addType(this);
+    addServiceTypes(BindServiceTypes);
   }
 
   static get typeDefinition() {

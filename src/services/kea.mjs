@@ -12,6 +12,7 @@ import {
   SUBNET_LOCALHOST_IPV4,
   SUBNET_LOCALHOST_IPV6
 } from "pmcf";
+import { addServiceTypes } from "../service-types.mjs";
 import { addType } from "../types.mjs";
 import { writeLines } from "../utils.mjs";
 
@@ -29,6 +30,13 @@ const ddnsEndpoint = {
   port: 53001,
   protocol: "tcp",
   tls: false
+};
+
+const KEAServiceTypes = {
+  kea: { extends: ["dhcp"] },
+  "kea-ddns": {
+    endpoints: [ddnsEndpoint]
+  }
 };
 
 const controlAgentEndpoint = {
@@ -79,6 +87,7 @@ export const fetureHasHTTPEndpoints = keaVersion > 2.7;
 export class KeaService extends Service {
   static {
     addType(this);
+    addServiceTypes(KEAServiceTypes);
   }
 
   static get typeDefinition() {
@@ -367,9 +376,7 @@ export class KeaService extends Service {
 
           if (addr && subnet.matchesAddress(addr)) {
             ip =
-              family == 6
-                ? { "ip-addresses": [addr] }
-                : { "ip-address": addr };
+              family == 6 ? { "ip-addresses": [addr] } : { "ip-address": addr };
           }
 
           return {
