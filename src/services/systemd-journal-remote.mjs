@@ -1,5 +1,6 @@
 import { Service, ServiceTypeDefinition } from "pmcf";
 import { addType } from "../types.mjs";
+import { addServiceTypes } from "../service-types.mjs";
 
 const SystemdJournalRemoteServiceTypeDefinition = {
   name: "systemd-journal-remote",
@@ -10,9 +11,23 @@ const SystemdJournalRemoteServiceTypeDefinition = {
   properties: {}
 };
 
+const SystemdJournalRemoteServiceTypes = {
+  "systemd-journal-remote": {
+    extends: ["http"],
+    endpoints: [
+      {
+        port: 19532,
+        protocol: "tcp",
+        tls: false
+      }
+    ]
+  }
+};
+
 export class SystemdJournalRemoteService extends Service {
   static {
     addType(this);
+    addServiceTypes(SystemdJournalRemoteServiceTypes);
   }
 
   static get typeDefinition() {

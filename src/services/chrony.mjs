@@ -7,6 +7,7 @@ import {
   ExtraSourceServiceTypeDefinition
 } from "../extra-source-service.mjs";
 import { writeLines } from "../utils.mjs";
+import { addServiceTypes } from "../service-types.mjs";
 
 const ChronyServiceTypeDefinition = {
   name: "chrony",
@@ -17,9 +18,16 @@ const ChronyServiceTypeDefinition = {
   properties: {}
 };
 
+const ChronyServiceTypes = {
+  "chrony": {
+    extends: ["ntp"]
+  }
+};
+
 export class ChronyService extends ExtraSourceService {
   static {
     addType(this);
+    addServiceTypes(ChronyServiceTypes);
   }
 
   static get typeDefinition() {
@@ -32,7 +40,7 @@ export class ChronyService extends ExtraSourceService {
   }
 
   get type() {
-    return "ntp"; //ChronyServiceTypeDefinition.name;
+    return ChronyServiceTypeDefinition.name;
   }
 
   async *preparePackages(dir) {
@@ -57,7 +65,7 @@ export class ChronyService extends ExtraSourceService {
     const lines = [
       ...serviceEndpoints(this, {
         services: {
-          type: "ntp",
+          types: "ntp",
           priority: ">=200"
         },
         endpoints: e =>
