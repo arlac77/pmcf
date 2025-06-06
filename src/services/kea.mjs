@@ -32,13 +32,6 @@ const ddnsEndpoint = {
   tls: false
 };
 
-const KEAServiceTypes = {
-  kea: { extends: ["dhcp"] },
-  "kea-ddns": {
-    endpoints: [ddnsEndpoint]
-  }
-};
-
 const controlAgentEndpoint = {
   type: "kea-control-agent",
   port: 53002,
@@ -79,6 +72,31 @@ const controlDDNSEndpoint = {
   type: "kea-control-ddns",
   family: "unix",
   path: "/run/kea/ddns-ctrl-socket"
+};
+
+const KEAServiceTypes = {
+  kea: { extends: ["dhcp"] },
+  "kea-ddns": {
+    endpoints: [ddnsEndpoint]
+  },
+  "kea-control-agent": {
+    endpoints: [controlAgentEndpoint]
+  },
+  "kea-ha-4": {
+    endpoints: [ha4Endpoint]
+  },
+  "kea-ha-6": {
+    endpoints: [ha6Endpoint]
+  },
+  "kea-control-dhcp4": {
+    endpoints: [control4Endpoint]
+  },
+  "kea-control-dhcp6": {
+    endpoints: [control6Endpoint]
+  },
+  "kea-control-ddns": {
+    endpoints: [controlDDNSEndpoint]
+  }
 };
 
 const keaVersion = 2.6;
