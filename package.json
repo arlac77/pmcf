@@ -20,7 +20,10 @@
     "kea",
     "keepalived",
     "openldap",
-    "systemd"
+    "systemd",
+    "chrony",
+    "influxdb",
+    "openldap"
   ],
   "contributors": [
     {
