@@ -1,3 +1,6 @@
+import { join } from "node:path";
+import { FileContentProvider } from "npm-pkgbuild";
+import { writeLines } from "../utils.mjs";
 import { addType } from "../types.mjs";
 import { Service, ServiceTypeDefinition } from "../service.mjs";
 
@@ -35,5 +38,29 @@ export class InfluxdbService extends Service {
 
   get type() {
     return InfluxdbServiceTypeDefinition.name;
+  }
+
+  async *preparePackages(dir) {
+    const network = this.network;
+    const host = this.host;
+    const name = host.name;
+
+    const packageData = {
+      dir,
+      sources: [new FileContentProvider(dir + "/")],
+      outputs: this.outputs,
+      properties: {
+        name: `influxdb-${this.location.name}-${host.name}`,
+        description: `influxdb definitions for ${this.fullName}@${name}`,
+        access: "private",
+        dependencies: ["influxdb>=2.7.0"]
+      }
+    };
+
+    const lines = ["metrics-disabled: true"];
+
+    await writeLines(join(dir, "etc", "influxdb"), "config.yml", lines);
+
+    yield packageData;
   }
 }
