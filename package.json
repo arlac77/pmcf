@@ -23,7 +23,8 @@
     "systemd",
     "chrony",
     "influxdb",
-    "openldap"
+    "openldap",
+    "mosquitto"
   ],
   "contributors": [
     {
