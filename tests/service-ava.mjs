@@ -187,7 +187,7 @@ test("Service basics", t => {
   t.deepEqual(
     s3.dnsRecordsForDomainName("example.com", true).map(r => r.toString()),
     [
-      "_http3._tcp.example.com. 1W IN SRV   500   0 443 h1.",
+      "_http3._udp.example.com. 1W IN SRV   500   0 443 h1.",
       'example.com. 1W IN HTTPS 500 . alpn="h3" no-default-alpn'
     ]
   );

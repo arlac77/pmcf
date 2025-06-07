@@ -14,7 +14,6 @@ export const ServiceTypes = {
     dnsRecord: { type: "HTTPS", parameters: { alpn: "h2" } }
   },
   http3: {
-    extends: ["https"],
     endpoints: [{ protocol: "udp", port: 443, tls: false }],
     dnsRecord: {
       type: "HTTPS",
