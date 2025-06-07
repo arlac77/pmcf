@@ -16,7 +16,7 @@ import {
   addresses
 } from "pmcf";
 import { addType } from "../types.mjs";
-import { serviceTypeEndpoints, addServiceTypes } from "../service-types.mjs";
+import { addServiceTypes } from "../service-types.mjs";
 import { Service, ServiceTypeDefinition } from "../service.mjs";
 import { ExtraSourceServiceTypeDefinition } from "../extra-source-service.mjs";
 import { addHook } from "../hooks.mjs";
@@ -172,10 +172,6 @@ export class BindService extends ExtraSourceService {
     return BindServiceTypeDefinition.name;
   }
 
-  get serviceTypeEndpoints() {
-    return serviceTypeEndpoints("dns");
-  }
-
   endpoints(filter) {
     const endpoints = super.endpoints(filter);
 
@@ -311,20 +307,21 @@ export class BindService extends ExtraSourceService {
       hooks: {}
     };
 
+    const filePermissions = [
+      {
+        mode: 0o644,
+        owner: "named",
+        group: "named"
+      },
+      {
+        mode: 0o755,
+        owner: "named",
+        group: "named"
+      }
+    ];
+
     packageData.sources = [
-      new FileContentProvider(
-        zonesPackageDir,
-        {
-          mode: 0o644,
-          owner: "named",
-          group: "named"
-        },
-        {
-          mode: 0o755,
-          owner: "named",
-          group: "named"
-        }
-      )
+      new FileContentProvider(zonesPackageDir, ...filePermissions)
     ];
 
     yield this.generateZoneDefs(sources, packageData);
@@ -340,19 +337,7 @@ export class BindService extends ExtraSourceService {
     };
 
     packageData.sources = [
-      new FileContentProvider(
-        outfacingZonesPackageDir,
-        {
-          mode: 0o644,
-          owner: "named",
-          group: "named"
-        },
-        {
-          mode: 0o755,
-          owner: "named",
-          group: "named"
-        }
-      )
+      new FileContentProvider(outfacingZonesPackageDir, ...filePermissions)
     ];
 
     yield* this.generateOutfacingDefs(sources, packageData);
