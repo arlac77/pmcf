@@ -12,18 +12,8 @@ import {
   SUBNET_LOCALHOST_IPV4,
   SUBNET_LOCALHOST_IPV6
 } from "pmcf";
-import { addServiceTypes } from "../service-types.mjs";
 import { addType } from "../types.mjs";
 import { writeLines } from "../utils.mjs";
-
-const KeaServiceTypeDefinition = {
-  name: "kea",
-  specializationOf: ServiceTypeDefinition,
-  owners: ServiceTypeDefinition.owners,
-  extends: ServiceTypeDefinition,
-  priority: 0.1,
-  properties: {}
-};
 
 const ddnsEndpoint = {
   type: "kea-ddns",
@@ -74,28 +64,38 @@ const controlDDNSEndpoint = {
   path: "/run/kea/ddns-ctrl-socket"
 };
 
-const KEAServiceTypes = {
-  kea: { extends: ["dhcp"] },
-  "kea-ddns": {
-    endpoints: [ddnsEndpoint]
+const KeaServiceTypeDefinition = {
+  name: "kea",
+  specializationOf: ServiceTypeDefinition,
+  owners: ServiceTypeDefinition.owners,
+  extends: ServiceTypeDefinition,
+  priority: 0.1,
+  properties: {},
+  service: {
+    extends: ["dhcp"]
   },
-  "kea-control-agent": {
-    endpoints: [controlAgentEndpoint]
-  },
-  "kea-ha-4": {
-    endpoints: [ha4Endpoint]
-  },
-  "kea-ha-6": {
-    endpoints: [ha6Endpoint]
-  },
-  "kea-control-dhcp4": {
-    endpoints: [control4Endpoint]
-  },
-  "kea-control-dhcp6": {
-    endpoints: [control6Endpoint]
-  },
-  "kea-control-ddns": {
-    endpoints: [controlDDNSEndpoint]
+  services: {
+    "kea-ddns": {
+      endpoints: [ddnsEndpoint]
+    },
+    "kea-control-agent": {
+      endpoints: [controlAgentEndpoint]
+    },
+    "kea-ha-4": {
+      endpoints: [ha4Endpoint]
+    },
+    "kea-ha-6": {
+      endpoints: [ha6Endpoint]
+    },
+    "kea-control-dhcp4": {
+      endpoints: [control4Endpoint]
+    },
+    "kea-control-dhcp6": {
+      endpoints: [control6Endpoint]
+    },
+    "kea-control-ddns": {
+      endpoints: [controlDDNSEndpoint]
+    }
   }
 };
 
@@ -105,7 +105,6 @@ export const fetureHasHTTPEndpoints = keaVersion > 2.7;
 export class KeaService extends Service {
   static {
     addType(this);
-    addServiceTypes(KEAServiceTypes);
   }
 
   static get typeDefinition() {

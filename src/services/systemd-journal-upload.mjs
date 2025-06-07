@@ -9,7 +9,8 @@ const SystemdJournalUploadServiceTypeDefinition = {
   priority: 0.1,
   properties: {
     url: { type: "string", collection: false, writeable: true }
-  }
+  },
+  service: {}
 };
 
 export class SystemdJournalUploadService extends Service {

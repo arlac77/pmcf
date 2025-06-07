@@ -16,12 +16,26 @@ import {
   addresses
 } from "pmcf";
 import { addType } from "../types.mjs";
-import { addServiceTypes } from "../service-types.mjs";
 import { Service, ServiceTypeDefinition } from "../service.mjs";
 import { ExtraSourceServiceTypeDefinition } from "../extra-source-service.mjs";
 import { addHook } from "../hooks.mjs";
 
 const address_types = ["network", "host", "network_interface"];
+
+const BindServiceTypes = {
+  "bind-statistics": {
+    endpoints: [
+      {
+        port: 19521,
+        protocol: "tcp",
+        tls: false
+      }
+    ]
+  },
+  rdnc: {
+    endpoints: [{ type: "rdnc", port: 953, protocol: "tcp", tls: false }]
+  }
+};
 
 const BindServiceTypeDefinition = {
   name: "bind",
@@ -87,25 +101,12 @@ const BindServiceTypeDefinition = {
     expire: { type: "string", collection: false, writeable: true },
     minimum: { type: "string", collection: false, writeable: true },
     allowedUpdates: { type: "string", collection: true, writeable: true }
-  }
-};
+  },
 
-const BindServiceTypes = {
-  [BindServiceTypeDefinition.name]: {
+  service: {
     extends: ["dns"]
   },
-  "bind-statistics": {
-    endpoints: [
-      {
-        port: 19521,
-        protocol: "tcp",
-        tls: false
-      }
-    ]
-  },
-  rdnc: {
-    endpoints: [{ type: "rdnc", port: 953, protocol: "tcp", tls: false }]
-  }
+  services: BindServiceTypes
 };
 
 const rdncEndpoint = BindServiceTypes.rdnc.endpoints[0];
@@ -142,7 +143,6 @@ export class BindService extends ExtraSourceService {
 
   static {
     addType(this);
-    addServiceTypes(BindServiceTypes);
   }
 
   static get typeDefinition() {

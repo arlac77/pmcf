@@ -128,7 +128,9 @@ export class Service extends Base {
 
   endpoints(filter) {
     const data = serviceTypeEndpoints(this.type);
-
+    if (!data) {
+      return [];
+    }
     const l = this._port === undefined ? {} : { port: this._port };
     let result = [...this.host.networkAddresses()]
       .map(na => data.map(d => new Endpoint(this, na, { ...d, ...l })))

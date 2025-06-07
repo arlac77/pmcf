@@ -13,7 +13,8 @@ const OpenLDAPServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
-  properties: {}
+  properties: {},
+  service: {}
 };
 
 export class OpenLDAPService extends Service {

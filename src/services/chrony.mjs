@@ -7,7 +7,6 @@ import {
   ExtraSourceServiceTypeDefinition
 } from "../extra-source-service.mjs";
 import { writeLines } from "../utils.mjs";
-import { addServiceTypes } from "../service-types.mjs";
 
 const ChronyServiceTypeDefinition = {
   name: "chrony",
@@ -15,11 +14,8 @@ const ChronyServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ExtraSourceServiceTypeDefinition,
   priority: 0.1,
-  properties: {}
-};
-
-const ChronyServiceTypes = {
-  [ChronyServiceTypeDefinition.name]: {
+  properties: {},
+  service: {
     extends: ["ntp"]
   }
 };
@@ -27,7 +23,6 @@ const ChronyServiceTypes = {
 export class ChronyService extends ExtraSourceService {
   static {
     addType(this);
-    addServiceTypes(ChronyServiceTypes);
   }
 
   static get typeDefinition() {

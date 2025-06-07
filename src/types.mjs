@@ -1,4 +1,5 @@
 import { asArray } from "./utils.mjs";
+import { addServiceTypes } from "./service-types.mjs";
 
 export const types = {};
 
@@ -7,6 +8,14 @@ export function addType(clazz) {
 
   if (type.specializationOf) {
     type.specializationOf.specializations[type.name] = type;
+  }
+
+  if (type.service) {
+    addServiceTypes({ [type.name]: type.service });
+  }
+
+  if (type.services) {
+    addServiceTypes(type.services);
   }
 
   types[type.name] = type;
