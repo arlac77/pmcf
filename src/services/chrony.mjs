@@ -19,7 +19,7 @@ const ChronyServiceTypeDefinition = {
 };
 
 const ChronyServiceTypes = {
-  "chrony": {
+  [ChronyServiceTypeDefinition.name]: {
     extends: ["ntp"]
   }
 };
