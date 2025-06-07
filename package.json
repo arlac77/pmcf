@@ -12,19 +12,19 @@
   "description": "Poor mans configuration management",
   "keywords": [
     "bind",
+    "chrony",
     "config",
     "config management",
     "dhcp",
     "dns",
+    "influxdb",
     "iwd",
     "kea",
     "keepalived",
+    "mosquitto",
     "openldap",
-    "systemd",
-    "chrony",
-    "influxdb",
     "openldap",
-    "mosquitto"
+    "systemd"
   ],
   "contributors": [
     {
@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.15.30",
-    "ava": "^6.3.0",
+    "ava": "^6.4.0",
     "c8": "^10.1.3",
     "documentation": "^14.0.3",
     "semantic-release": "^24.2.5",
