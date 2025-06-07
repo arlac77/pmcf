@@ -22,6 +22,7 @@ export * from "./services/bind.mjs";
 export * from "./services/chrony.mjs";
 export * from "./services/kea.mjs";
 export * from "./services/openldap.mjs";
+export * from "./services/influxdb.mjs";
 export * from "./services/systemd-journal.mjs";
 export * from "./services/systemd-journal-remote.mjs";
 export * from "./services/systemd-journal-upload.mjs";
