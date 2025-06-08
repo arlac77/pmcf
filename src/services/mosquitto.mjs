@@ -51,7 +51,7 @@ export class MosquittoService extends Service {
       }
     };
 
-    const endpoint = this.endpoint(e => e.type === "mosquitto");
+    const endpoint = this.endpoint("mqtt");
 
     const lines = [
       `listener ${endpoint.port}`,
