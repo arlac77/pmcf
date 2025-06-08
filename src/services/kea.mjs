@@ -28,8 +28,7 @@ const KeaServiceTypeDefinition = {
             family: "IPv4",
             port: 53001,
             protocol: "tcp",
-            tls: false,
-          //  kind: "loopback"
+            tls: false
           }
         ]
       },
@@ -153,7 +152,7 @@ export class KeaService extends Service {
       (
         await Array.fromAsync(
           network.findServices({
-            type: "dhcp",
+            type: "kea",
             priority: ">=" + (this.priority < 100 ? this.priority : 100)
           })
         )
@@ -161,11 +160,7 @@ export class KeaService extends Service {
         .sort(sortDescendingByPriority)
         .map((dhcp, i) => {
           const ctrlAgentEndpoint = dhcp.endpoint(
-            e =>
-              e.type ===
-              (fetureHasHTTPEndpoints
-                ? `kea-ha-${family}`
-                : "kea-control-agent")
+            fetureHasHTTPEndpoints ? `kea-ha-${family}` : "kea-control-agent"
           );
 
           if (ctrlAgentEndpoint) {
