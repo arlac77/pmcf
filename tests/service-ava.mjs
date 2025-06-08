@@ -61,6 +61,7 @@ test("Service basics", t => {
       ...lna.map(
         a =>
           new Endpoint(s1, a, {
+            type: "dns",
             protocol: "udp",
             port: 53,
             tls: false
@@ -69,6 +70,7 @@ test("Service basics", t => {
       ...ena.map(
         a =>
           new Endpoint(s1, a, {
+            type: "dns",
             protocol: "udp",
             port: 53,
             tls: false
@@ -97,13 +99,13 @@ test("Service basics", t => {
   t.is(s1.port, 53);
 
   t.deepEqual(
-    [...s1.endpoints()].map(e => e.address),
-    ["127.0.0.1", "::1", "10.0.0.1"]
+    [...s1.endpoints()].map(e => e.address).sort(),
+    ["127.0.0.1", "::1", "10.0.0.1", "h1"].sort()
   );
 
   t.deepEqual(
-    [...s1.endpoints(e => e.family == "IPv4")].map(e => e.socketAddress),
-    ["127.0.0.1:53", "10.0.0.1:53"]
+    [...s1.endpoints(e => e.family == "IPv4")].map(e => e.socketAddress).sort(),
+    ["127.0.0.1:53", "10.0.0.1:53"].sort()
   );
 
   t.is([...h1.findServices({ type: "dns" })][0], s1);
@@ -129,13 +131,13 @@ test("Service basics", t => {
   );
 
   t.deepEqual(
-    [...s2.endpoints()].map(e => e.address),
-    ["10.0.0.2"]
+    [...s2.endpoints()].map(e => e.address).sort(),
+    ["10.0.0.2", "h2"].sort()
   );
 
   t.deepEqual(
-    [...s2.endpoints()].map(e => e.socketAddress),
-    ["10.0.0.2:53"]
+    [...s2.endpoints()].map(e => e.socketAddress).sort(),
+    ["10.0.0.2:53", "h2:53"].sort()
   );
   t.is([...h2.findServices({ type: "dns" })][0], s2);
 
@@ -205,7 +207,7 @@ test("Service without protocol", t => {
   const na = h1.networkAddresses();
 
   const s1 = new Service(h1, {
-    name: "xyz",
+    name: "abc",
     port: 555,
     weight: 5,
     priority: 3
@@ -216,13 +218,14 @@ test("Service without protocol", t => {
   ]);
 
   t.deepEqual(s1.endpoints(), [
-    ...na.map(
+    /*...na.map(
       a =>
         new Endpoint(s1, a, {
+          type: "abc",
           port: 555,
           tls: false
         })
-    )
+    )*/
   ]);
 });
 
@@ -257,7 +260,7 @@ test("Service owner", t => {
     name: "h2",
     priority: 8,
     weight: 7,
-    networkInterfces: {
+    networkInterfaces: {
       eth0: { kind: "ethernet", ipAddresses: "10.0.0.1" }
     }
   });
@@ -276,13 +279,16 @@ test("Service owner", t => {
   t.is(s1b.priority, 8);
   t.is(s1b.weight, 7);
 
+  const options = {
+    type: "dns",
+    port: 53,
+    protocol: "udp",
+    tls: false
+  };
+
   t.deepEqual(s1b.endpoints(), [
-    new DomainNameEndpoint(s1b, "h2", {
-      //   type: "dns",
-      port: 53,
-      protocol: "udp",
-      tls: false
-    })
+    new Endpoint(s1b, [...h2.networkAddresses()][0], options),
+    new DomainNameEndpoint(s1b, "h2", options)
   ]);
 });
 

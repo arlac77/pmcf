@@ -41,7 +41,8 @@ export class SystemdResolvedService extends ExtraSourceService {
     const options = (priority, limit) => {
       return {
         services: { types: "dns", priority },
-        endpoints: e => e.networkInterface.kind !== "loopback",
+        endpoints: e =>
+          e.networkInterface.kind !== "loopback" && e.family !== "dns",
         select: endpoint => endpoint.address,
         join: " ",
         limit

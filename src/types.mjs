@@ -14,10 +14,6 @@ export function addType(clazz) {
     addServiceTypes({ [type.name]: type.service });
   }
 
-  if (type.services) {
-    addServiceTypes(type.services);
-  }
-
   types[type.name] = type;
 
   type.clazz = clazz;

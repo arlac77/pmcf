@@ -14,6 +14,13 @@ const InfluxdbServiceTypeDefinition = {
   service: {
     endpoints: [
       {
+        family: "IPv4",
+        port: 8086,
+        protocol: "tcp",
+        tls: false
+      },
+      {
+        family: "IPv6",
         port: 8086,
         protocol: "tcp",
         tls: false

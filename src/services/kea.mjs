@@ -5,64 +5,12 @@ import {
   Service,
   sortDescendingByPriority,
   ServiceTypeDefinition,
-  Endpoint,
-  UnixEndpoint,
-  HTTPEndpoint,
   serviceEndpoints,
   SUBNET_LOCALHOST_IPV4,
   SUBNET_LOCALHOST_IPV6
 } from "pmcf";
 import { addType } from "../types.mjs";
 import { writeLines } from "../utils.mjs";
-
-const ddnsEndpoint = {
-  type: "kea-ddns",
-  port: 53001,
-  protocol: "tcp",
-  tls: false
-};
-
-const controlAgentEndpoint = {
-  type: "kea-control-agent",
-  port: 53002,
-  pathname: "/",
-  protocol: "tcp",
-  tls: false
-};
-
-const ha4Endpoint = {
-  type: "kea-ha-4",
-  port: 53003,
-  pathname: "/",
-  protocol: "tcp",
-  tls: false
-};
-
-const ha6Endpoint = {
-  type: "kea-ha-6",
-  port: 53004,
-  pathname: "/",
-  protocol: "tcp",
-  tls: false
-};
-
-const control4Endpoint = {
-  type: "kea-control-dhcp4",
-  family: "unix",
-  path: "/run/kea/4-ctrl-socket"
-};
-
-const control6Endpoint = {
-  type: "kea-control-dhcp6",
-  family: "unix",
-  path: "/run/kea/6-ctrl-socket"
-};
-
-const controlDDNSEndpoint = {
-  type: "kea-control-ddns",
-  family: "unix",
-  path: "/run/kea/ddns-ctrl-socket"
-};
 
 const KeaServiceTypeDefinition = {
   name: "kea",
@@ -72,29 +20,77 @@ const KeaServiceTypeDefinition = {
   priority: 0.1,
   properties: {},
   service: {
-    extends: ["dhcp"]
-  },
-  services: {
-    "kea-ddns": {
-      endpoints: [ddnsEndpoint]
-    },
-    "kea-control-agent": {
-      endpoints: [controlAgentEndpoint]
-    },
-    "kea-ha-4": {
-      endpoints: [ha4Endpoint]
-    },
-    "kea-ha-6": {
-      endpoints: [ha6Endpoint]
-    },
-    "kea-control-dhcp4": {
-      endpoints: [control4Endpoint]
-    },
-    "kea-control-dhcp6": {
-      endpoints: [control6Endpoint]
-    },
-    "kea-control-ddns": {
-      endpoints: [controlDDNSEndpoint]
+    extends: ["dhcp"],
+    services: {
+      "kea-ddns": {
+        endpoints: [
+          {
+            family: "IPv4",
+            port: 53001,
+            protocol: "tcp",
+            tls: false,
+          //  kind: "loopback"
+          }
+        ]
+      },
+      "kea-control-agent": {
+        endpoints: [
+          {
+            family: "IPv4",
+            port: 53002,
+            pathname: "/",
+            protocol: "tcp",
+            tls: false
+          }
+        ]
+      },
+      /*
+      "kea-ha-4": {
+        endpoints: [
+          {
+            family: "IPv4",
+            port: 53003,
+            pathname: "/",
+            protocol: "tcp",
+            tls: false
+          }
+        ]
+      },
+      "kea-ha-6": {
+        endpoints: [
+          {
+            family: "IPv6",
+            port: 53004,
+            pathname: "/",
+            protocol: "tcp",
+            tls: false
+          }
+        ]
+      },*/
+      "kea-control-dhcp4": {
+        endpoints: [
+          {
+            family: "unix",
+            path: "/run/kea/4-ctrl-socket"
+          }
+        ]
+      },
+      "kea-control-dhcp6": {
+        endpoints: [
+          {
+            family: "unix",
+            path: "/run/kea/6-ctrl-socket"
+          }
+        ]
+      },
+      "kea-control-ddns": {
+        endpoints: [
+          {
+            family: "unix",
+            path: "/run/kea/ddns-ctrl-socket"
+          }
+        ]
+      }
     }
   }
 };
@@ -117,43 +113,11 @@ export class KeaService extends Service {
   }
 
   get type() {
-    return "dhcp"; //KeaServiceTypeDefinition.name;
-  }
-
-  endpoints(filter) {
-    const endpoints = super.endpoints(filter);
-
-    for (const na of this.host.networkAddresses()) {
-      endpoints.push(new HTTPEndpoint(this, na, controlAgentEndpoint));
-
-      if (fetureHasHTTPEndpoints) {
-        endpoints.push(
-          new HTTPEndpoint(
-            this,
-            na,
-            na.family === "IPv4" ? ha4Endpoint : ha6Endpoint
-          )
-        );
-      }
-
-      if (na.networkInterface.kind === "loopback") {
-        endpoints.push(new Endpoint(this, na, ddnsEndpoint));
-      }
-    }
-
-    endpoints.push(
-      new UnixEndpoint(this, control4Endpoint.path, control4Endpoint),
-      new UnixEndpoint(this, control6Endpoint.path, control6Endpoint),
-      new UnixEndpoint(this, controlDDNSEndpoint.path, controlDDNSEndpoint)
-    );
-
-    return filter ? endpoints.filter(filter) : endpoints;
+    return KeaServiceTypeDefinition.name;
   }
 
   async *preparePackages(dir) {
-    const ctrlAgentEndpoint = this.endpoint(
-      e => e.type === "kea-control-agent"
-    );
+    const ctrlAgentEndpoint = this.endpoint("kea-control-agent");
 
     if (!ctrlAgentEndpoint) {
       return;
@@ -232,9 +196,7 @@ export class KeaService extends Service {
         "interfaces-config": {
           interfaces: listenInterfaces(`IPv${family}`)
         },
-        "control-socket": toUnix(
-          this.endpoint(e => e.type === `kea-control-dhcp${family}`)
-        ),
+        "control-socket": toUnix(this.endpoint(`kea-control-dhcp${family}`)),
         "lease-database": {
           type: "memfile",
           "lfc-interval": 3600
@@ -313,9 +275,9 @@ export class KeaService extends Service {
         "http-host": ctrlAgentEndpoint.hostname,
         "http-port": ctrlAgentEndpoint.port,
         "control-sockets": {
-          dhcp4: toUnix(this.endpoint(e => e.type === "kea-control-dhcp4")),
-          dhcp6: toUnix(this.endpoint(e => e.type === "kea-control-dhcp6")),
-          d2: toUnix(this.endpoint(e => e.type === "kea-control-ddns"))
+          dhcp4: toUnix(this.endpoint("kea-control-dhcp4")),
+          dhcp6: toUnix(this.endpoint("kea-control-dhcp6")),
+          d2: toUnix(this.endpoint("kea-control-ddns"))
         },
         loggers
       }
@@ -333,7 +295,7 @@ export class KeaService extends Service {
         };
       });
 
-    const ddnsEndpoint = this.endpoint(e => e.type === "kea-ddns");
+    const ddnsEndpoint = this.endpoint("kea-ddns");
 
     const subnetPrefixes = new Set(
       [...this.subnets]

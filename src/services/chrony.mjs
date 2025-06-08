@@ -16,7 +16,29 @@ const ChronyServiceTypeDefinition = {
   priority: 0.1,
   properties: {},
   service: {
-    extends: ["ntp"]
+    extends: ["ntp"],
+    services: {
+      "chrony-cmd": {
+        endpoints: [
+          {
+            family: "IPv4",
+            port: 323,
+            protocol: "tcp",
+            tls: false
+          },
+          {
+            family: "IPv6",
+            port: 323,
+            protocol: "tcp",
+            tls: false
+          },
+          {
+            family: "unux",
+            path: "/var/run/chrony/chronyd.sock"
+          }
+        ]
+      }
+    }
   }
 };
 

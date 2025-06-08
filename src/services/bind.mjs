@@ -22,21 +22,6 @@ import { addHook } from "../hooks.mjs";
 
 const address_types = ["network", "host", "network_interface"];
 
-const BindServiceTypes = {
-  "bind-statistics": {
-    endpoints: [
-      {
-        port: 19521,
-        protocol: "tcp",
-        tls: false
-      }
-    ]
-  },
-  rdnc: {
-    endpoints: [{ type: "rdnc", port: 953, protocol: "tcp", tls: false }]
-  }
-};
-
 const BindServiceTypeDefinition = {
   name: "bind",
   specializationOf: ServiceTypeDefinition,
@@ -104,13 +89,33 @@ const BindServiceTypeDefinition = {
   },
 
   service: {
-    extends: ["dns"]
-  },
-  services: BindServiceTypes
+    extends: ["dns"],
+    services: {
+      "bind-statistics": {
+        endpoints: [
+          {
+            family: "IPv4",
+            port: 19521,
+            protocol: "tcp",
+            tls: false,
+            kind: "loopback"
+          }
+        ]
+      },
+      "bind-rdnc": {
+        endpoints: [
+          {
+            family: "IPv4",
+            port: 953,
+            protocol: "tcp",
+            tls: false,
+            kind: "loopback"
+          }
+        ]
+      }
+    }
+  }
 };
-
-const rdncEndpoint = BindServiceTypes.rdnc.endpoints[0];
-const statisticsEndpoint = BindServiceTypes["bind-statistics"].endpoints[0];
 
 function addressesStatement(prefix, objects, generateEmpty = false) {
   const body = asArray(objects).map(name => `  ${name};`);
@@ -170,21 +175,6 @@ export class BindService extends ExtraSourceService {
 
   get type() {
     return BindServiceTypeDefinition.name;
-  }
-
-  endpoints(filter) {
-    const endpoints = super.endpoints(filter);
-
-    for (const na of this.owner.networkAddresses(
-      na => na.networkInterface.kind === "loopback"
-    )) {
-      endpoints.push(
-        new Endpoint(this, na, rdncEndpoint),
-        new Endpoint(this, na, statisticsEndpoint)
-      );
-    }
-
-    return filter ? endpoints.filter(filter) : endpoints;
   }
 
   get soaUpdates() {

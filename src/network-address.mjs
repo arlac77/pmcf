@@ -66,3 +66,7 @@ export function addresses(sources, options) {
 export function cidrAddresses(networkAddresses) {
   return [...networkAddresses].map(na => na.cidrAddress);
 }
+
+export function sortByFamilyAndAddress(a, b) {
+  return a.family.localeCompare(b.family) ?? a.address.localeCompare(b.address);
+}

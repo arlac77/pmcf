@@ -38,6 +38,10 @@ class PortEndpoint extends BaseEndpoint {
     return this._port ?? this.service.port;
   }
 
+  get socketAddress() {
+    return `${this.address}:${this.port}`;
+  }
+
   toString() {
     return `${this.type}:${this.family}/${this.address}[${this.port}]`;
   }
@@ -49,9 +53,10 @@ export class Endpoint extends PortEndpoint {
     this.networkAddress = networkAddress;
   }
 
+  /*
   get socketAddress() {
     return `${this.address}:${this.port}`;
-  }
+  }*/
 
   get hostName() {
     return this.networkAddress.networkInterface.hostName;
@@ -84,13 +89,16 @@ export class DomainNameEndpoint extends PortEndpoint {
     return {};
   }
 
+  get family() {
+    return "dns"; // TODO
+  }
+
   get address() {
     return this.domainName;
   }
 
-  get isPool()
-  {
-    return this.domainName.indexOf('pool') >= 0; // TODO
+  get isPool() {
+    return this.domainName.indexOf("pool") >= 0; // TODO
   }
 }
 

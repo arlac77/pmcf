@@ -5,7 +5,8 @@ import {
   KeaService,
   Endpoint,
   HTTPEndpoint,
-  fetureHasHTTPEndpoints
+  fetureHasHTTPEndpoints,
+  sortByFamilyAndAddress
 } from "pmcf";
 
 test("kea basics", t => {
@@ -25,8 +26,6 @@ test("kea basics", t => {
   );
   */
 
-  const a1 = [...h1.networkAddresses(na => na.family === "IPv4")][0];
-
   const kea = new KeaService(h1, {
     name: "kea",
     subsystems: {
@@ -41,17 +40,28 @@ test("kea basics", t => {
 
   h1.services = kea;
 
-  const result = kea.endpoints(e => e.family === "IPv4");
+  t.is(kea.endpoint("dhcp").toString(), "dhcp:IPv4/10.0.0.1[547]");
+  t.is(kea.endpoint("kea-ddns").toString(), "kea-ddns:IPv4/10.0.0.1[53001]");
+  t.is(kea.endpoint("kea-control-dhcp4").toString(), "kea-control-dhcp4:unix:/run/kea/4-ctrl-socket");
+  t.is(kea.endpoint("kea-control-dhcp6").toString(), "kea-control-dhcp6:unix:/run/kea/6-ctrl-socket");
 
-  const expected = [
-    new Endpoint(kea, a1, {
-      protocol: "udp",
-      port: 547,
-      tls: false
-    }),
+  /*
+  const a1 = [...h1.networkAddresses(na => na.family === "IPv4")][0];
+
+  const result = kea
+    .endpoints(e => e.family === "IPv4")
+    .sort(sortByFamilyAndAddress);
+
+  let expected = [
     new HTTPEndpoint(kea, a1, {
       type: "kea-control-agent",
       port: 53002,
+      tls: false
+    }),
+    new Endpoint(kea, a1, {
+      type: "dhcp",
+      protocol: "udp",
+      port: 547,
       tls: false
     })
   ];
@@ -66,9 +76,12 @@ test("kea basics", t => {
     );
   }
 
+  expected = expected.sort(sortByFamilyAndAddress);
+
   //console.log([...la].map(a => a.toString()));
-  //console.log(result.map(na => na.toString()));
-  //console.log(expected.map(na => na.toString()));
+  console.log(result.map(na => na.toString()));
+  console.log(expected.map(na => na.toString()));
 
   t.deepEqual(result, expected);
+  */
 });

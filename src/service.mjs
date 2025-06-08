@@ -1,4 +1,11 @@
-import { Base, Host, Endpoint, DomainNameEndpoint } from "pmcf";
+import {
+  Base,
+  Host,
+  Endpoint,
+  DomainNameEndpoint,
+  HTTPEndpoint,
+  UnixEndpoint
+} from "pmcf";
 import { addType } from "./types.mjs";
 import { asArray } from "./utils.mjs";
 import { networkAddressProperties } from "./network-support.mjs";
@@ -131,18 +138,59 @@ export class Service extends Base {
     if (!data) {
       return [];
     }
-    const l = this._port === undefined ? {} : { port: this._port };
-    let result = [...this.host.networkAddresses()]
-      .map(na => data.map(d => new Endpoint(this, na, { ...d, ...l })))
-      .flat();
 
-    if (result.length === 0) {
-      result = data.map(
-        d => new DomainNameEndpoint(this, this.domainName, { ...d, ...l })
-      );
+    const result = [];
+
+    const domainNames = new Set([undefined]);
+
+    for (const e of data) {
+      switch (e.family) {
+        case "unix":
+          result.push(new UnixEndpoint(this, e.path, e));
+          break;
+
+        case undefined:
+        case "dns":
+        case "IPv4":
+        case "IPv6":
+          const options =
+            this._port === undefined ? { ...e } : { ...e, port: this._port };
+          delete options.kind;
+
+          for (const na of this.host.networkAddresses()) {
+            if (e.kind && e.kind !== na.networkInterface.kind) {
+              continue;
+            }
+
+            if (e.pathname) {
+              result.push(new HTTPEndpoint(this, na, options));
+            } else {
+              if (e.family === na.family) {
+                result.push(new Endpoint(this, na, options));
+              } else {
+                if (!domainNames.has(this.domainName)) {
+                  domainNames.add(this.domainName);
+                  result.push(
+                    new DomainNameEndpoint(this, this.domainName, options)
+                  );
+                }
+              }
+            }
+          }
+          break;
+      }
     }
 
-    return filter ? result.filter(filter) : result;
+    switch (typeof filter) {
+      case "string":
+        return result.filter(endpoint => endpoint.type === filter);
+
+      case "undefined":
+        return result;
+
+      default:
+        return result.filter(filter);
+    }
   }
 
   endpoint(filter) {
@@ -230,6 +278,7 @@ export class Service extends Base {
             dnsFullName(this.domainName)
           )
         );
+        break; // TODO only one ?
       }
     }
 

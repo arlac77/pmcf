@@ -1,5 +1,5 @@
 import test from "ava";
-import { Root, Host, Service, Endpoint, HTTPEndpoint } from "pmcf";
+import { Root, Host, Service, Endpoint, HTTPEndpoint, DomainNameEndpoint, sortByFamilyAndAddress } from "pmcf";
 
 function prepare() {
   const root = new Root("/somwhere");
@@ -29,20 +29,20 @@ function prepare() {
 test("Endpoint from Service basics", t => {
   const { h1, s1 } = prepare();
 
-  //console.log(s1.endpoints().map(e => e.toString()));
+  const nas = [...h1.networkAddresses()].sort(sortByFamilyAndAddress);
+  const eps = s1.endpoints().sort(sortByFamilyAndAddress);
 
-  const nas = h1.networkAddresses();
-  const eps = s1.endpoints();
+  //console.log(eps.map(e => e.toString()));
 
+  const options = {
+    type: "dns",
+    protocol: "udp",
+    port: 53,
+    tls: false
+  };
   t.deepEqual(eps, [
-    ...nas.map(
-      na =>
-        new Endpoint(s1, na, {
-          protocol: "udp",
-          port: 53,
-          tls: false
-        })
-    )
+    new DomainNameEndpoint(s1, "h1", options),
+    ...nas.map(na => new Endpoint(s1, na, options))
   ]);
 
   t.is(
@@ -50,7 +50,7 @@ test("Endpoint from Service basics", t => {
     "localhost"
   );
 
-  const e1 = s1.endpoints(e => e.networkInterface.kind !== "loopback")[0];
+  const e1 = s1.endpoints(e => e.family=='IPv4' && e.networkInterface.kind !== "loopback")[0];
   t.is(e1.hostName, "h1");
   t.is(e1.type, "dns");
   t.is(e1.protocol, "udp");

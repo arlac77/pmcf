@@ -46,7 +46,7 @@ export class SystemdTimesyncdService extends ExtraSourceService {
         {
           NTP: serviceEndpoints(this, {
             services: {
-              type: "ntp",
+              types: "ntp",
               priority: "[200:399]"
             },
             endpoints: endpoint =>
