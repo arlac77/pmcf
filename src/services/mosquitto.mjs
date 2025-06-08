@@ -56,7 +56,8 @@ export class MosquittoService extends Service {
     const lines = [
       `listener ${endpoint.port}`,
       "log_timestamp false",
-      "allow_anonymous true"
+      "allow_anonymous true",
+      "persistence_location /var/lib/mosquitto"
     ];
 
     await writeLines(join(dir, "etc", "mosquitto"), "mosquitto.conf", lines);
