@@ -55,41 +55,5 @@ export class WLANNetworkInterface extends EthernetNetworkInterface {
     await mkdir(d, { recursive: true });
 
     packageData.properties.requires.push("iwd", "impala");
-
-    /*
-    writeFile(
-      join(d, `${this.network.name}.psk`),
-      `[Security]
-Passphrase=
-SAE-PT-Group19=
-SAE-PT-Group20=
-`,
-      "utf8"
-    );
-*/
-    /*
-    const d = join(packageData.dir, "etc/wpa_supplicant");
-    await mkdir(d, { recursive: true });
-    writeFile(
-      join(d, `wpa_supplicant-${this.name}.conf`),
-      `country=${this.location.country}
-ctrl_interface=DIR=/run/wpa_supplicant GROUP=netdev
-update_config=1
-p2p_disabled=1
-network={
-  ssid="${this.ssid}"
-  psk=${this.psk}
-  scan_ssid=1
-}`,
-      "utf8"
-    );
-
-    addHook(
-      packageData.properties.hooks,
-      "post_install",
-      `systemctl enable wpa_supplicant@${this.name}.service`
-    );
-
-  */
   }
 }
