@@ -34,10 +34,16 @@ class PortEndpoint extends BaseEndpoint {
     }
   }
 
+  /**
+   * @return {number}
+   */
   get port() {
     return this._port ?? this.service.port;
   }
 
+  /**
+   * @return {string}
+   */
   get socketAddress() {
     return `${this.address}:${this.port}`;
   }
@@ -52,11 +58,6 @@ export class Endpoint extends PortEndpoint {
     super(service, data);
     this.networkAddress = networkAddress;
   }
-
-  /*
-  get socketAddress() {
-    return `${this.address}:${this.port}`;
-  }*/
 
   get hostName() {
     return this.networkAddress.networkInterface.hostName;
@@ -125,6 +126,9 @@ export class HTTPEndpoint extends BaseEndpoint {
     }
   }
 
+  /**
+   * @return {number}
+   */
   get port() {
     const port = this.url.port;
     if (port.length) {
