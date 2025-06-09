@@ -104,7 +104,7 @@ export class Cluster extends Host {
       )) {
         cfg.push(`vrrp_instance ${cluster.name} {`);
         cfg.push(
-          `  state ${cluster.masters.indexOf(ni) >= 0 ? "MASTER" : "BACKUP"}`
+          `  state ${cluster.masters.indexOf(ni) === 0 ? "MASTER" : "BACKUP"}`
         );
         cfg.push(`  interface ${ni.name}`);
 
