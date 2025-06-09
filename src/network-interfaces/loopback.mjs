@@ -61,4 +61,9 @@ export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
   get ipAddresses() {
     return _localAddresses;
   }
+
+  get MTU()
+  {
+    return 16436;
+  }
 }

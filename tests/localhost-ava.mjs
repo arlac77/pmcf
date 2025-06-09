@@ -8,6 +8,7 @@ test("localhost", async t => {
   const local = root.named("/LOCAL");
   t.is(local.name, "LOCAL");
   t.is(local.constructor, LoopbackNetworkInterface);
+  t.is(local.MTU, 16436);
   t.deepEqual(local.localDomains, new Set(["localhost"]));
   t.is(local.host, undefined);
   t.deepEqual([...local.hosts()], []);
