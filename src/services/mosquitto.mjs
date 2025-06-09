@@ -57,7 +57,9 @@ export class MosquittoService extends Service {
       `listener ${endpoint.port}`,
       "log_timestamp false",
       "allow_anonymous true",
-      "persistence_location /var/lib/mosquitto"
+      "persistence_location /var/lib/mosquitto",
+      "password_file /etc/mosquitto/passwd",
+      "acl_file /etc/mosquitto/acl"
     ];
 
     await writeLines(join(dir, "etc", "mosquitto"), "mosquitto.conf", lines);
