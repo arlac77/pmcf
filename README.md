@@ -25,6 +25,9 @@
     *   [extends](#extends)
     *   [findService](#findservice)
         *   [Parameters](#parameters-1)
+*   [port](#port)
+*   [socketAddress](#socketaddress)
+*   [port](#port-1)
 *   [SkeletonNetworkInterface](#skeletonnetworkinterface)
     *   [networkAddresses](#networkaddresses)
         *   [Parameters](#parameters-2)
@@ -56,6 +59,18 @@ Returns **Iterable<[Base](#base)>**&#x20;
 *   `filter` **any**&#x20;
 
 Returns **any** service with the highest priority
+
+## port
+
+Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+
+## socketAddress
+
+Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+
+## port
+
+Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
 ## SkeletonNetworkInterface
 
