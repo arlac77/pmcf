@@ -125,7 +125,13 @@ export class Cluster extends Host {
         }
 
         cfg.push(`  virtual_router_id ${cluster.routerId}`);
-        cfg.push(`  priority ${host.priority - cluster.masters.indexOf(ni)}`);
+
+        let reducedPrio = cluster.masters.indexOf(ni);
+        if(reducedPrio < 0) {
+          reducedPrio = cluster.backups.indexOf(ni) + 5;
+        }
+
+        cfg.push(`  priority ${host.priority - reducedPrio}`);
         cfg.push("  smtp_alert");
         cfg.push("  advert_int 5");
         cfg.push("  authentication {");
