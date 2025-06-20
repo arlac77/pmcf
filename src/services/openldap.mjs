@@ -100,8 +100,8 @@ export class OpenLDAPService extends Service {
     ]);
 
     await writeLines(join(packageData.dir, "etc/openldap"), "ldap.conf", [
-      `BASE=${this.baseDN}`,
-      `URI=${this.uri}`
+      `BASE  ${this.baseDN}`,
+      `URI   ${this.uri}`
     ]);
 
     yield packageData;
