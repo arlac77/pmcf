@@ -1,10 +1,7 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { addType } from "../types.mjs";
-import {
-  ServiceTypeDefinition,
-  Service
-} from "../service.mjs";
+import { ServiceTypeDefinition, Service } from "../service.mjs";
 import { writeLines } from "../utils.mjs";
 
 const OpenLDAPServiceTypeDefinition = {
@@ -13,7 +10,23 @@ const OpenLDAPServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
-  properties: {},
+  properties: {
+    baseDN: {
+      type: "string",
+      collection: false,
+      writeable: true
+    },
+    rootDN: {
+      type: "string",
+      collection: false,
+      writeable: true
+    },
+    uri: {
+      type: "string",
+      collection: false,
+      writeable: true
+    }
+  },
   service: {}
 };
 
@@ -26,6 +39,9 @@ export class OpenLDAPService extends Service {
     return OpenLDAPServiceTypeDefinition;
   }
 
+  baseDN;
+  rootDN;
+
   constructor(owner, data) {
     super(owner, data);
     this.read(data, OpenLDAPServiceTypeDefinition);
@@ -33,6 +49,17 @@ export class OpenLDAPService extends Service {
 
   get type() {
     return OpenLDAPServiceTypeDefinition.name;
+  }
+
+  get uri()
+  {
+    return this._uri;
+  }
+
+  set uri(value)
+  {
+    console.log("SET URI",value);
+    this._uri = value;
   }
 
   async *preparePackages(dir) {
@@ -57,6 +84,12 @@ export class OpenLDAPService extends Service {
     await writeLines(join(packageData.dir, "etc/conf.d"), "slapd", [
       "SLAPD_OPTIONS=-d 9",
       "SLAPD_URLS=ldap:/// ldaps:///"
+    ]);
+
+    console.log(this);
+    await writeLines(join(packageData.dir, "etc/openldap"), "ldap.conf", [
+      `BASE=${this.baseDN}`,
+      `URI=${this.uri}`
     ]);
 
     yield packageData;

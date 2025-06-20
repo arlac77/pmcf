@@ -13,6 +13,7 @@
     }
   },
   "services": {
-    "dns": { "type": "dns", "alias": "dns" }
+    "dns": { "type": "dns", "alias": "dns" },
+    "openldap": { "baseDN": "abc", "rootDN" : "dn=root", "uri": "ldap://" }
   }
 }
