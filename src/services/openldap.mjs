@@ -82,9 +82,22 @@ export class OpenLDAPService extends Service {
 
     console.log("openldap", name, network.name);
 
+    const filePermissions = [
+      {
+        mode: 0o644,
+        owner: "ldap",
+        group: "ldap"
+      },
+      {
+        mode: 0o755,
+        owner: "ldap",
+        group: "ldap"
+      }
+    ];
+
     const packageData = {
       dir,
-      sources: [new FileContentProvider(dir + "/")],
+      sources: [new FileContentProvider(dir + "/", ...filePermissions)],
       outputs: this.outputs,
       properties: {
         name: `openldap-${this.location.name}-${name}`,
@@ -98,6 +111,16 @@ export class OpenLDAPService extends Service {
       "SLAPD_OPTIONS=-d 9",
       "SLAPD_URLS=ldap:/// ldaps:///"
     ]);
+
+    await writeLines(
+      join(packageData.dir, "/var/lib/openldap/openldap-data"),
+      "DB_CONFIG",
+      [
+        "set_cachesize 0 16777216 1",
+        "set_lg_regionmax 65536",
+        "set_lg_bsize 524288"
+      ]
+    );
 
     await writeLines(join(packageData.dir, "etc/openldap"), "ldap.conf", [
       `BASE  ${this.baseDN}`,
