@@ -39,8 +39,8 @@ export class OpenLDAPService extends Service {
     return OpenLDAPServiceTypeDefinition;
   }
 
-  baseDN;
-  rootDN;
+  _baseDN;
+  _rootDN;
 
   constructor(owner, data) {
     super(owner, data);
@@ -51,14 +51,27 @@ export class OpenLDAPService extends Service {
     return OpenLDAPServiceTypeDefinition.name;
   }
 
-  get uri()
-  {
+  get baseDN() {
+    return this.expand(this._baseDN);
+  }
+
+  set baseDN(value) {
+    this._baseDN = value;
+  }
+
+  get rootDN() {
+    return this.expand(this._rootDN);
+  }
+
+  set rootDN(value) {
+    this._rootDN = value;
+  }
+
+  get uri() {
     return this._uri;
   }
 
-  set uri(value)
-  {
-    console.log("SET URI",value);
+  set uri(value) {
     this._uri = value;
   }
 
@@ -86,7 +99,6 @@ export class OpenLDAPService extends Service {
       "SLAPD_URLS=ldap:/// ldaps:///"
     ]);
 
-    console.log(this);
     await writeLines(join(packageData.dir, "etc/openldap"), "ldap.conf", [
       `BASE=${this.baseDN}`,
       `URI=${this.uri}`
