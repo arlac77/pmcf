@@ -1,5 +1,5 @@
 import test from "ava";
-import { Root } from "pmcf";
+import { Root, UnixEndpoint } from "pmcf";
 import { OpenLDAPService } from "../src/services/openldap.mjs";
 
 test("OpenLDAPService basics", async t => {
@@ -8,12 +8,19 @@ test("OpenLDAPService basics", async t => {
 
   const openldap = await root.named("/L1/host1/openldap");
 
+  t.true(openldap instanceof OpenLDAPService);
   t.is(openldap.baseDN, "abc");
   t.is(openldap.rootDN, "dn=root");
   t.is(openldap.uri, "ldap://");
+
+  t.deepEqual(
+    openldap.endpoint("ldap"),
+    new UnixEndpoint(openldap, "/run/ldapi", { type: "ldap" })
+  );
+
   /*
   t.deepEqual(
-    openldap.endpoints().map(e => {
+    openldap.endpoints('ldapi').map(e => {
       return {
         type: e.type,
         port: e.port,
@@ -29,5 +36,4 @@ test("OpenLDAPService basics", async t => {
     ]
   );
 */
-  t.true(openldap instanceof OpenLDAPService);
 });
