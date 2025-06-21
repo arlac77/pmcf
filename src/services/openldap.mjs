@@ -108,8 +108,8 @@ export class OpenLDAPService extends Service {
     };
 
     await writeLines(join(packageData.dir, "etc/conf.d"), "slapd", [
-      "SLAPD_OPTIONS=-d 9",
-      "SLAPD_URLS=ldap:/// ldaps:///"
+      "SLAPD_OPTIONS=",
+      "SLAPD_URLS=ldap:/// ldaps:/// ldapi://%2Frun%2Fldapi"
     ]);
 
     await writeLines(
