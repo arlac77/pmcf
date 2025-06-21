@@ -33,8 +33,8 @@ const ChronyServiceTypeDefinition = {
             tls: false
           },
           {
-            family: "unux",
-            path: "/var/run/chrony/chronyd.sock"
+            family: "unix",
+            path: "/run/chrony/chronyd.sock"
           }
         ]
       }
