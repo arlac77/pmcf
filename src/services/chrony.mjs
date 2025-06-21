@@ -34,7 +34,7 @@ const ChronyServiceTypeDefinition = {
           },
           {
             family: "unix",
-            path: "/run/chrony/chronyd.sock"
+            path: "/var/run/chrony/chronyd.sock"
           }
         ]
       }
@@ -54,6 +54,8 @@ export class ChronyService extends ExtraSourceService {
   constructor(owner, data) {
     super(owner, data);
     this.read(data, ChronyServiceTypeDefinition);
+
+    this._systemd = "chronyd.service";
   }
 
   get type() {

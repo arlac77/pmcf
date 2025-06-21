@@ -152,6 +152,7 @@ export class BindService extends ExtraSourceService {
   constructor(owner, data) {
     super(owner, data);
 
+    this._systemd = "bind.service";
     this._extends.push(new Service(owner, { name: this.name, type: "dns" }));
     this.views = {};
 
