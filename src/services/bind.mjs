@@ -9,12 +9,7 @@ import {
   dnsRecordTypeForAddressFamily,
   sortZoneRecords
 } from "../dns-utils.mjs";
-import {
-  ExtraSourceService,
-  Endpoint,
-  serviceEndpoints,
-  addresses
-} from "pmcf";
+import { ExtraSourceService, serviceEndpoints, addresses } from "pmcf";
 import { addType } from "../types.mjs";
 import { Service, ServiceTypeDefinition } from "../service.mjs";
 import { ExtraSourceServiceTypeDefinition } from "../extra-source-service.mjs";
@@ -366,14 +361,13 @@ export class BindService extends ExtraSourceService {
 
     for (const source of sources) {
       console.log(
-        "LOCAL DOMAINS",
-        source.localDomains,
-        source.domain,
-        source.toString()
+        "SOURCE",
+        source.toString(),
+        [...source.localDomains].join(" ")
       );
 
       for (const domain of source.localDomains) {
-        const locationName = source.name;
+        const locationName = source.location.name;
         const reverseZones = new Map();
 
         const config = {
