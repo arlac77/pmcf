@@ -27,7 +27,19 @@ const OpenLDAPServiceTypeDefinition = {
       writeable: true
     }
   },
-  service: {}
+  service: {
+    extends: ["ldap"],
+    services: {
+      "ldap": {
+        endpoints: [
+          {
+            family: "unix",
+            path: "/run/ldapi"
+          }
+        ]
+      }
+    }
+  }
 };
 
 export class OpenLDAPService extends Service {
