@@ -127,7 +127,7 @@ export class Cluster extends Host {
         cfg.push(`  virtual_router_id ${cluster.routerId}`);
 
         let reducedPrio = cluster.masters.indexOf(ni);
-        if(reducedPrio < 0) {
+        if (reducedPrio < 0) {
           reducedPrio = cluster.backups.indexOf(ni) + 5;
         }
 
@@ -193,44 +193,43 @@ export class Cluster extends Host {
           cfg.push("}", "");
           break; // only one for now
         }
+        await writeLines(
+          join(packageStagingDir, "/usr/lib/systemd/system"),
+          `${cluster.name}-master.target`,
+          [
+            "[Unit]",
+            `Description=master state of cluster ${cluster.name}`,
+            "PartOf=keepalived.service",
+            `Conflicts=${cluster.name}-fault.target`
+          ]
+        );
+
+        await writeLines(
+          join(packageStagingDir, "/usr/lib/systemd/system"),
+          `${cluster.name}-backup.target`,
+          [
+            "[Unit]",
+            `Description=backup state of cluster ${cluster.name}`,
+            "PartOf=keepalived.service",
+            `Conflicts=${cluster.name}-fault.target`
+          ]
+        );
+
+        await writeLines(
+          join(packageStagingDir, "/usr/lib/systemd/system"),
+          `${cluster.name}-fault.target`,
+          [
+            "[Unit]",
+            `Description=fault state of cluster ${cluster.name}`,
+            `Conflicts=${cluster.name}-master.target ${cluster.name}-backup.target`
+          ]
+        );
       }
 
       await writeLines(
         join(packageStagingDir, "etc/keepalived"),
         "keepalived.conf",
         cfg
-      );
-
-      await writeLines(
-        join(packageStagingDir, "/usr/lib/systemd/system"),
-        `${this.name}-master.target`,
-        [
-          "[Unit]",
-          `Description=master state of cluster ${this.name}`,
-          "PartOf=keepalived.service",
-          `Conflicts=${this.name}-fault.target`
-        ]
-      );
-
-      await writeLines(
-        join(packageStagingDir, "/usr/lib/systemd/system"),
-        `${this.name}-backup.target`,
-        [
-          "[Unit]",
-          `Description=backup state of cluster ${this.name}`,
-          "PartOf=keepalived.service",
-          `Conflicts=${this.name}-fault.target`
-        ]
-      );
-
-      await writeLines(
-        join(packageStagingDir, "/usr/lib/systemd/system"),
-        `${this.name}-fault.target`,
-        [
-          "[Unit]",
-          `Description=fault state of cluster ${this.name}`,
-          `Conflicts=${this.name}-master.target ${this.name}-backup.target`
-        ]
       );
 
       yield result;
