@@ -1,5 +1,13 @@
 import test from "ava";
-import { Root, Host, Service, Endpoint, HTTPEndpoint, DomainNameEndpoint, sortByFamilyAndAddress } from "pmcf";
+import {
+  Root,
+  Host,
+  Service,
+  Endpoint,
+  HTTPEndpoint,
+  DomainNameEndpoint,
+  sortByFamilyAndAddress
+} from "pmcf";
 
 function prepare() {
   const root = new Root("/somwhere");
@@ -50,7 +58,9 @@ test("Endpoint from Service basics", t => {
     "localhost"
   );
 
-  const e1 = s1.endpoints(e => e.family=='IPv4' && e.networkInterface.kind !== "loopback")[0];
+  const e1 = s1.endpoints(
+    e => e.family == "IPv4" && e.networkInterface.kind !== "loopback"
+  )[0];
   t.is(e1.hostName, "h1");
   t.is(e1.type, "dns");
   t.is(e1.protocol, "udp");
@@ -104,4 +114,26 @@ test("HTTPEndpoint from URL with port", t => {
   t.is(ep.pathname, "/aPath");
   t.is(ep.tls, true);
   t.is(ep.url.toString(), "https://somwhere:1443/aPath");
+});
+
+test("DomainNameEndpoint", t => {
+  const root = new Root("/somwhere");
+
+  const h1 = new Host(root, {
+    name: "h1"
+    /* networkInterfaces: {
+      eth0: { ipAddresses: "10.0.0.1/16" }
+    }*/
+  });
+  root.addObject(h1);
+
+  const s1 = new Service(h1, {
+    name: "ntp"
+  });
+
+  h1.services = s1;
+
+  const options = { port: 123, type: "ntp", protocol: "udp", tls: false };
+
+  t.deepEqual(s1.endpoint(), new DomainNameEndpoint(s1, "h1", options));
 });

@@ -167,16 +167,15 @@ export class Service extends Base {
             } else {
               if (e.family === na.family) {
                 result.push(new Endpoint(this, na, options));
-              } else {
-                if (!domainNames.has(this.domainName)) {
-                  domainNames.add(this.domainName);
-                  result.push(
-                    new DomainNameEndpoint(this, this.domainName, options)
-                  );
-                }
               }
             }
           }
+
+          if (!domainNames.has(this.domainName)) {
+            domainNames.add(this.domainName);
+            result.push(new DomainNameEndpoint(this, this.domainName, options));
+          }
+
           break;
       }
     }

@@ -11,8 +11,12 @@ test("ChronyService basics", async t => {
   //console.log([...chrony.findServices({ type: "ntp"})]);
   t.true(chrony instanceof ChronyService);
 
-  /*t.deepEqual(
+  /*
+  t.deepEqual(
     chrony.endpoint("ntp"),
-    new Endpoint(chrony, "/run/ldapi", { type: "ntp" })
-  );*/
+    new Endpoint(chrony, [...chrony.host.networkAddresses()][0], {
+      type: "ntp"
+    })
+  );
+  */
 });

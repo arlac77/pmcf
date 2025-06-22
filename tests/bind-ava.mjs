@@ -13,12 +13,12 @@ test("BIND basics", async t => {
       return { type: e.type, port: e.port, address: e.address /*, family: e.family*/ };
     }),
     [
-      /*{
+      {
         type: "bind-statistics",
-        address: "192.168.1.11",
+        address: "C1.mydomain.com",
         port: 19521
       },
-      {
+    /*  {
         type: "bind-rdnc",
         address: "192.168.1.11",
         port: 953
@@ -28,11 +28,11 @@ test("BIND basics", async t => {
         address: "192.168.1.11",
         port: 53
       },
-      {
+     /* {
         type: "dns",
         address: "C1.mydomain.com",
         port: 53
-      }
+      }*/
     ]
   );
 
