@@ -3,6 +3,7 @@ import { FileContentProvider } from "npm-pkgbuild";
 import { addType } from "../types.mjs";
 import { ServiceTypeDefinition, Service } from "../service.mjs";
 import { writeLines } from "../utils.mjs";
+import { addHook } from "../hooks.mjs";
 
 const OpenLDAPServiceTypeDefinition = {
   name: "openldap",
@@ -30,7 +31,7 @@ const OpenLDAPServiceTypeDefinition = {
   service: {
     extends: ["ldap"],
     services: {
-      "ldap": {
+      ldap: {
         endpoints: [
           {
             family: "unix",
@@ -117,9 +118,22 @@ export class OpenLDAPService extends Service {
         name: `openldap-${this.location.name}-${name}`,
         description: `openldap definitions for ${this.fullName}@${name}`,
         access: "private",
-        dependencies: ["openldap>=2.6.10"]
+        dependencies: ["openldap>=2.6.10"],
+        hooks: {}
       }
     };
+
+    addHook(
+      packageData.properties.hooks,
+      "post_upgrade",
+      "setfacl -m u:ldap:r /etc/letsencrypt/archive/*/privkey*.pem"
+    );
+
+    addHook(
+      packageData.properties.hooks,
+      "post_install",
+      "setfacl -m u:ldap:r /etc/letsencrypt/archive/*/privkey*.pem"
+    );
 
     await writeLines(join(packageData.dir, "etc/conf.d"), "slapd", [
       "SLAPD_OPTIONS=",
