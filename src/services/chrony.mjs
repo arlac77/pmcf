@@ -1,7 +1,11 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { addType } from "../types.mjs";
-import { ServiceTypeDefinition, serviceEndpoints } from "../service.mjs";
+import {
+  Service,
+  ServiceTypeDefinition,
+  serviceEndpoints
+} from "../service.mjs";
 import {
   ExtraSourceService,
   ExtraSourceServiceTypeDefinition
@@ -53,6 +57,9 @@ export class ChronyService extends ExtraSourceService {
 
   constructor(owner, data) {
     super(owner, data);
+
+    this._extends.push(new Service(owner, { name: this.name, type: "ntp" }));
+
     this.read(data, ChronyServiceTypeDefinition);
 
     this._systemd = "chronyd.service";
@@ -88,12 +95,12 @@ export class ChronyService extends ExtraSourceService {
           priority: ">=200"
         },
         endpoints: e =>
-          e.service.host !== host && e.networkInterface.kind !== "loopback",
+          e.type === "ntp" &&
+          e.service.host !== host &&
+          e.networkInterface?.kind !== "loopback",
 
         select: endpoint =>
-          `${endpoint.isPool ? "pool" : "server"} ${
-            endpoint.domainName
-          } iburst`,
+          `${endpoint.isPool ? "pool" : "server"} ${endpoint.address} iburst`,
 
         limit: 7
       }),

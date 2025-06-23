@@ -38,23 +38,24 @@ export class SystemdTimesyncdService extends ExtraSourceService {
   }
 
   systemdConfigs(name) {
+    const options = priority => {
+      return {
+        services: { types: "ntp", priority },
+        endpoints: e => e.networkInterface?.kind !== "loopback",
+        select: endpoint => endpoint.address,
+        join: " ",
+        limit: 2
+      };
+    };
+
     return {
       serviceName: "systemd-timesyncd.service",
       configFileName: `etc/systemd/timesyncd.conf.d/${name}.conf`,
       content: [
         "Time",
         {
-          NTP: serviceEndpoints(this, {
-            services: {
-              types: "ntp",
-              priority: "[200:399]"
-            },
-            endpoints: endpoint =>
-              endpoint.networkInterface.kind !== "loopback",
-            select: endpoint => endpoint.domainName,
-            limit: 2,
-            join: " "
-          })
+          NTP: serviceEndpoints(this, options("[300:399]")),
+          FallbackNTP: serviceEndpoints(this, options("[100:199]"))
         }
       ]
     };

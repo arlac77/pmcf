@@ -1,5 +1,5 @@
 {
   "services": {
-    "ntp": { "type": "ntp", "priority": 490 }
+    "ntp": { "priority": 190 }
   }
 }

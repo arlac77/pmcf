@@ -7,6 +7,6 @@
     }
   },
   "services": {
-    "dns": { "type": "dns", "alias": "dns" }
+    "dns": { "alias": "dns" }
   }
 }
