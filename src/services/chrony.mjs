@@ -1,5 +1,7 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
+import { isLinkLocal } from "ip-utilties";
+
 import { addType } from "../types.mjs";
 import {
   Service,
@@ -92,17 +94,16 @@ export class ChronyService extends ExtraSourceService {
       ...serviceEndpoints(this, {
         services: {
           types: "ntp",
-          priority: ">=200"
+          priority: ">=100"
         },
         endpoints: e =>
           e.type === "ntp" &&
+          !isLinkLocal(e.address) &&
           e.service.host !== host &&
           e.networkInterface?.kind !== "loopback",
 
         select: endpoint =>
-          `${endpoint.isPool ? "pool" : "server"} ${endpoint.address} iburst`,
-
-        limit: 7
+          `${endpoint.isPool ? "pool" : "server"} ${endpoint.address} iburst`
       }),
       `mailonchange ${this.administratorEmail} 0.5`,
       "local stratum 10",
