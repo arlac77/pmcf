@@ -106,7 +106,7 @@ export class ChronyService extends ExtraSourceService {
           `${endpoint.isPool ? "pool" : "server"} ${endpoint.address} iburst`
       }),
       `mailonchange ${this.administratorEmail} 0.5`,
-      "local stratum 10",
+      "local stratum 10 orphan",
       "leapsectz right/UTC",
       "makestep 1.0 3",
       "ratelimit interval 3 burst 8",
