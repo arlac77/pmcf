@@ -189,10 +189,14 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     const networkDir = join(packageData.dir, "etc/systemd/network");
 
     if (this.name !== "eth0" && this.hwaddr) {
+      const disabled = {};
+      if(this.disabled) {
+        disabled.Unmanaged = "yes";
+      }
       await writeLines(networkDir, `${this.name}.link`, [
         sectionLines("Match", { MACAddress: this.hwaddr }),
         "",
-        sectionLines("Link", { Name: this.name })
+        sectionLines("Link", { Name: this.name, ...disabled })
       ]);
     }
 
@@ -249,6 +253,10 @@ export class NetworkInterface extends SkeletonNetworkInterface {
       networkSections.push("", sectionLines("Link", { Promiscuous: "yes" }));
     }
 
-    await writeLines(networkDir, `${this.name}.network`, networkSections);
+    await writeLines(
+      networkDir,
+      `${this.name}.network${this.disabled ? ".disabled" : ""}`,
+      networkSections
+    );
   }
 }
