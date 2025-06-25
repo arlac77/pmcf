@@ -117,7 +117,6 @@ export class ChronyService extends ExtraSourceService {
       [...this.subnets].map(s => `allow ${s.address}`),
       "cmdratelimit interval -4 burst 16",
       [...this.subnets].map(s => `cmdallow ${s.address}`)
-      //this.endpoints(e=>e.type === "ntp" && e.networkInterface.kind=='loopback').map(endpoint=>`alllow ${endpoint.address}`)
     ];
 
     await writeLines(join(dir, "etc"), "chrony.conf", lines);
