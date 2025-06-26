@@ -13,6 +13,11 @@ class BaseEndpoint {
     return this._type ?? this.service.type;
   }
 
+  get priority()
+  {
+    return this.service.priority;
+  }
+
   toString() {
     return `${this.type}`;
   }
