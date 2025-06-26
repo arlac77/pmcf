@@ -102,8 +102,20 @@ export class ChronyService extends ExtraSourceService {
           e.service.host !== host &&
           e.networkInterface?.kind !== "loopback",
 
-        select: endpoint =>
-          `${endpoint.isPool ? "pool" : "server"} ${endpoint.address} iburst`
+        select: endpoint => {
+          const options = [
+            endpoint.isPool ? "pool" : "server",
+            endpoint.address,
+            "iburst"
+          ];
+          if (endpoint.isPool) {
+            options.push("maxsources 2");
+          }
+          if (endpoint.priority > 300) {
+            options.push("prefer");
+          }
+          return options.join(" ");
+        }
       }),
       `mailonchange ${this.administratorEmail} 0.5`,
       "local stratum 10 orphan",
