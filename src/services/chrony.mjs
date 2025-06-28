@@ -111,7 +111,7 @@ export class ChronyService extends ExtraSourceService {
           if (endpoint.isPool) {
             options.push("maxsources 2");
           }
-          if (endpoint.priority > 300) {
+          if (endpoint.priority > 300 && endpoint.family !== "IPv6") {
             options.push("prefer");
           }
           return options.join(" ");
