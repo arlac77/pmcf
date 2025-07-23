@@ -4,7 +4,7 @@ import { join, resolve } from "node:path";
 import { readFile, mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { cwd, env } from "node:process";
-import { packageDirectory } from "pkg-dir";
+import { packageDirectory } from "package-directory";
 import { createPublishingDetails } from "npm-pkgbuild";
 import { prepare } from "../src/cli.mjs";
 import { asArray } from "../src/utils.mjs";

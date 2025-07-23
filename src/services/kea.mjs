@@ -94,7 +94,7 @@ const KeaServiceTypeDefinition = {
   }
 };
 
-const keaVersion = 2.6;
+const keaVersion = 3.0;
 export const fetureHasHTTPEndpoints = keaVersion > 2.7;
 
 export class KeaService extends Service {
@@ -265,7 +265,7 @@ export class KeaService extends Service {
       };
     };
 
-    const ctrlAgent = {
+    /*const ctrlAgent = {
       "Control-agent": {
         "http-host": ctrlAgentEndpoint.hostname,
         "http-port": ctrlAgentEndpoint.port,
@@ -276,7 +276,7 @@ export class KeaService extends Service {
         },
         loggers
       }
-    };
+    };*/
 
     const dnsServersSlot = names =>
       names.map(name => {
@@ -418,7 +418,6 @@ export class KeaService extends Service {
     };
 
     for (const [name, data] of Object.entries({
-      "kea-ctrl-agent": ctrlAgent,
       "kea-dhcp-ddns": ddns,
       "kea-dhcp4": dhcp4,
       "kea-dhcp6": dhcp6
