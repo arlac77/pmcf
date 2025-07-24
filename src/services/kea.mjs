@@ -32,7 +32,7 @@ const KeaServiceTypeDefinition = {
           }
         ]
       },
-      "kea-control-agent": {
+      /*"kea-control-agent": {
         endpoints: [
           {
             family: "IPv4",
@@ -42,8 +42,7 @@ const KeaServiceTypeDefinition = {
             tls: false
           }
         ]
-      },
-      /*
+      },*/
       "kea-ha-4": {
         endpoints: [
           {
@@ -65,7 +64,7 @@ const KeaServiceTypeDefinition = {
             tls: false
           }
         ]
-      },*/
+      },
       "kea-control-dhcp4": {
         endpoints: [
           {
@@ -116,7 +115,9 @@ export class KeaService extends Service {
   }
 
   async *preparePackages(dir) {
-    const ctrlAgentEndpoint = this.endpoint("kea-control-agent");
+    const ctrlAgentEndpoint = this.endpoint(
+      fetureHasHTTPEndpoints ? "kea-ha-4" : "kea-control-agent"
+    );
 
     if (!ctrlAgentEndpoint) {
       return;
@@ -197,7 +198,7 @@ export class KeaService extends Service {
           "lfc-interval": 3600
         },
         "multi-threading": {
-          "enable-multi-threading": false
+          "enable-multi-threading": true
         },
         "expired-leases-processing": {
           "reclaim-timer-wait-time": 10,
@@ -241,6 +242,8 @@ export class KeaService extends Service {
           }
         ],
         "dhcp-ddns": dhcpServerDdns,
+        "ddns-send-updates": true,
+
         loggers,
         "option-data": [
           {
@@ -323,7 +326,7 @@ export class KeaService extends Service {
       "enable-updates": true,
       "server-ip": ddnsEndpoint.address,
       "server-port": ddnsEndpoint.port,
-      "max-queue-size": 64,
+      "max-queue-size": 16,
       "ncr-protocol": "UDP",
       "ncr-format": "JSON"
     };
