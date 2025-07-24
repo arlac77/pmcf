@@ -17,10 +17,10 @@ const OwnerTypeDefinition = {
     subnets: { type: Subnet.typeDefinition, collection: true, writeable: true },
     country: { ...default_attribute, writeable: true },
     domain: { ...default_attribute, writeable: true },
-    domains: { type: "string", collection: true, writeable: true },
-    timezone: { type: "string", collection: false, writeable: true },
-    architectures: { type: "string", collection: true, writeable: true },
-    locales: { type: "string", collection: true, writeable: true },
+    domains: { ...default_attribute, collection: true, writeable: true },
+    timezone: { ...default_attribute, writeable: true },
+    architectures: { ...default_attribute, collection: true, writeable: true },
+    locales: { ...default_attribute, collection: true, writeable: true },
     administratorEmail: { ...email_attribute, writeable: true }
   }
 };

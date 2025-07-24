@@ -71,11 +71,11 @@ const HostTypeDefinition = {
       writeable: true,
       values: ["x86", "x86_64", "aarch64", "armv7"]
     },
-    replaces: { type: "string", collection: true, writeable: true },
-    depends: { type: "string", collection: true, writeable: true },
-    provides: { type: "string", collection: true, writeable: true },
+    replaces: { ...default_attribute, collection: true, writeable: true },
+    depends: { ...default_attribute, collection: true, writeable: true },
+    provides: { ...default_attribute, collection: true, writeable: true },
     extends: { type: "host", collection: true, writeable: true },
-    model: { type: "string", collection: false, writeable: false },
+    model: { ...default_attribute, collection: false, writeable: false },
     isModel: { type: "boolean", collection: false, writeable: false }
   }
 };
