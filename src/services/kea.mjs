@@ -198,7 +198,9 @@ export class KeaService extends Service {
           "lfc-interval": 3600
         },
         "multi-threading": {
-          "enable-multi-threading": true
+          "enable-multi-threading": true,
+          "thread-pool-size": 2,
+          "packet-queue-size": 4
         },
         "expired-leases-processing": {
           "reclaim-timer-wait-time": 10,
