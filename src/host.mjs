@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
+import { default_attribute } from "pacc";
 import { ServiceOwner, Base, addresses } from "pmcf";
 import { networkAddressProperties } from "./network-support.mjs";
 import { addHook } from "./hooks.mjs";
@@ -32,26 +33,23 @@ const HostTypeDefinition = {
     services: { type: "service", collection: true, writeable: true },
     aliases: { type: "string", collection: true, writeable: true },
     os: {
-      type: "string",
-      collection: false,
+      ...default_attribute,
       writeable: true,
       values: ["osx", "windows", "linux"]
     },
-    "machine-id": { type: "string", collection: false, writeable: true },
-    distribution: { type: "string", collection: false, writeable: true },
+    "machine-id": { ...default_attribute, writeable: true },
+    distribution: { ...default_attribute, writeable: true },
     deployment: {
-      type: "string",
-      collection: false,
+      ...default_attribute,
       writeable: true,
       values: ["production", "development"]
     },
     weight: { type: "number", collection: false, writeable: true },
-    serial: { type: "string", collection: false, writeable: true },
-    vendor: { type: "string", collection: false, writeable: true },
-    keymap: { type: "string", collection: false, writeable: true },
+    serial: { ...default_attribute, writeable: true },
+    vendor: { ...default_attribute, writeable: true },
+    keymap: { ...default_attribute, writeable: true },
     chassis: {
-      type: "string",
-      collection: false,
+      ...default_attribute,
       writeable: true,
       values: [
         "phone",
@@ -69,8 +67,7 @@ const HostTypeDefinition = {
       ]
     },
     architecture: {
-      type: "string",
-      collection: false,
+      ...default_attribute,
       writeable: true,
       values: ["x86", "x86_64", "aarch64", "armv7"]
     },
@@ -516,11 +513,9 @@ export class Host extends ServiceOwner {
 
     for (const service of this.services) {
       if (service.systemdConfigs) {
-        for (const {
-          serviceName,
-          configFileName,
-          content
-        } of asArray(service.systemdConfigs(this.name))) {
+        for (const { serviceName, configFileName, content } of asArray(
+          service.systemdConfigs(this.name)
+        )) {
           await writeLines(dir, configFileName, sectionLines(...content));
 
           addHook(

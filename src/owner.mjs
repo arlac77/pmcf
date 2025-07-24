@@ -1,4 +1,5 @@
 import { normalizeCIDR, familyIP } from "ip-utilties";
+import { default_attribute, email_attribute } from "pacc";
 import { asIterator } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { Subnet, SUBNET_GLOBAL_IPV4, SUBNET_GLOBAL_IPV6 } from "./subnet.mjs";
@@ -14,14 +15,13 @@ const OwnerTypeDefinition = {
     hosts: { type: "host", collection: true, writeable: true },
     clusters: { type: "cluster", collection: true, writeable: true },
     subnets: { type: Subnet.typeDefinition, collection: true, writeable: true },
-
-    country: { type: "string", collection: false, writeable: true },
-    domain: { type: "string", collection: false, writeable: true },
+    country: { ...default_attribute, writeable: true },
+    domain: { ...default_attribute, writeable: true },
     domains: { type: "string", collection: true, writeable: true },
     timezone: { type: "string", collection: false, writeable: true },
     architectures: { type: "string", collection: true, writeable: true },
     locales: { type: "string", collection: true, writeable: true },
-    administratorEmail: { type: "string", collection: false, writeable: true }
+    administratorEmail: { ...email_attribute, writeable: true }
   }
 };
 
