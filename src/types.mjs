@@ -29,7 +29,7 @@ export function resolveTypeLinks() {
 
     for (const [name, property] of Object.entries(type.properties)) {
       property.name = name;
-      if (property.identifier) {
+      if (property.isKey) {
         type.identifier = property;
       }
 

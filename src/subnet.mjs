@@ -18,7 +18,7 @@ const SubnetTypeDefinition = {
   properties: {
     address: {
       ...default_attribute,
-      identifier: true
+      isKey: true
     },
     networks: { type: "network", collection: true, writeable: true },
     prefixLength: { type: "number", collection: false, writeable: false }

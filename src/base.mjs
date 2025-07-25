@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { allOutputs } from "npm-pkgbuild";
-import { getAttribute, default_attribute, description_attribute } from "pacc";
+import { getAttribute, default_attribute, description_attribute, boolean_attribute } from "pacc";
 import { addType, primitives, typeFactory } from "./types.mjs";
 import { asArray } from "./utils.mjs";
 
@@ -9,11 +9,10 @@ const BaseTypeDefinition = {
   owners: [],
   properties: {
     owner: { type: "base", collection: false, writeable: false },
-    type: { type: "string", collection: false, writeable: false },
+    type: default_attribute,
     name: {
-      type: "string",
-      collection: false,
-      identifier: true,
+      ...default_attribute,
+      isKey: true,
       writeable: true
     },
     description: { ...description_attribute, writeable: true },
@@ -21,8 +20,7 @@ const BaseTypeDefinition = {
     directory: { ...default_attribute, writeable: false },
     packaging: { ...default_attribute, writeable: true },
     disabled: {
-      type: "boolean",
-      collection: false,
+      ...boolean_attribute,
       writeable: true,
       default: false
     },
