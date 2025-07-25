@@ -1,3 +1,4 @@
+import { default_attribute } from "pacc";
 import { Service, ServiceTypeDefinition } from "pmcf";
 import { addType } from "../types.mjs";
 
@@ -8,7 +9,7 @@ const SystemdJournalUploadServiceTypeDefinition = {
   extends: ServiceTypeDefinition,
   priority: 0.1,
   properties: {
-    url: { type: "string", collection: false, writeable: true }
+    url: { ...default_attribute, writeable: true }
   },
   service: {}
 };

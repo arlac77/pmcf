@@ -2,6 +2,7 @@ import { join } from "node:path";
 import { createHmac } from "node:crypto";
 import { FileContentProvider } from "npm-pkgbuild";
 import { isLinkLocal, reverseArpa } from "ip-utilties";
+import { boolean_attribute, default_attribute } from "pacc";
 import { writeLines, asArray } from "../utils.mjs";
 import {
   DNSRecord,
@@ -38,49 +39,41 @@ const BindServiceTypeDefinition = {
     protected: { type: address_types, collection: true, writeable: true },
     internal: { type: address_types, collection: true, writeable: true },
     hasSVRRecords: {
-      type: "boolean",
-      collection: false,
-      writeable: true,
-      default: false
+      ...boolean_attribute,
+      writeable: true
     },
     hasCatalog: {
-      type: "boolean",
-      collection: false,
-      writeable: true,
-      default: false
+      ...boolean_attribute,
+      writeable: true
     },
     hasLinkLocalAdresses: {
-      type: "boolean",
-      collection: false,
-      writeable: true,
-      default: false
+      ...boolean_attribute,
+      writeable: true
     },
     hasLocationRecord: {
-      type: "boolean",
-      collection: false,
+      ...boolean_attribute,
       writeable: true,
       default: true
     },
     excludeInterfaceKinds: {
-      type: "string",
+      ...default_attribute,
       collection: true,
       writeable: true
     },
 
     exclude: { type: address_types, collection: true, writeable: true },
     notify: {
-      type: "boolean",
-      collection: false,
+      ...boolean_attribute,
       writeable: true,
       default: false
     },
-    recordTTL: { type: "string", collection: false, writeable: true },
+    recordTTL: { ...default_attribute, writeable: true },
     serial: { type: "number", collection: false, writeable: true },
-    refresh: { type: "string", collection: false, writeable: true },
-    retry: { type: "string", collection: false, writeable: true },
-    expire: { type: "string", collection: false, writeable: true },
-    minimum: { type: "string", collection: false, writeable: true },
-    allowedUpdates: { type: "string", collection: true, writeable: true }
+    refresh: { ...default_attribute, writeable: true },
+    retry: { ...default_attribute, writeable: true },
+    expire: { ...default_attribute, writeable: true },
+    minimum: { ...default_attribute, writeable: true },
+    allowedUpdates: { ...default_attribute, collection: true, writeable: true }
   },
 
   service: {
