@@ -1,5 +1,6 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
+import { boolean_attribute_writeable_true } from "pacc";
 import { writeLines } from "../utils.mjs";
 import { addType } from "../types.mjs";
 import { Service, ServiceTypeDefinition } from "../service.mjs";
@@ -10,7 +11,12 @@ const InfluxdbServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
-  properties: {},
+  properties: {
+    "metrics-disabled": {
+      ...boolean_attribute_writeable_true,
+      isCommonOption: true
+    }
+  },
   service: {
     endpoints: [
       {
@@ -64,7 +70,12 @@ export class InfluxdbService extends Service {
       }
     };
 
-    const lines = ["metrics-disabled: true"];
+    const lines = Object.entries(InfluxdbServiceTypeDefinition.properties)
+      .filter(
+        ([key, attribute]) =>
+          attribute.isCommonOption && this[key] !== undefined
+      )
+      .map(([key]) => `${key}: ${this[key]}`);
 
     await writeLines(join(dir, "etc", "influxdb"), "config.yml", lines);
 
