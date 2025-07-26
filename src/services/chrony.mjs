@@ -1,7 +1,6 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { isLinkLocal } from "ip-utilties";
-
 import { addType } from "../types.mjs";
 import {
   Service,

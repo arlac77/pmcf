@@ -10,7 +10,7 @@ const LocationTypeDefinition = {
   priority: 1.0,
   extends: Owner.typeDefinition,
   properties: {
-    locales: { ...default_attribute, collection: true, writeable: true }
+    locales: { ...default_attribute, collection: true, writable: true }
   }
 };
 

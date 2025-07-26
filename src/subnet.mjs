@@ -20,8 +20,8 @@ const SubnetTypeDefinition = {
       ...default_attribute,
       isKey: true
     },
-    networks: { type: "network", collection: true, writeable: true },
-    prefixLength: { type: "number", collection: false, writeable: false }
+    networks: { type: "network", collection: true, writable: true },
+    prefixLength: { type: "number", collection: false, writable: false }
   }
 };
 

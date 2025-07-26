@@ -28,52 +28,52 @@ const BindServiceTypeDefinition = {
     addresses: {
       type: ["network", "host", "network_interface", "location", "owner"],
       collection: true,
-      writeable: true
+      writable: true
     },
 
     trusted: {
       type: address_types,
       collection: true,
-      writeable: true
+      writable: true
     },
-    protected: { type: address_types, collection: true, writeable: true },
-    internal: { type: address_types, collection: true, writeable: true },
+    protected: { type: address_types, collection: true, writable: true },
+    internal: { type: address_types, collection: true, writable: true },
     hasSVRRecords: {
       ...boolean_attribute,
-      writeable: true
+      writable: true
     },
     hasCatalog: {
       ...boolean_attribute,
-      writeable: true
+      writable: true
     },
     hasLinkLocalAdresses: {
       ...boolean_attribute,
-      writeable: true
+      writable: true
     },
     hasLocationRecord: {
       ...boolean_attribute,
-      writeable: true,
+      writable: true,
       default: true
     },
     excludeInterfaceKinds: {
       ...default_attribute,
       collection: true,
-      writeable: true
+      writable: true
     },
 
-    exclude: { type: address_types, collection: true, writeable: true },
+    exclude: { type: address_types, collection: true, writable: true },
     notify: {
       ...boolean_attribute,
-      writeable: true,
+      writable: true,
       default: false
     },
-    recordTTL: { ...default_attribute, writeable: true },
-    serial: { type: "number", collection: false, writeable: true },
-    refresh: { ...default_attribute, writeable: true },
-    retry: { ...default_attribute, writeable: true },
-    expire: { ...default_attribute, writeable: true },
-    minimum: { ...default_attribute, writeable: true },
-    allowedUpdates: { ...default_attribute, collection: true, writeable: true }
+    recordTTL: { ...default_attribute, writable: true },
+    serial: { type: "number", collection: false, writable: true },
+    refresh: { ...default_attribute, writable: true },
+    retry: { ...default_attribute, writable: true },
+    expire: { ...default_attribute, writable: true },
+    minimum: { ...default_attribute, writable: true },
+    allowedUpdates: { ...default_attribute, collection: true, writable: true }
   },
 
   service: {

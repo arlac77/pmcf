@@ -12,11 +12,11 @@ const ClusterTypeDefinition = {
   priority: 0.7,
   extends: Host.typeDefinition,
   properties: {
-    routerId: { type: "number", collection: false, writeable: true },
-    masters: { type: "network_interface", collection: true, writeable: true },
-    backups: { type: "network_interface", collection: true, writeable: true },
-    members: { type: "network_interface", collection: true, writeable: false },
-    checkInterval: { type: "number", collection: false, writeable: true }
+    routerId: { type: "number", collection: false, writable: true },
+    masters: { type: "network_interface", collection: true, writable: true },
+    backups: { type: "network_interface", collection: true, writable: true },
+    members: { type: "network_interface", collection: true, writable: false },
+    checkInterval: { type: "number", collection: false, writable: true }
   }
 };
 

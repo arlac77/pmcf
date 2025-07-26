@@ -28,29 +28,29 @@ const HostTypeDefinition = {
     networkInterfaces: {
       type: "network_interface",
       collection: true,
-      writeable: true
+      writable: true
     },
-    services: { type: "service", collection: true, writeable: true },
-    aliases: { type: "string", collection: true, writeable: true },
+    services: { type: "service", collection: true, writable: true },
+    aliases: { type: "string", collection: true, writable: true },
     os: {
       ...default_attribute,
-      writeable: true,
+      writable: true,
       values: ["osx", "windows", "linux"]
     },
-    "machine-id": { ...default_attribute, writeable: true },
-    distribution: { ...default_attribute, writeable: true },
+    "machine-id": { ...default_attribute, writable: true },
+    distribution: { ...default_attribute, writable: true },
     deployment: {
       ...default_attribute,
-      writeable: true,
+      writable: true,
       values: ["production", "development"]
     },
-    weight: { type: "number", collection: false, writeable: true },
-    serial: { ...default_attribute, writeable: true },
-    vendor: { ...default_attribute, writeable: true },
-    keymap: { ...default_attribute, writeable: true },
+    weight: { type: "number", collection: false, writable: true },
+    serial: { ...default_attribute, writable: true },
+    vendor: { ...default_attribute, writable: true },
+    keymap: { ...default_attribute, writable: true },
     chassis: {
       ...default_attribute,
-      writeable: true,
+      writable: true,
       values: [
         "phone",
         "tablet",
@@ -68,15 +68,15 @@ const HostTypeDefinition = {
     },
     architecture: {
       ...default_attribute,
-      writeable: true,
+      writable: true,
       values: ["x86", "x86_64", "aarch64", "armv7"]
     },
-    replaces: { ...default_attribute, collection: true, writeable: true },
-    depends: { ...default_attribute, collection: true, writeable: true },
-    provides: { ...default_attribute, collection: true, writeable: true },
-    extends: { type: "host", collection: true, writeable: true },
-    model: { ...default_attribute, collection: false, writeable: false },
-    isModel: { type: "boolean", collection: false, writeable: false }
+    replaces: { ...default_attribute, collection: true, writable: true },
+    depends: { ...default_attribute, collection: true, writable: true },
+    provides: { ...default_attribute, collection: true, writable: true },
+    extends: { type: "host", collection: true, writable: true },
+    model: { ...default_attribute, collection: false, writable: false },
+    isModel: { type: "boolean", collection: false, writable: false }
   }
 };
 

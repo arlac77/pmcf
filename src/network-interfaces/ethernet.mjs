@@ -11,7 +11,7 @@ export const EthernetNetworkInterfaceTypeDefinition = {
   extends: NetworkInterfaceTypeDefinition,
   priority: 0.1,
   properties: {
-    arpbridge: { type: "network_interface", collection: true, writeable: true }
+    arpbridge: { type: "network_interface", collection: true, writable: true }
   }
 };
 

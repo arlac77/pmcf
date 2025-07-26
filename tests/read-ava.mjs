@@ -8,10 +8,10 @@ const MyTypeDefinition = {
   priority: 0.9,
   extends: Base.typeDefinition,
   properties: {
-    aString: { type: "string", collection: false, writeable: true },
-    arrayStrings: { type: "string", collection: true, writeable: true },
-    undefStrings: { type: "string", collection: true, writeable: true },
-    setStrings: { type: "string", collection: true, writeable: true }
+    aString: { type: "string", collection: false, writable: true },
+    arrayStrings: { type: "string", collection: true, writable: true },
+    undefStrings: { type: "string", collection: true, writable: true },
+    setStrings: { type: "string", collection: true, writable: true }
   }
 };
 

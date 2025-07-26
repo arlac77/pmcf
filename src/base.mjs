@@ -8,23 +8,23 @@ const BaseTypeDefinition = {
   name: "base",
   owners: [],
   properties: {
-    owner: { type: "base", collection: false, writeable: false },
+    owner: { type: "base", collection: false, writable: false },
     type: default_attribute,
     name: {
       ...default_attribute,
       isKey: true,
-      writeable: true
+      writable: true
     },
-    description: { ...description_attribute, writeable: true },
-    priority: { type: "number", collection: false, writeable: true },
-    directory: { ...default_attribute, writeable: false },
-    packaging: { ...default_attribute, writeable: true },
+    description: { ...description_attribute, writable: true },
+    priority: { type: "number", collection: false, writable: true },
+    directory: { ...default_attribute, writable: false },
+    packaging: { ...default_attribute, writable: true },
     disabled: {
       ...boolean_attribute,
-      writeable: true,
+      writable: true,
       default: false
     },
-    tags: { ...default_attribute, collection: true, writeable: true }
+    tags: { ...default_attribute, collection: true, writable: true }
   }
 };
 
@@ -223,7 +223,7 @@ export class Base {
     }
 
     for (const property of Object.values(type.properties)) {
-      if (property.writeable) {
+      if (property.writable) {
         const value = this.expand(data[property.name]);
 
         if (property.collection) {

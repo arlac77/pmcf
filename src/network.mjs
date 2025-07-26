@@ -10,8 +10,8 @@ const NetworkTypeDefinition = {
   extends: Owner.typeDefinition,
   properties: {
     ...networkProperties,
-    bridge: { type: "network", collection: true, writeable: true },
-    gateway: { type: "host", collection: false, writeable: true }
+    bridge: { type: "network", collection: true, writable: true },
+    gateway: { type: "host", collection: false, writable: true }
   }
 };
 

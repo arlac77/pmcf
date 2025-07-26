@@ -39,13 +39,13 @@ export const NetworkInterfaceTypeDefinition = {
     ...networkProperties,
     ...networkAddressProperties,
 
-    services: { type: "service", collection: true, writeable: true },
-    hostName: { ...hostname_attribute, writeable: true },
-    ipAddresses: { ...default_attribute, writeable: true },
+    services: { type: "service", collection: true, writable: true },
+    hostName: { ...hostname_attribute, writable: true },
+    ipAddresses: { ...default_attribute, writable: true },
 
-    hwaddr: { ...default_attribute, writeable: true },
-    network: { type: "network", collection: false, writeable: true },
-    destination: { ...default_attribute, writeable: true }
+    hwaddr: { ...default_attribute, writable: true },
+    network: { type: "network", collection: false, writable: true },
+    destination: { ...default_attribute, writable: true }
   }
 };
 

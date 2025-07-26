@@ -11,17 +11,17 @@ const OwnerTypeDefinition = {
   priority: 0.9,
   extends: Base.typeDefinition,
   properties: {
-    networks: { type: "network", collection: true, writeable: true },
-    hosts: { type: "host", collection: true, writeable: true },
-    clusters: { type: "cluster", collection: true, writeable: true },
-    subnets: { type: Subnet.typeDefinition, collection: true, writeable: true },
-    country: { ...default_attribute, writeable: true },
-    domain: { ...default_attribute, writeable: true },
-    domains: { ...default_attribute, collection: true, writeable: true },
-    timezone: { ...default_attribute, writeable: true },
-    architectures: { ...default_attribute, collection: true, writeable: true },
-    locales: { ...default_attribute, collection: true, writeable: true },
-    administratorEmail: { ...email_attribute, writeable: true }
+    networks: { type: "network", collection: true, writable: true },
+    hosts: { type: "host", collection: true, writable: true },
+    clusters: { type: "cluster", collection: true, writable: true },
+    subnets: { type: Subnet.typeDefinition, collection: true, writable: true },
+    country: { ...default_attribute, writable: true },
+    domain: { ...default_attribute, writable: true },
+    domains: { ...default_attribute, collection: true, writable: true },
+    timezone: { ...default_attribute, writable: true },
+    architectures: { ...default_attribute, collection: true, writable: true },
+    locales: { ...default_attribute, collection: true, writable: true },
+    administratorEmail: { ...email_attribute, writable: true }
   }
 };
 

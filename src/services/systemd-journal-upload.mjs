@@ -9,7 +9,7 @@ const SystemdJournalUploadServiceTypeDefinition = {
   extends: ServiceTypeDefinition,
   priority: 0.1,
   properties: {
-    url: { ...default_attribute, writeable: true }
+    url: { ...default_attribute, writable: true }
   },
   service: {}
 };

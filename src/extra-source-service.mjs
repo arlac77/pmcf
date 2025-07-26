@@ -7,7 +7,7 @@ export const ExtraSourceServiceTypeDefinition = {
   extends: ServiceTypeDefinition,
   priority: 0.1,
   properties: {
-    source: { type: "network", collection: true, writeable: true }
+    source: { type: "network", collection: true, writable: true }
   }
 };
 

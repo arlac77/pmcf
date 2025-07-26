@@ -15,15 +15,15 @@ const OpenLDAPServiceTypeDefinition = {
   properties: {
     baseDN: {
       ...default_attribute,
-      writeable: true
+      writable: true
     },
     rootDN: {
       ...default_attribute,
-      writeable: true
+      writable: true
     },
     uri: {
       ...default_attribute,
-      writeable: true
+      writable: true
     }
   },
   service: {
