@@ -1,5 +1,10 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
+import {
+  boolean_attribute_writeable_true,
+  boolean_attribute_writeable_false
+} from "pacc";
+
 import { writeLines } from "../utils.mjs";
 import { addType } from "../types.mjs";
 import { Service, ServiceTypeDefinition } from "../service.mjs";
@@ -10,7 +15,16 @@ const MosquittoServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
-  properties: {},
+  properties: {
+    log_timestamp: {
+      ...boolean_attribute_writeable_false,
+      isCommonOption: true
+    },
+    allow_anonymous: {
+      ...boolean_attribute_writeable_false,
+      isCommonOption: true
+    }
+  },
   service: {
     extends: ["mqtt"]
   }
@@ -51,16 +65,21 @@ export class MosquittoService extends Service {
       }
     };
 
+    const lines = Object.entries(MosquittoServiceTypeDefinition.properties)
+      .filter(
+        ([key, attribute]) =>
+          attribute.isCommonOption && this[key] !== undefined
+      )
+      .map(([key]) => `${key}: ${this[key]}`);
+
     const endpoint = this.endpoint("mqtt");
 
-    const lines = [
+    lines.push(
       `listener ${endpoint.port}`,
-      "log_timestamp false",
-      "allow_anonymous true",
       "persistence_location /var/lib/mosquitto",
       "password_file /etc/mosquitto/passwd",
       "acl_file /etc/mosquitto/acl"
-    ];
+    );
 
     await writeLines(join(dir, "etc", "mosquitto"), "mosquitto.conf", lines);
 
