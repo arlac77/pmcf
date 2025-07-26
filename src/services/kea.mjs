@@ -1,6 +1,7 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { reverseArpa } from "ip-utilties";
+import { default_attribute, boolean_attribute_writeable_true } from "pacc";
 import {
   Service,
   sortDescendingByPriority,
@@ -18,7 +19,39 @@ const KeaServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
-  properties: {},
+  properties: {
+    "ddns-send-updates": {
+      ...boolean_attribute_writeable_true,
+      isCommonOption: true
+    },
+    "renew-timer": {
+      ...default_attribute,
+      type: "number",
+      writable: true,
+      isCommonOption: true,
+      default: 900
+    },
+    "rebind-timer": {
+      ...default_attribute,
+      type: "number",
+      writable: true,
+      isCommonOption: true,
+      default: 1800
+    },
+    "valid-lifetime": {
+      ...default_attribute,
+      type: "number",
+      writable: true,
+      isCommonOption: true,
+      default: 86400
+    },
+    "ddns-conflict-resolution-mode": {
+      ...default_attribute,
+      writable: true,
+      isCommonOption: true
+      //values: ["check-exists-with-dhcid"]
+    }
+  },
   service: {
     extends: ["dhcp"],
     services: {
@@ -188,7 +221,7 @@ export class KeaService extends Service {
     ];
 
     const commonConfig = async family => {
-      return {
+      const cfg = {
         "interfaces-config": {
           interfaces: listenInterfaces(`IPv${family}`)
         },
@@ -210,9 +243,6 @@ export class KeaService extends Service {
           "max-reclaim-time": 250,
           "unwarned-reclaim-cycles": 5
         },
-        "renew-timer": 900,
-        "rebind-timer": 1800,
-        "valid-lifetime": 86400,
         "hooks-libraries": [
           /*{
             library: "/usr/lib/kea/hooks/libdhcp_ddns_tuning.so"
@@ -244,7 +274,6 @@ export class KeaService extends Service {
           }
         ],
         "dhcp-ddns": dhcpServerDdns,
-        "ddns-send-updates": true,
 
         loggers,
         "option-data": [
@@ -261,6 +290,17 @@ export class KeaService extends Service {
           }
         ]
       };
+
+      for (const [key] of Object.entries(
+        KeaServiceTypeDefinition.properties
+      ).filter(
+        ([key, attribute]) =>
+          attribute.isCommonOption && this[key] !== undefined
+      )) {
+        cfg[key] = this[key];
+      }
+
+      return cfg;
     };
 
     const toUnix = endpoint => {
