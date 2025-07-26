@@ -42,6 +42,7 @@ const KeaServiceTypeDefinition = {
       ...default_attribute,
       type: "number",
       writable: true,
+      mandatory: true,
       isCommonOption: true,
       default: 86400
     },
