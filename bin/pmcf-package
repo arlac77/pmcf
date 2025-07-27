@@ -16,8 +16,19 @@ const { root, args, options } = await prepare({
   output: {
     type: "string",
     short: "o"
+  },
+  define: {
+    type: "string",
+    short: "D"
   }
 });
+
+const cmdLineProperties = {};
+
+if (options.define) {
+  const [k, v] = options.define.split(/=/);
+  cmdLineProperties[k] = v;
+}
 
 options.output = options.output
   ? resolve(cwd(), options.output)
@@ -43,6 +54,8 @@ for (const object of root.find(args)) {
       properties.maintainer = pkg.contributors.map(
         c => c.name + (c.email ? ` <${c.email}>` : "")
       );
+
+      Object.assign(properties, cmdLineProperties);
 
       const output = new outputFactory(properties);
 
