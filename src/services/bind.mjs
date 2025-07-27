@@ -488,6 +488,11 @@ export class BindService extends ExtraSourceService {
 
   outfacingZones(host, view, records) {
     return host.foreignDomainNames.map(domain => {
+      const wildcard = domain.startsWith("*.");
+      if (wildcard) {
+        domain = domain.substring(2);
+      }
+
       const zone = {
         id: domain,
         file: `OUTFACING/${domain}.zone`,
@@ -509,6 +514,12 @@ export class BindService extends ExtraSourceService {
         zone.records.add(
           DNSRecord("@", dnsRecordTypeForAddressFamily(na.family), na.address)
         );
+
+        if (wildcard) {
+          zone.records.add(
+            DNSRecord("*", dnsRecordTypeForAddressFamily(na.family), na.address)
+          );
+        }
       }
 
       return config;
