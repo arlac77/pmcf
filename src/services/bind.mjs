@@ -2,7 +2,12 @@ import { join } from "node:path";
 import { createHmac } from "node:crypto";
 import { FileContentProvider } from "npm-pkgbuild";
 import { isLinkLocal, reverseArpa } from "ip-utilties";
-import { default_attribute, boolean_attribute, number_attribute } from "pacc";
+import {
+  default_attribute,
+  boolean_attribute_writeable_true,
+  boolean_attribute_writeable_false,
+  number_attribute
+} from "pacc";
 import { writeLines, asArray } from "../utils.mjs";
 import {
   DNSRecord,
@@ -38,35 +43,17 @@ const BindServiceTypeDefinition = {
     },
     protected: { type: address_types, collection: true, writable: true },
     internal: { type: address_types, collection: true, writable: true },
-    hasSVRRecords: {
-      ...boolean_attribute,
-      writable: true
-    },
-    hasCatalog: {
-      ...boolean_attribute,
-      writable: true
-    },
-    hasLinkLocalAdresses: {
-      ...boolean_attribute,
-      writable: true
-    },
-    hasLocationRecord: {
-      ...boolean_attribute,
-      writable: true,
-      default: true
-    },
+    hasSVRRecords: boolean_attribute_writeable_false,
+    hasCatalog: boolean_attribute_writeable_true,
+    hasLinkLocalAdresses: boolean_attribute_writeable_true,
+    hasLocationRecord: boolean_attribute_writeable_true,
     excludeInterfaceKinds: {
       ...default_attribute,
       collection: true,
       writable: true
     },
-
     exclude: { type: address_types, collection: true, writable: true },
-    notify: {
-      ...boolean_attribute,
-      writable: true,
-      default: false
-    },
+    notify: boolean_attribute_writeable_false,
     recordTTL: { ...default_attribute, writable: true },
     serial: { ...number_attribute, writable: true },
     refresh: { ...default_attribute, writable: true },
