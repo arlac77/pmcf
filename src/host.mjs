@@ -1,7 +1,12 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
-import { default_attribute, number_attribute, boolean_attribute_false } from "pacc";
+import {
+  string_attribute,
+  string_collection_attribute,
+  number_attribute,
+  boolean_attribute_false
+} from "pacc";
 import { ServiceOwner, Base, addresses } from "pmcf";
 import { networkAddressProperties } from "./network-support.mjs";
 import { addHook } from "./hooks.mjs";
@@ -31,25 +36,25 @@ const HostTypeDefinition = {
       writable: true
     },
     services: { type: "service", collection: true, writable: true },
-    aliases: { ...default_attribute, collection: true, writable: true },
+    aliases: { ...string_collection_attribute, writable: true },
     os: {
-      ...default_attribute,
+      ...string_attribute,
       writable: true,
       values: ["osx", "windows", "linux"]
     },
-    "machine-id": { ...default_attribute, writable: true },
-    distribution: { ...default_attribute, writable: true },
+    "machine-id": { ...string_attribute, writable: true },
+    distribution: { ...string_attribute, writable: true },
     deployment: {
-      ...default_attribute,
+      ...string_attribute,
       writable: true,
       values: ["production", "development"]
     },
     weight: { ...number_attribute, writable: true },
-    serial: { ...default_attribute, writable: true },
-    vendor: { ...default_attribute, writable: true },
-    keymap: { ...default_attribute, writable: true },
+    serial: { ...string_attribute, writable: true },
+    vendor: { ...string_attribute, writable: true },
+    keymap: { ...string_attribute, writable: true },
     chassis: {
-      ...default_attribute,
+      ...string_attribute,
       writable: true,
       values: [
         "phone",
@@ -67,15 +72,15 @@ const HostTypeDefinition = {
       ]
     },
     architecture: {
-      ...default_attribute,
+      ...string_attribute,
       writable: true,
       values: ["x86", "x86_64", "aarch64", "armv7"]
     },
-    replaces: { ...default_attribute, collection: true, writable: true },
-    depends: { ...default_attribute, collection: true, writable: true },
-    provides: { ...default_attribute, collection: true, writable: true },
+    replaces: { ...string_collection_attribute, writable: true },
+    depends: { ...string_collection_attribute, writable: true },
+    provides: { ...string_collection_attribute, writable: true },
     extends: { type: "host", collection: true, writable: true },
-    model: { ...default_attribute, collection: false, writable: false },
+    model: string_attribute,
     isModel: boolean_attribute_false
   }
 };

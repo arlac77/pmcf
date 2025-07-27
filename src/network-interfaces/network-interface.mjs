@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { hasWellKnownSubnet, normalizeIP } from "ip-utilties";
-import { default_attribute, hostname_attribute } from "pacc";
+import { string_attribute, hostname_attribute } from "pacc";
 import { Base, cidrAddresses } from "pmcf";
 import {
   networkProperties,
@@ -41,11 +41,11 @@ export const NetworkInterfaceTypeDefinition = {
 
     services: { type: "service", collection: true, writable: true },
     hostName: { ...hostname_attribute, writable: true },
-    ipAddresses: { ...default_attribute, writable: true },
+    ipAddresses: { ...string_attribute, writable: true },
 
-    hwaddr: { ...default_attribute, writable: true },
+    hwaddr: { ...string_attribute, writable: true },
     network: { type: "network", collection: false, writable: true },
-    destination: { ...default_attribute, writable: true }
+    destination: { ...string_attribute, writable: true }
   }
 };
 

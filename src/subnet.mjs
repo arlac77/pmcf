@@ -6,7 +6,7 @@ import {
   familyIP,
   matchPrefixIP
 } from "ip-utilties";
-import { default_attribute, number_attribute } from "pacc";
+import { string_attribute, number_attribute } from "pacc";
 import { Base } from "./base.mjs";
 import { addType } from "./types.mjs";
 
@@ -17,11 +17,11 @@ const SubnetTypeDefinition = {
   constructWithIdentifierOnly: true,
   properties: {
     address: {
-      ...default_attribute,
+      ...string_attribute,
       isKey: true
     },
     networks: { type: "network", collection: true, writable: true },
-    prefixLength: { ...number_attribute, writable: false }
+    prefixLength: { ...number_attribute }
   }
 };
 

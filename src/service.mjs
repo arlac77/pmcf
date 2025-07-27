@@ -1,4 +1,9 @@
-import { default_attribute, string_attribute, number_attribute, boolean_attribute_false } from "pacc";
+import {
+  string_attribute,
+  string_collection_attribute,
+  number_attribute,
+  boolean_attribute_false
+} from "pacc";
 import {
   Base,
   Host,
@@ -22,12 +27,12 @@ import {
 export const endpointProperties = {
   port: { ...number_attribute, writable: true },
   protocol: {
-    ...default_attribute,
+    ...string_attribute,
     writable: true,
     values: ["tcp", "udp"]
   },
-  type: { ...default_attribute, writable: true },
-  types: { ...default_attribute, collection: true },
+  type: { ...string_attribute, writable: true },
+  types: string_collection_attribute,
   tls: boolean_attribute_false
 };
 
@@ -59,9 +64,9 @@ export const ServiceTypeDefinition = {
   properties: {
     ...networkAddressProperties,
     ...endpointProperties,
-    alias: { ...default_attribute, writable: true },
+    alias: { ...string_attribute, writable: true },
     weight: { ...number_attribute, writable: true, default: 1 },
-    systemd: { ...string_attribute, collection: true, writable: true }
+    systemd: { ...string_collection_attribute, writable: true }
   }
 };
 

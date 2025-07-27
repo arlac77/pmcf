@@ -1,7 +1,11 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { reverseArpa } from "ip-utilties";
-import { default_attribute, boolean_attribute_writeable_true } from "pacc";
+import {
+  string_attribute,
+  number_attribute,
+  boolean_attribute_writeable_true
+} from "pacc";
 import {
   Service,
   sortDescendingByPriority,
@@ -25,29 +29,26 @@ const KeaServiceTypeDefinition = {
       isCommonOption: true
     },
     "renew-timer": {
-      ...default_attribute,
-      type: "number",
+      ...number_attribute,
       writable: true,
       isCommonOption: true,
       default: 900
     },
     "rebind-timer": {
-      ...default_attribute,
-      type: "number",
+      ...number_attribute,
       writable: true,
       isCommonOption: true,
       default: 1800
     },
     "valid-lifetime": {
-      ...default_attribute,
-      type: "number",
+      ...number_attribute,
       writable: true,
       mandatory: true,
       isCommonOption: true,
       default: 86400
     },
     "ddns-conflict-resolution-mode": {
-      ...default_attribute,
+      ...string_attribute,
       writable: true,
       isCommonOption: true
       //values: ["check-exists-with-dhcid"]
