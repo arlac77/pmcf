@@ -1,4 +1,4 @@
-import { default_attribute, boolean_attribute } from "pacc";
+import { default_attribute, string_attribute, number_attribute, boolean_attribute_false } from "pacc";
 import {
   Base,
   Host,
@@ -20,7 +20,7 @@ import {
 } from "./dns-utils.mjs";
 
 export const endpointProperties = {
-  port: { type: "number", collection: false, writable: true },
+  port: { ...number_attribute, writable: true },
   protocol: {
     ...default_attribute,
     writable: true,
@@ -28,10 +28,7 @@ export const endpointProperties = {
   },
   type: { ...default_attribute, writable: true },
   types: { ...default_attribute, collection: true },
-  tls: {
-    ...boolean_attribute,
-    writable: false
-  }
+  tls: boolean_attribute_false
 };
 
 export const EndpointTypeDefinition = {
@@ -63,8 +60,8 @@ export const ServiceTypeDefinition = {
     ...networkAddressProperties,
     ...endpointProperties,
     alias: { ...default_attribute, writable: true },
-    weight: { type: "number", collection: false, writable: true, default: 1 },
-    systemd: { type: "string", collection: true, writable: true }
+    weight: { ...number_attribute, writable: true, default: 1 },
+    systemd: { ...string_attribute, collection: true, writable: true }
   }
 };
 

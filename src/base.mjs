@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { allOutputs } from "npm-pkgbuild";
-import { getAttribute, default_attribute, description_attribute, boolean_attribute } from "pacc";
+import { getAttribute, default_attribute, number_attribute, description_attribute, boolean_attribute } from "pacc";
 import { addType, primitives, typeFactory } from "./types.mjs";
 import { asArray } from "./utils.mjs";
 
@@ -16,7 +16,7 @@ const BaseTypeDefinition = {
       writable: true
     },
     description: { ...description_attribute, writable: true },
-    priority: { type: "number", collection: false, writable: true },
+    priority: { ...number_attribute, writable: true },
     directory: { ...default_attribute, writable: false },
     packaging: { ...default_attribute, writable: true },
     disabled: {

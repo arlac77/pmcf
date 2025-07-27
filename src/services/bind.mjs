@@ -2,7 +2,7 @@ import { join } from "node:path";
 import { createHmac } from "node:crypto";
 import { FileContentProvider } from "npm-pkgbuild";
 import { isLinkLocal, reverseArpa } from "ip-utilties";
-import { boolean_attribute, default_attribute } from "pacc";
+import { default_attribute, boolean_attribute, number_attribute } from "pacc";
 import { writeLines, asArray } from "../utils.mjs";
 import {
   DNSRecord,
@@ -68,7 +68,7 @@ const BindServiceTypeDefinition = {
       default: false
     },
     recordTTL: { ...default_attribute, writable: true },
-    serial: { type: "number", collection: false, writable: true },
+    serial: { ...number_attribute, writable: true },
     refresh: { ...default_attribute, writable: true },
     retry: { ...default_attribute, writable: true },
     expire: { ...default_attribute, writable: true },

@@ -1,5 +1,6 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
+import { number_attribute } from "pacc";
 import { Owner } from "./owner.mjs";
 import { Host } from "./host.mjs";
 import { serviceEndpoints } from "pmcf";
@@ -12,11 +13,11 @@ const ClusterTypeDefinition = {
   priority: 0.7,
   extends: Host.typeDefinition,
   properties: {
-    routerId: { type: "number", collection: false, writable: true },
+    routerId: { ...number_attribute, writable: true },
     masters: { type: "network_interface", collection: true, writable: true },
     backups: { type: "network_interface", collection: true, writable: true },
     members: { type: "network_interface", collection: true, writable: false },
-    checkInterval: { type: "number", collection: false, writable: true }
+    checkInterval: { ...number_attribute, writable: true }
   }
 };
 
