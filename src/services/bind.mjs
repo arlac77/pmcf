@@ -56,10 +56,10 @@ const BindServiceTypeDefinition = {
     notify: boolean_attribute_writeable_false,
     recordTTL: { ...default_attribute, writable: true },
     serial: { ...number_attribute, writable: true },
-    refresh: { ...default_attribute, writable: true },
-    retry: { ...default_attribute, writable: true },
-    expire: { ...default_attribute, writable: true },
-    minimum: { ...default_attribute, writable: true },
+    refresh: { ...default_attribute, writable: true, default: 36000 },
+    retry: { ...default_attribute, writable: true, default: 72000 },
+    expire: { ...default_attribute, writable: true, default: 600000 },
+    minimum: { ...default_attribute, writable: true, default: 60000 },
     allowedUpdates: { ...default_attribute, collection: true, writable: true }
   },
 
