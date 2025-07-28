@@ -7,7 +7,7 @@ import {
   string_collection_attribute,
   number_attribute,
   description_attribute,
-  boolean_attribute
+  boolean_attribute_writeable_false
 } from "pacc";
 import { addType, primitives, typeFactory } from "./types.mjs";
 import { asArray } from "./utils.mjs";
@@ -26,11 +26,7 @@ const BaseTypeDefinition = {
     priority: { ...number_attribute, writable: true },
     directory: { ...string_attribute, writable: false },
     packaging: { ...string_attribute, writable: true },
-    disabled: {
-      ...boolean_attribute,
-      writable: true,
-      default: false
-    },
+    disabled: boolean_attribute_writeable_false,
     tags: { ...string_collection_attribute, writable: true }
   }
 };
@@ -101,20 +97,20 @@ export class Base {
   }
 
   read(data, type) {
-    const assign = (property, value) => {
+    const assign = (name, property, value) => {
       if (value !== undefined) {
         if (property.values) {
           if (property.values.indexOf(value) < 0) {
-            this.error(property.name, "unknown value", value, property.values);
+            this.error(name, "unknown value", value, property.values);
           }
         }
 
         if (property.collection) {
-          const current = this[property.name];
+          const current = this[name];
 
           switch (typeof current) {
             case "undefined":
-              this[property.name] = asArray(value);
+              this[name] = asArray(value);
               break;
             case "object":
               if (Array.isArray(current)) {
@@ -122,12 +118,12 @@ export class Base {
               } else {
                 if (current instanceof Set) {
                   // TODO
-                  this[property.name] = value;
+                  this[name] = value;
                 } else if (current instanceof Map) {
                   // TODO
-                  this[property.name] = value;
+                  this[name] = value;
                 } else {
-                  this.error("Unknown collection type", property.name, current);
+                  this.error("Unknown collection type", name, current);
                 }
               }
               break;
@@ -135,19 +131,19 @@ export class Base {
               if (value instanceof Base) {
                 this.addObject(value);
               } else {
-                this.error("Unknown collection type", property.name, current);
+                this.error("Unknown collection type", name, current);
               }
               break;
           }
         } else {
-          this[property.name] = value;
+          this[name] = value ?? property.default;
         }
       }
     };
 
-    const instantiateAndAssign = (property, value) => {
+    const instantiateAndAssign = (name, property, value) => {
       if (primitives.has(property.type[0])) {
-        assign(property, value);
+        assign(name, property, value);
         return;
       }
 
@@ -155,7 +151,7 @@ export class Base {
         case "undefined":
           return;
         case "function":
-          this.error("Invalid value", property.name, value);
+          this.error("Invalid value", name, value);
           break;
 
         case "boolean":
@@ -173,7 +169,7 @@ export class Base {
             }
 
             if (object) {
-              assign(property, object);
+              assign(name, property, object);
             } else {
               if (property.type[0].constructWithIdentifierOnly) {
                 object = new property.type[0].clazz(
@@ -192,14 +188,14 @@ export class Base {
                       this.root.typeNamed(type.name, value); // TODO
 
                     if (object) {
-                      assign(property, object);
+                      assign(name, property, object);
                       return;
                     }
                   }
 
                   this.error(
                     "Not found",
-                    property.name,
+                    name,
                     property.type.map(t => t.name),
                     value
                   );
@@ -210,9 +206,10 @@ export class Base {
           break;
         case "object":
           if (value instanceof property.type[0].clazz) {
-            assign(property, value);
+            assign(name, property, value);
           } else {
             assign(
+              name,
               property,
               typeFactory(
                 property.type[0],
@@ -229,32 +226,32 @@ export class Base {
       this._properties = data.properties;
     }
 
-    for (const property of Object.values(type.properties)) {
+    for (const [name, property] of Object.entries(type.properties)) {
       if (property.writable) {
-        const value = this.expand(data[property.name]);
+        const value = this.expand(data[name]);
 
         if (property.collection) {
           if (typeof value === "object") {
             if (Array.isArray(value)) {
               for (const v of value) {
-                instantiateAndAssign(property, v);
+                instantiateAndAssign(name, property, v);
               }
             } else {
               if (value instanceof Base) {
-                assign(property, value);
+                assign(name, property, value);
               } else {
                 for (const [objectName, objectData] of Object.entries(value)) {
                   if (typeof objectData === "object") {
                     objectData[type.identifier.name] = objectName;
                   }
-                  instantiateAndAssign(property, objectData);
+                  instantiateAndAssign(name, property, objectData);
                 }
               }
             }
             continue;
           }
         }
-        instantiateAndAssign(property, value);
+        instantiateAndAssign(name, property, value);
       }
     }
   }

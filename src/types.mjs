@@ -48,7 +48,7 @@ export function resolveTypeLinks() {
                 "Unknown type",
                 property.type,
                 type.name,
-                property.name
+                name
               );
             }
           }
@@ -69,7 +69,7 @@ export function resolveTypeLinks() {
               "Unknown type",
               property.type,
               type.name,
-              property.name
+              name
             );
           }
         }
