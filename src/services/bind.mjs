@@ -106,7 +106,7 @@ export class BindService extends ExtraSourceService {
   recordTTL = "1W";
   hasSVRRecords = true;
   hasCatalog = true;
-  hasLinkLocalAdresses = true;
+  hasLinkLocalAdresses = BindServiceTypeDefinition.properties.hasLinkLocalAdresses.default;
   hasLocationRecord = true;
   notify = true;
   _addresses = [];
