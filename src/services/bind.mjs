@@ -36,7 +36,6 @@ const BindServiceTypeDefinition = {
       collection: true,
       writable: true
     },
-
     trusted: {
       type: address_types,
       collection: true,
@@ -296,9 +295,10 @@ export class BindService extends ExtraSourceService {
 
     packageData.dir = outfacingZonesPackageDir;
     packageData.properties = {
-      name: `named-zones-${name}-OUTFACING`,
+      name: `named-zones-${name}-outfacing`,
       description: `outfacing zone definitions for ${names}`,
       access: "private",
+      replaces: [`named-zones-${name}-OUTFACING`],
       hooks: {}
     };
 
@@ -495,7 +495,7 @@ export class BindService extends ExtraSourceService {
 
       const zone = {
         id: domain,
-        file: `OUTFACING/${domain}.zone`,
+        file: `outfacing/${domain}.zone`,
         records: new Set(records)
       };
       const config = {
