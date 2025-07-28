@@ -106,7 +106,8 @@ export class BindService extends ExtraSourceService {
   recordTTL = "1W";
   hasSVRRecords = true;
   hasCatalog = true;
-  hasLinkLocalAdresses = BindServiceTypeDefinition.properties.hasLinkLocalAdresses.default;
+  hasLinkLocalAdresses =
+    BindServiceTypeDefinition.properties.hasLinkLocalAdresses.default;
   hasLocationRecord = true;
   notify = true;
   _addresses = [];
@@ -412,7 +413,16 @@ export class BindService extends ExtraSourceService {
             ) {
               addresses.add(address);
 
-              let reverseZone = reverseZones.get(subnet.address);
+              let reverseZone = reverseZones.get(subnet);
+
+              // is there already a matching subnet ?
+              if (!reverseZone) {
+                for (const [presentSubnet, zone] of reverseZones) {
+                  if (presentSubnet.matchesAddress(subnet.address)) {
+                    reverseZone = zone;
+                  }
+                }
+              }
 
               if (!reverseZone) {
                 const id = reverseArpa(subnet.prefix);
@@ -423,7 +433,7 @@ export class BindService extends ExtraSourceService {
                   records: new Set(this.defaultRecords)
                 };
                 config.zones.push(reverseZone);
-                reverseZones.set(subnet.address, reverseZone);
+                reverseZones.set(subnet, reverseZone);
               }
 
               for (const domainName of domainNames) {
