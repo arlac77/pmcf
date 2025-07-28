@@ -45,7 +45,7 @@ const BindServiceTypeDefinition = {
     internal: { type: address_types, collection: true, writable: true },
     hasSVRRecords: boolean_attribute_writeable_false,
     hasCatalog: boolean_attribute_writeable_true,
-    hasLinkLocalAdresses: boolean_attribute_writeable_true,
+    hasLinkLocalAdresses: boolean_attribute_writeable_false,
     hasLocationRecord: boolean_attribute_writeable_true,
     excludeInterfaceKinds: {
       ...string_collection_attribute,
