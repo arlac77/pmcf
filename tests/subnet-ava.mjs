@@ -56,6 +56,13 @@ test("Subnet ipv6", t => {
   t.true(s1.isLinkLocal);
 });
 
+test("Subnet match with prefix length", t => {
+  const root = new Root("/");
+  const s1 = new Subnet(root, "192.168.1/24");
+  t.true(s1.matchesAddress("192.168.1.60"));
+  t.true(s1.matchesAddress("192.168.1.60/30"));
+});
+
 function st(t, address, expected) {
   const subnet =
     address instanceof Subnet ? address : new Subnet(new Root("/"), address);
