@@ -61,6 +61,7 @@ const KeaServiceTypeDefinition = {
         endpoints: [
           {
             family: "IPv4",
+            kind: "loopback",
             port: 53001,
             protocol: "tcp",
             tls: false
