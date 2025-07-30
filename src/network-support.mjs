@@ -1,9 +1,9 @@
 import {
   string_collection_attribute,
   string_attribute,
-  number_attribute,
+  number_attribute_writable,
   hostname_attribute,
-  boolean_attribute
+  boolean_attribute_writable
 } from "pacc";
 
 export const networkProperties = {
@@ -11,7 +11,7 @@ export const networkProperties = {
     ...string_attribute,
     writable: true,
     values: ["global", "site", "link", "host"],
-    default: "global"
+  //  default: "global"
   },
   class: {
     ...string_attribute,
@@ -25,13 +25,10 @@ export const networkProperties = {
   },
   ssid: { ...string_attribute, writable: true },
   psk: { ...string_attribute, writable: true },
-  metric: { ...number_attribute, writable: true, default: 1004 },
-  mtu: { ...number_attribute, writable: true, default: 1500 },
+  metric: { ...number_attribute_writable, /*default: 1004*/ },
+  mtu: { ...number_attribute_writable, default: 1500 },
   gateway: { type: "host", collection: false, writable: true },
-  multicastDNS: {
-    ...boolean_attribute,
-    writable: true
-  }
+  multicastDNS: boolean_attribute_writable,
 };
 
 export const networkAddressProperties = {

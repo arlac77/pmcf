@@ -4,10 +4,10 @@ import {
   getAttribute,
   name_attribute,
   string_attribute,
-  string_collection_attribute,
-  number_attribute,
+  string_collection_attribute_writable,
+  number_attribute_writable,
   description_attribute,
-  boolean_attribute_writable_false
+  boolean_attribute_writable
 } from "pacc";
 import { addType, primitives, typeFactory } from "./types.mjs";
 import { asArray } from "./utils.mjs";
@@ -23,11 +23,11 @@ const BaseTypeDefinition = {
       writable: true
     },
     description: { ...description_attribute, writable: true },
-    priority: { ...number_attribute, writable: true },
+    priority: number_attribute_writable,
     directory: { ...string_attribute, writable: false },
     packaging: { ...string_attribute, writable: true },
-    disabled: boolean_attribute_writable_false,
-    tags: { ...string_collection_attribute, writable: true }
+    disabled: boolean_attribute_writable,
+    tags: string_collection_attribute_writable
   }
 };
 
@@ -98,6 +98,10 @@ export class Base {
 
   read(data, type) {
     const assign = (name, property, value) => {
+      if (value === undefined && property.default !== undefined) {
+        value = property.default;
+      }
+
       if (value !== undefined) {
         if (property.values) {
           if (property.values.indexOf(value) < 0) {
@@ -136,7 +140,7 @@ export class Base {
               break;
           }
         } else {
-          this[name] = value ?? property.default;
+          this[name] = value;
         }
       }
     };

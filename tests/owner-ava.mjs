@@ -61,6 +61,7 @@ test("Owner read write", t => {
         administratorEmail: "master@somewhere",
         directory: "/o1/n1",
         kind: "ethernet",
+        mtu: 1500,
         owner: {
           name: "o1",
           type: "owner"

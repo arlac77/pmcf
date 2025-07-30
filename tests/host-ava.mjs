@@ -230,7 +230,7 @@ test("Host addresses", t => {
   t.deepEqual(eth0.toJSON(), {
     directory: "/n1/h1/eth0",
     name: "eth0",
-    metric: 1004,
+   // metric: 1004,
     mtu: 1500,
     kind: "ethernet",
     scope: "global",

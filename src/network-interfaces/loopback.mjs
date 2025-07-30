@@ -42,6 +42,7 @@ export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
     return LoopbackNetworkInterfaceTypeDefinition.name;
   }
 
+  set scope(v) {}
   get scope() {
     return "host";
   }
@@ -61,6 +62,8 @@ export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
   get ipAddresses() {
     return _localAddresses;
   }
+
+    set mtu(v) {}
 
   get mtu()
   {

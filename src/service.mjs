@@ -1,7 +1,8 @@
 import {
   string_attribute,
   string_collection_attribute,
-  number_attribute,
+  string_collection_attribute_writable,
+  number_attribute_writable,
   boolean_attribute_false
 } from "pacc";
 import {
@@ -25,7 +26,7 @@ import {
 } from "./dns-utils.mjs";
 
 export const endpointProperties = {
-  port: { ...number_attribute, writable: true },
+  port: { ...number_attribute_writable },
   protocol: {
     ...string_attribute,
     writable: true,
@@ -65,8 +66,8 @@ export const ServiceTypeDefinition = {
     ...networkAddressProperties,
     ...endpointProperties,
     alias: { ...string_attribute, writable: true },
-    weight: { ...number_attribute, writable: true, default: 1 },
-    systemd: { ...string_collection_attribute, writable: true }
+    weight: { ...number_attribute_writable /*default: 1*/ },
+    systemd: string_collection_attribute_writable
   }
 };
 

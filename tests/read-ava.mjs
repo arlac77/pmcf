@@ -43,7 +43,7 @@ test("read basics", t => {
     setStrings: ["s41", "s42"]
   });
   t.is(m1.aString, "s1");
- // t.is(m1.aStringWitwDefault, "xyz");
+  t.is(m1.aStringWitwDefault, "xyz");
   t.deepEqual(m1.undefStrings, ["s2"]);
   t.deepEqual(m1.arrayStrings, ["s3"]);
   // t.deepEqual(m1.setStrings, ["s41", "s42"]);
