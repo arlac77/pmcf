@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
-import { boolean_attribute_writeable_true } from "pacc";
+import { boolean_attribute_writable_true } from "pacc";
 import { writeLines } from "../utils.mjs";
 import { addType } from "../types.mjs";
 import { Service, ServiceTypeDefinition } from "../service.mjs";
@@ -13,7 +13,7 @@ const InfluxdbServiceTypeDefinition = {
   priority: 0.1,
   properties: {
     "metrics-disabled": {
-      ...boolean_attribute_writeable_true,
+      ...boolean_attribute_writable_true,
       isCommonOption: true
     }
   },

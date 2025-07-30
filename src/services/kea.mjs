@@ -4,7 +4,7 @@ import { reverseArpa } from "ip-utilties";
 import {
   string_attribute,
   number_attribute,
-  boolean_attribute_writeable_true
+  boolean_attribute_writable_true
 } from "pacc";
 import {
   Service,
@@ -25,7 +25,7 @@ const KeaServiceTypeDefinition = {
   priority: 0.1,
   properties: {
     "ddns-send-updates": {
-      ...boolean_attribute_writeable_true,
+      ...boolean_attribute_writable_true,
       isCommonOption: true
     },
     "renew-timer": {

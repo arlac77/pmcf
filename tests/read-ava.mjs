@@ -1,4 +1,5 @@
 import test from "ava";
+import { string_attribute, string_collection_attribute_writable } from "pacc";
 import { Root, Base } from "pmcf";
 import { addType } from "../src/types.mjs";
 
@@ -8,10 +9,11 @@ const MyTypeDefinition = {
   priority: 0.9,
   extends: Base.typeDefinition,
   properties: {
-    aString: { type: "string", collection: false, writable: true },
-    arrayStrings: { type: "string", collection: true, writable: true },
-    undefStrings: { type: "string", collection: true, writable: true },
-    setStrings: { type: "string", collection: true, writable: true }
+    aString: { ...string_attribute, writable: true },
+    aStringWitwDefault: { ...string_attribute, default: "xyz", writable: true },
+    arrayStrings: string_collection_attribute_writable,
+    undefStrings: string_collection_attribute_writable,
+    setStrings: string_collection_attribute_writable
   }
 };
 
@@ -41,7 +43,8 @@ test("read basics", t => {
     setStrings: ["s41", "s42"]
   });
   t.is(m1.aString, "s1");
+ // t.is(m1.aStringWitwDefault, "xyz");
   t.deepEqual(m1.undefStrings, ["s2"]);
   t.deepEqual(m1.arrayStrings, ["s3"]);
- // t.deepEqual(m1.setStrings, ["s41", "s42"]);
+  // t.deepEqual(m1.setStrings, ["s41", "s42"]);
 });

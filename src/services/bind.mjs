@@ -5,8 +5,8 @@ import { isLinkLocal, reverseArpa } from "ip-utilties";
 import {
   string_attribute,
   string_collection_attribute,
-  boolean_attribute_writeable_true,
-  boolean_attribute_writeable_false,
+  boolean_attribute_writable_true,
+  boolean_attribute_writable_false,
   number_attribute
 } from "pacc";
 import { writeLines, asArray } from "../utils.mjs";
@@ -43,16 +43,16 @@ const BindServiceTypeDefinition = {
     },
     protected: { type: address_types, collection: true, writable: true },
     internal: { type: address_types, collection: true, writable: true },
-    hasSVRRecords: boolean_attribute_writeable_false,
-    hasCatalog: boolean_attribute_writeable_true,
-    hasLinkLocalAdresses: boolean_attribute_writeable_false,
-    hasLocationRecord: boolean_attribute_writeable_true,
+    hasSVRRecords: boolean_attribute_writable_false,
+    hasCatalog: boolean_attribute_writable_true,
+    hasLinkLocalAdresses: boolean_attribute_writable_false,
+    hasLocationRecord: boolean_attribute_writable_true,
     excludeInterfaceKinds: {
       ...string_collection_attribute,
       writable: true
     },
     exclude: { type: address_types, collection: true, writable: true },
-    notify: boolean_attribute_writeable_false,
+    notify: boolean_attribute_writable_false,
     recordTTL: { ...string_attribute, writable: true },
     serial: { ...number_attribute, writable: true },
     refresh: { ...string_attribute, writable: true, default: 36000 },

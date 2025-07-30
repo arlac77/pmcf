@@ -7,7 +7,7 @@ import {
   string_collection_attribute,
   number_attribute,
   description_attribute,
-  boolean_attribute_writeable_false
+  boolean_attribute_writable_false
 } from "pacc";
 import { addType, primitives, typeFactory } from "./types.mjs";
 import { asArray } from "./utils.mjs";
@@ -26,7 +26,7 @@ const BaseTypeDefinition = {
     priority: { ...number_attribute, writable: true },
     directory: { ...string_attribute, writable: false },
     packaging: { ...string_attribute, writable: true },
-    disabled: boolean_attribute_writeable_false,
+    disabled: boolean_attribute_writable_false,
     tags: { ...string_collection_attribute, writable: true }
   }
 };
