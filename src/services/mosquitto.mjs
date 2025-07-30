@@ -1,10 +1,6 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
-import {
-  boolean_attribute_writable_true,
-  boolean_attribute_writable_false
-} from "pacc";
-
+import { boolean_attribute_writable_true } from "pacc";
 import { writeLines } from "../utils.mjs";
 import { addType } from "../types.mjs";
 import { Service, ServiceTypeDefinition } from "../service.mjs";
@@ -17,11 +13,11 @@ const MosquittoServiceTypeDefinition = {
   priority: 0.1,
   properties: {
     log_timestamp: {
-      ...boolean_attribute_writable_false,
+      ...boolean_attribute_writable_true,
       isCommonOption: true
     },
     allow_anonymous: {
-      ...boolean_attribute_writable_false,
+      ...boolean_attribute_writable_true,
       isCommonOption: true
     }
   },
