@@ -3,7 +3,7 @@ import { FileContentProvider } from "npm-pkgbuild";
 import { reverseArpa } from "ip-utilties";
 import {
   string_attribute,
-  number_attribute,
+  number_attribute_writable,
   boolean_attribute_writable_true
 } from "pacc";
 import {
@@ -29,20 +29,17 @@ const KeaServiceTypeDefinition = {
       isCommonOption: true
     },
     "renew-timer": {
-      ...number_attribute,
-      writable: true,
+      ...number_attribute_writable,
       isCommonOption: true,
       default: 900
     },
     "rebind-timer": {
-      ...number_attribute,
-      writable: true,
+      ...number_attribute_writable,
       isCommonOption: true,
       default: 1800
     },
     "valid-lifetime": {
-      ...number_attribute,
-      writable: true,
+      ...number_attribute_writable,
       mandatory: true,
       isCommonOption: true,
       default: 86400

@@ -1,3 +1,4 @@
+import { default_attribute_writable } from "pacc";
 import { Owner } from "./owner.mjs";
 import { Subnet } from "./subnet.mjs";
 import { addType } from "./types.mjs";
@@ -10,8 +11,12 @@ const NetworkTypeDefinition = {
   extends: Owner.typeDefinition,
   properties: {
     ...networkProperties,
-    bridge: { type: "network", collection: true, writable: true },
-    gateway: { type: "host", collection: false, writable: true }
+    bridge: {
+      ...default_attribute_writable,
+      type: "network",
+      collection: true
+    },
+    gateway: { ...default_attribute_writable, type: "host" }
   }
 };
 
@@ -40,7 +45,7 @@ export class Network extends Owner {
   }
 
   get address() {
-    for(const subnet of this.subnets()) {
+    for (const subnet of this.subnets()) {
       return subnet.address;
     }
   }
