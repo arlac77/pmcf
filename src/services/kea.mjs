@@ -102,7 +102,7 @@ const KeaServiceTypeDefinition = {
         endpoints: [
           {
             family: "unix",
-            path: "/run/kea/4-ctrl-socket"
+            path: "/run/kea/ctrl-4"
           }
         ]
       },
@@ -110,7 +110,7 @@ const KeaServiceTypeDefinition = {
         endpoints: [
           {
             family: "unix",
-            path: "/run/kea/6-ctrl-socket"
+            path: "/run/kea/ctrl-6"
           }
         ]
       },
@@ -118,7 +118,7 @@ const KeaServiceTypeDefinition = {
         endpoints: [
           {
             family: "unix",
-            path: "/run/kea/ddns-ctrl-socket"
+            path: "/run/kea/ctrl-ddns"
           }
         ]
       }
@@ -126,7 +126,7 @@ const KeaServiceTypeDefinition = {
   }
 };
 
-const keaVersion = 3.0;
+const keaVersion = 3.1;
 export const fetureHasHTTPEndpoints = keaVersion >= 3.0;
 
 export class KeaService extends Service {
@@ -225,7 +225,7 @@ export class KeaService extends Service {
         "interfaces-config": {
           interfaces: listenInterfaces(`IPv${family}`)
         },
-        "control-socket": toUnix(this.endpoint(`kea-control-dhcp${family}`)),
+        "control-sockets": [toUnix(this.endpoint(`kea-control-dhcp${family}`))],
         "lease-database": {
           type: "memfile",
           "lfc-interval": 3600

@@ -42,8 +42,8 @@ test("kea basics", t => {
 
   t.is(kea.endpoint("dhcp").toString(), "dhcp:IPv4/10.0.0.1[547]");
   t.is(kea.endpoint("kea-ddns").toString(), "kea-ddns:dns/h1[53001]");
-  t.is(kea.endpoint("kea-control-dhcp4").toString(), "kea-control-dhcp4:unix:/run/kea/4-ctrl-socket");
-  t.is(kea.endpoint("kea-control-dhcp6").toString(), "kea-control-dhcp6:unix:/run/kea/6-ctrl-socket");
+  t.is(kea.endpoint("kea-control-dhcp4").toString(), "kea-control-dhcp4:unix:/run/kea/ctrl-4");
+  t.is(kea.endpoint("kea-control-dhcp6").toString(), "kea-control-dhcp6:unix:/run/kea/ctrl-6");
 
   /*
   const a1 = [...h1.networkAddresses(na => na.family === "IPv4")][0];
