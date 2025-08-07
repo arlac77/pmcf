@@ -126,7 +126,7 @@ const KeaServiceTypeDefinition = {
   }
 };
 
-const keaVersion = 3.1;
+const keaVersion = 3.0;
 export const fetureHasHTTPEndpoints = keaVersion >= 3.0;
 
 export class KeaService extends Service {
