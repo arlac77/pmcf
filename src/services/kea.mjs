@@ -48,7 +48,7 @@ const KeaServiceTypeDefinition = {
       ...string_attribute,
       writable: true,
       isCommonOption: true
-      //values: ["check-exists-with-dhcid"]
+      //values: ["check-exists-with-dhcid","no-check-with-dhcid"]
     }
   },
   service: {
