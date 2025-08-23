@@ -68,7 +68,8 @@ const HostTypeDefinition = {
         "camera",
         "inverter",
         "battery",
-        "virtual"
+        "virtual",
+        "dehumidifier"
       ]
     },
     architecture: {
