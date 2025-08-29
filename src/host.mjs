@@ -486,7 +486,7 @@ export class Host extends ServiceOwner {
         ),
         new FileContentProvider(
           { base: this.directory, pattern: "credential.secret" },
-          { destination: "/var/lib/systemd", mode: 0o400 }
+          { destination: "/var/lib/systemd/", mode: 0o400 }
         ),
         new FileContentProvider(dir + "/")
       ],
