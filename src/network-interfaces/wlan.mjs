@@ -1,6 +1,7 @@
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { addType } from "../types.mjs";
+import { writeLines, sectionLines } from "../utils.mjs";
 import { NetworkInterfaceTypeDefinition } from "./network-interface.mjs";
 import {
   EthernetNetworkInterface,
@@ -50,8 +51,25 @@ export class WLANNetworkInterface extends EthernetNetworkInterface {
 
   async systemdDefinitions(packageData) {
     await super.systemdDefinitions(packageData);
-    const d = join(packageData.dir, "var/lib/iwd/");
-    await mkdir(d, { recursive: true });
+    await mkdir(join(packageData.dir, "var/lib/iwd/"), { recursive: true });
+
+    const secretName = "iwd-secret";
+
+    await writeLines(join(packageData.dir, "/etc/iwd"), "main.conf", [
+      sectionLines("General", {
+        SystemdEncrypt: secretName
+      })
+    ]);
+
+    await writeLines(
+      join(packageData.dir, "usr/lib/systemd/system/iwd.service.d/"),
+      "mf.conf",
+      [
+        sectionLines("Service", {
+          LoadCredentialEncrypted: `${secretName}:/etc/credstore.encrypted/${secretName}`
+        })
+      ]
+    );
 
     packageData.properties.requires.push("iwd", "impala");
   }
