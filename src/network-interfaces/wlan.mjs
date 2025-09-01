@@ -1,7 +1,6 @@
-import { writeFile, mkdir } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { addType } from "../types.mjs";
-import { addHook } from "../hooks.mjs";
 import { NetworkInterfaceTypeDefinition } from "./network-interface.mjs";
 import {
   EthernetNetworkInterface,
