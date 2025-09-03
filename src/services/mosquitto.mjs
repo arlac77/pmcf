@@ -57,7 +57,7 @@ export class MosquittoService extends Service {
         name: `mosquitto-${this.location.name}-${host.name}`,
         description: `mosquitto definitions for ${this.fullName}@${name}`,
         access: "private",
-        dependencies: ["mosquitto>=2.0.21"]
+        dependencies: ["mosquitto>=2.0.22"]
       }
     };
 
