@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { hasWellKnownSubnet, normalizeIP } from "ip-utilties";
-import { string_attribute, hostname_attribute } from "pacc";
+import { string_attribute_writable, hostname_attribute } from "pacc";
 import { Base, cidrAddresses } from "pmcf";
 import {
   networkProperties,
@@ -41,11 +41,10 @@ export const NetworkInterfaceTypeDefinition = {
 
     services: { type: "service", collection: true, writable: true },
     hostName: { ...hostname_attribute, writable: true },
-    ipAddresses: { ...string_attribute, writable: true },
-
-    hwaddr: { ...string_attribute, writable: true },
+    ipAddresses: { ...string_attribute_writable },
+    hwaddr: { ...string_attribute_writable },
     network: { type: "network", collection: false, writable: true },
-    destination: { ...string_attribute, writable: true }
+    destination: { ...string_attribute_writable }
   }
 };
 
@@ -191,7 +190,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
 
     if (this.name !== "eth0" && this.hwaddr) {
       const disabled = {};
-      if(this.disabled) {
+      if (this.disabled) {
         disabled.Unmanaged = "yes";
       }
       await writeLines(networkDir, `${this.name}.link`, [

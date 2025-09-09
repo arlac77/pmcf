@@ -1,7 +1,8 @@
 import { normalizeCIDR, familyIP } from "ip-utilties";
 import {
-  string_collection_attribute,
+  string_collection_attribute_writable,
   string_attribute,
+  string_attribute_writable,
   email_attribute
 } from "pacc";
 import { asIterator } from "./utils.mjs";
@@ -19,12 +20,12 @@ const OwnerTypeDefinition = {
     hosts: { type: "host", collection: true, writable: true },
     clusters: { type: "cluster", collection: true, writable: true },
     subnets: { type: Subnet.typeDefinition, collection: true, writable: true },
-    country: { ...string_attribute, writable: true },
-    domain: { ...string_attribute, writable: true },
-    domains: { ...string_collection_attribute, writable: true },
-    timezone: { ...string_attribute, writable: true },
-    architectures: { ...string_collection_attribute, writable: true },
-    locales: { ...string_collection_attribute, writable: true },
+    country: { ...string_attribute_writable },
+    domain: { ...string_attribute_writable },
+    domains: { ...string_collection_attribute_writable },
+    timezone: { ...string_attribute_writable },
+    architectures: { ...string_collection_attribute_writable },
+    locales: { ...string_collection_attribute_writable },
     administratorEmail: { ...email_attribute, writable: true }
   }
 };

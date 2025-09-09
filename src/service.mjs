@@ -1,5 +1,5 @@
 import {
-  string_attribute,
+  string_attribute_writable,
   string_collection_attribute,
   string_collection_attribute_writable,
   number_attribute_writable,
@@ -28,11 +28,10 @@ import {
 export const endpointProperties = {
   port: { ...number_attribute_writable },
   protocol: {
-    ...string_attribute,
-    writable: true,
+    ...string_attribute_writable,
     values: ["tcp", "udp"]
   },
-  type: { ...string_attribute, writable: true },
+  type: { ...string_attribute_writable },
   types: string_collection_attribute,
   tls: boolean_attribute_false
 };
@@ -65,7 +64,7 @@ export const ServiceTypeDefinition = {
   properties: {
     ...networkAddressProperties,
     ...endpointProperties,
-    alias: { ...string_attribute, writable: true },
+    alias: { ...string_attribute_writable },
     weight: { ...number_attribute_writable /*default: 1*/ },
     systemd: string_collection_attribute_writable
   }

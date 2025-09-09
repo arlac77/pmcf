@@ -4,6 +4,7 @@ import {
   getAttribute,
   name_attribute_writable,
   string_attribute,
+  string_attribute_writable,
   string_collection_attribute_writable,
   number_attribute_writable,
   description_attribute,
@@ -22,7 +23,7 @@ const BaseTypeDefinition = {
     description: { ...description_attribute, writable: true },
     priority: number_attribute_writable,
     directory: { ...string_attribute, writable: false },
-    packaging: { ...string_attribute, writable: true },
+    packaging: string_attribute_writable,
     disabled: boolean_attribute_writable,
     tags: string_collection_attribute_writable
   }

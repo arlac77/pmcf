@@ -1,6 +1,6 @@
 import {
-  string_collection_attribute,
-  string_attribute,
+  string_collection_attribute_writable,
+  string_attribute_writable,
   number_attribute_writable,
   hostname_attribute,
   boolean_attribute_writable
@@ -8,33 +8,30 @@ import {
 
 export const networkProperties = {
   scope: {
-    ...string_attribute,
-    writable: true,
-    values: ["global", "site", "link", "host"],
-  //  default: "global"
+    ...string_attribute_writable,
+    values: ["global", "site", "link", "host"]
+    //  default: "global"
   },
   class: {
-    ...string_attribute,
-    writable: true,
+    ...string_attribute_writable,
     values: ["10GBASE-T", "1000BASE-T", "100BASE-T", "10BASE-T"]
   },
   kind: {
-    ...string_attribute,
-    writable: true,
+    ...string_attribute_writable,
     values: ["loopback", "ethernet", "wlan", "wireguard", "fiber", "dsl"]
   },
-  ssid: { ...string_attribute, writable: true },
-  psk: { ...string_attribute, writable: true },
-  metric: { ...number_attribute_writable, /*default: 1004*/ },
+  ssid: { ...string_attribute_writable },
+  psk: { ...string_attribute_writable },
+  metric: { ...number_attribute_writable /*default: 1004*/ },
   mtu: { ...number_attribute_writable, default: 1500 },
   gateway: { type: "host", collection: false, writable: true },
-  multicastDNS: boolean_attribute_writable,
+  multicastDNS: boolean_attribute_writable
 };
 
 export const networkAddressProperties = {
   hostName: { ...hostname_attribute, writable: true },
-  cidrAddresses: { ...string_collection_attribute, writable: false },
-  cidrAddress: { ...string_attribute, writable: false },
-  addresses: { ...string_collection_attribute, writable: false },
-  address: { ...string_attribute, writable: false }
+  cidrAddresses: { ...string_collection_attribute_writable },
+  cidrAddress: { ...string_attribute_writable },
+  addresses: { ...string_collection_attribute_writable },
+  address: { ...string_attribute_writable }
 };

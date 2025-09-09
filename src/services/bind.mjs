@@ -3,7 +3,7 @@ import { createHmac } from "node:crypto";
 import { FileContentProvider } from "npm-pkgbuild";
 import { isLinkLocal, reverseArpa } from "ip-utilties";
 import {
-  string_attribute,
+  string_attribute_writable,
   string_collection_attribute,
   boolean_attribute_writable_true,
   boolean_attribute_writable_false,
@@ -53,12 +53,12 @@ const BindServiceTypeDefinition = {
     },
     exclude: { type: address_types, collection: true, writable: true },
     notify: boolean_attribute_writable_false,
-    recordTTL: { ...string_attribute, writable: true },
+    recordTTL: { ...string_attribute_writable },
     serial: { ...number_attribute, writable: true },
-    refresh: { ...string_attribute, writable: true, default: 36000 },
-    retry: { ...string_attribute, writable: true, default: 72000 },
-    expire: { ...string_attribute, writable: true, default: 600000 },
-    minimum: { ...string_attribute, writable: true, default: 60000 },
+    refresh: { ...string_attribute_writable, default: 36000 },
+    retry: { ...string_attribute_writable, default: 72000 },
+    expire: { ...string_attribute_writable, default: 600000 },
+    minimum: { ...string_attribute_writable, default: 60000 },
     allowedUpdates: { ...string_collection_attribute, writable: true }
   },
 

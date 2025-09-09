@@ -3,8 +3,9 @@ import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import {
   string_attribute,
-  string_collection_attribute,
-  number_attribute,
+  string_attribute_writable,
+  string_collection_attribute_writable,
+  number_attribute_writable,
   boolean_attribute_false
 } from "pacc";
 import { ServiceOwner, Base, addresses } from "pmcf";
@@ -36,26 +37,23 @@ const HostTypeDefinition = {
       writable: true
     },
     services: { type: "service", collection: true, writable: true },
-    aliases: { ...string_collection_attribute, writable: true },
+    aliases: { ...string_collection_attribute_writable },
     os: {
-      ...string_attribute,
-      writable: true,
+      ...string_attribute_writable,
       values: ["osx", "windows", "linux"]
     },
-    "machine-id": { ...string_attribute, writable: true },
-    distribution: { ...string_attribute, writable: true },
+    "machine-id": { ...string_attribute_writable },
+    distribution: { ...string_attribute_writable },
     deployment: {
-      ...string_attribute,
-      writable: true,
+      ...string_attribute_writable,
       values: ["production", "development"]
     },
-    weight: { ...number_attribute, writable: true },
-    serial: { ...string_attribute, writable: true },
-    vendor: { ...string_attribute, writable: true },
-    keymap: { ...string_attribute, writable: true },
+    weight: { ...number_attribute_writable },
+    serial: { ...string_attribute_writable },
+    vendor: { ...string_attribute_writable },
+    keymap: { ...string_attribute_writable },
     chassis: {
-      ...string_attribute,
-      writable: true,
+      ...string_attribute_writable,
       values: [
         "phone",
         "tablet",
@@ -73,13 +71,12 @@ const HostTypeDefinition = {
       ]
     },
     architecture: {
-      ...string_attribute,
-      writable: true,
+      ...string_attribute_writable,
       values: ["x86", "x86_64", "aarch64", "armv7"]
     },
-    replaces: { ...string_collection_attribute, writable: true },
-    depends: { ...string_collection_attribute, writable: true },
-    provides: { ...string_collection_attribute, writable: true },
+    replaces: { ...string_collection_attribute_writable },
+    depends: { ...string_collection_attribute_writable },
+    provides: { ...string_collection_attribute_writable },
     extends: { type: "host", collection: true, writable: true },
     model: string_attribute,
     isModel: boolean_attribute_false
