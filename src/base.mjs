@@ -2,7 +2,7 @@ import { join } from "node:path";
 import { allOutputs } from "npm-pkgbuild";
 import {
   getAttribute,
-  name_attribute,
+  name_attribute_writable,
   string_attribute,
   string_collection_attribute_writable,
   number_attribute_writable,
@@ -18,10 +18,7 @@ const BaseTypeDefinition = {
   properties: {
     owner: { type: "base", collection: false, writable: false },
     type: string_attribute,
-    name: {
-      ...name_attribute,
-      writable: true
-    },
+    name: name_attribute_writable,
     description: { ...description_attribute, writable: true },
     priority: number_attribute_writable,
     directory: { ...string_attribute, writable: false },
