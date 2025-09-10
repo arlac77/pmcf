@@ -2,7 +2,7 @@ import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { reverseArpa } from "ip-utilties";
 import {
-  string_attribute,
+  string_attribute_writable,
   number_attribute_writable,
   boolean_attribute_writable_true
 } from "pacc";
@@ -45,8 +45,7 @@ const KeaServiceTypeDefinition = {
       default: 86400
     },
     "ddns-conflict-resolution-mode": {
-      ...string_attribute,
-      writable: true,
+      ...string_attribute_writable,
       isCommonOption: true
       //values: ["check-exists-with-dhcid","no-check-with-dhcid"]
     }
@@ -126,8 +125,7 @@ const KeaServiceTypeDefinition = {
   }
 };
 
-const keaVersion = 3.0;
-export const fetureHasHTTPEndpoints = keaVersion >= 3.0;
+const keaVersion = "3.0.1";
 
 export class KeaService extends Service {
   static {
@@ -148,9 +146,7 @@ export class KeaService extends Service {
   }
 
   async *preparePackages(dir) {
-    const ctrlAgentEndpoint = this.endpoint(
-      fetureHasHTTPEndpoints ? "kea-ha-4" : "kea-control-agent"
-    );
+    const ctrlAgentEndpoint = this.endpoint("kea-ha-4");
 
     if (!ctrlAgentEndpoint) {
       return;
@@ -193,9 +189,7 @@ export class KeaService extends Service {
       )
         .sort(sortDescendingByPriority)
         .map((dhcp, i) => {
-          const ctrlAgentEndpoint = dhcp.endpoint(
-            fetureHasHTTPEndpoints ? `kea-ha-${family}` : "kea-control-agent"
-          );
+          const ctrlAgentEndpoint = dhcp.endpoint(`kea-ha-${family}`);
 
           if (ctrlAgentEndpoint) {
             return {

@@ -5,7 +5,6 @@ import {
   KeaService,
   Endpoint,
   HTTPEndpoint,
-  fetureHasHTTPEndpoints,
   sortByFamilyAndAddress
 } from "pmcf";
 
@@ -66,16 +65,14 @@ test("kea basics", t => {
     })
   ];
 
-  if (fetureHasHTTPEndpoints) {
-    expected.push(
-      new HTTPEndpoint(kea, a1, {
-        type: "kea-ha-4",
-        port: 53003,
-        tls: false
-      })
-    );
-  }
-
+   expected.push(
+    new HTTPEndpoint(kea, a1, {
+      type: "kea-ha-4",
+      port: 53003,
+      tls: false
+    })
+  );
+  
   expected = expected.sort(sortByFamilyAndAddress);
 
   //console.log([...la].map(a => a.toString()));
