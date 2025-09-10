@@ -23,11 +23,6 @@ export class Location extends Owner {
     return LocationTypeDefinition;
   }
 
-  constructor(owner, data) {
-    super(owner, data);
-    this.read(data, LocationTypeDefinition);
-  }
-
   get location() {
     return this;
   }

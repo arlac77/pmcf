@@ -6,7 +6,7 @@ test("systemd-resolved basics", async t => {
   await root.loadAll();
 
   const resolved = await root.named("/L1/C1/systemd-resolved");
-
+  
   t.deepEqual(resolved.systemdConfigs("ABC"), {
     serviceName: "systemd-resolved.service",
     configFileName: "etc/systemd/resolved.conf.d/ABC.conf",

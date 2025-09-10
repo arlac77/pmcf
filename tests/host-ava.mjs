@@ -52,7 +52,8 @@ test("Host all", async t => {
 
 test("Host extends", t => {
   const owner = new Root("/");
-  const e1 = new Host(owner, {
+  const e1 = new Host(owner);
+  e1.read({
     name: "e1",
     os: "linux",
     distribution: "suse",
@@ -71,7 +72,9 @@ test("Host extends", t => {
       }
     }
   });
-  const e2 = new Host(owner, {
+
+  const e2 = new Host(owner);
+  e2.read({
     name: "e2",
     extends: e1,
     aliases: "e2a",
@@ -80,7 +83,8 @@ test("Host extends", t => {
     replaces: "rpkge2"
   });
 
-  const h1 = new Host(owner, {
+  const h1 = new Host(owner);
+  h1.read({
     name: "h1",
     extends: e2,
     aliases: "h1a",
@@ -108,13 +112,15 @@ test("Host extends", t => {
 
 test("Host domains & aliases", t => {
   const owner = new Root("/");
-  const n1 = new Network(owner, {
+  const n1 = new Network(owner);
+  n1.read({
     name: "n1",
     domain: "example.com"
   });
   owner.addObject(n1);
 
-  const h1 = new Host(n1, {
+  const h1 = new Host(n1);
+  h1.read({
     name: "h1",
     networkInterfaces: {
       eth0: {
@@ -179,13 +185,15 @@ test("Host domains & aliases", t => {
 
 test("Host addresses", t => {
   const owner = new Root("/");
-  const n1 = new Network(owner, {
+  const n1 = new Network(owner);
+  n1.read({
     name: "n1",
     properties: { "ipv4.prefix": "10.0" }
   });
   owner.addObject(n1);
 
-  const h1 = new Host(n1, {
+  const h1 = new Host(n1);
+  h1.read({
     name: "h1",
     networkInterfaces: {
       lo: {
@@ -230,7 +238,7 @@ test("Host addresses", t => {
   t.deepEqual(eth0.toJSON(), {
     directory: "/n1/h1/eth0",
     name: "eth0",
-   // metric: 1004,
+    // metric: 1004,
     mtu: 1500,
     kind: "ethernet",
     scope: "global",
@@ -279,13 +287,15 @@ test("Host addresses", t => {
 test("Host addresses with network", t => {
   const owner = new Root("/");
 
-  const n1 = new Network(owner, {
+  const n1 = new Network(owner);
+  n1.read({
     name: "n1",
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
   });
   owner.addObject(n1);
 
-  const h1 = new Host(owner, {
+  const h1 = new Host(owner);
+  h1.read({
     name: "h1",
     networkInterfaces: {
       eth0: {
@@ -315,13 +325,15 @@ test("Host addresses with network", t => {
 test("clone NetworkInterface", t => {
   const owner = new Root("/");
 
-  const n1 = new Network(owner, {
+  const n1 = new Network(owner);
+  n1.read({
     name: "n1",
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
   });
   owner.addObject(n1);
 
-  const h1 = new Host(owner, {
+  const h1 = new Host(owner);
+  h1.read({
     name: "h1",
     networkInterfaces: {
       eth0: {
@@ -332,7 +344,8 @@ test("clone NetworkInterface", t => {
   });
   owner.addObject(h1);
 
-  const h2 = new Host(owner, {
+  const h2 = new Host(owner);
+  h2.read({
     name: "h2",
     extends: [h1],
     networkInterfaces: {
@@ -343,7 +356,6 @@ test("clone NetworkInterface", t => {
       }
     }
   });
-
   h2.execFinalize();
 
   const ni = h2.typeNamed("network_interface", "eth0");

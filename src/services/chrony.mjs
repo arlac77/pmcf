@@ -58,11 +58,7 @@ export class ChronyService extends ExtraSourceService {
 
   constructor(owner, data) {
     super(owner, data);
-
     this._extends.push(new Service(owner, { name: this.name, type: "ntp" }));
-
-    this.read(data, ChronyServiceTypeDefinition);
-
     this._systemd = "chronyd.service";
   }
 

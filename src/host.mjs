@@ -109,12 +109,13 @@ export class Host extends ServiceOwner {
 
   constructor(owner, data) {
     super(owner, data);
-
-    this.read(data, HostTypeDefinition);
-
     owner.addObject(this);
+  }
 
-    if (data.extends) {
+  read(data, type) {
+    super.read(data, type);
+
+    if (data?.extends) {
       this.finalize(() => {
         for (const host of this.extends) {
           host.execFinalize();
@@ -122,7 +123,6 @@ export class Host extends ServiceOwner {
         }
       });
     }
-
     this.extra = data.extra;
   }
 

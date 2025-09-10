@@ -86,11 +86,6 @@ export class Service extends Base {
     return ServiceTypeDefinition;
   }
 
-  constructor(owner, data) {
-    super(owner, data);
-    this.read(data, ServiceTypeDefinition);
-  }
-
   toString() {
     return `${super.toString()}[${this.type}]`;
   }

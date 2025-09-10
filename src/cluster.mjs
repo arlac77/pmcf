@@ -35,10 +35,6 @@ export class Cluster extends Host {
     return ClusterTypeDefinition;
   }
 
-  constructor(owner, data) {
-    super(owner, data);
-    this.read(data, ClusterTypeDefinition);
-  }
 
   set masters(value) {
     this._masters.push(value);

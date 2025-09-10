@@ -23,11 +23,6 @@ export class SystemdJournalUploadService extends Service {
     return SystemdJournalUploadServiceTypeDefinition;
   }
 
-  constructor(owner, data) {
-    super(owner, data);
-    this.read(data, SystemdJournalUploadServiceTypeDefinition);
-  }
-
   get type() {
     return SystemdJournalUploadServiceTypeDefinition.name;
   }

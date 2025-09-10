@@ -44,11 +44,6 @@ export class Owner extends Base {
     return OwnerTypeDefinition;
   }
 
-  constructor(owner, data) {
-    super(owner, data);
-    this.read(data, OwnerTypeDefinition);
-  }
-
   _traverse(...args) {
     if (super._traverse(...args)) {
       for (const typeSlot of this._membersByType.values()) {

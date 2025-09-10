@@ -69,11 +69,6 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   _hwaddr;
   _class;
 
-  constructor(owner, data) {
-    super(owner, data);
-    this.read(data, NetworkInterfaceTypeDefinition);
-  }
-
   addSubnet(address) {
     if (!this.network) {
       if (!hasWellKnownSubnet(address)) {

@@ -11,7 +11,8 @@ import {
 test("kea basics", t => {
   const owner = new Root("/");
 
-  const h1 = new Host(owner, {
+  const h1 = new Host(owner);
+  h1.read({
     name: "h1",
     networkInterfaces: {
       eth0: { ipAddresses: "10.0.0.1/16" }
@@ -25,7 +26,8 @@ test("kea basics", t => {
   );
   */
 
-  const kea = new KeaService(h1, {
+  const kea = new KeaService(h1);
+  kea.read({
     name: "kea",
     subsystems: {
       "kea-control-agent": {
@@ -36,13 +38,18 @@ test("kea basics", t => {
       }
     }
   });
-
   h1.services = kea;
 
   t.is(kea.endpoint("dhcp").toString(), "dhcp:IPv4/10.0.0.1[547]");
   t.is(kea.endpoint("kea-ddns").toString(), "kea-ddns:dns/h1[53001]");
-  t.is(kea.endpoint("kea-control-dhcp4").toString(), "kea-control-dhcp4:unix:/run/kea/ctrl-4");
-  t.is(kea.endpoint("kea-control-dhcp6").toString(), "kea-control-dhcp6:unix:/run/kea/ctrl-6");
+  t.is(
+    kea.endpoint("kea-control-dhcp4").toString(),
+    "kea-control-dhcp4:unix:/run/kea/ctrl-4"
+  );
+  t.is(
+    kea.endpoint("kea-control-dhcp6").toString(),
+    "kea-control-dhcp6:unix:/run/kea/ctrl-6"
+  );
 
   /*
   const a1 = [...h1.networkAddresses(na => na.family === "IPv4")][0];

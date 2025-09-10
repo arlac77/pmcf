@@ -30,11 +30,6 @@ export class EthernetNetworkInterface extends NetworkInterface {
     return name.match(/eth\d+$/);
   }
 
-  constructor(owner, data) {
-    super(owner, data);
-    this.read(data, EthernetNetworkInterfaceTypeDefinition);
-  }
-
   get kind() {
     return EthernetNetworkInterfaceTypeDefinition.name;
   }

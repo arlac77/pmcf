@@ -55,8 +55,6 @@ export class OpenLDAPService extends Service {
 
   constructor(owner, data) {
     super(owner, data);
-    this.read(data, OpenLDAPServiceTypeDefinition);
-
     this._systemd = "slapd.service";
   }
 

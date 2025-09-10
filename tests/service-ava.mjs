@@ -10,14 +10,16 @@ import {
 
 test("Service basics", t => {
   const root = new Root("/somwhere");
-
-  const l1 = new Location(root, {
+  const l1 = new Location(root);
+  l1.read({
     name: "l1",
     networks: { ethernet: { subnets: "10.0/16" } }
   });
+
   root.addObject(l1);
 
-  const h1 = new Host(l1, {
+  const h1 = new Host(l1);
+  h1.read({
     name: "h1",
     networkInterfaces: {
       l0: { kind: "loopback" },
@@ -34,13 +36,13 @@ test("Service basics", t => {
     na => na.networkInterface.kind !== "loopback"
   );
 
-  const s1 = new Service(h1, {
+  const s1 = new Service(h1);
+  s1.read({
     name: "dns",
     weight: 5,
     priority: 3,
     alias: "primary-dns"
   });
-
   h1.services = s1;
 
   //console.log(s1.endpoints().map(e => e.toString()));
@@ -110,12 +112,12 @@ test("Service basics", t => {
 
   t.is([...h1.findServices({ type: "dns" })][0], s1);
 
-  const h2 = new Host(l1, {
+  const h2 = new Host(l1);
+  h2.read({
     name: "h2",
     priority: 3,
     networkInterfaces: { eth0: { kind: "ethernet", ipAddresses: "10.0.0.2" } }
   });
-
   const s2 = s1.forOwner(h2);
   h2.services = s2;
   t.is(s2.name, "dns");
@@ -141,16 +143,16 @@ test("Service basics", t => {
   );
   t.is([...h2.findServices({ type: "dns" })][0], s2);
 
-  t.deepEqual(Array.from(l1.findServices({ type: "dns" })), [s1, s2]);
-  t.deepEqual(Array.from(l1.findServices({ name: "dns" })), [s1, s2]);
+  t.deepEqual(Array.from(l1.findServices({ type: "dns" })), [s2, s1]);
+  t.deepEqual(Array.from(l1.findServices({ name: "dns" })), [s2, s1]);
   t.deepEqual(Array.from(l1.findServices({ type: "dns", name: "dns" })), [
-    s1,
-    s2
+    s2,
+    s1
   ]);
   t.deepEqual(Array.from(l1.findServices({ type: "dns", name: "dnsx" })), []);
   t.deepEqual(Array.from(l1.findServices({ type: "dns", name: "dns|http" })), [
-    s1,
-    s2
+    s2,
+    s1
   ]);
   /*
   t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: 19 })), [s2]);
@@ -162,12 +164,12 @@ test("Service basics", t => {
   ]);
   */
   t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: "<20" })), [
-    s1,
-    s2
+    s2,
+    s1
   ]);
   t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: "<=20" })), [
-    s1,
-    s2
+    s2,
+    s1
   ]);
   /*
   t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: "!=19" })), [
@@ -175,14 +177,14 @@ test("Service basics", t => {
   ]);
   */
 
-  t.is(s1, l1.findService({ type: "dns" }));
+  t.is(s2, l1.findService({ type: "dns" }));
 
-  const s3 = new Service(h1, {
+  const s3 = new Service(h1);
+  s3.read({
     name: "http3",
     weight: 0,
     priority: 0
   });
-
   t.is(s3.priority, 0);
   t.is(s3.priority, 0);
 
@@ -198,7 +200,8 @@ test("Service basics", t => {
 test("Service without protocol", t => {
   const root = new Root("/somwhere");
 
-  const h1 = new Host(root, {
+  const h1 = new Host(root);
+  h1.read({
     name: "h1",
     networkInterfaces: { eth0: { kind: "ethernet", ipAddresses: "10.0.0.1" } }
   });
@@ -206,13 +209,13 @@ test("Service without protocol", t => {
 
   const na = h1.networkAddresses();
 
-  const s1 = new Service(h1, {
+  const s1 = new Service(h1);
+  s1.read({
     name: "abc",
     port: 555,
     weight: 5,
     priority: 3
   });
-
   t.deepEqual(s1.dnsRecordsForDomainName("example.com", true), [
     //   DNSRecord("_xxx._yyy", "SRV", 3, 5, 555, "example.com")
   ]);
@@ -232,7 +235,8 @@ test("Service without protocol", t => {
 test("Service load", t => {
   const root = new Root("/somwhere");
 
-  const h1 = new Host(root, {
+  const h1 = new Host(root);
+  h1.read({
     name: "h1",
     networkInterfaces: { eth0: { kind: "ethernet", ipAddresses: "10.0.0.1" } },
     services: {
@@ -249,14 +253,16 @@ test("Service load", t => {
 test("Service owner", t => {
   const root = new Root("/somwhere");
 
-  const h1 = new Host(root, {
+  const h1 = new Host(root);
+  h1.read({
     name: "h1",
     priority: 3,
     weight: 5
   });
   root.addObject(h1);
 
-  const h2 = new Host(root, {
+  const h2 = new Host(root);
+  h2.read({
     name: "h2",
     priority: 8,
     weight: 7,
@@ -267,11 +273,11 @@ test("Service owner", t => {
   root.addObject(h2);
 
   t.is(h2.weight, 7);
-  const s1 = new Service(h1, {
+  const s1 = new Service(h1);
+  s1.read({
     name: "dns",
     alias: "primary-dns"
   });
-
   const s1b = s1.forOwner(h2);
 
   t.is(s1b.owner, h2);
@@ -295,7 +301,8 @@ test("Service owner", t => {
 test("Service type extension", t => {
   const root = new Root("/somwhere");
 
-  const h1 = new Host(root, {
+  const h1 = new Host(root);
+  h1.read({
     name: "h1",
     networkInterfaces: { eth0: { kind: "ethernet", ipAddresses: "10.0.0.1" } },
     services: {

@@ -1,5 +1,6 @@
 import {
   ExtraSourceService,
+  ExtraSourceServiceTypeDefinition,
   ServiceTypeDefinition,
   serviceEndpoints
 } from "pmcf";
@@ -9,7 +10,7 @@ const SystemdResolvedServiceTypeDefinition = {
   name: "systemd-resolved",
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
-  extends: ServiceTypeDefinition,
+  extends: ExtraSourceServiceTypeDefinition,
   priority: 0.1,
   properties: {},
   service: {}
@@ -22,11 +23,6 @@ export class SystemdResolvedService extends ExtraSourceService {
 
   static get typeDefinition() {
     return SystemdResolvedServiceTypeDefinition;
-  }
-
-  constructor(owner, data) {
-    super(owner, data);
-    this.read(data, SystemdResolvedServiceTypeDefinition);
   }
 
   get type() {

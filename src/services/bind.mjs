@@ -120,7 +120,6 @@ export class BindService extends ExtraSourceService {
   retry = 72000;
   expire = 600000;
   minimum = 60000;
-
   static {
     addType(this);
   }
@@ -133,7 +132,13 @@ export class BindService extends ExtraSourceService {
     super(owner, data);
 
     this._systemd = "bind.service";
-    this._extends.push(new Service(owner, { name: this.name, type: "dns" }));
+
+    // TODO
+    const dns = new Service(owner);
+    dns.name = "dns";
+    dns.type = "dns";
+
+    this._extends.push(dns);
     this.views = {};
 
     for (const name of ["internal", "protected"]) {
@@ -145,8 +150,6 @@ export class BindService extends ExtraSourceService {
 
     this.views.protected.inView = this.views.internal;
     this.views.protected.access = ["!internal"];
-
-    this.read(data, BindServiceTypeDefinition);
   }
 
   get type() {

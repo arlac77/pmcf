@@ -28,20 +28,21 @@ export class MyType extends Base {
 
   arrayStrings = [];
   setStrings = new Set();
-  constructor(owner, data) {
-    super(owner, data);
-    this.read(data, MyTypeDefinition);
-  }
 }
 
 test("read basics", t => {
   const root = new Root("/");
-  const m1 = new MyType(root, {
+
+  const data = {
     aString: "s1",
     undefStrings: "s2",
     arrayStrings: "s3",
     setStrings: ["s41", "s42"]
-  });
+  };
+
+  const m1 = new MyType(root);
+  m1.read(data);
+
   t.is(m1.aString, "s1");
   t.is(m1.aStringWitwDefault, "xyz");
   t.deepEqual(m1.undefStrings, ["s2"]);

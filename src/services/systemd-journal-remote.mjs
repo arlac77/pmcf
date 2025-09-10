@@ -35,11 +35,6 @@ export class SystemdJournalRemoteService extends Service {
     return SystemdJournalRemoteServiceTypeDefinition;
   }
 
-  constructor(owner, data) {
-    super(owner, data);
-    this.read(data, SystemdJournalRemoteServiceTypeDefinition);
-  }
-
   get type() {
     return SystemdJournalRemoteServiceTypeDefinition.name;
   }

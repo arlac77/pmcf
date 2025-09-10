@@ -35,11 +35,6 @@ export class Network extends Owner {
     return NetworkTypeDefinition;
   }
 
-  constructor(owner, data) {
-    super(owner, data);
-    this.read(data, NetworkTypeDefinition);
-  }
-
   get network() {
     return this;
   }

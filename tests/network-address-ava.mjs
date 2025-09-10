@@ -4,7 +4,8 @@ import { Root, Host, Network, NetworkAddress } from "pmcf";
 test("NetworkAddress filter", t => {
   const owner = new Root("/");
 
-  const n1 = new Network(owner, {
+  const n1 = new Network(owner, );
+  n1.read({
     name: "n1",
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
   });
@@ -12,7 +13,8 @@ test("NetworkAddress filter", t => {
 
   const [s1, s2] = [...n1.subnets()];
 
-  const h2 = new Host(owner, {
+  const h2 = new Host(owner, );
+  h2.read({
     name: "h2",
     networkInterfaces: {
       eth0: {
@@ -21,7 +23,6 @@ test("NetworkAddress filter", t => {
       }
     }
   });
-
   const eth0 = h2.networkInterfaces.get("eth0");
 
   const a1 = new NetworkAddress(eth0, "10.0.0.2", s1);

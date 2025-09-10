@@ -44,11 +44,6 @@ export class InfluxdbService extends Service {
     return InfluxdbServiceTypeDefinition;
   }
 
-  constructor(owner, data) {
-    super(owner, data);
-    this.read(data, InfluxdbServiceTypeDefinition);
-  }
-
   get type() {
     return InfluxdbServiceTypeDefinition.name;
   }

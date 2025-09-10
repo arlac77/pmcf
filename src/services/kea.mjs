@@ -136,11 +136,6 @@ export class KeaService extends Service {
     return KeaServiceTypeDefinition;
   }
 
-  constructor(owner, data) {
-    super(owner, data);
-    this.read(data, KeaServiceTypeDefinition);
-  }
-
   get type() {
     return KeaServiceTypeDefinition.name;
   }

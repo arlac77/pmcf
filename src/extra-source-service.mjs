@@ -22,11 +22,6 @@ export class ExtraSourceService extends Service {
     return ExtraSourceServiceTypeDefinition;
   }
 
-  constructor(owner, data) {
-    super(owner, data);
-    this.read(data, ExtraSourceServiceTypeDefinition);
-  }
-
   get type() {
     return ExtraSourceServiceTypeDefinition.name;
   }

@@ -35,11 +35,6 @@ export class MosquittoService extends Service {
     return MosquittoServiceTypeDefinition;
   }
 
-  constructor(owner, data) {
-    super(owner, data);
-    this.read(data, MosquittoServiceTypeDefinition);
-  }
-
   get type() {
     return MosquittoServiceTypeDefinition.name;
   }

@@ -33,11 +33,6 @@ export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
     return name.match(/lo\d+$/);
   }
 
-  constructor(owner, data) {
-    super(owner, data);
-    this.read(data, NetworkInterfaceTypeDefinition);
-  }
-
   get kind() {
     return LoopbackNetworkInterfaceTypeDefinition.name;
   }

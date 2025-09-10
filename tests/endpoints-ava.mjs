@@ -12,7 +12,8 @@ import {
 function prepare() {
   const root = new Root("/somwhere");
 
-  const h1 = new Host(root, {
+  const h1 = new Host(root);
+  h1.read({
     name: "h1",
     networkInterfaces: {
       l0: { kind: "loopback" },
@@ -22,7 +23,8 @@ function prepare() {
   });
   root.addObject(h1);
 
-  const s1 = new Service(h1, {
+  const s1 = new Service(h1);
+  s1.read({
     name: "dns",
     weight: 5,
     priority: 3,
@@ -120,7 +122,8 @@ test("HTTPEndpoint from URL with port", t => {
 test("DomainNameEndpoint", t => {
   const root = new Root("/somwhere");
 
-  const h1 = new Host(root, {
+  const h1 = new Host(root);
+  h1.read({
     name: "h1"
     /* networkInterfaces: {
       eth0: { ipAddresses: "10.0.0.1/16" }

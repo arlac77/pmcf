@@ -20,11 +20,6 @@ export class SystemdJournalService extends Service {
     return SystemdJournalServiceTypeDefinition;
   }
 
-  constructor(owner, data) {
-    super(owner, data);
-    this.read(data, SystemdJournalServiceTypeDefinition);
-  }
-
   get type() {
     return SystemdJournalServiceTypeDefinition.name;
   }

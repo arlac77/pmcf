@@ -36,18 +36,25 @@ test("Owner ownerFor", t => {
 
 test("Owner read write", t => {
   const root = new Root("/");
+  const o1 = new Owner(root);
 
-  const o1 = new Owner(root, {
+  t.is(o1.owner, root);
+  o1.read({
     name: "o1",
     administratorEmail: "master@somewhere",
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"],
     networks: { n1: { kind: "ethernet" } }
   });
+
   root.addObject(o1);
 
+  t.is(o1.name, "o1");
+  t.is(o1.directory, "/o1");
   t.is(o1.administratorEmail, "master@somewhere");
   t.is(o1.subnetNamed("10.0/16").name, "10.0/16");
   t.is(o1.subnetNamed("fe80::/64").name, "fe80::/64");
+
+  t.is(o1.networkNamed("n1").kind, "ethernet");
 
   t.deepEqual(o1.toJSON(), {
     name: "o1",

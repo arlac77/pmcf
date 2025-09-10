@@ -72,10 +72,6 @@ export class Base {
       case "object":
         this.read(data, BaseTypeDefinition);
     }
-
-    if (this.name === undefined) {
-      this.error("Missing name", this.owner?.toString(), data);
-    }
   }
 
   ownerFor(property, data) {
@@ -94,7 +90,11 @@ export class Base {
     return this;
   }
 
-  read(data, type) {
+  read(data, type=this.constructor.typeDefinition) {
+    if(type.extends) {
+      this.read(data, type.extends);
+    }
+
     const assign = (name, property, value) => {
       if (value === undefined && property.default !== undefined) {
         value = property.default;
@@ -178,6 +178,7 @@ export class Base {
                   this.ownerFor(property, value),
                   value
                 );
+                object.read(value);
                 this.addObject(object);
               } else {
                 this.finalize(() => {

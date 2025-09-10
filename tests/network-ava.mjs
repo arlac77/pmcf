@@ -11,13 +11,14 @@ test("Network basics", async t => {
 
 test("Network addresses", t => {
   const owner = new Root("/");
-
-  const n1 = new Network(owner, {
+  const n1 = new Network(owner);
+  n1.read({
     name: "n1",
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"],
     kind: "ethernet",
     scope: "global"
   });
+
   owner.addObject(n1);
 
   t.is(n1.kind, "ethernet");
@@ -44,10 +45,12 @@ test("Network bridges", t => {
   t.true(n1.bridge.has(n2));
   */
 
-  const n3 = new Network(owner, { name: "n3", bridge: "/n4" });
+  const n3 = new Network(owner);
+  n3.read({ name: "n3", bridge: "/n4" });
   owner.addObject(n3);
 
-  const n4 = new Network(owner, { name: "n4" });
+  const n4 = new Network(owner);
+  n4.read({ name: "n4" });
   owner.addObject(n4);
 
   owner.execFinalize();
