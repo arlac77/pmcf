@@ -21,7 +21,8 @@ const SubnetTypeDefinition = {
       isKey: true
     },
     networks: { type: "network", collection: true, writable: true },
-    prefixLength: { ...number_attribute }
+    prefixLength: { ...number_attribute },
+    family: { ...string_attribute }
   }
 };
 
@@ -66,8 +67,13 @@ export class Subnet extends Base {
 
   get dhcpPools() {
     /* TODO where to take values from ? */
+
     return [
-      rangeIP(this.prefix, this.prefixLength, 51, 6).map(a => decodeIP(a))
+      rangeIP(
+        this.prefix,
+        this.prefixLength,
+        ...(this.family === "IPv6" ? [0, 0] : [51, 6])
+      ).map(a => decodeIP(a))
     ];
   }
 
