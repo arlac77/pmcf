@@ -69,11 +69,9 @@ export class Subnet extends Base {
     /* TODO where to take values from ? */
 
     return [
-      rangeIP(
-        this.prefix,
-        this.prefixLength,
-        ...(this.family === "IPv6" ? [0, 0] : [51, 6])
-      ).map(a => decodeIP(a))
+      this.family === "IPv6"
+        ? this.prefix
+        : rangeIP(this.prefix, this.prefixLength, 51, 6).map(a => decodeIP(a))
     ];
   }
 

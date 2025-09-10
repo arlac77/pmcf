@@ -415,6 +415,13 @@ export class KeaService extends Service {
     const subnets = [...this.subnets].filter(
       s => s !== SUBNET_LOCALHOST_IPV4 && s !== SUBNET_LOCALHOST_IPV6
     );
+
+    const pools = (subnet) => {
+      return subnet.dhcpPools.map(pool => {
+        return { pool: Array.isArray(pool) ? pool.join(" - ") : pool };
+      });
+    };
+
     const dhcp4 = {
       Dhcp4: {
         ...(await commonConfig("4")),
@@ -424,16 +431,14 @@ export class KeaService extends Service {
             return {
               id: index + 1,
               subnet: subnet.longAddress,
-              pools: subnet.dhcpPools.map(range => {
-                return { pool: range.join(" - ") };
-              }),
+              pools: pools(subnet),
+              reservations: reservations(subnet, "4"),
               "option-data": [
                 {
                   name: "routers",
                   data: network.gateway.address
                 }
-              ],
-              reservations: reservations(subnet, "4")
+              ]
             };
           })
       }
@@ -447,9 +452,7 @@ export class KeaService extends Service {
             return {
               id: index + 1,
               subnet: subnet.longAddress,
-              pools: subnet.dhcpPools.map(range => {
-                return { pool: range.join(" - ") };
-              }),
+              pools: pools(subnet),
               reservations: reservations(subnet, "6")
             };
           })
