@@ -68,9 +68,11 @@ test("Owner read write", t => {
         },
         subnets: {
           "10.0/16": {
+            family: "IPv4",
             prefixLength: 16
           },
           "fe80::/64": {
+            family: "IPv6",
             prefixLength: 64
           }
         }
@@ -78,9 +80,11 @@ test("Owner read write", t => {
     },
     subnets: {
       "10.0/16": {
+        family: "IPv4",
         prefixLength: 16
       },
       "fe80::/64": {
+        family: "IPv6",
         prefixLength: 64
       }
     }
