@@ -1,8 +1,8 @@
-import { SkeletonNetworkInterface } from "./skeleton.mjs";
+import { NetworkInterface } from "./network-interface.mjs";
 import { NetworkInterfaceTypeDefinition } from "./network-interface.mjs";
 import { addType } from "../types.mjs";
 
-const WireguardNetworkInterfaceTypeDefinition = {
+const TUNdNetworkInterfaceTypeDefinition = {
   name: "tun",
   specializationOf: NetworkInterfaceTypeDefinition,
   owners: NetworkInterfaceTypeDefinition.owners,
@@ -11,20 +11,16 @@ const WireguardNetworkInterfaceTypeDefinition = {
   properties: {}
 };
 
-export class TUNNetworkInterface extends SkeletonNetworkInterface {
+export class TUNNetworkInterface extends NetworkInterface {
   static {
     addType(this);
   }
 
   static get typeDefinition() {
-    return WireguardNetworkInterfaceTypeDefinition;
+    return TUNdNetworkInterfaceTypeDefinition;
   }
 
   get kind() {
-    return WireguardNetworkInterfaceTypeDefinition.name;
-  }
-
-  get ipAddresses() {
-    return new Map();
+    return TUNdNetworkInterfaceTypeDefinition.name;
   }
 }
