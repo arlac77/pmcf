@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
-import { reverseArpa } from "ip-utilties";
+import { reverseArpa, isLinkLocal } from "ip-utilties";
 import {
   string_attribute_writable,
   number_attribute_writable,
@@ -442,7 +442,7 @@ export class KeaService extends Service {
       Dhcp6: {
         ...(await commonConfig("6")),
         subnet6: subnets
-          .filter(s => s.family === "IPv6")
+          .filter(s => s.family === "IPv6" && !isLinkLocal(s.address))
           .map((subnet, index) => {
             return {
               id: index + 1,

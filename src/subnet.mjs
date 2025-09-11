@@ -49,6 +49,10 @@ export class Subnet extends Base {
     owner.addObject(this);
   }
 
+  get cidr() {
+    return this.name;
+  }
+
   get fullName() {
     return this.name;
   }
@@ -70,7 +74,7 @@ export class Subnet extends Base {
 
     return [
       this.family === "IPv6"
-        ? this.prefix
+        ? this.cidr
         : rangeIP(this.prefix, this.prefixLength, 51, 6).map(a => decodeIP(a))
     ];
   }
