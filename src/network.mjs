@@ -79,4 +79,12 @@ export class Network extends Owner {
     this._bridge = this.owner.addBridge(this, network);
     network.bridge = this.bridge; // TODO should happen in addBridge
   }
+
+  set secretName(value) {
+    this._secretName = value;
+  }
+
+  get secretName() {
+    return this._secretName ?? `${this.name}.password`;
+  }
 }

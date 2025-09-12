@@ -22,6 +22,7 @@ export const networkProperties = {
   },
   ssid: { ...string_attribute_writable },
   psk: { ...string_attribute_writable },
+  secretName: string_attribute_writable,
   metric: { ...number_attribute_writable /*default: 1004*/ },
   mtu: { ...number_attribute_writable, default: 1500 },
   gateway: { type: "host", collection: false, writable: true },

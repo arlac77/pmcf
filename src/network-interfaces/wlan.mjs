@@ -1,5 +1,6 @@
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
+import { string_attribute_writable, secret_attribute } from "pacc";
 import { addType } from "../types.mjs";
 import { writeLines, sectionLines } from "../utils.mjs";
 import { NetworkInterfaceTypeDefinition } from "./network-interface.mjs";
@@ -14,15 +15,24 @@ const WLANNetworkInterfaceTypeDefinition = {
   owners: EthernetNetworkInterfaceTypeDefinition.owners,
   extends: EthernetNetworkInterfaceTypeDefinition,
   priority: 0.1,
-  properties: {}
+  properties: {
+    ssid: string_attribute_writable,
+    psk: { ...secret_attribute, writable: true },
+    secretName: string_attribute_writable
+  }
 };
 
 export class WLANNetworkInterface extends EthernetNetworkInterface {
   _ssid;
   _psk;
+  _secretName;
 
   static {
     addType(this);
+  }
+
+  static isCommonName(name) {
+    return name.match(/wlan\d+$/);
   }
 
   static get typeDefinition() {
@@ -31,6 +41,18 @@ export class WLANNetworkInterface extends EthernetNetworkInterface {
 
   get kind() {
     return WLANNetworkInterfaceTypeDefinition.name;
+  }
+
+  set secretName(value) {
+    this._secretName = value;
+  }
+
+  get secretName() {
+    return (
+      this.extendedProperty("_secretName") ??
+      this.network?.secretName ??
+      `${this.network.name}.password`
+    );
   }
 
   set ssid(value) {
@@ -53,7 +75,7 @@ export class WLANNetworkInterface extends EthernetNetworkInterface {
     await super.systemdDefinitions(packageData);
     await mkdir(join(packageData.dir, "var/lib/iwd/"), { recursive: true });
 
-    const secretName = "iwd-secret";
+    const secretName = this.secretName;
 
     await writeLines(join(packageData.dir, "/etc/iwd"), "main.conf", [
       sectionLines("General", {
@@ -63,7 +85,7 @@ export class WLANNetworkInterface extends EthernetNetworkInterface {
 
     await writeLines(
       join(packageData.dir, "usr/lib/systemd/system/iwd.service.d/"),
-      "mf.conf",
+      "pmcf.conf",
       [
         sectionLines("Service", {
           LoadCredentialEncrypted: `${secretName}:/etc/credstore.encrypted/${secretName}`
