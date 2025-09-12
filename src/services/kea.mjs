@@ -402,7 +402,8 @@ export class KeaService extends Service {
           endpoint.type === "dhcp" &&
           endpoint.family === family &&
           endpoint.networkInterface.kind !== "loopback" &&
-          endpoint.networkInterface.kind !== "wlan"
+          endpoint.networkInterface.kind !== "wlan" &&
+          endpoint.networkInterface.kind !== "tun"
       ).map(
         endpoint => `${endpoint.networkInterface.name}/${endpoint.address}`
       );
