@@ -101,9 +101,12 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   }
 
   get gatewayAddress() {
-    for (const a of this.gateway.networkAddresses()) {
-      if (a.networkInterface.network === this.network) {
-        return a.address;
+    const gateway = this.gateway;
+    if (gateway) {
+      for (const a of gateway.networkAddresses()) {
+        if (a.networkInterface.network === this.network) {
+          return a.address;
+        }
       }
     }
   }
@@ -208,7 +211,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
 
     const routeSectionExtra = this.destination
       ? { Destination: this.destination }
-      : { Gateway: this.gatewayAddress };
+      : this.gateway ? { Gateway: this.gatewayAddress } : {};
 
     const networkSectionExtra = this.arpbridge
       ? {
