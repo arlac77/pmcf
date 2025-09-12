@@ -69,6 +69,7 @@ test("Owner read write", t => {
         directory: "/o1/n1",
         kind: "ethernet",
         mtu: 1500,
+        secretName: "n1.password",
         owner: {
           name: "o1",
           type: "owner"
