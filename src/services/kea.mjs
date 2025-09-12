@@ -412,7 +412,7 @@ export class KeaService extends Service {
       s => s !== SUBNET_LOCALHOST_IPV4 && s !== SUBNET_LOCALHOST_IPV6
     );
 
-    const pools = (subnet) => {
+    const pools = subnet => {
       return subnet.dhcpPools.map(pool => {
         return { pool: Array.isArray(pool) ? pool.join(" - ") : pool };
       });
@@ -422,7 +422,9 @@ export class KeaService extends Service {
       Dhcp4: {
         ...(await commonConfig("4")),
         subnet4: subnets
-          .filter(s => s.family === "IPv4")
+          .filter(s => s.family === "IPv4" &&
+            // TODO keep out tailscale
+            s.cidr !== "100.64.0.2/32")
           .map((subnet, index) => {
             return {
               id: index + 1,
@@ -443,7 +445,13 @@ export class KeaService extends Service {
       Dhcp6: {
         ...(await commonConfig("6")),
         subnet6: subnets
-          .filter(s => s.family === "IPv6" && !isLinkLocal(s.address))
+          .filter(
+            s =>
+              s.family === "IPv6" &&
+              !isLinkLocal(s.address) &&
+              // TODO keep out tailscale
+              s.cidr !== "fd7a:115c:a1e0::/64"
+          )
           .map((subnet, index) => {
             return {
               id: index + 1,
