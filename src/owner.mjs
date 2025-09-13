@@ -1,7 +1,6 @@
 import { normalizeCIDR, familyIP } from "ip-utilties";
 import {
   string_collection_attribute_writable,
-  string_attribute,
   string_attribute_writable,
   email_attribute
 } from "pacc";
