@@ -16,7 +16,12 @@ import {
   dnsRecordTypeForAddressFamily,
   sortZoneRecords
 } from "../dns-utils.mjs";
-import { ExtraSourceService, serviceEndpoints, addresses, networkAddressType } from "pmcf";
+import {
+  ExtraSourceService,
+  serviceEndpoints,
+  addresses,
+  networkAddressType
+} from "pmcf";
 import { addType } from "../types.mjs";
 import { Service, ServiceTypeDefinition } from "../service.mjs";
 import { ExtraSourceServiceTypeDefinition } from "../extra-source-service.mjs";
@@ -29,7 +34,7 @@ const BindServiceTypeDefinition = {
   extends: ExtraSourceServiceTypeDefinition,
   priority: 0.1,
   properties: {
-    addresses: {
+    zones: {
       type: [...networkAddressType, "location", "owner"],
       collection: true,
       writable: true
@@ -107,7 +112,7 @@ export class BindService extends ExtraSourceService {
     BindServiceTypeDefinition.properties.hasLinkLocalAdresses.default;
   hasLocationRecord = true;
   notify = true;
-  _addresses = [];
+  _zones = [];
   _trusted = [];
   _exclude = new Set([]);
   _excludeInterfaceKinds = new Set();
@@ -157,12 +162,12 @@ export class BindService extends ExtraSourceService {
     return [this.serial, this.refresh, this.retry, this.expire, this.minimum];
   }
 
-  set addresses(value) {
-    this._addresses.push(value);
+  set zones(value) {
+    this._zones.push(value);
   }
 
-  get addresses() {
-    return this._addresses;
+  get zones() {
+    return this._zones;
   }
 
   set protected(value) {
@@ -206,7 +211,7 @@ export class BindService extends ExtraSourceService {
   }
 
   async *preparePackages(dir) {
-    const sources = this.addresses.length ? this.addresses : [this.owner];
+    const sources = this.zones.length ? this.zones : [this.owner];
     const names = sources.map(a => a.fullName).join(" ");
     const name = this.owner.owner.name || this.owner.name;
 
@@ -344,8 +349,8 @@ export class BindService extends ExtraSourceService {
     for (const source of sources) {
       console.log(
         "SOURCE",
-        source.toString(),
-        [...source.localDomains].join(" ")
+        source.toString()
+        //   [...source.localDomains].join(" ")
       );
 
       for (const domain of source.localDomains) {

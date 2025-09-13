@@ -54,6 +54,8 @@ test("BIND named", async t => {
   t.is(bind.source[0].name, "GLOBAL");
   t.is(bind.source[1].name, "n2");
 
+  t.is(bind.zones[0].name, "n1");
+
   t.deepEqual(addresses(bind.trusted, { aggregate: true }), [
     "192.168.1/24",
     "127.0.0.1",
