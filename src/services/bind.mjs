@@ -349,8 +349,8 @@ export class BindService extends ExtraSourceService {
     for (const source of sources) {
       console.log(
         "SOURCE",
-        source.toString()
-        //   [...source.localDomains].join(" ")
+        source.toString(),
+        [...source.localDomains].join(" ")
       );
 
       for (const domain of source.localDomains) {
@@ -401,6 +401,7 @@ export class BindService extends ExtraSourceService {
         const hosts = new Set();
         const addresses = new Set();
 
+        console.log([...source.hosts()].map(h=>h.name));
         for await (const {
           address,
           subnet,
