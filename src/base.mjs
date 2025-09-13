@@ -95,19 +95,19 @@ export class Base {
       this.read(data, type.extends);
     }
 
-    const assign = (name, property, value) => {
-      if (value === undefined && property.default !== undefined) {
-        value = property.default;
+    const assign = (name, attribute, value) => {
+      if (value === undefined && attribute.default !== undefined) {
+        value = attribute.default;
       }
 
       if (value !== undefined) {
-        if (property.values) {
-          if (property.values.indexOf(value) < 0) {
-            this.error(name, "unknown value", value, property.values);
+        if (attribute.values) {
+          if (attribute.values.indexOf(value) < 0) {
+            this.error(name, "unknown value", value, attribute.values);
           }
         }
 
-        if (property.collection) {
+        if (attribute.collection) {
           const current = this[name];
 
           switch (typeof current) {
@@ -116,6 +116,7 @@ export class Base {
               break;
             case "object":
               if (Array.isArray(current)) {
+                console.log("PUSH",this.toString(), name,typeof current);
                 current.push(value);
               } else {
                 if (current instanceof Set) {
@@ -143,9 +144,9 @@ export class Base {
       }
     };
 
-    const instantiateAndAssign = (name, property, value) => {
-      if (primitives.has(property.type[0])) {
-        assign(name, property, value);
+    const instantiateAndAssign = (name, attribute, value) => {
+      if (primitives.has(attribute.type[0])) {
+        assign(name, attribute, value);
         return;
       }
 
@@ -163,7 +164,7 @@ export class Base {
           {
             let object;
 
-            for (const type of property.type) {
+            for (const type of attribute.type) {
               object = this.typeNamed(type.name, value);
               if (object) {
                 break;
@@ -171,11 +172,11 @@ export class Base {
             }
 
             if (object) {
-              assign(name, property, object);
+              assign(name, attribute, object);
             } else {
-              if (property.type[0].constructWithIdentifierOnly) {
-                object = new property.type[0].clazz(
-                  this.ownerFor(property, value),
+              if (attribute.type[0].constructWithIdentifierOnly) {
+                object = new attribute.type[0].clazz(
+                  this.ownerFor(attribute, value),
                   value
                 );
                 object.read(value);
@@ -184,14 +185,14 @@ export class Base {
                 this.finalize(() => {
                   value = this.expand(value);
 
-                  for (const type of property.type) {
+                  for (const type of attribute.type) {
                     const object =
                       this.typeNamed(type.name, value) ||
                       this.owner.typeNamed(type.name, value) ||
                       this.root.typeNamed(type.name, value); // TODO
 
                     if (object) {
-                      assign(name, property, object);
+                      assign(name, attribute, object);
                       return;
                     }
                   }
@@ -199,7 +200,7 @@ export class Base {
                   this.error(
                     "Not found",
                     name,
-                    property.type.map(t => t.name),
+                    attribute.type.map(t => t.name),
                     value
                   );
                 });
@@ -208,15 +209,15 @@ export class Base {
           }
           break;
         case "object":
-          if (value instanceof property.type[0].clazz) {
-            assign(name, property, value);
+          if (value instanceof attribute.type[0].clazz) {
+            assign(name, attribute, value);
           } else {
             assign(
               name,
-              property,
+              attribute,
               typeFactory(
-                property.type[0],
-                this.ownerFor(property, value),
+                attribute.type[0],
+                this.ownerFor(attribute, value),
                 value
               )
             );
@@ -229,32 +230,32 @@ export class Base {
       this._properties = data.properties;
     }
 
-    for (const [name, property] of Object.entries(type.properties)) {
-      if (property.writable) {
+    for (const [name, attribute] of Object.entries(type.properties)) {
+      if (attribute.writable) {
         const value = this.expand(data[name]);
 
-        if (property.collection) {
+        if (attribute.collection) {
           if (typeof value === "object") {
             if (Array.isArray(value)) {
               for (const v of value) {
-                instantiateAndAssign(name, property, v);
+                instantiateAndAssign(name, attribute, v);
               }
             } else {
               if (value instanceof Base) {
-                assign(name, property, value);
+                assign(name, attribute, value);
               } else {
                 for (const [objectName, objectData] of Object.entries(value)) {
                   if (typeof objectData === "object") {
                     objectData[type.identifier.name] = objectName;
                   }
-                  instantiateAndAssign(name, property, objectData);
+                  instantiateAndAssign(name, attribute, objectData);
                 }
               }
             }
             continue;
           }
         }
-        instantiateAndAssign(name, property, value);
+        instantiateAndAssign(name, attribute, value);
       }
     }
   }
