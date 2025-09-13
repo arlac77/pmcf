@@ -16,6 +16,7 @@
   },
   "services": {
     "bind": {
+      "zones": "/L1/n1",
       "source": ["/GLOBAL", "/L1/n2"],
       "internal": "/L1/n1",
       "trusted": ["/LOCAL", "/L1/n1"],
