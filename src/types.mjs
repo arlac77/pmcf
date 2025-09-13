@@ -1,9 +1,7 @@
-import { baseTypes, attributeIterator } from "pacc";
+import { baseTypes, attributeIterator, types } from "pacc";
 import { asArray } from "./utils.mjs";
 import { addServiceTypes } from "./service-types.mjs";
-
-export const types = {};
-
+export { types };
 export function addType(clazz) {
   const type = clazz.typeDefinition;
 
@@ -22,12 +20,16 @@ export function addType(clazz) {
 
 export function resolveTypeLinks() {
   for (const type of Object.values(types)) {
-    type.owners = type.owners.map(owner =>
-      typeof owner === "string" ? types[owner] : owner
-    );
-
+    if (type.owners) {
+      type.owners = type.owners.map(owner =>
+        typeof owner === "string" ? types[owner] : owner
+      );
+    }
+    else {
+      type.owners = [];
+    }
     for (const [path, attribute] of attributeIterator(type.attributes)) {
-      attribute.name = path.join('.');
+      attribute.name = path.join(".");
       if (attribute.isKey) {
         type.identifier = attribute;
       }
@@ -43,12 +45,7 @@ export function resolveTypeLinks() {
             if (t) {
               ts.push(t);
             } else {
-              console.error(
-                "Unknown type",
-                attribute.type,
-                type.name,
-                name
-              );
+              console.error("Unknown type", attribute.type, type.name, name);
             }
           }
         } else {

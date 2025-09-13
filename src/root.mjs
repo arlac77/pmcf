@@ -80,10 +80,12 @@ export class Root extends Location {
     for (const type of Object.values(types).sort(
       (a, b) => b.priority - a.priority
     )) {
-      for await (const name of glob(type.clazz.fileNameGlob, {
-        cwd: this.directory
-      })) {
-        await this.load(name, { type });
+      if (type.clazz) {
+        for await (const name of glob(type.clazz.fileNameGlob, {
+          cwd: this.directory
+        })) {
+          await this.load(name, { type });
+        }
       }
     }
 
