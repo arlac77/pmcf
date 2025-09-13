@@ -33,7 +33,7 @@ const BindServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ExtraSourceServiceTypeDefinition,
   priority: 0.1,
-  properties: {
+  attributes: {
     zones: {
       type: [...networkAddressType, "location", "owner"],
       collection: true,
@@ -109,7 +109,7 @@ export class BindService extends ExtraSourceService {
   hasSVRRecords = true;
   hasCatalog = true;
   hasLinkLocalAdresses =
-    BindServiceTypeDefinition.properties.hasLinkLocalAdresses.default;
+    BindServiceTypeDefinition.attributes.hasLinkLocalAdresses.default;
   hasLocationRecord = true;
   notify = true;
   _zones = [];

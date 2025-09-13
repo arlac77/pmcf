@@ -7,7 +7,7 @@ const SystemdJournalServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
-  properties: {},
+  attributes: {},
   service: {}
 };
 

@@ -12,7 +12,7 @@ const OpenLDAPServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
-  properties: {
+  attributes: {
     baseDN: {
       ...string_attribute,
       writable: true
@@ -110,7 +110,7 @@ export class OpenLDAPService extends Service {
       dir,
       sources: [new FileContentProvider(dir + "/", ...filePermissions)],
       outputs: this.outputs,
-      properties: {
+      attributes: {
         name: `openldap-${this.location.name}-${name}`,
         description: `openldap definitions for ${this.fullName}@${name}`,
         access: "private",
@@ -120,13 +120,13 @@ export class OpenLDAPService extends Service {
     };
 
     addHook(
-      packageData.properties.hooks,
+      packageData.attributes.hooks,
       "post_upgrade",
       "setfacl -m u:ldap:r /etc/letsencrypt/archive/*/privkey*.pem"
     );
 
     addHook(
-      packageData.properties.hooks,
+      packageData.attributes.hooks,
       "post_install",
       "setfacl -m u:ldap:r /etc/letsencrypt/archive/*/privkey*.pem"
     );

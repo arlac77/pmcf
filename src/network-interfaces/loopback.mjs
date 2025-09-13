@@ -9,7 +9,7 @@ const LoopbackNetworkInterfaceTypeDefinition = {
   owners: NetworkInterfaceTypeDefinition.owners,
   extends: NetworkInterfaceTypeDefinition,
   priority: 0.1,
-  properties: {}
+  attributes: {}
 };
 
 const _localAddresses = new Map([

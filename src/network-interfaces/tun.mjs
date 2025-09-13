@@ -8,7 +8,7 @@ const TUNdNetworkInterfaceTypeDefinition = {
   owners: NetworkInterfaceTypeDefinition.owners,
   extends: NetworkInterfaceTypeDefinition,
   priority: 0.1,
-  properties: {}
+  attributes: {}
 };
 
 export class TUNNetworkInterface extends NetworkInterface {

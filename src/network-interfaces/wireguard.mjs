@@ -8,7 +8,7 @@ const WireguardNetworkInterfaceTypeDefinition = {
   owners: NetworkInterfaceTypeDefinition.owners,
   extends: NetworkInterfaceTypeDefinition,
   priority: 0.1,
-  properties: {}
+  attributes: {}
 };
 
 export class WireguardNetworkInterface extends SkeletonNetworkInterface {

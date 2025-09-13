@@ -3,8 +3,8 @@ import { hasWellKnownSubnet, normalizeIP } from "ip-utilties";
 import { string_attribute_writable, hostname_attribute } from "pacc";
 import { Base, cidrAddresses } from "pmcf";
 import {
-  networkProperties,
-  networkAddressProperties
+  networkAttributes,
+  networkAddressAttributes
 } from "../network-support.mjs";
 import { asArray, writeLines, sectionLines } from "../utils.mjs";
 import { addType } from "../types.mjs";
@@ -35,9 +35,9 @@ export const NetworkInterfaceTypeDefinition = {
 
     return NetworkInterface;
   },
-  properties: {
-    ...networkProperties,
-    ...networkAddressProperties,
+  attributes: {
+    ...networkAttributes,
+    ...networkAddressAttributes,
 
     services: { type: "service", collection: true, writable: true },
     hostName: { ...hostname_attribute, writable: true },
@@ -133,7 +133,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     return (
       this.extendedProperty("_scope") ??
       this.network?.scope ??
-      networkProperties.scope.default
+      networkAttributes.scope.default
     );
   }
 
@@ -153,7 +153,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     return (
       this.extendedProperty("_metric") ??
       this.network?.metric ??
-      networkProperties.metric.default
+      networkAttributes.metric.default
     );
   }
 
@@ -162,7 +162,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   }
 
   get mtu() {
-    return this.extendedProperty("_mtu"); // ?? networkProperties.mtu.default;
+    return this.extendedProperty("_mtu"); // ?? networkAttributes.mtu.default;
   }
 
   set class(value) {

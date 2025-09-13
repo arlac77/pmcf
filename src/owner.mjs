@@ -15,7 +15,7 @@ const OwnerTypeDefinition = {
   owners: ["location", "owner", "root"],
   priority: 0.9,
   extends: Base.typeDefinition,
-  properties: {
+  attributes: {
     networks: { type: "network", collection: true, writable: true },
     hosts: { type: "host", collection: true, writable: true },
     clusters: { type: "cluster", collection: true, writable: true },

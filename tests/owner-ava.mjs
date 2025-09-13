@@ -29,7 +29,7 @@ test("Owner ownerFor", t => {
   root.addObject(o1);
 
   t.is(
-    o1.ownerFor(Owner.typeDefinition.properties.networks, { name: "n1" }),
+    o1.ownerFor(Owner.typeDefinition.attributes.networks, { name: "n1" }),
     o1
   );
 });

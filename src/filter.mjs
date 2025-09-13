@@ -55,7 +55,7 @@ export function* objectFilter(type, objects, filter) {
         return false;
       };
       for (let t = type; t; t = t.extends) {
-        for (const property of Object.values(t.properties)) {
+        for (const property of Object.values(t.attributes)) {
           switch (property.type[0]) {
             case "boolean":
               if (

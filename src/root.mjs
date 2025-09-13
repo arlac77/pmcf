@@ -8,7 +8,7 @@ const RootTypeDefinition = {
   owners: [],
   priority: 1000,
   extends: Location.typeDefinition,
-  properties: {}
+  attributes: {}
 };
 
 export class Root extends Location {

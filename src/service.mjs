@@ -15,7 +15,7 @@ import {
 } from "pmcf";
 import { addType } from "./types.mjs";
 import { asArray } from "./utils.mjs";
-import { networkAddressProperties } from "./network-support.mjs";
+import { networkAddressAttributes } from "./network-support.mjs";
 import { serviceTypeEndpoints, ServiceTypes } from "./service-types.mjs";
 import {
   DNSRecord,
@@ -25,7 +25,7 @@ import {
   dnsPriority
 } from "./dns-utils.mjs";
 
-export const endpointProperties = {
+export const endpointAttributes = {
   port: { ...number_attribute_writable },
   protocol: {
     ...string_attribute_writable,
@@ -41,7 +41,7 @@ export const EndpointTypeDefinition = {
   owners: ["service", "network_interface"],
   priority: 0.4,
   specializations: {},
-  properties: endpointProperties
+  attributes: endpointAttributes
 };
 
 export const ServiceTypeDefinition = {
@@ -61,9 +61,9 @@ export const ServiceTypeDefinition = {
 
     return Service;
   },
-  properties: {
-    ...networkAddressProperties,
-    ...endpointProperties,
+  attributes: {
+    ...networkAddressAttributes,
+    ...endpointAttributes,
     alias: { ...string_attribute_writable },
     weight: { ...number_attribute_writable /*default: 1*/ },
     systemd: string_collection_attribute_writable

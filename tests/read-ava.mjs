@@ -8,7 +8,7 @@ const MyTypeDefinition = {
   owners: [],
   priority: 0.9,
   extends: Base.typeDefinition,
-  properties: {
+  attributes: {
     aString: { ...string_attribute, writable: true },
     aStringWitwDefault: { ...string_attribute, default: "xyz", writable: true },
     arrayStrings: string_collection_attribute_writable,

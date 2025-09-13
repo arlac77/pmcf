@@ -2,15 +2,15 @@ import { default_attribute_writable } from "pacc";
 import { Owner } from "./owner.mjs";
 import { Subnet } from "./subnet.mjs";
 import { addType } from "./types.mjs";
-import { networkProperties } from "./network-support.mjs";
+import { networkAttributes } from "./network-support.mjs";
 
 const NetworkTypeDefinition = {
   name: "network",
   owners: ["location", "owner", "root"],
   priority: 0.8,
   extends: Owner.typeDefinition,
-  properties: {
-    ...networkProperties,
+  attributes: {
+    ...networkAttributes,
     bridge: {
       ...default_attribute_writable,
       type: "network",

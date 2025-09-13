@@ -11,7 +11,7 @@ const InfluxdbServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
-  properties: {
+  attributes: {
     "metrics-disabled": {
       ...boolean_attribute_writable_true,
       isCommonOption: true
@@ -65,7 +65,7 @@ export class InfluxdbService extends Service {
       }
     };
 
-    const lines = Object.entries(InfluxdbServiceTypeDefinition.properties)
+    const lines = Object.entries(InfluxdbServiceTypeDefinition.attributes)
       .filter(
         ([key, attribute]) =>
           attribute.isCommonOption && this[key] !== undefined

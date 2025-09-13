@@ -23,7 +23,7 @@ const KeaServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
-  properties: {
+  attributes: {
     "ddns-send-updates": {
       ...boolean_attribute_writable_true,
       isCommonOption: true
@@ -281,7 +281,7 @@ export class KeaService extends Service {
       };
 
       for (const [key] of Object.entries(
-        KeaServiceTypeDefinition.properties
+        KeaServiceTypeDefinition.attributes
       ).filter(
         ([key, attribute]) =>
           attribute.isCommonOption && this[key] !== undefined

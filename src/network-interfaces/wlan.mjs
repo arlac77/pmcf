@@ -15,7 +15,7 @@ const WLANNetworkInterfaceTypeDefinition = {
   owners: EthernetNetworkInterfaceTypeDefinition.owners,
   extends: EthernetNetworkInterfaceTypeDefinition,
   priority: 0.1,
-  properties: {
+  attributes: {
     ssid: string_attribute_writable,
     psk: { ...secret_attribute, writable: true },
     secretName: string_attribute_writable

@@ -7,7 +7,7 @@ export const ExtraSourceServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
-  properties: {
+  attributes: {
     source: { type: networkAddressType, collection: true, writable: true }
   }
 };

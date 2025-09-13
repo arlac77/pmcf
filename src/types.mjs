@@ -26,15 +26,15 @@ export function resolveTypeLinks() {
       typeof owner === "string" ? types[owner] : owner
     );
 
-    for (const [name, property] of Object.entries(type.properties)) {
-      property.name = name;
-      if (property.isKey) {
-        type.identifier = property;
+    for (const [name, attribute] of Object.entries(type.attributes)) {
+      attribute.name = name;
+      if (attribute.isKey) {
+        type.identifier = attribute;
       }
 
       const ts = [];
 
-      for (const type of asArray(property.type)) {
+      for (const type of asArray(attribute.type)) {
         if (typeof type === "string") {
           if (baseTypes.has(type)) {
             ts.push(type);
@@ -45,7 +45,7 @@ export function resolveTypeLinks() {
             } else {
               console.error(
                 "Unknown type",
-                property.type,
+                attribute.type,
                 type.name,
                 name
               );
@@ -55,7 +55,7 @@ export function resolveTypeLinks() {
           ts.push(type);
         }
       }
-      property.type = ts;
+      attribute.type = ts;
 
       /*
       if (typeof property.type === "string") {

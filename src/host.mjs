@@ -9,7 +9,7 @@ import {
   boolean_attribute_false
 } from "pacc";
 import { ServiceOwner, Base, addresses } from "pmcf";
-import { networkAddressProperties } from "./network-support.mjs";
+import { networkAddressAttributes } from "./network-support.mjs";
 import { addHook } from "./hooks.mjs";
 import {
   domainFromDominName,
@@ -29,8 +29,8 @@ const HostTypeDefinition = {
   priority: 0.5,
   owners: ["owner", "network", "root"],
   extends: Base.typeDefinition,
-  properties: {
-    ...networkAddressProperties,
+  attributes: {
+    ...networkAddressAttributes,
     networkInterfaces: {
       type: "network_interface",
       collection: true,

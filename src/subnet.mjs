@@ -15,7 +15,7 @@ const SubnetTypeDefinition = {
   owners: ["location", "owner", "network", "root"],
   priority: 0.6,
   constructWithIdentifierOnly: true,
-  properties: {
+  attributes: {
     address: {
       ...string_attribute,
       isKey: true

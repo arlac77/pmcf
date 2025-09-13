@@ -11,7 +11,7 @@ const MosquittoServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
-  properties: {
+  attributes: {
     log_timestamp: {
       ...boolean_attribute_writable_true,
       isCommonOption: true
@@ -48,7 +48,7 @@ export class MosquittoService extends Service {
       dir,
       sources: [new FileContentProvider(dir + "/")],
       outputs: this.outputs,
-      properties: {
+      attributes: {
         name: `mosquitto-${this.location.name}-${host.name}`,
         description: `mosquitto definitions for ${this.fullName}@${name}`,
         access: "private",
@@ -56,7 +56,7 @@ export class MosquittoService extends Service {
       }
     };
 
-    const lines = Object.entries(MosquittoServiceTypeDefinition.properties)
+    const lines = Object.entries(MosquittoServiceTypeDefinition.attributes)
       .filter(
         ([key, attribute]) =>
           attribute.isCommonOption && this[key] !== undefined

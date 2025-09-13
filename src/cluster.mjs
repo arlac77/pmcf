@@ -12,7 +12,7 @@ const ClusterTypeDefinition = {
   owners: [Owner.typeDefinition, "network", "location", "root"],
   priority: 0.7,
   extends: Host.typeDefinition,
-  properties: {
+  attributes: {
     routerId: { ...number_attribute_writable },
     masters: { type: "network_interface", collection: true, writable: true },
     backups: { type: "network_interface", collection: true, writable: true },

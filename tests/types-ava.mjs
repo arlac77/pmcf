@@ -36,12 +36,12 @@ test("types", t => {
   t.is(types.owner.clazz, Owner);
 
   t.deepEqual(types.owner.extends, types.base);
-  t.deepEqual(types.owner.identifier, types.base.properties.name);
+  t.deepEqual(types.owner.identifier, types.base.attributes.name);
   t.deepEqual(types.service.extends, types.base);
   t.deepEqual(types.host.extends, types.base);
   t.deepEqual(types.cluster.extends, types.host);
-  t.deepEqual(types.subnet.identifier, types.subnet.properties.address);
+  t.deepEqual(types.subnet.identifier, types.subnet.attributes.address);
 
-  t.deepEqual(types.owner.properties.hosts.type, [types.host]);
-  t.deepEqual(types.owner.properties.networks.type, [types.network]);
+  t.deepEqual(types.owner.attributes.hosts.type, [types.host]);
+  t.deepEqual(types.owner.attributes.networks.type, [types.network]);
 });

@@ -17,7 +17,7 @@ import { asArray } from "./utils.mjs";
 const BaseTypeDefinition = {
   name: "base",
   owners: [],
-  properties: {
+  attributes: {
     owner: { type: "base", collection: false, writable: false },
     type: string_attribute,
     name: name_attribute_writable,
@@ -228,7 +228,7 @@ export class Base {
       this._properties = data.properties;
     }
 
-    for (const [name, attribute] of Object.entries(type.properties)) {
+    for (const [name, attribute] of Object.entries(type.attributes)) {
       if (attribute.writable) {
         const value = this.expand(data[name]);
 
@@ -616,7 +616,7 @@ export function extractFrom(
   const json = {};
 
   do {
-    for (const [name, def] of Object.entries(typeDefinition.properties)) {
+    for (const [name, def] of Object.entries(typeDefinition.attributes)) {
       let value = object[name];
 
       switch (typeof value) {

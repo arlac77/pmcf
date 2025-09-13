@@ -9,7 +9,7 @@ const LocationTypeDefinition = {
   owners: [Owner.typeDefinition, "location", "root"],
   priority: 1.0,
   extends: Owner.typeDefinition,
-  properties: {
+  attributes: {
     locales: { ...string_collection_attribute, writable: true }
   }
 };
