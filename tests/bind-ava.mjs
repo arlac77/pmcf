@@ -10,7 +10,11 @@ test("BIND basics", async t => {
 
   t.deepEqual(
     bind.endpoints().map(e => {
-      return { type: e.type, port: e.port, address: e.address /*, family: e.family*/ };
+      return {
+        type: e.type,
+        port: e.port,
+        address: e.address /*, family: e.family*/
+      };
     }),
     [
       {
@@ -18,7 +22,7 @@ test("BIND basics", async t => {
         address: "C1.mydomain.com",
         port: 19521
       },
-    /*  {
+      /*  {
         type: "bind-rdnc",
         address: "192.168.1.11",
         port: 953
@@ -27,8 +31,8 @@ test("BIND basics", async t => {
         type: "dns",
         address: "192.168.1.11",
         port: 53
-      },
-     /* {
+      }
+      /* {
         type: "dns",
         address: "C1.mydomain.com",
         port: 53
@@ -46,6 +50,9 @@ test("BIND named", async t => {
   const bind = await root.named("/L1/C1/bind");
 
   t.is(bind.fullName, "/L1/C1/bind");
+
+  t.is(bind.source[0].name, "GLOBAL");
+  t.is(bind.source[1].name, "n2");
 
   t.deepEqual(addresses(bind.trusted, { aggregate: true }), [
     "192.168.1/24",

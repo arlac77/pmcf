@@ -16,7 +16,7 @@
   },
   "services": {
     "bind": {
-      "source": "/GLOBAL",
+      "source": ["/GLOBAL", "/L1/n2"],
       "internal": "/L1/n1",
       "trusted": ["/LOCAL", "/L1/n1"],
       "allowedUpdates": ["trusted"],
