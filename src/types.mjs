@@ -1,3 +1,4 @@
+import { baseTypes } from "pacc";
 import { asArray } from "./utils.mjs";
 import { addServiceTypes } from "./service-types.mjs";
 
@@ -19,8 +20,6 @@ export function addType(clazz) {
   type.clazz = clazz;
 }
 
-export const primitives = new Set(["string", "number", "boolean"]);
-
 export function resolveTypeLinks() {
   for (const type of Object.values(types)) {
     type.owners = type.owners.map(owner =>
@@ -37,7 +36,7 @@ export function resolveTypeLinks() {
 
       for (const type of asArray(property.type)) {
         if (typeof type === "string") {
-          if (primitives.has(type)) {
+          if (baseTypes.has(type)) {
             ts.push(type);
           } else {
             const t = types[type];
@@ -60,7 +59,7 @@ export function resolveTypeLinks() {
 
       /*
       if (typeof property.type === "string") {
-        if (!primitives.has(property.type)) {
+        if (!baseTypes.has(property.type)) {
           const type = types[property.type];
           if (type) {
             property.type = type;

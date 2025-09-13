@@ -2,6 +2,7 @@ import { join } from "node:path";
 import { allOutputs } from "npm-pkgbuild";
 import {
   getAttribute,
+  baseTypes,
   name_attribute_writable,
   string_attribute,
   string_attribute_writable,
@@ -10,7 +11,7 @@ import {
   description_attribute,
   boolean_attribute_writable
 } from "pacc";
-import { addType, primitives, typeFactory } from "./types.mjs";
+import { addType, typeFactory } from "./types.mjs";
 import { asArray } from "./utils.mjs";
 
 const BaseTypeDefinition = {
@@ -90,15 +91,13 @@ export class Base {
     return this;
   }
 
-  read(data, type=this.constructor.typeDefinition) {
-    if(type.extends) {
+  read(data, type = this.constructor.typeDefinition) {
+    if (type.extends) {
       this.read(data, type.extends);
     }
 
     const assign = (name, attribute, value) => {
-      if (value === undefined && attribute.default !== undefined) {
-        value = attribute.default;
-      }
+      value ??= attribute.default;
 
       if (value !== undefined) {
         if (attribute.values) {
@@ -116,7 +115,6 @@ export class Base {
               break;
             case "object":
               if (Array.isArray(current)) {
-                console.log("PUSH",this.toString(), name,typeof current);
                 current.push(value);
               } else {
                 if (current instanceof Set) {
@@ -145,7 +143,7 @@ export class Base {
     };
 
     const instantiateAndAssign = (name, attribute, value) => {
-      if (primitives.has(attribute.type[0])) {
+      if (baseTypes.has(attribute.type[0])) {
         assign(name, attribute, value);
         return;
       }
