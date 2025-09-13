@@ -3,6 +3,7 @@ import { allOutputs } from "npm-pkgbuild";
 import {
   getAttribute,
   baseTypes,
+  attributeIterator,
   name_attribute_writable,
   string_attribute,
   string_attribute_writable,
@@ -228,8 +229,9 @@ export class Base {
       this._properties = data.properties;
     }
 
-    for (const [name, attribute] of Object.entries(type.attributes)) {
+    for (const [path, attribute] of attributeIterator(type.attributes)) {
       if (attribute.writable) {
+        const name = path.join(".");
         const value = this.expand(data[name]);
 
         if (attribute.collection) {

@@ -1,4 +1,4 @@
-import { baseTypes } from "pacc";
+import { baseTypes, attributeIterator } from "pacc";
 import { asArray } from "./utils.mjs";
 import { addServiceTypes } from "./service-types.mjs";
 
@@ -26,8 +26,8 @@ export function resolveTypeLinks() {
       typeof owner === "string" ? types[owner] : owner
     );
 
-    for (const [name, attribute] of Object.entries(type.attributes)) {
-      attribute.name = name;
+    for (const [path, attribute] of attributeIterator(type.attributes)) {
+      attribute.name = path.join('.');
       if (attribute.isKey) {
         type.identifier = attribute;
       }
