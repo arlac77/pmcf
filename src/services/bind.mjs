@@ -211,8 +211,8 @@ export class BindService extends ExtraSourceService {
   }
 
   async *preparePackages(dir) {
-    const sources = this.zones.length ? this.zones : [this.owner];
-    const names = sources.map(a => a.fullName).join(" ");
+    const zoneSources = this.zones.length ? this.zones : [this.owner];
+    const names = zoneSources.map(a => a.fullName).join(" ");
     const name = this.owner.owner.name || this.owner.name;
 
     const configPackageDir = join(dir, "config") + "/";
@@ -295,7 +295,7 @@ export class BindService extends ExtraSourceService {
       new FileContentProvider(zonesPackageDir, ...filePermissions)
     ];
 
-    yield this.generateZoneDefs(sources, packageData);
+    yield this.generateZoneDefs(zoneSources, packageData);
 
     const outfacingZonesPackageDir = join(dir, "outfacingZones") + "/";
 
@@ -312,7 +312,7 @@ export class BindService extends ExtraSourceService {
       new FileContentProvider(outfacingZonesPackageDir, ...filePermissions)
     ];
 
-    yield* this.generateOutfacingDefs(sources, packageData);
+    yield* this.generateOutfacingDefs(zoneSources, packageData);
   }
 
   async *generateOutfacingDefs(sources, packageData) {
@@ -343,18 +343,18 @@ export class BindService extends ExtraSourceService {
     }
   }
 
-  async generateZoneDefs(sources, packageData) {
+  async generateZoneDefs(zoneSources, packageData) {
     const configs = [];
 
-    for (const source of sources) {
+    for (const zoneSource of zoneSources) {
       console.log(
         "SOURCE",
-        source.toString(),
-        [...source.localDomains].join(" ")
+        zoneSource.toString(),
+        [...zoneSource.localDomains].join(" ")
       );
 
-      for (const domain of source.localDomains) {
-        const locationName = source.location.name;
+      for (const domain of zoneSource.localDomains) {
+        const locationName = zoneSource.location.name;
         const reverseZones = new Map();
 
         const config = {
@@ -401,14 +401,13 @@ export class BindService extends ExtraSourceService {
         const hosts = new Set();
         const addresses = new Set();
 
-        console.log([...source.hosts()].map(h=>h.name));
         for await (const {
           address,
           subnet,
           networkInterface,
           domainNames,
           family
-        } of source.networkAddresses()) {
+        } of zoneSource.networkAddresses()) {
           if (
             !this.exclude.has(networkInterface.network) &&
             !this.excludeInterfaceKinds.has(networkInterface.kind)
