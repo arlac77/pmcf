@@ -1,5 +1,6 @@
 import { addType } from "./types.mjs";
 import { Service, ServiceTypeDefinition } from "./service.mjs";
+import { networkAddressType } from "pmcf";
 
 export const ExtraSourceServiceTypeDefinition = {
   name: "extra-source-service",
@@ -7,7 +8,7 @@ export const ExtraSourceServiceTypeDefinition = {
   extends: ServiceTypeDefinition,
   priority: 0.1,
   properties: {
-    source: { type: "network", collection: true, writable: true }
+    source: { type: networkAddressType, collection: true, writable: true }
   }
 };
 

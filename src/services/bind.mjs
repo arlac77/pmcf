@@ -16,13 +16,11 @@ import {
   dnsRecordTypeForAddressFamily,
   sortZoneRecords
 } from "../dns-utils.mjs";
-import { ExtraSourceService, serviceEndpoints, addresses } from "pmcf";
+import { ExtraSourceService, serviceEndpoints, addresses, networkAddressType } from "pmcf";
 import { addType } from "../types.mjs";
 import { Service, ServiceTypeDefinition } from "../service.mjs";
 import { ExtraSourceServiceTypeDefinition } from "../extra-source-service.mjs";
 import { addHook } from "../hooks.mjs";
-
-const address_types = ["network", "host", "network_interface"];
 
 const BindServiceTypeDefinition = {
   name: "bind",
@@ -32,17 +30,17 @@ const BindServiceTypeDefinition = {
   priority: 0.1,
   properties: {
     addresses: {
-      type: ["network", "host", "network_interface", "location", "owner"],
+      type: [...networkAddressType, "location", "owner"],
       collection: true,
       writable: true
     },
     trusted: {
-      type: address_types,
+      type: networkAddressType,
       collection: true,
       writable: true
     },
-    protected: { type: address_types, collection: true, writable: true },
-    internal: { type: address_types, collection: true, writable: true },
+    protected: { type: networkAddressType, collection: true, writable: true },
+    internal: { type: networkAddressType, collection: true, writable: true },
     hasSVRRecords: boolean_attribute_writable_false,
     hasCatalog: boolean_attribute_writable_true,
     hasLinkLocalAdresses: boolean_attribute_writable_false,
@@ -50,7 +48,7 @@ const BindServiceTypeDefinition = {
     excludeInterfaceKinds: {
       ...string_collection_attribute_writable
     },
-    exclude: { type: address_types, collection: true, writable: true },
+    exclude: { type: networkAddressType, collection: true, writable: true },
     notify: boolean_attribute_writable_false,
     recordTTL: { ...string_attribute_writable },
     serial: { ...number_attribute, writable: true },

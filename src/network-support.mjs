@@ -6,6 +6,8 @@ import {
   boolean_attribute_writable
 } from "pacc";
 
+export const networkAddressType = ["network", "host", "network_interface"];
+
 export const networkProperties = {
   scope: {
     ...string_attribute_writable,
