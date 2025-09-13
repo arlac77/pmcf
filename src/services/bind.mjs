@@ -7,7 +7,8 @@ import {
   string_collection_attribute,
   boolean_attribute_writable_true,
   boolean_attribute_writable_false,
-  number_attribute
+  number_attribute,
+  string_collection_attribute_writable
 } from "pacc";
 import { writeLines, asArray } from "../utils.mjs";
 import {
@@ -48,8 +49,7 @@ const BindServiceTypeDefinition = {
     hasLinkLocalAdresses: boolean_attribute_writable_false,
     hasLocationRecord: boolean_attribute_writable_true,
     excludeInterfaceKinds: {
-      ...string_collection_attribute,
-      writable: true
+      ...string_collection_attribute_writable
     },
     exclude: { type: address_types, collection: true, writable: true },
     notify: boolean_attribute_writable_false,
@@ -59,7 +59,7 @@ const BindServiceTypeDefinition = {
     retry: { ...string_attribute_writable, default: 72000 },
     expire: { ...string_attribute_writable, default: 600000 },
     minimum: { ...string_attribute_writable, default: 60000 },
-    allowedUpdates: { ...string_collection_attribute, writable: true }
+    allowedUpdates: { ...string_collection_attribute_writable }
   },
 
   service: {
