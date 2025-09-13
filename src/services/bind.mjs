@@ -4,7 +4,6 @@ import { FileContentProvider } from "npm-pkgbuild";
 import { isLinkLocal, reverseArpa } from "ip-utilties";
 import {
   string_attribute_writable,
-  string_collection_attribute,
   boolean_attribute_writable_true,
   boolean_attribute_writable_false,
   number_attribute,
