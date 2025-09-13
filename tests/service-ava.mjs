@@ -143,15 +143,15 @@ test("Service basics", t => {
   );
   t.is([...h2.findServices({ type: "dns" })][0], s2);
 
-  t.deepEqual(Array.from(l1.findServices({ type: "dns" })), [s2, s1]);
-  t.deepEqual(Array.from(l1.findServices({ name: "dns" })), [s2, s1]);
+  t.deepEqual(Array.from(l1.findServices({ type: "dns" })), [  s1]);
+  t.deepEqual(Array.from(l1.findServices({ name: "dns" })), [ s1]);
   t.deepEqual(Array.from(l1.findServices({ type: "dns", name: "dns" })), [
-    s2,
+ 
     s1
   ]);
   t.deepEqual(Array.from(l1.findServices({ type: "dns", name: "dnsx" })), []);
   t.deepEqual(Array.from(l1.findServices({ type: "dns", name: "dns|http" })), [
-    s2,
+   
     s1
   ]);
   /*
@@ -164,11 +164,11 @@ test("Service basics", t => {
   ]);
   */
   t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: "<20" })), [
-    s2,
+    
     s1
   ]);
   t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: "<=20" })), [
-    s2,
+    
     s1
   ]);
   /*
@@ -177,7 +177,7 @@ test("Service basics", t => {
   ]);
   */
 
-  t.is(s2, l1.findService({ type: "dns" }));
+  t.is(s1, l1.findService({ type: "dns" }));
 
   const s3 = new Service(h1);
   s3.read({

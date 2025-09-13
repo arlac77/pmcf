@@ -107,11 +107,6 @@ export class Host extends ServiceOwner {
     return HostTypeDefinition;
   }
 
-  constructor(owner, data) {
-    super(owner, data);
-    owner.addObject(this);
-  }
-
   read(data, type) {
     super.read(data, type);
 
