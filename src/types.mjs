@@ -2,6 +2,7 @@ import { baseTypes, attributeIterator, types } from "pacc";
 import { asArray } from "./utils.mjs";
 import { addServiceTypes } from "./service-types.mjs";
 export { types };
+
 export function addType(clazz) {
   const type = clazz.typeDefinition;
 
@@ -24,8 +25,7 @@ export function resolveTypeLinks() {
       type.owners = type.owners.map(owner =>
         typeof owner === "string" ? types[owner] : owner
       );
-    }
-    else {
+    } else {
       type.owners = [];
     }
     for (const [path, attribute] of attributeIterator(type.attributes)) {
