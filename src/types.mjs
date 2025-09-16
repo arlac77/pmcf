@@ -29,11 +29,8 @@ export function resolveTypeLinks() {
       type.owners = [];
     }
     for (const [path, attribute] of attributeIterator(type.attributes)) {
-      attribute.name = path.join(".");
-      if (attribute.isKey) {
-        type.identifier = attribute;
-      }
-
+      const name = path.join(".");
+      attribute.name = name;
       const ts = [];
 
       for (const type of asArray(attribute.type)) {
@@ -54,25 +51,9 @@ export function resolveTypeLinks() {
       }
       attribute.type = ts;
 
-      /*
-      if (typeof property.type === "string") {
-        if (!baseTypes.has(property.type)) {
-          const type = types[property.type];
-          if (type) {
-            property.type = type;
-          } else {
-            console.error(
-              "Unknown type",
-              property.type,
-              type.name,
-              name
-            );
-          }
-        }
+      if (attribute.isKey) {
+        type.identifier = { name, ...attribute };
       }
-
-      property.type = asArray(property.type);
-      */
     }
   }
 
