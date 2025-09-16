@@ -18,8 +18,7 @@ import {
   sectionLines,
   asArray
 } from "./utils.mjs";
-import { objectFilter } from "./filter.mjs";
-import { addType, types } from "./types.mjs";
+import { addType } from "./types.mjs";
 import { loadHooks } from "./hooks.mjs";
 import { generateMachineInfo, generateKnownHosts } from "./host-utils.mjs";
 import { NetworkInterfaceTypeDefinition } from "./network-interfaces/network-interface.mjs";
@@ -402,24 +401,6 @@ export class Host extends ServiceOwner {
         .filter(ni => ni._network)
         .map(ni => ni._network)
     );
-  }
-
-  *findNetworkInterfaces(filter) {
-    yield* objectFilter(
-      types.network_interface,
-      this._networkInterfaces.values(),
-      filter
-    );
-  }
-
-  findNetworkInterface(filter) {
-    for (const ni of objectFilter(
-      types.network_interface,
-      this._networkInterfaces.values(),
-      filter
-    )) {
-      return ni;
-    }
   }
 
   get networkInterfaces() {
