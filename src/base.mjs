@@ -1,7 +1,9 @@
 import { join } from "node:path";
 import { allOutputs } from "npm-pkgbuild";
 import {
-  getAttribute,
+  parse,
+  expand,
+  tokens,
   baseTypes,
   attributeIterator,
   name_attribute_writable,
@@ -482,45 +484,26 @@ export class Base {
     return false;
   }
 
+  get properties() {
+    return this._properties;
+  }
+
   property(name) {
     return this._properties?.[name] ?? this.owner?.property(name);
   }
 
   expand(object) {
-    if (this.isTemplate) {
+    if (this.isTemplate || object instanceof Base) {
       return object;
     }
 
-    switch (typeof object) {
-      case "string":
-        return object.replaceAll(/\$\{([^\}]*)\}/g, (match, m1) => {
-          return this.property(m1) ?? getAttribute(this, m1) ?? "${" + m1 + "}";
-        });
+    const context = {
+      stopClass: Base,
+      root: this,
+      globals: Object.assign({}, this.properties, this.owner.properties)
+    };
 
-      case "object":
-        if (object instanceof Base) {
-          return object;
-        }
-        if (object instanceof Map) {
-          return new Map(
-            [...object].map(([k, v]) => [this.expand(k), this.expand(v)])
-          );
-        }
-
-        if (object instanceof Set) {
-          return new Set([...object].map(e => this.expand(e)));
-        }
-
-        if (Array.isArray(object)) {
-          return object.map(e => this.expand(e));
-        }
-
-        return Object.fromEntries(
-          Object.entries(object).map(([k, v]) => [k, this.expand(v)])
-        );
-    }
-
-    return object;
+    return expand(object, context);
   }
 
   finalize(action) {

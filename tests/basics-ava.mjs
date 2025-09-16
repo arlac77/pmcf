@@ -13,7 +13,10 @@ test("Root basics", async t => {
 
 test("expand", t => {
   const root = new Root("/somewhere");
-  const l1 = new Location(root, { name: "l1", properties: { p1: "v1" } });
+  const l1 = new Location(root, {
+    name: "l1",
+    properties: { p1: "v1", n1: 7 }
+  });
   root.addObject(l1);
   const h1 = new Location(l1, { name: "h1" });
   l1.addObject(h1);
@@ -25,6 +28,7 @@ test("expand", t => {
   t.is(h1.expand("${fullName}"), "/l1/h1");
   t.is(h1.expand("${owner.fullName}"), "/l1");
   t.is(h1.expand("${p1}"), "v1");
+  t.is(h1.expand("${n1 + 2}"), 9);
   t.deepEqual(
     h1.expand(
       new Map([
