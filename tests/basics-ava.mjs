@@ -11,14 +11,32 @@ test("Root basics", async t => {
   t.is(await root.load(""), root);
 });
 
-test("expand", t => {
+test("expression", t => {
   const root = new Root("/somewhere");
-  const l1 = new Location(root, {
+  const l1 = new Location(root);
+  l1.read({
     name: "l1",
     properties: { p1: "v1", n1: 7 }
   });
   root.addObject(l1);
-  const h1 = new Location(l1, { name: "h1" });
+  const h1 = new Host(l1);
+  h1.read({ name: "h1" });
+  l1.addObject(h1);
+
+  t.is(l1.expression("name"), "l1");
+  t.is(l1.expression("location.name"), "l1");
+});
+
+test("expand", t => {
+  const root = new Root("/somewhere");
+  const l1 = new Location(root);
+  l1.read({
+    name: "l1",
+    properties: { p1: "v1", n1: 7 }
+  });
+  root.addObject(l1);
+  const h1 = new Host(l1);
+  h1.read({ name: "h1" });
   l1.addObject(h1);
 
   t.is(l1.expand("${directory}"), "/somewhere/l1");

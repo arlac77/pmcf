@@ -3,7 +3,6 @@ import { allOutputs } from "npm-pkgbuild";
 import {
   parse,
   expand,
-  tokens,
   baseTypes,
   attributeIterator,
   name_attribute_writable,
@@ -406,6 +405,10 @@ export class Base {
 
   get smtp() {
     return this.findService({ type: "smtp" });
+  }
+
+  expression(expression) {
+    return parse(expression, { root: this });
   }
 
   /**
