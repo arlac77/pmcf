@@ -48,7 +48,7 @@ export class MosquittoService extends Service {
       dir,
       sources: [new FileContentProvider(dir + "/")],
       outputs: this.outputs,
-      attributes: {
+      properties: {
         name: `mosquitto-${this.location.name}-${host.name}`,
         description: `mosquitto definitions for ${this.fullName}@${name}`,
         access: "private",

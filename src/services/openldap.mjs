@@ -110,7 +110,7 @@ export class OpenLDAPService extends Service {
       dir,
       sources: [new FileContentProvider(dir + "/", ...filePermissions)],
       outputs: this.outputs,
-      attributes: {
+      properties: {
         name: `openldap-${this.location.name}-${name}`,
         description: `openldap definitions for ${this.fullName}@${name}`,
         access: "private",
@@ -120,13 +120,13 @@ export class OpenLDAPService extends Service {
     };
 
     addHook(
-      packageData.attributes.hooks,
+      packageData.properties.hooks,
       "post_upgrade",
       "setfacl -m u:ldap:r /etc/letsencrypt/archive/*/privkey*.pem"
     );
 
     addHook(
-      packageData.attributes.hooks,
+      packageData.properties.hooks,
       "post_install",
       "setfacl -m u:ldap:r /etc/letsencrypt/archive/*/privkey*.pem"
     );
