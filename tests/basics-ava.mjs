@@ -20,11 +20,28 @@ test("expression", t => {
   });
   root.addObject(l1);
   const h1 = new Host(l1);
-  h1.read({ name: "h1" });
+  h1.read({
+    name: "h1",
+    networkInterfaces: {
+      eth0: {
+        metric: 1,
+        ipAddresses: "10.0.0.1"
+      },
+      eth1: {
+        metric: 2,
+        ipAddresses: "10.1.0.1"
+      }
+    }
+  });
   l1.addObject(h1);
 
   t.is(l1.expression("name"), "l1");
+  t.is(l1.expression("owner.name"), "");
   t.is(l1.expression("location.name"), "l1");
+  t.is(h1.expression("networkInterfaces.eth0.name"), "eth0");
+  t.is(h1.expression("networkInterfaces.eth0.metric"), 1);
+  //t.is(h1.expression("networkInterfaces.eth0.ipAddresses"), ["10.0.0.1"]);
+  //t.is(h1.expression("networkInterfaces[name='eth1'].name"), "eth1");
 });
 
 test("expand", t => {
