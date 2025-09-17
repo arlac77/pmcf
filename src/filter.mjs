@@ -55,31 +55,28 @@ export function* objectFilter(type, objects, filter) {
         return false;
       };
       for (let t = type; t; t = t.extends) {
-        for (const property of Object.values(t.attributes)) {
-          switch (property.type[0]) {
+        for (const [name, attribute] of Object.entries(t.attributes)) {
+          switch (attribute.type[0]) {
             case "boolean":
-              if (
-                filter[property.name] !== undefined &&
-                filter[property.name] != object[property.name]
-              ) {
+              if (filter[name] !== undefined && filter[name] != object[name]) {
                 continue advance;
               }
               break;
 
             case "number":
-              if (!filterNumber(property.name)) {
+              if (!filterNumber(name)) {
                 continue advance;
               }
               break;
             case "string":
-              if (property.collection && filter[property.name] !== undefined) {
-                const value = object[property.name];
+              if (attribute.collection && filter[name] !== undefined) {
+                const value = object[name];
 
-                if (value instanceof Set && value.has(filter[property.name])) {
+                if (value instanceof Set && value.has(filter[name])) {
                   break;
                 }
                 continue advance;
-              } else if (!filterString(property.name)) {
+              } else if (!filterString(name)) {
                 continue advance;
               }
               break;

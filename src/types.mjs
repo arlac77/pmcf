@@ -30,7 +30,6 @@ export function resolveTypeLinks() {
     }
     for (const [path, attribute] of attributeIterator(type.attributes)) {
       const name = path.join(".");
-      attribute.name = name;
       const ts = [];
 
       for (const type of asArray(attribute.type)) {
