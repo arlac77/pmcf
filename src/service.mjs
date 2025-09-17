@@ -26,12 +26,12 @@ import {
 } from "./dns-utils.mjs";
 
 export const endpointAttributes = {
-  port: { ...number_attribute_writable },
+  port: number_attribute_writable,
   protocol: {
     ...string_attribute_writable,
     values: ["tcp", "udp"]
   },
-  type: { ...string_attribute_writable },
+  type: string_attribute_writable,
   types: string_collection_attribute,
   tls: boolean_attribute_false
 };
@@ -64,7 +64,7 @@ export const ServiceTypeDefinition = {
   attributes: {
     ...networkAddressAttributes,
     ...endpointAttributes,
-    alias: { ...string_attribute_writable },
+    alias: string_attribute_writable,
     weight: { ...number_attribute_writable /*default: 1*/ },
     systemd: string_collection_attribute_writable
   }

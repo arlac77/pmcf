@@ -13,11 +13,11 @@ const ClusterTypeDefinition = {
   priority: 0.7,
   extends: Host.typeDefinition,
   attributes: {
-    routerId: { ...number_attribute_writable },
+    routerId: number_attribute_writable,
     masters: { type: "network_interface", collection: true, writable: true },
     backups: { type: "network_interface", collection: true, writable: true },
     members: { type: "network_interface", collection: true, writable: false },
-    checkInterval: { ...number_attribute_writable }
+    checkInterval: number_attribute_writable
   }
 };
 
@@ -34,7 +34,6 @@ export class Cluster extends Host {
   static get typeDefinition() {
     return ClusterTypeDefinition;
   }
-
 
   set masters(value) {
     this._masters.push(value);

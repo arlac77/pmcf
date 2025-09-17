@@ -26,7 +26,7 @@ const BaseTypeDefinition = {
     name: name_attribute_writable,
     description: { ...description_attribute, writable: true },
     priority: number_attribute_writable,
-    directory: { ...string_attribute, writable: false },
+    directory: string_attribute_writable,
     packaging: string_attribute_writable,
     disabled: boolean_attribute_writable,
     tags: string_collection_attribute_writable

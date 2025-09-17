@@ -36,21 +36,21 @@ const HostTypeDefinition = {
       writable: true
     },
     services: { type: "service", collection: true, writable: true },
-    aliases: { ...string_collection_attribute_writable },
+    aliases: string_collection_attribute_writable,
     os: {
       ...string_attribute_writable,
       values: ["osx", "windows", "linux"]
     },
-    "machine-id": { ...string_attribute_writable },
-    distribution: { ...string_attribute_writable },
+    "machine-id": string_attribute_writable,
+    distribution: string_attribute_writable,
     deployment: {
       ...string_attribute_writable,
       values: ["production", "development"]
     },
-    weight: { ...number_attribute_writable },
-    serial: { ...string_attribute_writable },
-    vendor: { ...string_attribute_writable },
-    keymap: { ...string_attribute_writable },
+    weight: number_attribute_writable,
+    serial: string_attribute_writable,
+    vendor: string_attribute_writable,
+    keymap: string_attribute_writable,
     chassis: {
       ...string_attribute_writable,
       values: [
@@ -73,9 +73,9 @@ const HostTypeDefinition = {
       ...string_attribute_writable,
       values: ["x86", "x86_64", "aarch64", "armv7"]
     },
-    replaces: { ...string_collection_attribute_writable },
-    depends: { ...string_collection_attribute_writable },
-    provides: { ...string_collection_attribute_writable },
+    replaces: string_collection_attribute_writable,
+    depends: string_collection_attribute_writable,
+    provides: string_collection_attribute_writable,
     extends: { type: "host", collection: true, writable: true },
     model: string_attribute,
     isModel: boolean_attribute_false

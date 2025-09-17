@@ -22,8 +22,8 @@ export const networkAttributes = {
     ...string_attribute_writable,
     values: ["loopback", "ethernet", "wlan", "wireguard", "fiber", "dsl"]
   },
-  ssid: { ...string_attribute_writable },
-  psk: { ...string_attribute_writable },
+  ssid: string_attribute_writable,
+  psk: string_attribute_writable,
   secretName: string_attribute_writable,
   metric: { ...number_attribute_writable /*default: 1004*/ },
   mtu: { ...number_attribute_writable, default: 1500 },
@@ -33,8 +33,8 @@ export const networkAttributes = {
 
 export const networkAddressAttributes = {
   hostName: { ...hostname_attribute, writable: true },
-  cidrAddresses: { ...string_collection_attribute_writable },
-  cidrAddress: { ...string_attribute_writable },
-  addresses: { ...string_collection_attribute_writable },
-  address: { ...string_attribute_writable }
+  cidrAddresses: string_collection_attribute_writable ,
+  cidrAddress: string_attribute_writable,
+  addresses: string_collection_attribute_writable,
+  address: string_attribute_writable
 };

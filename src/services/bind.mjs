@@ -6,7 +6,7 @@ import {
   string_attribute_writable,
   boolean_attribute_writable_true,
   boolean_attribute_writable_false,
-  number_attribute,
+  number_attribute_writable,
   string_collection_attribute_writable
 } from "pacc";
 import { writeLines, asArray } from "../utils.mjs";
@@ -50,18 +50,16 @@ const BindServiceTypeDefinition = {
     hasCatalog: boolean_attribute_writable_true,
     hasLinkLocalAdresses: boolean_attribute_writable_false,
     hasLocationRecord: boolean_attribute_writable_true,
-    excludeInterfaceKinds: {
-      ...string_collection_attribute_writable
-    },
+    excludeInterfaceKinds: string_collection_attribute_writable,
     exclude: { type: networkAddressType, collection: true, writable: true },
     notify: boolean_attribute_writable_false,
-    recordTTL: { ...string_attribute_writable },
-    serial: { ...number_attribute, writable: true },
+    recordTTL: string_attribute_writable,
+    serial: number_attribute_writable,
     refresh: { ...string_attribute_writable, default: 36000 },
     retry: { ...string_attribute_writable, default: 72000 },
     expire: { ...string_attribute_writable, default: 600000 },
     minimum: { ...string_attribute_writable, default: 60000 },
-    allowedUpdates: { ...string_collection_attribute_writable }
+    allowedUpdates: string_collection_attribute_writable
   },
 
   service: {

@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
-import { string_attribute } from "pacc";
+import { string_attribute_writable } from "pacc";
 import { addType } from "../types.mjs";
 import { ServiceTypeDefinition, Service } from "../service.mjs";
 import { writeLines } from "../utils.mjs";
@@ -13,18 +13,9 @@ const OpenLDAPServiceTypeDefinition = {
   extends: ServiceTypeDefinition,
   priority: 0.1,
   attributes: {
-    baseDN: {
-      ...string_attribute,
-      writable: true
-    },
-    rootDN: {
-      ...string_attribute,
-      writable: true
-    },
-    uri: {
-      ...string_attribute,
-      writable: true
-    }
+    baseDN: string_attribute_writable,
+    rootDN: string_attribute_writable,
+    uri: string_attribute_writable
   },
   service: {
     extends: ["ldap"],

@@ -19,12 +19,12 @@ const OwnerTypeDefinition = {
     hosts: { type: "host", collection: true, writable: true },
     clusters: { type: "cluster", collection: true, writable: true },
     subnets: { type: Subnet.typeDefinition, collection: true, writable: true },
-    country: { ...string_attribute_writable },
-    domain: { ...string_attribute_writable },
-    domains: { ...string_collection_attribute_writable },
-    timezone: { ...string_attribute_writable },
-    architectures: { ...string_collection_attribute_writable },
-    locales: { ...string_collection_attribute_writable },
+    country: string_attribute_writable,
+    domain: string_attribute_writable,
+    domains: string_collection_attribute_writable,
+    timezone: string_attribute_writable,
+    architectures: string_collection_attribute_writable,
+    locales: string_collection_attribute_writable,
     administratorEmail: { ...email_attribute, writable: true }
   }
 };
