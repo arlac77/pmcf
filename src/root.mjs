@@ -5,10 +5,8 @@ import { addType, types, resolveTypeLinks, typeFactory } from "./types.mjs";
 
 const RootTypeDefinition = {
   name: "root",
-  owners: [],
   priority: 1000,
-  extends: Location.typeDefinition,
-  attributes: {}
+  extends: Location.typeDefinition
 };
 
 export class Root extends Location {

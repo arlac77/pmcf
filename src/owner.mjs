@@ -8,14 +8,16 @@ import { asIterator } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { Subnet, SUBNET_GLOBAL_IPV4, SUBNET_GLOBAL_IPV6 } from "./subnet.mjs";
 import { addType, types } from "./types.mjs";
+import { networks_attribute } from "./network-support.mjs";
 
 const OwnerTypeDefinition = {
   name: "owner",
   owners: ["location", "owner", "root"],
   priority: 0.9,
   extends: Base.typeDefinition,
+  key: "name",
   attributes: {
-    networks: { type: "network", collection: true, writable: true },
+    networks: networks_attribute,
     hosts: { type: "host", collection: true, writable: true },
     clusters: { type: "cluster", collection: true, writable: true },
     subnets: { type: Subnet.typeDefinition, collection: true, writable: true },

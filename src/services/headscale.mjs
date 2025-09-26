@@ -11,7 +11,7 @@ const HeadscaleServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ExtraSourceServiceTypeDefinition,
   priority: 0.1,
-  attributes: {},
+  key: "name",
   service: {
     endpoints: [
       {

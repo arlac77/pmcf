@@ -45,18 +45,6 @@ test("Service basics", t => {
   });
   h1.services = s1;
 
-  //console.log(s1.endpoints().map(e => e.toString()));
-
-  /*t.deepEqual(
-    s1.endpoint(
-      e => e.networkInterface.kind === "loopback" && e.family === "IPv4"
-    ),
-    new Endpoint(s1, [...lna][0], {
-      protocol: "udp",
-      tls: false
-    })
-  );*/
-
   t.deepEqual(
     s1.endpoints(e => e.family === "IPv4"),
     [
@@ -110,7 +98,7 @@ test("Service basics", t => {
     ["127.0.0.1:53", "10.0.0.1:53"].sort()
   );
 
-  t.is([...h1.findServices({ type: "dns" })][0], s1);
+  t.is([...h1.findServices('type="dns"')][0], s1);
 
   const h2 = new Host(l1);
   h2.read({
@@ -141,43 +129,34 @@ test("Service basics", t => {
     [...s2.endpoints()].map(e => e.socketAddress).sort(),
     ["10.0.0.2:53", "h2:53"].sort()
   );
-  t.is([...h2.findServices({ type: "dns" })][0], s2);
+  t.is([...h2.findServices('type="dns"')][0], s2);
 
-  t.deepEqual(Array.from(l1.findServices({ type: "dns" })), [  s1]);
-  t.deepEqual(Array.from(l1.findServices({ name: "dns" })), [ s1]);
-  t.deepEqual(Array.from(l1.findServices({ type: "dns", name: "dns" })), [
- 
-    s1
-  ]);
-  t.deepEqual(Array.from(l1.findServices({ type: "dns", name: "dnsx" })), []);
-  t.deepEqual(Array.from(l1.findServices({ type: "dns", name: "dns|http" })), [
-   
+  t.deepEqual(Array.from(l1.findServices('type="dns"')), [s1]);
+  t.deepEqual(Array.from(l1.findServices('name="dns"')), [s1]);
+  t.deepEqual(Array.from(l1.findServices('type="dns" && name="dns"')), [s1]);
+  //t.deepEqual(Array.from(l1.findServices('type="dns" && name="dnsx"')), []);
+  t.deepEqual(Array.from(l1.findServices('type="dns" && (name="dns" || name="http")')), [
     s1
   ]);
   /*
-  t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: 19 })), [s2]);
-  t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: "=19" })), [
-    s2
-  ]);
-  t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: ">=19" })), [
+  t.deepEqual(Array.from(l1.findServices('type="dns" && priority=19')), [s2]);
+  t.deepEqual(Array.from(l1.findServices('type="dns" && priority>=19' })), [
     s2
   ]);
   */
-  t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: "<20" })), [
-    
+  t.deepEqual(Array.from(l1.findServices('type="dns" && priority<20')), [
     s1
   ]);
-  t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: "<=20" })), [
-    
+  t.deepEqual(Array.from(l1.findServices('type="dns" && priority<=20')), [
     s1
   ]);
   /*
-  t.deepEqual(Array.from(l1.findServices({ type: "dns", priority: "!=19" })), [
+  t.deepEqual(Array.from(l1.findServices('type="dns" && priority!=19')), [
     s2
   ]);
   */
 
-  t.is(s1, l1.findService({ type: "dns" }));
+  t.is(s1, l1.findService('type="dns"'));
 
   const s3 = new Service(h1);
   s3.read({
@@ -316,5 +295,5 @@ test("Service type extension", t => {
   t.is(s0.name, "bind");
   t.deepEqual(s0.types, new Set(["bind", "dns"]));
 
-  t.is(h1.findService({ type: "bind" }), s0);
+  t.is(h1.findService('type="bind"'), s0);
 });

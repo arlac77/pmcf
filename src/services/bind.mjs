@@ -3,6 +3,7 @@ import { createHmac } from "node:crypto";
 import { FileContentProvider } from "npm-pkgbuild";
 import { isLinkLocal, reverseArpa } from "ip-utilties";
 import {
+  oneOfType,
   string_attribute_writable,
   boolean_attribute_writable_true,
   boolean_attribute_writable_false,
@@ -33,9 +34,10 @@ const BindServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ExtraSourceServiceTypeDefinition,
   priority: 0.1,
+  key: "name",
   attributes: {
     zones: {
-      type: [...networkAddressType, "location", "owner"],
+      type: oneOfType([networkAddressType, "location", "owner"]),
       collection: true,
       writable: true
     },
@@ -226,7 +228,8 @@ export class BindService extends ExtraSourceService {
     };
 
     const forwarders = serviceEndpoints(this.source, {
-      services: { types: "dns", priority: ">=300" },
+      services: 'type="dns" && priority>=100 && priority<200',
+      endpoints: endpoint => endpoint.family !== "dns",
       select: e => e.address,
       limit: 5
     });
@@ -540,7 +543,7 @@ export class BindService extends ExtraSourceService {
   }
 
   get defaultRecords() {
-    const nameService = this.findService({ types: "dns", priority: ">=300" });
+    const nameService = this.findService('(type="dns" || type="bind") && priority>=300'); // TODO bind = dns ?
 
     const SOARecord = DNSRecord(
       "@",

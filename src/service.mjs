@@ -41,12 +41,13 @@ export const EndpointTypeDefinition = {
   owners: ["service", "network_interface"],
   priority: 0.4,
   specializations: {},
+  key: "type",
   attributes: endpointAttributes
 };
 
 export const ServiceTypeDefinition = {
   name: "service",
-  owners: ["host", "cluster", "network_interface"],
+  owners: [Host.typeDefinition, "cluster", "network_interface"],
   priority: 0.4,
   extends: Base.typeDefinition,
   specializations: {},
@@ -61,6 +62,7 @@ export const ServiceTypeDefinition = {
 
     return Service;
   },
+  key: "name",
   attributes: {
     ...networkAddressAttributes,
     ...endpointAttributes,
@@ -193,7 +195,7 @@ export class Service extends Base {
 
   address(
     options = {
-      endpoints: e => e.networkInterface?.kind !== "loopbak",
+      endpoints: e => e.networkInterface && e.networkInterface.kind !== "loopbak",
       select: e => e.domainName || e.address,
       limit: 1,
       join: ""

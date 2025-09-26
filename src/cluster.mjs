@@ -12,6 +12,7 @@ const ClusterTypeDefinition = {
   owners: [Owner.typeDefinition, "network", "location", "root"],
   priority: 0.7,
   extends: Host.typeDefinition,
+  key: "name",
   attributes: {
     routerId: number_attribute_writable,
     masters: { type: "network_interface", collection: true, writable: true },
@@ -155,8 +156,8 @@ export class Cluster extends Host {
 
           for (const member of this.members) {
             const memberService =
-              member.findService({ type: endpoint.type }) ||
-              member.host.findService({ type: endpoint.type }); // TODO
+              member.findService(`type="${endpoint.type}"`) ||
+              member.host.findService(`type="${endpoint.type}"`); // TODO
 
             cfg.push(`  real_server ${member.address} ${memberService.port} {`);
             cfg.push(`    weight ${memberService.weight}`);

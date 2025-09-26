@@ -7,7 +7,7 @@ const SystemdJournalServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
-  attributes: {},
+  key: "name",
   service: {}
 };
 
@@ -30,7 +30,7 @@ export class SystemdJournalService extends Service {
 
   systemdConfigs(name) {
     return {
-      serviceName: "systemd-journald",  
+      serviceName: "systemd-journald",
       configFileName: `etc/systemd/journal.conf.d/${name}.conf`,
       content: [
         "Journal",

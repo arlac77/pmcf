@@ -7,7 +7,7 @@ const SystemdJournalRemoteServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
-  attributes: {},
+  key: "name",
   services: {
     endpoints: [
       {

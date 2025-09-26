@@ -12,6 +12,7 @@ const OpenLDAPServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
+  key: "name",
   attributes: {
     baseDN: string_attribute_writable,
     rootDN: string_attribute_writable,

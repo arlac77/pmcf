@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { prepare } from "../src/cli.mjs";
+
 const { root, args, options } = await prepare({
   service: {
     type: "string"
@@ -12,7 +13,7 @@ const { root, args, options } = await prepare({
 for (const name of args) {
   const object = await root.load(name);
   if (options.service) {
-    for (const service of root.findServices({ type: options.service })) {
+    for (const service of root.findServices(`type="${options.service}"`)) {
       console.log(service.toString());
     }
   } else if (options.address) {

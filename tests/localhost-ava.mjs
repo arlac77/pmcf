@@ -13,6 +13,6 @@ test("localhost", async t => {
   t.is(local.host, undefined);
   t.deepEqual([...local.hosts()], []);
 
-  const dns = Array.from(local.findServices({ type: "dns" }))[0];
+  const dns = Array.from(local.findServices('type="dns"'))[0];
   t.is(dns.name, "dns");
 });

@@ -11,6 +11,7 @@ const MosquittoServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
+  key: "name",
   attributes: {
     log_timestamp: {
       ...boolean_attribute_writable_true,

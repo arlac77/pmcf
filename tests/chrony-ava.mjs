@@ -8,7 +8,7 @@ test("ChronyService basics", async t => {
 
   const chrony = await root.named("/L1/host1/chrony");
 
-  //console.log([...chrony.findServices({ type: "ntp"})]);
+  //console.log([...chrony.findServices("type='ntp'"")]);
   t.true(chrony instanceof ChronyService);
 
   /*

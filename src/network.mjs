@@ -4,11 +4,12 @@ import { Subnet } from "./subnet.mjs";
 import { addType } from "./types.mjs";
 import { networkAttributes } from "./network-support.mjs";
 
-const NetworkTypeDefinition = {
+export const NetworkTypeDefinition = {
   name: "network",
   owners: ["location", "owner", "root"],
   priority: 0.8,
   extends: Owner.typeDefinition,
+  key: "name",
   attributes: {
     ...networkAttributes,
     bridge: {

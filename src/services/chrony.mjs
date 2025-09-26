@@ -19,7 +19,7 @@ const ChronyServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ExtraSourceServiceTypeDefinition,
   priority: 0.1,
-  attributes: {},
+  key: "name",
   service: {
     extends: ["ntp"],
     services: {
@@ -87,15 +87,13 @@ export class ChronyService extends ExtraSourceService {
 
     const lines = [
       ...serviceEndpoints(this, {
-        services: {
-          types: "ntp",
-          priority: ">=100"
-        },
+        services: 'type="ntp" && priority>=100',
         endpoints: e =>
           e.type === "ntp" &&
           !isLinkLocal(e.address) &&
           e.service.host !== host &&
-          e.networkInterface?.kind !== "loopback",
+          e.networkInterface &&
+          e.networkInterface.kind !== "loopback",
 
         select: endpoint => {
           const options = [

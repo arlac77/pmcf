@@ -5,9 +5,9 @@ import { addType } from "../src/types.mjs";
 
 const MyTypeDefinition = {
   name: "mytype",
-  owners: [],
   priority: 0.9,
   extends: Base.typeDefinition,
+  key: "name",
   attributes: {
     aString: { ...string_attribute, writable: true },
     aStringWitwDefault: { ...string_attribute, default: "xyz", writable: true },

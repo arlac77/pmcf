@@ -11,6 +11,7 @@ const InfluxdbServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
+  key: "name",
   attributes: {
     "metrics-disabled": {
       ...boolean_attribute_writable_true,

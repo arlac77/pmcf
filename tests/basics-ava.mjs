@@ -95,7 +95,8 @@ test("extract", t => {
 test("directory & name & owner", t => {
   const root = new Root("/somewhere");
 
-  const l1 = new Location(root, { name: "l1" });
+  const l1 = new Location(root);
+  l1.read({ name: "l1" });
   root.addObject(l1);
   t.is(l1.name, "l1");
   t.is(l1.fullName, "/l1");
@@ -105,7 +106,8 @@ test("directory & name & owner", t => {
   t.is(root.named("/l1"), l1);
   t.is(root.locationNamed("/l1"), l1);
 
-  const h1 = new Host(l1, { name: "h1" });
+  const h1 = new Host(l1);
+  h1.read({ name: "h1" });
   l1.addObject(h1);
   t.is(h1.directory, "/somewhere/l1/h1");
   t.is(h1.name, "h1");
@@ -117,7 +119,8 @@ test("directory & name & owner", t => {
   t.is(l1.named("/l1/h1"), h1);
   t.is(l1.hostNamed("/l1/h1"), h1);
 
-  const h2 = new Host(l1, { name: "l2/h2" });
+  const h2 = new Host(l1);
+  h2.read({ name: "l2/h2" });
   l1.addObject(h2);
   t.is(h2.directory, "/somewhere/l1/l2/h2");
   t.is(h2.name, "l2/h2");

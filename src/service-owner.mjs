@@ -1,6 +1,4 @@
 import { Base } from "pmcf";
-import { objectFilter } from "./filter.mjs";
-import { types } from "./types.mjs";
 
 export class ServiceOwner extends Base {
   _services = [];
@@ -18,7 +16,13 @@ export class ServiceOwner extends Base {
   }
 
   *findServices(filter) {
-    yield* objectFilter(types.service, this._services, filter);
+    const services = filter
+      ? this.expression(`services[${filter}]`)
+      : this.services;
+
+    for (const service of services) {
+      yield service;
+    }
   }
 
   _traverse(...args) {
@@ -40,6 +44,10 @@ export class ServiceOwner extends Base {
       }
     }
 
+    if (typeName === "number") {
+      throw new Error("invalidType");
+    }
+    //console.log("TN***",typeName, name);
     return super.typeNamed(typeName, name);
   }
 

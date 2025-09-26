@@ -1,4 +1,6 @@
 import {
+  oneOfType,
+  default_attribute_writable,
   string_collection_attribute_writable,
   string_attribute_writable,
   number_attribute_writable,
@@ -6,7 +8,10 @@ import {
   boolean_attribute_writable
 } from "pacc";
 
-export const networkAddressType = ["network", "host", "network_interface"];
+export const networkAddressType = oneOfType("network|host|network_interface");
+//export const networkAddressType = oneOfType([NetworkTypeDefinition,"host","network_interface"]);
+
+export const networks_attribute = { ...default_attribute_writable, type: "network", collection: true };
 
 export const networkAttributes = {
   scope: {
@@ -27,13 +32,13 @@ export const networkAttributes = {
   secretName: string_attribute_writable,
   metric: { ...number_attribute_writable /*default: 1004*/ },
   mtu: { ...number_attribute_writable, default: 1500 },
-  gateway: { type: "host", collection: false, writable: true },
+  gateway: { ...default_attribute_writable, type: "host" },
   multicastDNS: boolean_attribute_writable
 };
 
 export const networkAddressAttributes = {
   hostName: { ...hostname_attribute, writable: true },
-  cidrAddresses: string_collection_attribute_writable ,
+  cidrAddresses: string_collection_attribute_writable,
   cidrAddress: string_attribute_writable,
   addresses: string_collection_attribute_writable,
   address: string_attribute_writable

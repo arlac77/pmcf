@@ -188,7 +188,7 @@ test("Host addresses", t => {
   const n1 = new Network(owner);
   n1.read({
     name: "n1",
-    properties: { "ipv4_prefix": "10.0" }
+    properties: { ipv4_prefix: "10.0" }
   });
   owner.addObject(n1);
 

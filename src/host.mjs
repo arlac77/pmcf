@@ -6,7 +6,8 @@ import {
   string_attribute_writable,
   string_collection_attribute_writable,
   number_attribute_writable,
-  boolean_attribute_false
+  boolean_attribute_false,
+  name_attribute
 } from "pacc";
 import { ServiceOwner, Base, addresses } from "pmcf";
 import { networkAddressAttributes } from "./network-support.mjs";
@@ -28,6 +29,7 @@ const HostTypeDefinition = {
   priority: 0.5,
   owners: ["owner", "network", "root"],
   extends: Base.typeDefinition,
+  key: "name",
   attributes: {
     ...networkAddressAttributes,
     networkInterfaces: {
@@ -456,10 +458,6 @@ export class Host extends ServiceOwner {
         new FileContentProvider(
           { base: this.directory, pattern: "*_key" },
           { destination: "/etc/ssh/", mode: 0o600 }
-        ),
-        new FileContentProvider(
-          { base: this.directory, pattern: "credential.secret" },
-          { destination: "/var/lib/systemd/", mode: 0o400 }
         ),
         new FileContentProvider(dir + "/")
       ],

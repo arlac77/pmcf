@@ -8,6 +8,7 @@ const SystemdJournalUploadServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
+  key: "name",
   attributes: {
     url: string_attribute_writable
   },

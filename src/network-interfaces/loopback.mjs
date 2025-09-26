@@ -9,7 +9,7 @@ const LoopbackNetworkInterfaceTypeDefinition = {
   owners: NetworkInterfaceTypeDefinition.owners,
   extends: NetworkInterfaceTypeDefinition,
   priority: 0.1,
-  attributes: {}
+  key: "name"
 };
 
 const _localAddresses = new Map([
@@ -28,8 +28,7 @@ export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
     return LoopbackNetworkInterfaceTypeDefinition;
   }
 
-  static isCommonName(name)
-  {
+  static isCommonName(name) {
     return name.match(/lo\d+$/);
   }
 
@@ -58,10 +57,9 @@ export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
     return _localAddresses;
   }
 
-    set mtu(v) {}
+  set mtu(v) {}
 
-  get mtu()
-  {
+  get mtu() {
     return 16436;
   }
 }

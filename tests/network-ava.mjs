@@ -21,6 +21,7 @@ test("Network addresses", t => {
 
   owner.addObject(n1);
 
+  t.is(n1.name, "n1");
   t.is(n1.kind, "ethernet");
   t.is(n1.scope, "global");
 

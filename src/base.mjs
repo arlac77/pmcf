@@ -3,7 +3,6 @@ import { allOutputs } from "npm-pkgbuild";
 import {
   parse,
   expand,
-  baseTypes,
   attributeIterator,
   name_attribute_writable,
   string_attribute,
@@ -18,7 +17,7 @@ import { asArray } from "./utils.mjs";
 
 const BaseTypeDefinition = {
   name: "base",
-  owners: [],
+  key: "name",
   attributes: {
     owner: { type: "base", collection: false, writable: false },
     type: string_attribute,
@@ -77,19 +76,21 @@ export class Base {
     }
   }
 
-  ownerFor(property, data) {
-    for (const type of property.type[0].owners) {
-      if (this.typeName === type?.name) {
-        return this;
+  ownerFor(attribute, data) {
+    const owners = attribute.type.owners;
+    if (owners) {
+      for (const type of owners) {
+        if (this.typeName === type?.name) {
+          return this;
+        }
+      }
+      for (const type of owners) {
+        const owner = this[type?.name];
+        if (owner) {
+          return owner;
+        }
       }
     }
-    for (const type of property.type[0].owners) {
-      const owner = this[type?.name];
-      if (owner) {
-        return owner;
-      }
-    }
-
     return this;
   }
 
@@ -145,7 +146,7 @@ export class Base {
     };
 
     const instantiateAndAssign = (name, attribute, value) => {
-      if (baseTypes.has(attribute.type[0])) {
+      if (attribute.type.primitive) {
         assign(name, attribute, value);
         return;
       }
@@ -164,7 +165,7 @@ export class Base {
           {
             let object;
 
-            for (const type of attribute.type) {
+            for (const type of attribute.type.members || [attribute.type]) {
               object = this.typeNamed(type.name, value);
               if (object) {
                 break;
@@ -174,8 +175,8 @@ export class Base {
             if (object) {
               assign(name, attribute, object);
             } else {
-              if (attribute.type[0].constructWithIdentifierOnly) {
-                object = new attribute.type[0].clazz(
+              if (attribute.type.constructWithIdentifierOnly) {
+                object = new attribute.type.clazz(
                   this.ownerFor(attribute, value),
                   value
                 );
@@ -185,7 +186,9 @@ export class Base {
                 this.finalize(() => {
                   value = this.expand(value);
 
-                  for (const type of attribute.type) {
+                  for (const type of attribute.type.members || [
+                    attribute.type
+                  ]) {
                     const object =
                       this.typeNamed(type.name, value) ||
                       this.owner.typeNamed(type.name, value) ||
@@ -209,14 +212,14 @@ export class Base {
           }
           break;
         case "object":
-          if (value instanceof attribute.type[0].clazz) {
+          if (attribute.type.clazz && value instanceof attribute.type.clazz) {
             assign(name, attribute, value);
           } else {
             assign(
               name,
               attribute,
               typeFactory(
-                attribute.type[0],
+                attribute.type,
                 this.ownerFor(attribute, value),
                 value
               )
@@ -247,7 +250,8 @@ export class Base {
               } else {
                 for (const [objectName, objectData] of Object.entries(value)) {
                   if (typeof objectData === "object") {
-                    objectData[type.identifier.name] = objectName;
+                    //console.log("KEY", objectName, type.name, type.key);
+                    objectData[attribute.type.key] = objectName;
                   }
                   instantiateAndAssign(name, attribute, objectData);
                 }
@@ -404,7 +408,7 @@ export class Base {
   }
 
   get smtp() {
-    return this.findService({ type: "smtp" });
+    return this.findService('type="smtp"');
   }
 
   expression(expression) {
@@ -428,9 +432,7 @@ export class Base {
   }
 
   *findServices(filter) {
-    if (this.owner) {
-      yield* this.owner.findServices(filter);
-    }
+    yield* this.owner?.findServices(filter);
   }
 
   set directory(directory) {
@@ -587,12 +589,12 @@ export function extractFrom(
       return undefined;
     }
 
-    if (typeDefinition?.identifier) {
+    if (typeDefinition?.key) {
       return Object.fromEntries(
         object.map(o => {
           o = extractFrom(o);
-          const name = o[typeDefinition.identifier.name];
-          delete o[typeDefinition.identifier.name];
+          const name = o[typeDefinition.key];
+          delete o[typeDefinition.key];
           return [name, o];
         })
       );
@@ -604,7 +606,8 @@ export function extractFrom(
   const json = {};
 
   do {
-    for (const [name, def] of Object.entries(typeDefinition.attributes)) {
+    for (const [path, def] of attributeIterator(typeDefinition.attributes)) {
+      const name = path.join(".");
       let value = object[name];
 
       switch (typeof value) {
@@ -616,7 +619,7 @@ export function extractFrom(
               value = [...value];
             }
 
-            value = extractFrom(value, def.type[0]);
+            value = extractFrom(value, def.type);
             if (value !== undefined) {
               json[name] = value;
             }

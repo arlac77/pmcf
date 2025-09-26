@@ -12,7 +12,7 @@ const SystemdResolvedServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ExtraSourceServiceTypeDefinition,
   priority: 0.1,
-  attributes: {},
+  key: "name",
   service: {}
 };
 
@@ -34,11 +34,13 @@ export class SystemdResolvedService extends ExtraSourceService {
   }
 
   systemdConfigs(name) {
-    const options = (priority, limit) => {
+    const options = (lower, upper, limit) => {
       return {
-        services: { types: "dns", priority },
+        services: `(type="dns" || type="bind") && priority>=${lower} && priority<=${upper}`,
         endpoints: e =>
-          e.networkInterface.kind !== "loopback" && e.family !== "dns",
+          e.networkInterface &&
+          e.networkInterface.kind !== "loopback" &&
+          e.family !== "dns",
         select: endpoint => endpoint.address,
         join: " ",
         limit
@@ -51,8 +53,8 @@ export class SystemdResolvedService extends ExtraSourceService {
       content: [
         "Resolve",
         {
-          DNS: serviceEndpoints(this, options("[300:399]", 4)),
-          FallbackDNS: serviceEndpoints(this, options("[100:199]", 4)),
+          DNS: serviceEndpoints(this, options(300, 399, 4)),
+          FallbackDNS: serviceEndpoints(this, options(100, 199, 4)),
           Domains: [...this.localDomains].join(" "),
           DNSSEC: "no",
           MulticastDNS: this.network.multicastDNS ? "yes" : "no",

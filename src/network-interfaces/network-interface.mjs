@@ -9,16 +9,19 @@ import {
 import { asArray, writeLines, sectionLines } from "../utils.mjs";
 import { addType } from "../types.mjs";
 import { SkeletonNetworkInterface } from "./skeleton.mjs";
+import { Network } from "../network.mjs";
+import { Host } from "../Host.mjs";
 
 export const NetworkInterfaceTypeDefinition = {
   name: "network_interface",
   priority: 0.4,
-  owners: ["host"],
+  owners: [Host.typeDefinition],
   extends: Base.typeDefinition,
   specializations: {},
   factoryFor(owner, value) {
     let t = NetworkInterfaceTypeDefinition.specializations[value.kind];
 
+    //console.log("factoryFor", owner, value);
     if (!t) {
       for (t of Object.values(NetworkInterfaceTypeDefinition.specializations)) {
         if (t.clazz.isCommonName && t.clazz.isCommonName(value.name)) {
@@ -35,6 +38,7 @@ export const NetworkInterfaceTypeDefinition = {
 
     return NetworkInterface;
   },
+  key: "name",
   attributes: {
     ...networkAttributes,
     ...networkAddressAttributes,
@@ -43,7 +47,11 @@ export const NetworkInterfaceTypeDefinition = {
     hostName: { ...hostname_attribute, writable: true },
     ipAddresses: { ...string_attribute_writable },
     hwaddr: { ...string_attribute_writable },
-    network: { type: "network", collection: false, writable: true },
+    network: {
+      type: Network.typeDefinition,
+      collection: false,
+      writable: true
+    },
     destination: { ...string_attribute_writable }
   }
 };
@@ -211,7 +219,9 @@ export class NetworkInterface extends SkeletonNetworkInterface {
 
     const routeSectionExtra = this.destination
       ? { Destination: this.destination }
-      : this.gateway ? { Gateway: this.gatewayAddress } : {};
+      : this.gateway
+      ? { Gateway: this.gatewayAddress }
+      : {};
 
     const networkSectionExtra = this.arpbridge
       ? {

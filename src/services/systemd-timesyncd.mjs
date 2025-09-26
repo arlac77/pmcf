@@ -8,11 +8,10 @@ import { addType } from "../types.mjs";
 
 const SystemdTimesyncdServiceTypeDefinition = {
   name: "systemd-timesyncd",
+  extends: ExtraSourceServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
-  extends: ExtraSourceServiceTypeDefinition,
   priority: 0.1,
-  attributes: {},
   service: {}
 };
 
@@ -34,10 +33,11 @@ export class SystemdTimesyncdService extends ExtraSourceService {
   }
 
   systemdConfigs(name) {
-    const options = priority => {
+    const options = (lower, upper) => {
       return {
-        services: { types: "ntp", priority },
-        endpoints: e => e.networkInterface?.kind !== "loopback",
+        services: `type='ntp' && priority >= ${lower} && priority <= ${upper}`,
+        endpoints: e =>
+          e.networkInterface && e.networkInterface.kind !== "loopback",
         select: endpoint => endpoint.address,
         join: " ",
         limit: 2
@@ -50,8 +50,8 @@ export class SystemdTimesyncdService extends ExtraSourceService {
       content: [
         "Time",
         {
-          NTP: serviceEndpoints(this, options("[300:399]")),
-          FallbackNTP: serviceEndpoints(this, options("[100:199]"))
+          NTP: serviceEndpoints(this, options(300, 399)),
+          FallbackNTP: serviceEndpoints(this, options(100, 199))
         }
       ]
     };

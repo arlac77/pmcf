@@ -23,6 +23,7 @@ const KeaServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
+  key: "name",
   attributes: {
     "ddns-send-updates": {
       ...boolean_attribute_writable_true,
@@ -154,11 +155,8 @@ export class KeaService extends Service {
     console.log("kea", name, network.name);
 
     const dnsServerEndpoints = serviceEndpoints(network, {
-      services: {
-        types: "dns",
-        priority: ">=300"
-      },
-      endpoints: endpoint => endpoint.networkInterface.kind !== "loopback"
+      services: 'type="dns" && priority >= 300',
+      endpoints: endpoint => endpoint.networkInterface?.kind !== "loopback"
     });
 
     const packageData = {
@@ -176,10 +174,11 @@ export class KeaService extends Service {
     const peers = async family =>
       (
         await Array.fromAsync(
-          network.findServices({
-            type: "kea",
-            priority: ">=" + (this.priority < 100 ? this.priority : 100)
-          })
+          network.findServices(
+            `type="kea" && priority>=${
+              this.priority < 100 ? this.priority : 100
+            }`
+          )
         )
       )
         .sort(sortDescendingByPriority)
@@ -422,9 +421,12 @@ export class KeaService extends Service {
       Dhcp4: {
         ...(await commonConfig("4")),
         subnet4: subnets
-          .filter(s => s.family === "IPv4" &&
-            // TODO keep out tailscale
-            s.cidr !== "100.64.0.2/32")
+          .filter(
+            s =>
+              s.family === "IPv4" &&
+              // TODO keep out tailscale
+              s.cidr !== "100.64.0.2/32"
+          )
           .map((subnet, index) => {
             return {
               id: index + 1,
