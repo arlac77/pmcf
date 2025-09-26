@@ -10,12 +10,11 @@ import { asArray, writeLines, sectionLines } from "../utils.mjs";
 import { addType } from "../types.mjs";
 import { SkeletonNetworkInterface } from "./skeleton.mjs";
 import { Network } from "../network.mjs";
-import { Host } from "../Host.mjs";
 
 export const NetworkInterfaceTypeDefinition = {
   name: "network_interface",
   priority: 0.4,
-  owners: [Host.typeDefinition],
+  owners: ["host"],
   extends: Base.typeDefinition,
   specializations: {},
   factoryFor(owner, value) {
