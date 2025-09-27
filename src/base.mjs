@@ -4,12 +4,13 @@ import {
   parse,
   expand,
   attributeIterator,
+  default_attribute,
   name_attribute_writable,
   string_attribute,
   string_attribute_writable,
   string_collection_attribute_writable,
   number_attribute_writable,
-  description_attribute,
+  description_attribute_writable,
   boolean_attribute_writable
 } from "pacc";
 import { addType, typeFactory } from "./types.mjs";
@@ -19,10 +20,10 @@ const BaseTypeDefinition = {
   name: "base",
   key: "name",
   attributes: {
-    owner: { type: "base", collection: false, writable: false },
+    owner: { ...default_attribute, type: "base" },
     type: string_attribute,
     name: name_attribute_writable,
-    description: { ...description_attribute, writable: true },
+    description: description_attribute_writable,
     priority: number_attribute_writable,
     directory: string_attribute_writable,
     packaging: string_attribute_writable,

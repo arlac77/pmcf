@@ -2,12 +2,12 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import {
+  default_attribute_writable,
   string_attribute,
   string_attribute_writable,
   string_collection_attribute_writable,
   number_attribute_writable,
-  boolean_attribute_false,
-  name_attribute
+  boolean_attribute_false
 } from "pacc";
 import { ServiceOwner, Base, addresses } from "pmcf";
 import { networkAddressAttributes } from "./network-support.mjs";
@@ -33,11 +33,15 @@ const HostTypeDefinition = {
   attributes: {
     ...networkAddressAttributes,
     networkInterfaces: {
+      ...default_attribute_writable,
       type: "network_interface",
-      collection: true,
-      writable: true
+      collection: true
     },
-    services: { type: "service", collection: true, writable: true },
+    services: {
+      ...default_attribute_writable,
+      type: "service",
+      collection: true
+    },
     aliases: string_collection_attribute_writable,
     os: {
       ...string_attribute_writable,
@@ -78,7 +82,7 @@ const HostTypeDefinition = {
     replaces: string_collection_attribute_writable,
     depends: string_collection_attribute_writable,
     provides: string_collection_attribute_writable,
-    extends: { type: "host", collection: true, writable: true },
+    extends: { ...default_attribute_writable, type: "host", collection: true },
     model: string_attribute,
     isModel: boolean_attribute_false
   }

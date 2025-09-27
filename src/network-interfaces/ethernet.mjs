@@ -1,3 +1,4 @@
+import { default_attribute_writable } from "pacc";
 import { addType } from "../types.mjs";
 import {
   NetworkInterface,
@@ -12,7 +13,11 @@ export const EthernetNetworkInterfaceTypeDefinition = {
   priority: 0.1,
   key: "name",
   attributes: {
-    arpbridge: { type: "network_interface", collection: true, writable: true }
+    arpbridge: {
+      ...default_attribute_writable,
+      type: "network_interface",
+      collection: true
+    }
   }
 };
 

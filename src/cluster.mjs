@@ -1,6 +1,10 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
-import { number_attribute_writable } from "pacc";
+import {
+  default_attribute_writable,
+  default_attribute,
+  number_attribute_writable
+} from "pacc";
 import { Owner } from "./owner.mjs";
 import { Host } from "./host.mjs";
 import { serviceEndpoints } from "pmcf";
@@ -15,9 +19,21 @@ const ClusterTypeDefinition = {
   key: "name",
   attributes: {
     routerId: number_attribute_writable,
-    masters: { type: "network_interface", collection: true, writable: true },
-    backups: { type: "network_interface", collection: true, writable: true },
-    members: { type: "network_interface", collection: true, writable: false },
+    masters: {
+      ...default_attribute_writable,
+      type: "network_interface",
+      collection: true
+    },
+    backups: {
+      ...default_attribute_writable,
+      type: "network_interface",
+      collection: true
+    },
+    members: {
+      ...default_attribute,
+      type: "network_interface",
+      collection: true
+    },
     checkInterval: number_attribute_writable
   }
 };
@@ -146,7 +162,8 @@ export class Cluster extends Host {
 
         for (const endpoint of serviceEndpoints(cluster, {
           services: 'type="http"',
-          endpoints: e => e.networkInterface && e.networkInterface.kind !== "loopback"
+          endpoints: e =>
+            e.networkInterface && e.networkInterface.kind !== "loopback"
         })) {
           cfg.push(`virtual_server ${cluster.address} ${endpoint.port} {`);
           cfg.push(`  delay_loop ${cluster.checkInterval}`);

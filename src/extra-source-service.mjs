@@ -1,3 +1,4 @@
+import { default_attribute_writable } from "pacc";
 import { addType } from "./types.mjs";
 import { Service, ServiceTypeDefinition } from "./service.mjs";
 import { networkAddressType } from "pmcf";
@@ -8,7 +9,11 @@ export const ExtraSourceServiceTypeDefinition = {
   extends: ServiceTypeDefinition,
   priority: 0.1,
   attributes: {
-    source: { type: networkAddressType, collection: true, writable: true }
+    source: {
+      ...default_attribute_writable,
+      type: networkAddressType,
+      collection: true
+    }
   }
 };
 

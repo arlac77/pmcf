@@ -4,6 +4,7 @@ import { FileContentProvider } from "npm-pkgbuild";
 import { isLinkLocal, reverseArpa } from "ip-utilties";
 import {
   oneOfType,
+  default_attribute_writable,
   string_attribute_writable,
   boolean_attribute_writable_true,
   boolean_attribute_writable_false,
@@ -46,14 +47,26 @@ const BindServiceTypeDefinition = {
       collection: true,
       writable: true
     },
-    protected: { type: networkAddressType, collection: true, writable: true },
-    internal: { type: networkAddressType, collection: true, writable: true },
+    protected: {
+      ...default_attribute_writable,
+      type: networkAddressType,
+      collection: true
+    },
+    internal: {
+      ...default_attribute_writable,
+      type: networkAddressType,
+      collection: true
+    },
     hasSVRRecords: boolean_attribute_writable_false,
     hasCatalog: boolean_attribute_writable_true,
     hasLinkLocalAdresses: boolean_attribute_writable_false,
     hasLocationRecord: boolean_attribute_writable_true,
     excludeInterfaceKinds: string_collection_attribute_writable,
-    exclude: { type: networkAddressType, collection: true, writable: true },
+    exclude: {
+      ...default_attribute_writable,
+      type: networkAddressType,
+      collection: true
+    },
     notify: boolean_attribute_writable_false,
     recordTTL: string_attribute_writable,
     serial: number_attribute_writable,
@@ -543,7 +556,9 @@ export class BindService extends ExtraSourceService {
   }
 
   get defaultRecords() {
-    const nameService = this.findService('(type="dns" || type="bind") && priority>=300'); // TODO bind = dns ?
+    const nameService = this.findService(
+      '(type="dns" || type="bind") && priority>=300'
+    ); // TODO bind = dns ?
 
     const SOARecord = DNSRecord(
       "@",

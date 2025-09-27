@@ -1,5 +1,6 @@
 import { normalizeCIDR, familyIP } from "ip-utilties";
 import {
+  default_attribute_writable,
   string_collection_attribute_writable,
   string_attribute_writable,
   email_attribute
@@ -18,9 +19,17 @@ const OwnerTypeDefinition = {
   key: "name",
   attributes: {
     networks: networks_attribute,
-    hosts: { type: "host", collection: true, writable: true },
-    clusters: { type: "cluster", collection: true, writable: true },
-    subnets: { type: Subnet.typeDefinition, collection: true, writable: true },
+    hosts: { ...default_attribute_writable, type: "host", collection: true },
+    clusters: {
+      ...default_attribute_writable,
+      type: "cluster",
+      collection: true
+    },
+    subnets: {
+      ...default_attribute_writable,
+      type: Subnet.typeDefinition,
+      collection: true
+    },
     country: string_attribute_writable,
     domain: string_attribute_writable,
     domains: string_collection_attribute_writable,
