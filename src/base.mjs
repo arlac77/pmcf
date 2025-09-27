@@ -412,8 +412,8 @@ export class Base {
     return this.findService('type="smtp"');
   }
 
-  expression(expression) {
-    return parse(expression, { root: this });
+  expression(expression, options) {
+    return parse(expression, { root: this, ...options });
   }
 
   /**
