@@ -145,8 +145,8 @@ export class Cluster extends Host {
         cfg.push("}", "");
 
         for (const endpoint of serviceEndpoints(cluster, {
-          services: { type: "http" },
-          endpoints: e => e.networkInterface.kind !== "loopback"
+          services: 'type="http"',
+          endpoints: e => e.networkInterface && e.networkInterface.kind !== "loopback"
         })) {
           cfg.push(`virtual_server ${cluster.address} ${endpoint.port} {`);
           cfg.push(`  delay_loop ${cluster.checkInterval}`);
