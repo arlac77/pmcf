@@ -2,6 +2,7 @@ import { join } from "node:path";
 import { allOutputs } from "npm-pkgbuild";
 import {
   parse,
+  globals,
   expand,
   attributeIterator,
   default_attribute,
@@ -413,7 +414,7 @@ export class Base {
   }
 
   expression(expression, options) {
-    return parse(expression, { root: this, ...options });
+    return parse(expression, { root: this, globals, ...options });
   }
 
   /**

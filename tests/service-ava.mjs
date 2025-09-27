@@ -135,21 +135,18 @@ test("Service basics", t => {
   t.deepEqual(Array.from(l1.findServices('name="dns"')), [s1]);
   t.deepEqual(Array.from(l1.findServices('type="dns" && name="dns"')), [s1]);
   //t.deepEqual(Array.from(l1.findServices('type="dns" && name="dnsx"')), []);
-  t.deepEqual(Array.from(l1.findServices('type="dns" && (name="dns" || name="http")')), [
-    s1
-  ]);
+  t.deepEqual(
+    Array.from(l1.findServices('type="dns" && (name="dns" || name="http")')),
+    [s1]
+  );
   /*
   t.deepEqual(Array.from(l1.findServices('type="dns" && priority=19')), [s2]);
   t.deepEqual(Array.from(l1.findServices('type="dns" && priority>=19' })), [
     s2
   ]);
   */
-  t.deepEqual(Array.from(l1.findServices('type="dns" && priority<20')), [
-    s1
-  ]);
-  t.deepEqual(Array.from(l1.findServices('type="dns" && priority<=20')), [
-    s1
-  ]);
+  t.deepEqual(Array.from(l1.findServices('type="dns" && priority<20')), [s1]);
+  t.deepEqual(Array.from(l1.findServices('type="dns" && priority<=20')), [s1]);
   /*
   t.deepEqual(Array.from(l1.findServices('type="dns" && priority!=19')), [
     s2
@@ -277,7 +274,7 @@ test("Service owner", t => {
   ]);
 });
 
-test("Service type extension", t => {
+test.only("Service type extension", t => {
   const root = new Root("/somwhere");
 
   const h1 = new Host(root);
@@ -296,4 +293,7 @@ test("Service type extension", t => {
   t.deepEqual(s0.types, new Set(["bind", "dns"]));
 
   t.is(h1.findService('type="bind"'), s0);
+  t.is(h1.findService('in("dns",types)'), s0);
+  t.is(h1.findService('in("bind",types)'), s0);
+  t.is(h1.findService('in("abc",types)'), undefined);
 });
