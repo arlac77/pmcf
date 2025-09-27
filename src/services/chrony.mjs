@@ -87,7 +87,7 @@ export class ChronyService extends ExtraSourceService {
 
     const lines = [
       ...serviceEndpoints(this, {
-        services: 'type="ntp" && priority>=100',
+        services: '(type="ntp" || type="chrony") && priority>=100',
         endpoints: e =>
           e.type === "ntp" &&
           !isLinkLocal(e.address) &&
