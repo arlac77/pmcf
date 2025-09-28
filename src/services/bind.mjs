@@ -76,7 +76,6 @@ const BindServiceTypeDefinition = {
     minimum: { ...string_attribute_writable, default: 60000 },
     allowedUpdates: string_collection_attribute_writable
   },
-
   service: {
     extends: ["dns"],
     services: {
@@ -148,12 +147,6 @@ export class BindService extends ExtraSourceService {
 
     this._systemd = "bind.service";
 
-    // TODO
-    const dns = new Service(owner);
-    dns.name = "dns";
-    dns.type = "dns";
-
-    this._extends.push(dns);
     this.views = {};
 
     for (const name of ["internal", "protected"]) {
@@ -538,7 +531,7 @@ export class BindService extends ExtraSourceService {
         zone.records.add(DNSRecord("location", "TXT", host.location.name));
       }
       for (const na of host.networkAddresses(
-        na => na.networkInterface.kind != "loopback"
+        na => na.networkInterface.kind !== "loopback"
       )) {
         zone.records.add(
           DNSRecord("@", dnsRecordTypeForAddressFamily(na.family), na.address)
@@ -556,9 +549,7 @@ export class BindService extends ExtraSourceService {
   }
 
   get defaultRecords() {
-    const nameService = this.findService(
-      '(type="dns" || type="bind") && priority>=300'
-    ); // TODO bind = dns ?
+    const nameService = this.findService('in("dns",types) && priority>=300');
 
     const SOARecord = DNSRecord(
       "@",

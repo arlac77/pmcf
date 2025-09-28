@@ -16,7 +16,11 @@ import {
 import { addType } from "./types.mjs";
 import { asArray } from "./utils.mjs";
 import { networkAddressAttributes } from "./network-support.mjs";
-import { serviceTypeEndpoints, ServiceTypes } from "./service-types.mjs";
+import {
+  serviceTypeEndpoints,
+  serviceTypes,
+  ServiceTypes
+} from "./service-types.mjs";
 import {
   DNSRecord,
   dnsFullName,
@@ -78,7 +82,6 @@ export class Service extends Base {
   _type;
   _port;
   _systemd;
-  _extends = [];
 
   static {
     addType(this);
@@ -90,14 +93,6 @@ export class Service extends Base {
 
   toString() {
     return `${super.toString()}[${this.type}]`;
-  }
-
-  set extends(value) {
-    this._extends.push(value);
-  }
-
-  get extends() {
-    return this._extends;
   }
 
   get network() {
@@ -127,11 +122,11 @@ export class Service extends Base {
   }
 
   get serviceTypeEndpoints() {
-    return serviceTypeEndpoints(this.type);
+    return serviceTypeEndpoints(ServiceTypes[this.type]);
   }
 
   endpoints(filter) {
-    const data = serviceTypeEndpoints(this.type);
+    const data = serviceTypeEndpoints(ServiceTypes[this.type]);
     if (!data) {
       return [];
     }
@@ -195,7 +190,8 @@ export class Service extends Base {
 
   address(
     options = {
-      endpoints: e => e.networkInterface && e.networkInterface.kind !== "loopbak",
+      endpoints: e =>
+        e.networkInterface && e.networkInterface.kind !== "loopbak",
       select: e => e.domainName || e.address,
       limit: 1,
       join: ""
@@ -224,7 +220,7 @@ export class Service extends Base {
   }
 
   get port() {
-    return this._port ?? serviceTypeEndpoints(this.type)[0].port;
+    return this._port ?? serviceTypeEndpoints(ServiceTypes[this.type])[0].port;
   }
 
   set weight(value) {
@@ -244,7 +240,7 @@ export class Service extends Base {
   }
 
   get types() {
-    return new Set([...this._extendedPropertyIterator("type", new Set())]);
+    return serviceTypes(ServiceTypes[this.type]);
   }
 
   get systemdServices() {
@@ -285,7 +281,7 @@ export class Service extends Base {
       if (parameters) {
         for (const service of this.findServices()) {
           if (service !== this) {
-            const r = ServiceTypes[service.type]?.dnsRecord;
+            const r = ServiceTypes[service.type].dnsRecord;
 
             if (r?.type === dnsRecord.type) {
               parameters = dnsMergeParameters(parameters, r.parameters);

@@ -11,8 +11,7 @@ const SystemdTimesyncdServiceTypeDefinition = {
   extends: ExtraSourceServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
-  priority: 0.1,
-  service: {}
+  priority: 0.1
 };
 
 export class SystemdTimesyncdService extends ExtraSourceService {
@@ -35,7 +34,7 @@ export class SystemdTimesyncdService extends ExtraSourceService {
   systemdConfigs(name) {
     const options = (lower, upper) => {
       return {
-        services: `(type="ntp" || type="chrony") && priority >= ${lower} && priority <= ${upper}`,
+        services: `in("ntp",types) && priority >= ${lower} && priority <= ${upper}`,
         endpoints: e =>
           e.networkInterface && e.networkInterface.kind !== "loopback",
         select: endpoint => endpoint.address,

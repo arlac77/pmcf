@@ -8,21 +8,23 @@ const SystemdJournalRemoteServiceTypeDefinition = {
   extends: ServiceTypeDefinition,
   priority: 0.1,
   key: "name",
-  services: {
-    endpoints: [
-      {
-        family: "IPv4",
-        port: 19532,
-        protocol: "tcp",
-        tls: false
-      },
-      {
-        family: "IPv6",
-        port: 19532,
-        protocol: "tcp",
-        tls: false
-      }
-    ]
+  service: {
+    services: {
+      endpoints: [
+        {
+          family: "IPv4",
+          port: 19532,
+          protocol: "tcp",
+          tls: false
+        },
+        {
+          family: "IPv6",
+          port: 19532,
+          protocol: "tcp",
+          tls: false
+        }
+      ]
+    }
   }
 };
 

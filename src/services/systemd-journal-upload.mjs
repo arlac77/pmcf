@@ -11,8 +11,7 @@ const SystemdJournalUploadServiceTypeDefinition = {
   key: "name",
   attributes: {
     url: string_attribute_writable
-  },
-  service: {}
+  }
 };
 
 export class SystemdJournalUploadService extends Service {

@@ -58,7 +58,6 @@ export class ChronyService extends ExtraSourceService {
 
   constructor(owner, data) {
     super(owner, data);
-    this._extends.push(new Service(owner, { name: this.name, type: "ntp" }));
     this._systemd = "chronyd.service";
   }
 
@@ -87,7 +86,7 @@ export class ChronyService extends ExtraSourceService {
 
     const lines = [
       ...serviceEndpoints(this, {
-        services: '(type="ntp" || type="chrony") && priority>=100',
+        services: 'in("ntp",types) && priority>=100',
         endpoints: e =>
           e.type === "ntp" &&
           !isLinkLocal(e.address) &&

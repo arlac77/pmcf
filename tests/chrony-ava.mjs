@@ -7,9 +7,10 @@ test("ChronyService basics", async t => {
   await root.loadAll();
 
   const chrony = await root.named("/L1/host1/chrony");
-
+  
   //console.log([...chrony.findServices("type='ntp'"")]);
   t.true(chrony instanceof ChronyService);
+  t.deepEqual(chrony.types, new Set(["chrony", "ntp" ]));
 
   /*
   t.deepEqual(

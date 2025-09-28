@@ -105,13 +105,14 @@ export const ServiceTypes = {
     ]
   },
   "dhcpv6-server": { endpoints: [{ family: "IPv6", port: 547, tls: false }] },
-  smb: { endpoints: [{ protocol: "tcp", port: 445, tls: false }] },
-  timemachine: {
-    extends: ["smb"],
+  smb: {
     endpoints: [
       { family: "IPv4", protocol: "tcp", port: 445, tls: false },
       { family: "IPv6", protocol: "tcp", port: 445, tls: false }
-    ],
+    ]
+  },
+  timemachine: {
+    extends: ["smb"],
     dnsRecord: {
       type: "TXT",
       parameters: {
@@ -124,47 +125,69 @@ export const ServiceTypes = {
   }
 };
 
-function prepareEndPoints(type, td) {
-  if (td.endpoints) {
-    td.endpoints.forEach(e => (e.type = type));
-  }
-}
-
-Object.entries(ServiceTypes).forEach(([type, td]) =>
-  prepareEndPoints(type, td)
+Object.entries(ServiceTypes).forEach(([name, type]) =>
+  addServiceType(type, name)
 );
 
-export function addServiceTypes(st) {
-  for (const [type, td] of Object.entries(st)) {
-    ServiceTypes[type] = td;
-    prepareEndPoints(type, td);
+export function addServiceType(type, name) {
+  if (type) {
+    if (name) {
+      type.name = name;
+    }
 
-    if (td.services) {
-      addServiceTypes(td.services);
+    ServiceTypes[type.name] = type;
+    if (type.endpoints) {
+      type.endpoints.forEach(e => (e.type = type));
+    } else {
+      type.endpoints = [];
+    }
+
+    if (type.services) {
+      Object.entries(type.services).forEach(([name, type]) =>
+        addServiceType(type, name)
+      );
+    } else {
+      type.services = {};
+    }
+
+    if (type.extends) {
+      type.extends = type.extends.map(t =>
+        typeof t === "string" ? ServiceTypes[t] : t
+      );
+    } else {
+      type.extends = [];
     }
   }
+  return type;
+}
+
+export function serviceTypes(type) {
+  if (type) {
+    let types = new Set([type.name]);
+
+    for (const t of type.extends) {
+      types = types.union(serviceTypes(t));
+    }
+
+    return types;
+  }
+  return new Set();
 }
 
 export function serviceTypeEndpoints(type) {
-  let td = ServiceTypes[type];
-  if (td) {
-    const all = td.services
-      ? Object.keys(td.services)
+  if (type) {
+    const all = type.services
+      ? Object.values(type.services)
           .map(type => serviceTypeEndpoints(type))
           .flat()
       : [];
 
-    if (td.extends) {
-      all.push(
-        td.extends.reduce(
-          (a, c) => [...a, ...(ServiceTypes[c]?.endpoints || [])],
-          []
-        )
-      );
+    if (type.extends) {
+      all.push(type.extends.reduce((a, c) => [...a, ...c?.endpoints], []));
     }
 
-    if (td.endpoints) {
-      all.push(td.endpoints);
+    if (type.endpoints) {
+      all.push(type.endpoints);
     }
 
     return all.flat();

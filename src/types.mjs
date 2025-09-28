@@ -4,7 +4,7 @@ import {
   oneOfType,
   addType as paccAddType
 } from "pacc";
-import { addServiceTypes } from "./service-types.mjs";
+import { addServiceType } from "./service-types.mjs";
 export { types };
 
 export function addType(clazz) {
@@ -15,10 +15,7 @@ export function addType(clazz) {
     type.specializationOf.specializations[type.name] = type;
   }
 
-  if (type.service) {
-    addServiceTypes({ [type.name]: type.service });
-  }
-
+  addServiceType(type.service, type.name);
   paccAddType(type);
 }
 

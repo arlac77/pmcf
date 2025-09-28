@@ -7,8 +7,7 @@ const SystemdJournalServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
   priority: 0.1,
-  key: "name",
-  service: {}
+  key: "name"
 };
 
 export class SystemdJournalService extends Service {

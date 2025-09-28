@@ -10,7 +10,7 @@ class BaseEndpoint {
   }
 
   get type() {
-    return this._type ?? this.service.type;
+    return this._type?.name ?? this.service.type;
   }
 
   get priority()

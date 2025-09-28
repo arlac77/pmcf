@@ -3,6 +3,8 @@ import {
   Root,
   Host,
   Service,
+  ServiceTypes,
+  addServiceType,
   Endpoint,
   HTTPEndpoint,
   DomainNameEndpoint,
@@ -12,6 +14,7 @@ import {
 function prepare() {
   const root = new Root("/somwhere");
 
+  addServiceType({}, "http-control");
   const h1 = new Host(root);
   h1.read({
     name: "h1",
@@ -45,7 +48,7 @@ test("Endpoint from Service basics", t => {
   //console.log(eps.map(e => e.toString()));
 
   const options = {
-    type: "dns",
+    type: ServiceTypes.dns,
     protocol: "udp",
     port: 53,
     tls: false
@@ -77,7 +80,7 @@ test("HTTPEndpoint basics", t => {
   const nas = h1.networkAddresses();
 
   const ep = new HTTPEndpoint(s1, [...nas][0], {
-    type: "http-control",
+    type: ServiceTypes["http-control"],
     port: 80,
     pathname: "/p1"
   });
@@ -94,7 +97,7 @@ test("HTTPEndpoint from URL", t => {
   const { s1 } = prepare();
 
   const ep = new HTTPEndpoint(s1, "https://somwhere/aPath", {
-    type: "http-control"
+    type: ServiceTypes["http-control"]
   });
 
   t.is(ep.type, "http-control");
@@ -108,7 +111,7 @@ test("HTTPEndpoint from URL with port", t => {
   const { s1 } = prepare();
 
   const ep = new HTTPEndpoint(s1, "https://somwhere:1443/aPath", {
-    type: "http-control"
+    type: ServiceTypes["http-control"]
   });
 
   t.is(ep.type, "http-control");
@@ -137,7 +140,12 @@ test("DomainNameEndpoint", t => {
 
   h1.services = s1;
 
-  const options = { port: 123, type: "ntp", protocol: "udp", tls: false };
+  const options = {
+    port: 123,
+    type: ServiceTypes.ntp,
+    protocol: "udp",
+    tls: false
+  };
 
   t.deepEqual(s1.endpoint(), new DomainNameEndpoint(s1, "h1", options));
 });

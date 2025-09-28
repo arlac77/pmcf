@@ -5,7 +5,8 @@ import {
   Host,
   Service,
   Endpoint,
-  DomainNameEndpoint
+  DomainNameEndpoint,
+  ServiceTypes
 } from "pmcf";
 
 test("Service basics", t => {
@@ -51,7 +52,7 @@ test("Service basics", t => {
       ...lna.map(
         a =>
           new Endpoint(s1, a, {
-            type: "dns",
+            type: ServiceTypes.dns,
             protocol: "udp",
             port: 53,
             tls: false
@@ -60,7 +61,7 @@ test("Service basics", t => {
       ...ena.map(
         a =>
           new Endpoint(s1, a, {
-            type: "dns",
+            type: ServiceTypes.dns,
             protocol: "udp",
             port: 53,
             tls: false
@@ -262,7 +263,7 @@ test("Service owner", t => {
   t.is(s1b.weight, 7);
 
   const options = {
-    type: "dns",
+    type: ServiceTypes.dns,
     port: 53,
     protocol: "udp",
     tls: false
@@ -274,7 +275,7 @@ test("Service owner", t => {
   ]);
 });
 
-test.only("Service type extension", t => {
+test("Service type extension", t => {
   const root = new Root("/somwhere");
 
   const h1 = new Host(root);
