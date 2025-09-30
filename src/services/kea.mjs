@@ -155,7 +155,7 @@ export class KeaService extends Service {
     console.log("kea", name, network.name);
 
     const dnsServerEndpoints = serviceEndpoints(network, {
-      services: 'type="dns" && priority >= 300',
+      services: 'in("dns",types) && priority>=300',
       endpoints: endpoint => endpoint.networkInterface?.kind !== "loopback"
     });
 
