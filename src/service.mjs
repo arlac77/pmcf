@@ -282,10 +282,10 @@ export class Service extends Base {
         for (const service of this.findServices()) {
           if (service !== this) {
             const serviceType = ServiceTypes[service.type];
-            if(!serviceType) {
+            /*if(!serviceType) {
               throw new Error(`Unknown service '${service.type}'`);
-            }
-            const r = serviceType.dnsRecord;
+            }*/
+            const r = serviceType?.dnsRecord;
 
             if (r?.type === dnsRecord.type) {
               parameters = dnsMergeParameters(parameters, r.parameters);
