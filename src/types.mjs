@@ -7,16 +7,14 @@ import {
 import { addServiceType } from "./service-types.mjs";
 export { types };
 
-export function addType(clazz) {
-  const type = clazz.typeDefinition;
-  type.clazz = clazz;
+export function addType(type) {
+  type = paccAddType(type);
 
   if (type.specializationOf) {
     type.specializationOf.specializations[type.name] = type;
   }
 
   addServiceType(type.service, type.name);
-  paccAddType(type);
 }
 
 export function resolveTypeLinks() {
