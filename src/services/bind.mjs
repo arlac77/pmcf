@@ -9,7 +9,8 @@ import {
   boolean_attribute_writable_true,
   boolean_attribute_writable_false,
   number_attribute_writable,
-  string_collection_attribute_writable
+  string_collection_attribute_writable,
+  name_attribute_writable
 } from "pacc";
 import { writeLines, asArray } from "../utils.mjs";
 import {
@@ -25,18 +26,36 @@ import {
   networkAddressType
 } from "pmcf";
 import { addType } from "../types.mjs";
-import { Service, ServiceTypeDefinition } from "../service.mjs";
+import { ServiceTypeDefinition } from "../service.mjs";
 import { ExtraSourceServiceTypeDefinition } from "../extra-source-service.mjs";
 import { addHook } from "../hooks.mjs";
 
+const BindServiceViewTypeDefinition = {
+  name: "bind-view",
+  key: "name",
+  attributes: {
+    name: { ...name_attribute_writable },
+    access: {
+      type: networkAddressType,
+      collection: true,
+      writable: true
+    }
+  }
+};
+
 const BindServiceTypeDefinition = {
   name: "bind",
+  extends: ExtraSourceServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
-  extends: ExtraSourceServiceTypeDefinition,
   priority: 0.1,
   key: "name",
   attributes: {
+    /*views: {
+      type: "object", //BindServiceViewTypeDefinition,
+      collection: true,
+      writable: true
+    },*/
     zones: {
       type: oneOfType([networkAddressType, "location", "owner"]),
       collection: true,
