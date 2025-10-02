@@ -3,9 +3,9 @@ import { addType } from "../types.mjs";
 
 const SystemdJournalRemoteServiceTypeDefinition = {
   name: "systemd-journal-remote",
+  extends: ServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
-  extends: ServiceTypeDefinition,
   priority: 0.1,
   key: "name",
   service: {

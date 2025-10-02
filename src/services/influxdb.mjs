@@ -7,9 +7,9 @@ import { Service, ServiceTypeDefinition } from "../service.mjs";
 
 const InfluxdbServiceTypeDefinition = {
   name: "influxdb",
+  extends: ServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
-  extends: ServiceTypeDefinition,
   priority: 0.1,
   key: "name",
   attributes: {

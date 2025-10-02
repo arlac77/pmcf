@@ -4,9 +4,9 @@ import { addType } from "../types.mjs";
 
 const TUNdNetworkInterfaceTypeDefinition = {
   name: "tun",
+  extends: NetworkInterfaceTypeDefinition,
   specializationOf: NetworkInterfaceTypeDefinition,
   owners: NetworkInterfaceTypeDefinition.owners,
-  extends: NetworkInterfaceTypeDefinition,
   priority: 0.1,
   key: "name"
 };

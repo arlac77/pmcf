@@ -5,8 +5,9 @@ import { networkAddressType } from "pmcf";
 
 export const ExtraSourceServiceTypeDefinition = {
   name: "extra-source-service",
-  owners: ServiceTypeDefinition.owners,
   extends: ServiceTypeDefinition,
+  specializationOf: ServiceTypeDefinition,
+  owners: ServiceTypeDefinition.owners,
   priority: 0.1,
   attributes: {
     source: {

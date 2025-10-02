@@ -7,9 +7,9 @@ import {
 
 const HeadscaleServiceTypeDefinition = {
   name: "headscale",
+  extends: ExtraSourceServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
-  extends: ExtraSourceServiceTypeDefinition,
   priority: 0.1,
   key: "name",
   service: {

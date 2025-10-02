@@ -2,11 +2,7 @@ import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { isLinkLocal } from "ip-utilties";
 import { addType } from "../types.mjs";
-import {
-  Service,
-  ServiceTypeDefinition,
-  serviceEndpoints
-} from "../service.mjs";
+import { ServiceTypeDefinition, serviceEndpoints } from "../service.mjs";
 import {
   ExtraSourceService,
   ExtraSourceServiceTypeDefinition
@@ -15,9 +11,9 @@ import { writeLines } from "../utils.mjs";
 
 const ChronyServiceTypeDefinition = {
   name: "chrony",
+  extends: ExtraSourceServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
-  extends: ExtraSourceServiceTypeDefinition,
   priority: 0.1,
   key: "name",
   service: {

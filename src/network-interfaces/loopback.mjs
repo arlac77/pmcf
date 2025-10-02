@@ -5,9 +5,9 @@ import { addType } from "../types.mjs";
 
 const LoopbackNetworkInterfaceTypeDefinition = {
   name: "loopback",
+  extends: NetworkInterfaceTypeDefinition,
   specializationOf: NetworkInterfaceTypeDefinition,
   owners: NetworkInterfaceTypeDefinition.owners,
-  extends: NetworkInterfaceTypeDefinition,
   priority: 0.1,
   key: "name"
 };

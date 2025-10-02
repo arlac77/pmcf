@@ -19,9 +19,9 @@ import { writeLines } from "../utils.mjs";
 
 const KeaServiceTypeDefinition = {
   name: "kea",
+  extends: ServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
-  extends: ServiceTypeDefinition,
   priority: 0.1,
   key: "name",
   attributes: {

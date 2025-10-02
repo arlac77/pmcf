@@ -11,9 +11,9 @@ import {
 
 const WLANNetworkInterfaceTypeDefinition = {
   name: "wlan",
+  extends: EthernetNetworkInterfaceTypeDefinition,
   specializationOf: NetworkInterfaceTypeDefinition,
   owners: EthernetNetworkInterfaceTypeDefinition.owners,
-  extends: EthernetNetworkInterfaceTypeDefinition,
   priority: 0.1,
   key: "name",
   attributes: {

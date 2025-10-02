@@ -7,9 +7,9 @@ import {
 
 export const EthernetNetworkInterfaceTypeDefinition = {
   name: "ethernet",
+  extends: NetworkInterfaceTypeDefinition,
   specializationOf: NetworkInterfaceTypeDefinition,
   owners: NetworkInterfaceTypeDefinition.owners,
-  extends: NetworkInterfaceTypeDefinition,
   priority: 0.1,
   key: "name",
   attributes: {

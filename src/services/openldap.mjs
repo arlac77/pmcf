@@ -8,9 +8,9 @@ import { addHook } from "../hooks.mjs";
 
 const OpenLDAPServiceTypeDefinition = {
   name: "openldap",
+  extends: ServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
-  extends: ServiceTypeDefinition,
   priority: 0.1,
   key: "name",
   attributes: {

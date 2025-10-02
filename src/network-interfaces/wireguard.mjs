@@ -4,9 +4,9 @@ import { addType } from "../types.mjs";
 
 const WireguardNetworkInterfaceTypeDefinition = {
   name: "wireguard",
+  extends: NetworkInterfaceTypeDefinition,
   specializationOf: NetworkInterfaceTypeDefinition,
   owners: NetworkInterfaceTypeDefinition.owners,
-  extends: NetworkInterfaceTypeDefinition,
   priority: 0.1,
   key: "name"
 };
