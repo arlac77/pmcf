@@ -14,7 +14,6 @@ import { writeLines } from "./utils.mjs";
 const ClusterTypeDefinition = {
   name: "cluster",
   owners: [Owner.typeDefinition, "network", "location", "root"],
-  priority: 0.7,
   extends: Host.typeDefinition,
   key: "name",
   attributes: {

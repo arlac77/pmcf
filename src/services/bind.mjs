@@ -48,7 +48,6 @@ const BindServiceTypeDefinition = {
   extends: ExtraSourceServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
-  priority: 0.1,
   key: "name",
   attributes: {
     /*views: {

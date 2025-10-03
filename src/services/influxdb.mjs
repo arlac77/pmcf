@@ -10,7 +10,7 @@ const InfluxdbServiceTypeDefinition = {
   extends: ServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
-  priority: 0.1,
+  //: 0.1,
   key: "name",
   attributes: {
     "metrics-disabled": {

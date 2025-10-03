@@ -26,7 +26,6 @@ import { NetworkInterfaceTypeDefinition } from "./network-interfaces/network-int
 
 const HostTypeDefinition = {
   name: "host",
-  priority: 0.5,
   owners: ["owner", "network", "root"],
   extends: Base.typeDefinition,
   key: "name",

@@ -14,7 +14,6 @@ import { networks_attribute } from "./network-support.mjs";
 const OwnerTypeDefinition = {
   name: "owner",
   owners: ["location", "owner", "root"],
-  priority: 0.9,
   extends: Base.typeDefinition,
   key: "name",
   attributes: {

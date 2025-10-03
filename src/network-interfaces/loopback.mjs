@@ -8,7 +8,6 @@ const LoopbackNetworkInterfaceTypeDefinition = {
   extends: NetworkInterfaceTypeDefinition,
   specializationOf: NetworkInterfaceTypeDefinition,
   owners: NetworkInterfaceTypeDefinition.owners,
-  priority: 0.1,
   key: "name"
 };
 

@@ -7,7 +7,6 @@ import { networkAttributes } from "./network-support.mjs";
 export const NetworkTypeDefinition = {
   name: "network",
   owners: ["location", "owner", "root"],
-  priority: 0.8,
   extends: Owner.typeDefinition,
   key: "name",
   attributes: {

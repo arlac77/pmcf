@@ -14,7 +14,6 @@ const WLANNetworkInterfaceTypeDefinition = {
   extends: EthernetNetworkInterfaceTypeDefinition,
   specializationOf: NetworkInterfaceTypeDefinition,
   owners: EthernetNetworkInterfaceTypeDefinition.owners,
-  priority: 0.1,
   key: "name",
   attributes: {
     ssid: string_attribute_writable,

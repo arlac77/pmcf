@@ -7,7 +7,6 @@ import { loadHooks } from "./hooks.mjs";
 const LocationTypeDefinition = {
   name: "location",
   owners: [Owner.typeDefinition, "location", "root"],
-  priority: 1.0,
   extends: Owner.typeDefinition,
   key: "name",
   attributes: {

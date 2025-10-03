@@ -11,7 +11,6 @@ const SystemdTimesyncdServiceTypeDefinition = {
   extends: ExtraSourceServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
-  priority: 0.1
 };
 
 export class SystemdTimesyncdService extends ExtraSourceService {

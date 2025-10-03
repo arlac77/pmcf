@@ -8,7 +8,6 @@ export const ExtraSourceServiceTypeDefinition = {
   extends: ServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
-  priority: 0.1,
   attributes: {
     source: {
       ...default_attribute_writable,

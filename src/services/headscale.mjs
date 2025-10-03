@@ -1,16 +1,11 @@
 import { addType } from "../types.mjs";
-import { ServiceTypeDefinition } from "../service.mjs";
-import {
-  ExtraSourceService,
-  ExtraSourceServiceTypeDefinition
-} from "../extra-source-service.mjs";
+import { ServiceTypeDefinition, Service } from "../service.mjs";
 
 const HeadscaleServiceTypeDefinition = {
   name: "headscale",
-  extends: ExtraSourceServiceTypeDefinition,
+  extends: ServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
-  priority: 0.1,
   key: "name",
   service: {
     endpoints: [
@@ -30,7 +25,7 @@ const HeadscaleServiceTypeDefinition = {
   }
 };
 
-export class HeadscaleService extends ExtraSourceService {
+export class HeadscaleService extends Service {
   static {
     addType(this);
   }

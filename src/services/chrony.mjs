@@ -14,7 +14,6 @@ const ChronyServiceTypeDefinition = {
   extends: ExtraSourceServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
-  priority: 0.1,
   key: "name",
   service: {
     extends: ["ntp"],

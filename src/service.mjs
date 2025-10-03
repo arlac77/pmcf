@@ -43,7 +43,6 @@ export const endpointAttributes = {
 export const EndpointTypeDefinition = {
   name: "endpoint",
   owners: ["service", "network_interface"],
-  priority: 0.4,
   specializations: {},
   key: "type",
   attributes: endpointAttributes
@@ -52,7 +51,6 @@ export const EndpointTypeDefinition = {
 export const ServiceTypeDefinition = {
   name: "service",
   owners: [Host.typeDefinition, "cluster", "network_interface"],
-  priority: 0.4,
   extends: Base.typeDefinition,
   specializations: {},
   factoryFor(owner, value) {

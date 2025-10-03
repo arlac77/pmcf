@@ -14,7 +14,6 @@ import { addType } from "./types.mjs";
 const SubnetTypeDefinition = {
   name: "subnet",
   owners: ["location", "owner", "network", "root"],
-  priority: 0.6,
   constructWithIdentifierOnly: true,
   key: "address",
   attributes: {

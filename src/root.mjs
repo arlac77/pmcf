@@ -5,7 +5,6 @@ import { addType, types, resolveTypeLinks, typeFactory } from "./types.mjs";
 
 const RootTypeDefinition = {
   name: "root",
-  priority: 1000,
   extends: Location.typeDefinition
 };
 
@@ -76,7 +75,7 @@ export class Root extends Location {
 
   async loadAll() {
     for (const type of Object.values(types).sort(
-      (a, b) => b.priority - a.priority
+      (a, b) => (b.priority || 1.0) - (a.priority || 1.0)
     )) {
       if (type.clazz) {
         for await (const name of glob(type.clazz.fileNameGlob, {

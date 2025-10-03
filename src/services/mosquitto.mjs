@@ -10,7 +10,6 @@ const MosquittoServiceTypeDefinition = {
   extends: ServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
-  priority: 0.1,
   key: "name",
   attributes: {
     log_timestamp: {

@@ -5,7 +5,6 @@ import { addType } from "../src/types.mjs";
 
 const MyTypeDefinition = {
   name: "mytype",
-  priority: 0.9,
   extends: Base.typeDefinition,
   key: "name",
   attributes: {

@@ -17,7 +17,6 @@ import { Network } from "../network.mjs";
 
 export const NetworkInterfaceTypeDefinition = {
   name: "network_interface",
-  priority: 0.4,
   owners: ["host"],
   extends: Base.typeDefinition,
   specializations: {},
