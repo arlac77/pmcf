@@ -507,7 +507,7 @@ export class Base {
     const context = {
       stopClass: Base,
       root: this,
-      globals: Object.assign({}, this.properties, this.owner.properties)
+      globals: Object.assign({}, this.properties, this.owner?.properties)
     };
 
     return expand(object, context);

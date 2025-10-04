@@ -77,7 +77,7 @@ export class Root extends Location {
     for (const type of Object.values(types).sort(
       (a, b) => (b.priority || 1.0) - (a.priority || 1.0)
     )) {
-      if (type.clazz) {
+      if (type.clazz?.fileNameGlob) {
         for await (const name of glob(type.clazz.fileNameGlob, {
           cwd: this.directory
         })) {
