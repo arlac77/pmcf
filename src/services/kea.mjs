@@ -424,7 +424,8 @@ export class KeaService extends Service {
             s =>
               s.family === "IPv4" &&
               // TODO keep out tailscale
-              s.cidr !== "100.64.0.2/32"
+              s.cidr !== "100.64.0.2/32" &&
+              s.cidr !== "100.64.0.3/32"
           )
           .map((subnet, index) => {
             return {
