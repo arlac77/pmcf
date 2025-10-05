@@ -27,7 +27,7 @@ test("types", t => {
   t.is(types.subnet.key, "address");
 
   t.is(types.service.clazz, Service);
-  
+
   /*
   t.deepEqual(types.service.owners, [
     types.host,
@@ -36,7 +36,7 @@ test("types", t => {
   ]);
   */
   t.is(types.host.clazz, Host);
-t.deepEqual(types.host.owners, [types.owner, types.network, types.root]);
+  t.deepEqual(types.host.owners, [types.owner, types.network, types.root]);
 
   t.is(types.bind.clazz, BindService);
   t.is(types.chrony.clazz, ChronyService);
