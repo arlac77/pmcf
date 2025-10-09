@@ -2,6 +2,22 @@ export const ServiceTypes = {
   "pacman-repo": {
     extends: ["https"]
   },
+  syslog: {
+    endpoints: [
+      {
+        protocol: "udp",
+        family: "IPv4",
+        port: 514,
+        tls: false
+      },
+      {
+        protocol: "udp",
+        family: "IPv6",
+        port: 514,
+        tls: false
+      }
+    ]
+  },
   mqtt: {
     endpoints: [
       { family: "IPv4", protocol: "tcp", port: 1883, tls: false },
