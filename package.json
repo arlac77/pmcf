@@ -53,7 +53,7 @@
   "dependencies": {
     "ip-utilties": "^1.4.9",
     "npm-pkgbuild": "^18.3.10",
-    "pacc": "^4.40.0",
+    "pacc": "^4.40.2",
     "package-directory": "^8.1.0"
   },
   "devDependencies": {
