@@ -71,7 +71,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   }
 
   static isCommonName(name) {
-    false;
+    return false;
   }
 
   _ipAddresses = new Map();
