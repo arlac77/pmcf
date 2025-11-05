@@ -1,7 +1,8 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { isLinkLocal } from "ip-utilties";
-import { addType } from "../types.mjs";
+import { addType } from "pacc";
+import { addServiceType } from "pmcf";
 import { ServiceTypeDefinition, serviceEndpoints } from "../service.mjs";
 import {
   ExtraSourceService,
@@ -45,6 +46,7 @@ const ChronyServiceTypeDefinition = {
 export class ChronyService extends ExtraSourceService {
   static {
     addType(this);
+    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
   }
 
   static get typeDefinition() {

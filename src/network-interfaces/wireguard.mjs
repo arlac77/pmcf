@@ -1,6 +1,6 @@
+import { addType } from "pacc";
 import { SkeletonNetworkInterface } from "./skeleton.mjs";
 import { NetworkInterfaceTypeDefinition } from "./network-interface.mjs";
-import { addType } from "../types.mjs";
 
 const WireguardNetworkInterfaceTypeDefinition = {
   name: "wireguard",

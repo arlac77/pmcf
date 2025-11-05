@@ -1,7 +1,6 @@
-import { default_attribute_writable } from "pacc";
+import { default_attribute_writable, addType } from "pacc";
 import { Owner } from "./owner.mjs";
 import { Subnet } from "./subnet.mjs";
-import { addType } from "./types.mjs";
 import { networkAttributes } from "./network-support.mjs";
 
 export const NetworkTypeDefinition = {

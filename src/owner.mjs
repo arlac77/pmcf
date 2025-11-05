@@ -3,12 +3,12 @@ import {
   default_attribute_writable,
   string_collection_attribute_writable,
   string_attribute_writable,
-  email_attribute
+  email_attribute,
+  addType, types
 } from "pacc";
 import { asIterator } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { Subnet, SUBNET_GLOBAL_IPV4, SUBNET_GLOBAL_IPV6 } from "./subnet.mjs";
-import { addType, types } from "./types.mjs";
 import { networks_attribute } from "./network-support.mjs";
 
 const OwnerTypeDefinition = {

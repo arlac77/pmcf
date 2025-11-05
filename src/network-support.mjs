@@ -1,5 +1,4 @@
 import {
-  oneOfType,
   default_attribute_writable,
   string_collection_attribute_writable,
   string_attribute_writable,
@@ -8,10 +7,13 @@ import {
   boolean_attribute_writable
 } from "pacc";
 
-export const networkAddressType = oneOfType("network|host|network_interface");
-//export const networkAddressType = oneOfType([NetworkTypeDefinition,"host","network_interface"]);
+export const networkAddressType = "network|host|network_interface";
 
-export const networks_attribute = { ...default_attribute_writable, type: "network", collection: true };
+export const networks_attribute = {
+  ...default_attribute_writable,
+  type: "network",
+  collection: true
+};
 
 export const networkAttributes = {
   scope: {

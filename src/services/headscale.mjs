@@ -1,4 +1,5 @@
-import { addType } from "../types.mjs";
+import { addType } from "pacc";
+import { addServiceType } from "pmcf";
 import { ServiceTypeDefinition, Service } from "../service.mjs";
 
 const HeadscaleServiceTypeDefinition = {
@@ -40,6 +41,7 @@ const HeadscaleServiceTypeDefinition = {
 export class HeadscaleService extends Service {
   static {
     addType(this);
+    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
   }
 
   static get typeDefinition() {

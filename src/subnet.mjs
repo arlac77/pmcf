@@ -6,10 +6,9 @@ import {
   familyIP,
   matchPrefixIP
 } from "ip-utilties";
-import { string_attribute, name_attribute, number_attribute } from "pacc";
+import { string_attribute, name_attribute, number_attribute, addType } from "pacc";
 import { networks_attribute } from "./network-support.mjs";
 import { Base } from "./base.mjs";
-import { addType } from "./types.mjs";
 
 const SubnetTypeDefinition = {
   name: "subnet",

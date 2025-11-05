@@ -1,6 +1,5 @@
-import { string_attribute_writable } from "pacc";
-import { Service, ServiceTypeDefinition } from "pmcf";
-import { addType } from "../types.mjs";
+import { string_attribute_writable, addType } from "pacc";
+import { Service, ServiceTypeDefinition, addServiceType } from "pmcf";
 
 const SystemdJournalUploadServiceTypeDefinition = {
   name: "systemd-journal-upload",
@@ -16,6 +15,7 @@ const SystemdJournalUploadServiceTypeDefinition = {
 export class SystemdJournalUploadService extends Service {
   static {
     addType(this);
+    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
   }
 
   static get typeDefinition() {

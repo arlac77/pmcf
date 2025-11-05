@@ -1,6 +1,6 @@
+import { addType } from "pacc";
 import { NetworkInterface } from "./network-interface.mjs";
 import { NetworkInterfaceTypeDefinition } from "./network-interface.mjs";
-import { addType } from "../types.mjs";
 
 const TUNdNetworkInterfaceTypeDefinition = {
   name: "tun",

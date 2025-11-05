@@ -76,11 +76,23 @@ test("Owner read write", t => {
         },
         subnets: {
           "10.0/16": {
+            directory: "/o1/10.0/16",
+            name: "10.0/16",
+            owner: {
+              name: "o1",
+              type: "owner"
+            },
             family: "IPv4",
             prefixLength: 16
           },
           "fe80::/64": {
+            directory: "/o1/fe80::/64",
             family: "IPv6",
+            name: "fe80::/64",
+            owner: {
+              name: "o1",
+              type: "owner"
+            },
             prefixLength: 64
           }
         }
@@ -88,11 +100,23 @@ test("Owner read write", t => {
     },
     subnets: {
       "10.0/16": {
+        directory: "/o1/10.0/16",
         family: "IPv4",
+        name: "10.0/16",
+        owner: {
+          name: "o1",
+          type: "owner"
+        },
         prefixLength: 16
       },
       "fe80::/64": {
+        directory: "/o1/fe80::/64",
         family: "IPv6",
+        name: "fe80::/64",
+        owner: {
+          name: "o1",
+          type: "owner"
+        },
         prefixLength: 64
       }
     }

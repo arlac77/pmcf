@@ -3,12 +3,12 @@ import { FileContentProvider } from "npm-pkgbuild";
 import {
   default_attribute_writable,
   default_attribute,
-  number_attribute_writable
+  number_attribute_writable,
+  addType
 } from "pacc";
 import { Owner } from "./owner.mjs";
 import { Host } from "./host.mjs";
 import { serviceEndpoints } from "pmcf";
-import { addType } from "./types.mjs";
 import { writeLines } from "./utils.mjs";
 
 const ClusterTypeDefinition = {

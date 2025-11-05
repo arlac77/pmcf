@@ -1,7 +1,7 @@
+import { addType } from "pacc";
 import { SUBNET_LOCALHOST_IPV4, SUBNET_LOCALHOST_IPV6 } from "pmcf";
 import { SkeletonNetworkInterface } from "./skeleton.mjs";
 import { NetworkInterfaceTypeDefinition } from "./network-interface.mjs";
-import { addType } from "../types.mjs";
 
 const LoopbackNetworkInterfaceTypeDefinition = {
   name: "loopback",

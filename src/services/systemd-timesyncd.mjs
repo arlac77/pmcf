@@ -1,10 +1,10 @@
+import { addType } from "pacc";
 import {
   ExtraSourceService,
   ExtraSourceServiceTypeDefinition,
   ServiceTypeDefinition,
   serviceEndpoints
 } from "pmcf";
-import { addType } from "../types.mjs";
 
 const SystemdTimesyncdServiceTypeDefinition = {
   name: "systemd-timesyncd",

@@ -1,5 +1,5 @@
 import test from "ava";
-import { extractFrom, Root, Host, Location, Owner, Base } from "pmcf";
+import { extractFrom, Root, Host, Location, Owner } from "pmcf";
 
 test("Root basics", async t => {
   const root = new Root("/somewhere");

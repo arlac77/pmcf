@@ -1,6 +1,8 @@
 import { join } from "node:path";
 import { allOutputs } from "npm-pkgbuild";
 import {
+  typeFactory,
+  addType,
   parse,
   globals,
   expand,
@@ -14,7 +16,6 @@ import {
   description_attribute_writable,
   boolean_attribute_writable
 } from "pacc";
-import { addType, typeFactory } from "./types.mjs";
 import { asArray } from "./utils.mjs";
 
 const BaseTypeDefinition = {
@@ -80,6 +81,7 @@ export class Base {
 
   ownerFor(attribute, data) {
     const owners = attribute.type.owners;
+
     if (owners) {
       for (const type of owners) {
         if (this.typeName === type?.name) {

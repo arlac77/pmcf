@@ -7,7 +7,8 @@ import {
   string_attribute_writable,
   string_collection_attribute_writable,
   number_attribute_writable,
-  boolean_attribute_false
+  boolean_attribute_false,
+  addType
 } from "pacc";
 import { ServiceOwner, Base, addresses } from "pmcf";
 import { networkAddressAttributes } from "./network-support.mjs";
@@ -19,7 +20,6 @@ import {
   sectionLines,
   asArray
 } from "./utils.mjs";
-import { addType } from "./types.mjs";
 import { loadHooks } from "./hooks.mjs";
 import { generateMachineInfo, generateKnownHosts } from "./host-utils.mjs";
 import { NetworkInterfaceTypeDefinition } from "./network-interfaces/network-interface.mjs";

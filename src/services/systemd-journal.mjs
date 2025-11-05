@@ -1,5 +1,5 @@
+import { addType } from "pacc";
 import { Service, ServiceTypeDefinition } from "pmcf";
-import { addType } from "../types.mjs";
 
 const SystemdJournalServiceTypeDefinition = {
   name: "systemd-journal",

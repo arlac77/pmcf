@@ -3,7 +3,8 @@ import {
   string_collection_attribute,
   string_collection_attribute_writable,
   number_attribute_writable,
-  boolean_attribute_false
+  boolean_attribute_false,
+  addType
 } from "pacc";
 import {
   Base,
@@ -13,7 +14,6 @@ import {
   HTTPEndpoint,
   UnixEndpoint
 } from "pmcf";
-import { addType } from "./types.mjs";
 import { asArray } from "./utils.mjs";
 import { networkAddressAttributes } from "./network-support.mjs";
 import {

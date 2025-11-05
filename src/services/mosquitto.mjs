@@ -1,8 +1,8 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
-import { boolean_attribute_writable_true } from "pacc";
+import { boolean_attribute_writable_true, addType } from "pacc";
+import { addServiceType } from "pmcf";
 import { writeLines } from "../utils.mjs";
-import { addType } from "../types.mjs";
 import { Service, ServiceTypeDefinition } from "../service.mjs";
 
 const MosquittoServiceTypeDefinition = {
@@ -29,6 +29,7 @@ const MosquittoServiceTypeDefinition = {
 export class MosquittoService extends Service {
   static {
     addType(this);
+    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
   }
 
   static get typeDefinition() {

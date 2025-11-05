@@ -1,7 +1,7 @@
 import { readFile, glob } from "node:fs/promises";
 import { join } from "node:path";
+import { typeFactory, addType, types, resolveTypeLinks } from "pacc";
 import { Location } from "./location.mjs";
-import { addType, types, resolveTypeLinks, typeFactory } from "./types.mjs";
 
 const RootTypeDefinition = {
   name: "root",

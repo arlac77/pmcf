@@ -1,5 +1,5 @@
-import { Service, ServiceTypeDefinition } from "pmcf";
-import { addType } from "../types.mjs";
+import { addType } from "pacc";
+import { Service, ServiceTypeDefinition, addServiceType } from "pmcf";
 
 const SystemdJournalRemoteServiceTypeDefinition = {
   name: "systemd-journal-remote",
@@ -30,6 +30,7 @@ const SystemdJournalRemoteServiceTypeDefinition = {
 export class SystemdJournalRemoteService extends Service {
   static {
     addType(this);
+    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
   }
 
   static get typeDefinition() {

@@ -1,4 +1,5 @@
 import test from "ava";
+import { types, resolveTypeLinks } from "pacc";
 import {
   Base,
   Cluster,
@@ -10,9 +11,7 @@ import {
   Subnet,
   Owner,
   BindService,
-  ChronyService,
-  types,
-  resolveTypeLinks
+  ChronyService
 } from "pmcf";
 
 test("types", t => {
@@ -54,4 +53,6 @@ test("types", t => {
 
   //console.log("CLUSTER EXT", types.cluster.extends.name, types.host.name);
   //t.is(types.cluster.extends, types.host);
+
+  t.is(types.loopback.extends, types.network_interface);
 });

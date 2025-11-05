@@ -4,9 +4,11 @@ import { reverseArpa, isLinkLocal } from "ip-utilties";
 import {
   string_attribute_writable,
   number_attribute_writable,
-  boolean_attribute_writable_true
+  boolean_attribute_writable_true,
+  addType
 } from "pacc";
 import {
+  addServiceType,
   Service,
   sortDescendingByPriority,
   ServiceTypeDefinition,
@@ -14,7 +16,6 @@ import {
   SUBNET_LOCALHOST_IPV4,
   SUBNET_LOCALHOST_IPV6
 } from "pmcf";
-import { addType } from "../types.mjs";
 import { writeLines } from "../utils.mjs";
 
 const KeaServiceTypeDefinition = {
@@ -130,6 +131,7 @@ const keaVersion = "3.0.1";
 export class KeaService extends Service {
   static {
     addType(this);
+    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
   }
 
   static get typeDefinition() {

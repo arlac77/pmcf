@@ -3,6 +3,7 @@ import { createHmac } from "node:crypto";
 import { FileContentProvider } from "npm-pkgbuild";
 import { isLinkLocal, reverseArpa } from "ip-utilties";
 import {
+  addType,
   oneOfType,
   default_attribute_writable,
   string_attribute_writable,
@@ -23,9 +24,9 @@ import {
   ExtraSourceService,
   serviceEndpoints,
   addresses,
-  networkAddressType
+  networkAddressType,
+  addServiceType
 } from "pmcf";
-import { addType } from "../types.mjs";
 import { ServiceTypeDefinition } from "../service.mjs";
 import { ExtraSourceServiceTypeDefinition } from "../extra-source-service.mjs";
 import { addHook } from "../hooks.mjs";
@@ -56,7 +57,7 @@ const BindServiceTypeDefinition = {
       writable: true
     },*/
     zones: {
-      type: oneOfType([networkAddressType, "location", "owner"]),
+      type: networkAddressType+ "|location|owner",
       collection: true,
       writable: true
     },
@@ -154,6 +155,7 @@ export class BindService extends ExtraSourceService {
   minimum = 60000;
   static {
     addType(this);
+    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
   }
 
   static get typeDefinition() {

@@ -1,4 +1,4 @@
-import { addType } from "../types.mjs";
+import { addType } from "pacc";
 import { ServiceTypeDefinition, Service } from "../service.mjs";
 
 export class TailscaleService extends Service {

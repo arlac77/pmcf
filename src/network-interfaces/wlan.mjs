@@ -1,7 +1,6 @@
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
-import { string_attribute_writable, secret_attribute } from "pacc";
-import { addType } from "../types.mjs";
+import { string_attribute_writable, secret_attribute, addType } from "pacc";
 import { writeLines, sectionLines } from "../utils.mjs";
 import { NetworkInterfaceTypeDefinition } from "./network-interface.mjs";
 import {

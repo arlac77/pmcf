@@ -1,5 +1,4 @@
-import { default_attribute_writable } from "pacc";
-import { addType } from "../types.mjs";
+import { default_attribute_writable, addType } from "pacc";
 import {
   NetworkInterface,
   NetworkInterfaceTypeDefinition

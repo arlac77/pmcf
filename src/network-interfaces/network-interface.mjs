@@ -3,7 +3,8 @@ import { hasWellKnownSubnet, normalizeIP } from "ip-utilties";
 import {
   default_attribute_writable,
   string_attribute_writable,
-  hostname_attribute
+  hostname_attribute,
+  addType
 } from "pacc";
 import { Base, cidrAddresses } from "pmcf";
 import {
@@ -11,7 +12,6 @@ import {
   networkAddressAttributes
 } from "../network-support.mjs";
 import { asArray, writeLines, sectionLines } from "../utils.mjs";
-import { addType } from "../types.mjs";
 import { SkeletonNetworkInterface } from "./skeleton.mjs";
 import { Network } from "../network.mjs";
 

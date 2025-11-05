@@ -1,7 +1,6 @@
 import test from "ava";
-import { string_attribute, string_collection_attribute_writable } from "pacc";
+import { string_attribute, string_collection_attribute_writable, addType } from "pacc";
 import { Root, Base } from "pmcf";
-import { addType } from "../src/types.mjs";
 
 const MyTypeDefinition = {
   name: "mytype",

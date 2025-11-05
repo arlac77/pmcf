@@ -1,10 +1,10 @@
+import { addType } from "pacc";
 import {
   ExtraSourceService,
   ExtraSourceServiceTypeDefinition,
   ServiceTypeDefinition,
-  serviceEndpoints
+  serviceEndpoints,
 } from "pmcf";
-import { addType } from "../types.mjs";
 
 const SystemdResolvedServiceTypeDefinition = {
   name: "systemd-resolved",
