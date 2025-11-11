@@ -18,10 +18,13 @@ import {
 } from "pacc";
 import { asArray } from "./utils.mjs";
 
-const BaseTypeDefinition = {
-  name: "base",
-  key: "name",
-  attributes: {
+/**
+ *
+ */
+export class Base {
+  static name = "base";
+  static key = "name";
+  static attributes = {
     owner: { ...default_attribute, type: "base" },
     type: string_attribute,
     name: name_attribute_writable,
@@ -31,13 +34,8 @@ const BaseTypeDefinition = {
     packaging: string_attribute_writable,
     disabled: boolean_attribute_writable,
     tags: string_collection_attribute_writable
-  }
-};
+  };
 
-/**
- *
- */
-export class Base {
   owner;
   description;
   name;
@@ -56,7 +54,7 @@ export class Base {
   }
 
   static get typeDefinition() {
-    return BaseTypeDefinition;
+    return this;
   }
 
   static get typeFileName() {
@@ -75,7 +73,7 @@ export class Base {
         this.name = data;
         break;
       case "object":
-        this.read(data, BaseTypeDefinition);
+        this.read(data, this.constructor);
     }
   }
 
