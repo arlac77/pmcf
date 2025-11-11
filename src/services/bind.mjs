@@ -57,7 +57,7 @@ const BindServiceTypeDefinition = {
       writable: true
     },*/
     zones: {
-      type: networkAddressType+ "|location|owner",
+      type: networkAddressType + "|location|owner",
       collection: true,
       writable: true
     },
