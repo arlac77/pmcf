@@ -331,7 +331,6 @@ export class BindService extends ExtraSourceService {
       name: `named-zones-${name}-outfacing`,
       description: `outfacing zone definitions for ${names}`,
       access: "private",
-      replaces: [`named-zones-${name}-OUTFACING`],
       hooks: {}
     };
 
@@ -359,9 +358,9 @@ export class BindService extends ExtraSourceService {
       addHook(
         packageData.properties.hooks,
         "post_upgrade",
-        `/usr/bin/named-hostname-info ${outfacingZones
+        `/usr/bin/named-hostname-update ${outfacingZones
           .map(zone => zone.id)
-          .join(" ")}|/usr/bin/named-hostname-update`
+          .join(" ")}`
       );
 
       await this.writeZones(packageData, configs);
