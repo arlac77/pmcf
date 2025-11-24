@@ -138,6 +138,20 @@ export const ServiceTypes = {
         //  adVF: "0x82"
       }
     }
+  },
+  pcp: {
+    // rfc6887
+    endpoints: [
+      { family: "IPv4", protocol: "udp", port: 5351, tls: false },
+      { family: "IPv6", protocol: "udp", port: 5351, tls: false }
+    ]
+  },
+  "pcp-multicast": {
+    // rfc6887
+    endpoints: [
+      { family: "IPv4", protocol: "udp", port: 5350, tls: false },
+      { family: "IPv6", protocol: "udp", port: 5350, tls: false }
+    ]
   }
 };
 
