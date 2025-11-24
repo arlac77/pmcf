@@ -24,7 +24,10 @@
     "keepalived",
     "mosquitto",
     "openldap",
-    "systemd"
+    "systemd",
+    "arch linux",
+    "rpm",
+    "debian"
   ],
   "contributors": [
     {
