@@ -24,7 +24,6 @@
     "keepalived",
     "mosquitto",
     "openldap",
-    "openldap",
     "systemd"
   ],
   "contributors": [
