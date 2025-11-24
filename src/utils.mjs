@@ -45,6 +45,12 @@ export async function writeLines(dir, name, lines) {
   return writeFile(join(dir, name), data, "utf8");
 }
 
+/**
+ * 
+ * @param {string} sectionName 
+ * @param {Object} values 
+ * @returns {Array<string>}
+ */
 export function sectionLines(sectionName, values) {
   const lines = [`[${sectionName}]`];
 
@@ -59,10 +65,18 @@ export function bridgeToJSON(bridge) {
   return [...bridge].map(n => n.fullName || `(${n})`).sort();
 }
 
+/**
+ * @param {any} value 
+ * @returns {Array<any>}
+ */
 export function asArray(value) {
   return Array.isArray(value) ? value : value === undefined ? [] : [value];
 }
 
+/**
+ * @param {any} value 
+ * @returns {Iterable<any>}
+ */
 export function asIterator(value) {
   switch (typeof value) {
     case "undefined":

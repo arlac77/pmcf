@@ -23,6 +23,9 @@ class BaseEndpoint {
   }
 }
 
+/**
+ * Endpoint with an ip port
+ */
 class PortEndpoint extends BaseEndpoint {
   _port;
   constructor(service, data) {
@@ -108,6 +111,9 @@ export class DomainNameEndpoint extends PortEndpoint {
   }
 }
 
+/**
+ * Endpoint based on http
+ */
 export class HTTPEndpoint extends BaseEndpoint {
   constructor(service, address, data) {
     super(service, data);

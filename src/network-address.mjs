@@ -1,6 +1,7 @@
 import { familyIP, formatCIDR, decodeIP } from "ip-utilties";
 import { Subnet } from "./subnet.mjs";
 import { Owner } from "pmcf";
+import { NetworkInterface } from "./network-interfaces/network-interface.mjs";
 
 /**
  *
@@ -10,6 +11,12 @@ export class NetworkAddress {
   /** @type {NetworkInterface} */ networkInterface;
   /** @type {string|Uint8Array|Uint16Array} */ address;
 
+  /**
+   * 
+   * @param {NetworkInterface} networkInterface 
+   * @param {string|Uint8Array|Uint16Array} address 
+   * @param {Subnet} subnet 
+   */
   constructor(networkInterface, address, subnet) {
     this.networkInterface = networkInterface;
     this.address = address;
@@ -34,9 +41,9 @@ export class NetworkAddress {
 }
 
 /**
- * 
- * @param {Iterable<Owner|string>} sources 
- * @param {Object} options 
+ *
+ * @param {Iterable<Owner|string>} sources
+ * @param {Object} options
  * @param {boolean} options.aggregate
  * @param {Object} options.filter
  * @returns {Iterable<string>} addresses
@@ -46,7 +53,7 @@ export function addresses(sources, options) {
     ...new Set(
       [...sources]
         .map(s => {
-          if(typeof s === "string") {
+          if (typeof s === "string") {
             return s;
           }
           if (options?.aggregate && s instanceof Owner && s.subnets) {
@@ -58,11 +65,18 @@ export function addresses(sources, options) {
             : s;
         })
         .flat()
-        .map(object => typeof object === "string" ? object : decodeIP(object.address))
+        .map(object =>
+          typeof object === "string" ? object : decodeIP(object.address)
+        )
     )
   ];
 }
 
+/**
+ * 
+ * @param {Array<NetworkAddress>} networkAddresses 
+ * @returns {Array<string>}
+ */
 export function cidrAddresses(networkAddresses) {
   return [...networkAddresses].map(na => na.cidrAddress);
 }
