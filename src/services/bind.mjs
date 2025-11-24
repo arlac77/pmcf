@@ -468,21 +468,23 @@ export class BindService extends ExtraSourceService {
               }
 
               for (const domainName of domainNames) {
-                zone.records.add(
-                  DNSRecord(
-                    dnsFullName(domainName),
-                    dnsRecordTypeForAddressFamily(family),
-                    address
-                  )
-                );
+                if (domainName[0] != "*") {
+                  zone.records.add(
+                    DNSRecord(
+                      dnsFullName(domainName),
+                      dnsRecordTypeForAddressFamily(family),
+                      address
+                    )
+                  );
 
-                reverseZone.records.add(
-                  DNSRecord(
-                    dnsFullName(reverseArpa(address)),
-                    "PTR",
-                    dnsFullName(domainName)
-                  )
-                );
+                  reverseZone.records.add(
+                    DNSRecord(
+                      dnsFullName(reverseArpa(address)),
+                      "PTR",
+                      dnsFullName(domainName)
+                    )
+                  );
+                }
               }
             }
 

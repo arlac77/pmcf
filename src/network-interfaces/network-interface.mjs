@@ -134,7 +134,9 @@ export class NetworkInterface extends SkeletonNetworkInterface {
 
   get domainNames() {
     return this.hostName
-      ? new Set([[this.hostName, this.host.domain].join(".")])
+      ? this.host.directDomainNames.union(
+          new Set([[this.hostName, this.host.domain].join(".")])
+        )
       : this.host.directDomainNames;
   }
 
