@@ -12,10 +12,12 @@
   },
   "description": "Poor mans configuration management",
   "keywords": [
+    "arch linux",
     "bind",
     "chrony",
     "config",
     "config management",
+    "debian",
     "dhcp",
     "dns",
     "influxdb",
@@ -24,10 +26,8 @@
     "keepalived",
     "mosquitto",
     "openldap",
-    "systemd",
-    "arch linux",
     "rpm",
-    "debian"
+    "systemd"
   ],
   "contributors": [
     {
