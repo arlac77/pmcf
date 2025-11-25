@@ -26,7 +26,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: install
-        run: npm install
+        run: npm ci
       - name: test and coverage
         run: npm run cover --if-present
       - name: coveralls
@@ -54,7 +54,7 @@ jobs:
         with:
           node-version: 24.11.1
       - name: install
-        run: npm install
+        run: npm ci
       - name: release
         run: npx semantic-release
         env:
