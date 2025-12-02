@@ -48,6 +48,14 @@ export const ServiceTypes = {
       { family: "IPv6", protocol: "udp", port: 5353, tls: false }
     ]
   },
+  llmnr: {
+    endpoints: [
+      { family: "IPv4", protocol: "udp", port: 5355, tls: false },
+      { family: "IPv4", protocol: "tcp", port: 5355, tls: false },
+      { family: "IPv6", protocol: "udp", port: 5355, tls: false },
+      { family: "IPv6", protocol: "tcp", port: 5355, tls: false }
+    ]
+  },
   ldap: {
     endpoints: [
       { family: "IPv4", protocol: "tcp", port: 389, tls: false },
