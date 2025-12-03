@@ -14,6 +14,7 @@ import {
 import { asArray, writeLines, sectionLines } from "../utils.mjs";
 import { SkeletonNetworkInterface } from "./skeleton.mjs";
 import { Network } from "../network.mjs";
+import { yesno } from "../utils.mjs";
 
 export const NetworkInterfaceTypeDefinition = {
   name: "network_interface",
@@ -243,7 +244,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
         ...networkSectionExtra,
         DHCP: "no",
         DHCPServer: "no",
-        MulticastDNS: this.network.multicastDNS ? "yes" : "no",
+        MulticastDNS: yesno(this.network.multicastDNS),
         LinkLocalAddressing: "ipv6",
         IPv6LinkLocalAddressGenerationMode: "stable-privacy"
       }),

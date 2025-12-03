@@ -1,6 +1,10 @@
 import { writeFile, mkdir } from "node:fs/promises";
 import { join, dirname, basename } from "node:path";
 
+export function yesno(flag) {
+  return flag ? "yes" : "no";
+}
+
 export function domainName(name, defaultDomain) {
   const dcs = name.split(".");
   return defaultDomain === undefined || dcs.length > 1

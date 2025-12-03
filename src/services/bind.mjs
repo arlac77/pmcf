@@ -4,7 +4,6 @@ import { FileContentProvider } from "npm-pkgbuild";
 import { isLinkLocal, reverseArpa } from "ip-utilties";
 import {
   addType,
-  oneOfType,
   default_attribute_writable,
   string_attribute_writable,
   boolean_attribute_writable_true,
@@ -13,7 +12,7 @@ import {
   string_collection_attribute_writable,
   name_attribute_writable
 } from "pacc";
-import { writeLines, asArray } from "../utils.mjs";
+import { yesno, writeLines, asArray } from "../utils.mjs";
 import {
   DNSRecord,
   dnsFullName,
@@ -619,7 +618,7 @@ export class BindService extends ExtraSourceService {
                 : "none"
             }; };`
           );
-          content.push(`  notify ${this.notify ? "yes" : "no"};`);
+          content.push(`  notify ${yesno(this.notify)};`);
         }
         content.push(`};`, "");
 
