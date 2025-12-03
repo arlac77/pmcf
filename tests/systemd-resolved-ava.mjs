@@ -18,7 +18,7 @@ test("systemd-resolved basics", async t => {
         Domains: "mydomain.com",
         DNSSEC: "no",
         MulticastDNS: "yes",
-        LLMNR: "no"
+        LLMNR: "yes"
       }
     ]
   });

@@ -1,17 +1,21 @@
-import { addType } from "pacc";
+import { addType, boolean_attribute_writable } from "pacc";
 import {
   ExtraSourceService,
   ExtraSourceServiceTypeDefinition,
   ServiceTypeDefinition,
   serviceEndpoints,
 } from "pmcf";
+import { yesno } from "../utils.mjs";
 
 const SystemdResolvedServiceTypeDefinition = {
   name: "systemd-resolved",
   extends: ExtraSourceServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
-  key: "name"
+  key: "name",
+  attributes: {
+    llmnr: boolean_attribute_writable
+  }
 };
 
 export class SystemdResolvedService extends ExtraSourceService {
@@ -28,7 +32,7 @@ export class SystemdResolvedService extends ExtraSourceService {
   }
 
   get systemdServices() {
-    return SystemdResolvedServiceTypeDefinition.name;
+    return this.type;
   }
 
   systemdConfigs(name) {
@@ -55,8 +59,8 @@ export class SystemdResolvedService extends ExtraSourceService {
           FallbackDNS: serviceEndpoints(this, options(100, 199, 4)),
           Domains: [...this.localDomains].join(" "),
           DNSSEC: "no",
-          MulticastDNS: this.network.multicastDNS ? "yes" : "no",
-          LLMNR: "no"
+          MulticastDNS: yesno(this.network.multicastDNS),
+          LLMNR: yesno(this.llmnr)
         }
       ]
     };

@@ -37,7 +37,8 @@
       "source": "/GLOBAL"
     },
     "systemd-resolved": {
-      "source": "/GLOBAL"
+      "source": "/GLOBAL",
+      "llmnr": true
     },
     "systemd-journal": {}
   }
