@@ -42,7 +42,7 @@ export class SystemdJournalRemoteService extends Service {
   }
 
   get systemdServices() {
-    return SystemdJournalRemoteServiceTypeDefinition.name;
+    return this.type;
   }
 
   systemdConfigs(name) {

@@ -27,7 +27,7 @@ export class SystemdJournalUploadService extends Service {
   }
 
   get systemdServices() {
-    return SystemdJournalUploadServiceTypeDefinition.name;
+    return this.type;
   }
 
   systemdConfigs(name) {

@@ -27,7 +27,7 @@ export class SystemdTimesyncdService extends ExtraSourceService {
   }
 
   get systemdServices() {
-    return SystemdTimesyncdServiceTypeDefinition.name;
+    return this.type;
   }
 
   systemdConfigs(name) {

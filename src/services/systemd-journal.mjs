@@ -23,7 +23,7 @@ export class SystemdJournalService extends Service {
   }
 
   get systemdServices() {
-    return SystemdJournalServiceTypeDefinition.name;
+    return this.type;
   }
 
   systemdConfigs(name) {
