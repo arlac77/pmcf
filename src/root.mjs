@@ -3,18 +3,15 @@ import { join } from "node:path";
 import { typeFactory, addType, types, resolveTypeLinks } from "pacc";
 import { Location } from "./location.mjs";
 
-const RootTypeDefinition = {
-  name: "root",
-  extends: Location.typeDefinition
-};
-
 export class Root extends Location {
-  static {
-    addType(this);
-  }
+  static name = "root";
 
   static get typeDefinition() {
-    return RootTypeDefinition;
+    return this;
+  }
+
+  static {
+    addType(this);
   }
 
   constructor(directory) {
