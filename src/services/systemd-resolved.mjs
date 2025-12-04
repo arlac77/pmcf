@@ -14,6 +14,7 @@ const SystemdResolvedServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   key: "name",
   attributes: {
+    dnssec: boolean_attribute_writable,
     llmnr: boolean_attribute_writable
   }
 };
@@ -58,7 +59,7 @@ export class SystemdResolvedService extends ExtraSourceService {
           DNS: serviceEndpoints(this, options(300, 399, 4)),
           FallbackDNS: serviceEndpoints(this, options(100, 199, 4)),
           Domains: [...this.localDomains].join(" "),
-          DNSSEC: "no",
+          DNSSEC: yesno(this.dnssec),
           MulticastDNS: yesno(this.network.multicastDNS),
           LLMNR: yesno(this.llmnr)
         }
