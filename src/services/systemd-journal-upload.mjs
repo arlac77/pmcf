@@ -8,10 +8,17 @@ const SystemdJournalUploadServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   key: "name",
   attributes: {
-    url: string_attribute_writable
+    URL: string_attribute_writable,
+    ServerCertificateFile: string_attribute_writable,
+    ServerKeyFile: string_attribute_writable
   }
 };
 
+/**
+ * @property {string} URL
+ * @property {string} ServerCertificateFile
+ * @property {string} ServerKeyFile
+ */
 export class SystemdJournalUploadService extends Service {
   static {
     addType(this);
@@ -30,13 +37,23 @@ export class SystemdJournalUploadService extends Service {
     return this.type;
   }
 
+  /**
+   * 
+   * @param {string} name 
+   * @returns {Object}
+   */
   systemdConfigs(name) {
     return {
       serviceName: "systemd-journal-upload.service",
       configFileName: `etc/systemd/journal-upload.conf.d/${name}.conf`,
-      content: ["Upload", {
-        URL : this.url
-      }]
+      content: [
+        "Upload",
+        {
+          URL: this.URL,
+          ServerCertificateFile: this.ServerCertificateFile,
+          ServerKeyFile: this.ServerKeyFile
+        }
+      ]
     };
   }
 }

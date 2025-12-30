@@ -1,4 +1,4 @@
-import { addType } from "pacc";
+import { addType, string_attribute_writable } from "pacc";
 import { Service, ServiceTypeDefinition, addServiceType } from "pmcf";
 
 const SystemdJournalRemoteServiceTypeDefinition = {
@@ -7,6 +7,11 @@ const SystemdJournalRemoteServiceTypeDefinition = {
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
   key: "name",
+  attributes: {
+    ServerCertificateFile: string_attribute_writable,
+    ServerKeyFile: string_attribute_writable
+  },
+
   service: {
     services: {
       endpoints: [
@@ -27,6 +32,10 @@ const SystemdJournalRemoteServiceTypeDefinition = {
   }
 };
 
+/**
+ * @property {string} ServerCertificateFile
+ * @property {string} ServerKeyFile
+ */
 export class SystemdJournalRemoteService extends Service {
   static {
     addType(this);
@@ -45,12 +54,23 @@ export class SystemdJournalRemoteService extends Service {
     return this.type;
   }
 
+  /**
+   *
+   * @param {string} name
+   * @returns {Object}
+   */
   systemdConfigs(name) {
     return [
       {
         serviceName: "systemd-journal-remote.service",
         configFileName: `etc/systemd/journal-remote.conf.d/${name}.conf`,
-        content: ["Remote", {}]
+        content: [
+          "Remote",
+          {
+            ServerCertificateFile: this.ServerCertificateFile,
+            ServerKeyFile: this.ServerKeyFile
+          }
+        ]
       } /*,
       {
         serviceName: "systemd-journal-remote.socket"
