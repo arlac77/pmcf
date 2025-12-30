@@ -1,4 +1,9 @@
-import { getAttributesJSON, addType, string_attribute_writable } from "pacc";
+import {
+  getAttributesJSON,
+  addType,
+  string_attribute_writable,
+  boolean_attribute_writable
+} from "pacc";
 import { Service, ServiceTypeDefinition, addServiceType } from "pmcf";
 
 const SystemdJournalRemoteServiceTypeDefinition = {
@@ -8,8 +13,40 @@ const SystemdJournalRemoteServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   key: "name",
   attributes: {
-    ServerCertificateFile: string_attribute_writable,
-    ServerKeyFile: string_attribute_writable
+    Seal: {
+      ...boolean_attribute_writable
+    },
+    SplitMode: {
+      ...string_attribute_writable
+    },
+    ServerKeyFile: {
+      ...string_attribute_writable
+      //   default: "/etc/ssl/private/journal-upload.pem"
+    },
+    ServerCertificateFile: {
+      ...string_attribute_writable
+      //   default: "/etc/ssl/certs/journal-upload.pem"
+    },
+    TrustedCertificateFile: {
+      ...string_attribute_writable
+      //  default: "/etc/ssl/ca/trusted.pem"
+    },
+    MaxUse: {
+      ...string_attribute_writable
+    },
+    KeepFree: {
+      ...string_attribute_writable
+    },
+    MaxFileSize: {
+      ...string_attribute_writable
+    },
+    MaxFiles: {
+      ...string_attribute_writable
+    },
+    Compression: {
+      ...string_attribute_writable
+      //   default: "zstd lz4 xz"
+    }
   },
 
   service: {
