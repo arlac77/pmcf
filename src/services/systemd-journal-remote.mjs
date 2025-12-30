@@ -1,4 +1,4 @@
-import { addType, string_attribute_writable } from "pacc";
+import { getAttributesJSON, addType, string_attribute_writable } from "pacc";
 import { Service, ServiceTypeDefinition, addServiceType } from "pmcf";
 
 const SystemdJournalRemoteServiceTypeDefinition = {
@@ -66,10 +66,10 @@ export class SystemdJournalRemoteService extends Service {
         configFileName: `etc/systemd/journal-remote.conf.d/${name}.conf`,
         content: [
           "Remote",
-          {
-            ServerCertificateFile: this.ServerCertificateFile,
-            ServerKeyFile: this.ServerKeyFile
-          }
+          getAttributesJSON(
+            this,
+            SystemdJournalRemoteServiceTypeDefinition.attributes
+          )
         ]
       } /*,
       {

@@ -1,4 +1,9 @@
-import { string_attribute_writable, addType } from "pacc";
+import {
+  string_attribute_writable,
+  boolean_attribute_writable,
+  addType,
+  getAttributesJSON
+} from "pacc";
 import { Service, ServiceTypeDefinition, addServiceType } from "pmcf";
 
 const SystemdJournalUploadServiceTypeDefinition = {
@@ -9,8 +14,26 @@ const SystemdJournalUploadServiceTypeDefinition = {
   key: "name",
   attributes: {
     URL: string_attribute_writable,
-    ServerCertificateFile: string_attribute_writable,
-    ServerKeyFile: string_attribute_writable
+    ServerKeyFile: {
+      ...string_attribute_writable
+      //   default: "/etc/ssl/private/journal-upload.pem"
+    },
+    ServerCertificateFile: {
+      ...string_attribute_writable
+      //   default: "/etc/ssl/certs/journal-upload.pem"
+    },
+    TrustedCertificateFile: {
+      ...string_attribute_writable
+      //  default: "/etc/ssl/ca/trusted.pem"
+    },
+    Compression: {
+      ...string_attribute_writable
+      //   default: "zstd lz4 xz"
+    },
+    ForceCompression: {
+      ...boolean_attribute_writable
+      //   default: false
+    }
   }
 };
 
@@ -38,8 +61,8 @@ export class SystemdJournalUploadService extends Service {
   }
 
   /**
-   * 
-   * @param {string} name 
+   *
+   * @param {string} name
    * @returns {Object}
    */
   systemdConfigs(name) {
@@ -48,11 +71,10 @@ export class SystemdJournalUploadService extends Service {
       configFileName: `etc/systemd/journal-upload.conf.d/${name}.conf`,
       content: [
         "Upload",
-        {
-          URL: this.URL,
-          ServerCertificateFile: this.ServerCertificateFile,
-          ServerKeyFile: this.ServerKeyFile
-        }
+        getAttributesJSON(
+          this,
+          SystemdJournalUploadServiceTypeDefinition.attributes
+        )
       ]
     };
   }
