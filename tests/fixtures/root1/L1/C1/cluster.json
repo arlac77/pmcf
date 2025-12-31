@@ -44,6 +44,9 @@
     "systemd-journal-upload": {
       "URL": "https://journal.examle.com/",
       "ServerKeyFile": "/etc/ssl/server.key"
+    },
+    "systemd-journal-remote": {
+      "ServerKeyFile": "/etc/ssl/server.key"
     }
   }
 }
