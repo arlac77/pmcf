@@ -55,23 +55,31 @@ generates config packages for:
 *   [SkeletonNetworkInterface](#skeletonnetworkinterface)
     *   [networkAddresses](#networkaddresses)
         *   [Parameters](#parameters-4)
+*   [SystemdJournalRemoteService](#systemdjournalremoteservice)
+    *   [Properties](#properties)
+    *   [systemdConfigs](#systemdconfigs)
+        *   [Parameters](#parameters-5)
+*   [SystemdJournalUploadService](#systemdjournaluploadservice)
+    *   [Properties](#properties-1)
+    *   [systemdConfigs](#systemdconfigs-1)
+        *   [Parameters](#parameters-6)
 *   [NetworkAddress](#networkaddress)
-    *   [Parameters](#parameters-5)
+    *   [Parameters](#parameters-7)
     *   [subnet](#subnet)
     *   [networkInterface](#networkinterface)
     *   [address](#address)
 *   [addresses](#addresses)
-    *   [Parameters](#parameters-6)
-*   [cidrAddresses](#cidraddresses)
-    *   [Parameters](#parameters-7)
-*   [serviceEndpoints](#serviceendpoints)
     *   [Parameters](#parameters-8)
-*   [sectionLines](#sectionlines)
+*   [cidrAddresses](#cidraddresses)
     *   [Parameters](#parameters-9)
-*   [asArray](#asarray)
+*   [serviceEndpoints](#serviceendpoints)
     *   [Parameters](#parameters-10)
-*   [asIterator](#asiterator)
+*   [sectionLines](#sectionlines)
     *   [Parameters](#parameters-11)
+*   [asArray](#asarray)
+    *   [Parameters](#parameters-12)
+*   [asIterator](#asiterator)
+    *   [Parameters](#parameters-13)
 
 ## Base
 
@@ -138,6 +146,41 @@ Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 *   `filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
 
 Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
+
+## SystemdJournalRemoteService
+
+**Extends Service**
+
+### Properties
+
+*   `ServerCertificateFile` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+*   `ServerKeyFile` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+
+### systemdConfigs
+
+#### Parameters
+
+*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+
+Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**&#x20;
+
+## SystemdJournalUploadService
+
+**Extends Service**
+
+### Properties
+
+*   `URL` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+*   `ServerCertificateFile` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+*   `ServerKeyFile` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+
+### systemdConfigs
+
+#### Parameters
+
+*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+
+Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**&#x20;
 
 ## NetworkAddress
 
