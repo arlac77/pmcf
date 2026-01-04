@@ -46,6 +46,8 @@
       "ServerKeyFile": "/etc/ssl/server.key"
     },
     "systemd-journal-remote": {
+      "Seal": false,
+      "SplitMode": "host",
       "ServerKeyFile": "/etc/ssl/server.key"
     }
   }

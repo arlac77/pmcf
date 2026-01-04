@@ -14,6 +14,8 @@ test("systemd-journal-remote", async t => {
       content: [
         "Remote",
         {
+          Seal: false,
+          SplitMode: "host",
           ServerKeyFile: "/etc/ssl/server.key"
         }
       ]

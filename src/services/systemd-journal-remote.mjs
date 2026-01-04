@@ -17,7 +17,8 @@ const SystemdJournalRemoteServiceTypeDefinition = {
       ...boolean_attribute_writable
     },
     SplitMode: {
-      ...string_attribute_writable
+      ...string_attribute_writable,
+      values: [false, "host"]
     },
     ServerKeyFile: {
       ...string_attribute_writable
