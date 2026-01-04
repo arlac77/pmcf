@@ -305,7 +305,7 @@ export class Host extends ServiceOwner {
 
   get hostName() {
     const parts = this.name.split(/\//);
-    return parts[parts.length - 1];
+    return parts[parts.length - 1].toLowerCase();
   }
 
   get foreignDomainNames() {

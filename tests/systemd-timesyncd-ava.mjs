@@ -13,7 +13,7 @@ test("systemd-timesyncd basics", async t => {
     content: [
       "Time",
       {
-        NTP: "192.168.1.11 C1.mydomain.com",
+        NTP: "192.168.1.11 c1.mydomain.com",
         FallbackNTP: '2.arch.pool.ntp.org'
       }
     ]

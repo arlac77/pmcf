@@ -19,7 +19,7 @@ test("BIND basics", async t => {
     [
       {
         type: "bind-statistics",
-        address: "C1.mydomain.com",
+        address: "c1.mydomain.com",
         port: 19521
       },
       /*  {
@@ -34,7 +34,7 @@ test("BIND basics", async t => {
       }
       /* {
         type: "dns",
-        address: "C1.mydomain.com",
+        address: "c1.mydomain.com",
         port: 53
       }*/
     ]
