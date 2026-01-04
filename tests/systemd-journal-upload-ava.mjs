@@ -14,7 +14,7 @@ test("systemd-journal-upload", async t => {
       "Upload",
       {
         URL: "https://journal.examle.com/",
-        ServerKeyFile: "/etc/ssl/server.key"
+        ServerKeyFile: "/etc/ssl/c1.mydomain.com.key"
       }
     ]
   });
