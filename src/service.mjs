@@ -89,6 +89,14 @@ export class Service extends Base {
     return ServiceTypeDefinition;
   }
 
+  get isTemplate() {
+    // TODO
+    if (this.fullName.startsWith("/services")) {
+      return true;
+    }
+    return super.isTemplate;
+  }
+
   toString() {
     return `${super.toString()}[${this.type}]`;
   }
