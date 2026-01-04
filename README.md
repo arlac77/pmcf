@@ -74,12 +74,16 @@ generates config packages for:
     *   [Parameters](#parameters-9)
 *   [serviceEndpoints](#serviceendpoints)
     *   [Parameters](#parameters-10)
-*   [sectionLines](#sectionlines)
+*   [domainName](#domainname)
     *   [Parameters](#parameters-11)
-*   [asArray](#asarray)
+*   [domainFromDominName](#domainfromdominname)
     *   [Parameters](#parameters-12)
-*   [asIterator](#asiterator)
+*   [sectionLines](#sectionlines)
     *   [Parameters](#parameters-13)
+*   [asArray](#asarray)
+    *   [Parameters](#parameters-14)
+*   [asIterator](#asiterator)
+    *   [Parameters](#parameters-15)
 
 ## Base
 
@@ -236,6 +240,28 @@ Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Gl
     *   `options.join` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** join result(s) into a string
 
 Returns **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | any)**&#x20;
+
+## domainName
+
+Appends default domain if name does not already have a domain.
+
+### Parameters
+
+*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+*   `defaultDomain` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**&#x20;
+
+Returns **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
+
+## domainFromDominName
+
+Extracts domain name from a name.
+
+### Parameters
+
+*   `domainName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+*   `defaultDomain` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**&#x20;
+
+Returns **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ## sectionLines
 
