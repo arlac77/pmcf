@@ -5,6 +5,12 @@ export function yesno(flag) {
   return flag ? "yes" : "no";
 }
 
+/**
+ * Appends default domain if name does not already have a domain.
+ * @param {string} name 
+ * @param {string} [defaultDomain] 
+ * @returns {string|undefined}
+ */
 export function domainName(name, defaultDomain) {
   const dcs = name.split(".");
   return defaultDomain === undefined || dcs.length > 1
@@ -12,6 +18,12 @@ export function domainName(name, defaultDomain) {
     : [name, defaultDomain].join(".");
 }
 
+/**
+ * Extracts domain name from a name.
+ * @param {string} domainName 
+ * @param {string} [defaultDomain]
+ * @returns {string|undefined}
+ */
 export function domainFromDominName(domainName, defaultDomain) {
   const dcs = domainName.split(".");
 
