@@ -498,7 +498,7 @@ export class Host extends ServiceOwner {
     for (const service of this.services) {
       if (service.systemdConfigs) {
         for (const { serviceName, configFileName, content } of asArray(
-          service.systemdConfigs(this.name)
+          service.expand(service.systemdConfigs(this.name))
         )) {
           await writeLines(dir, configFileName, sectionLines(...content));
 
