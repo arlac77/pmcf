@@ -14,7 +14,11 @@
   },
   "services": {
     "dns": { "type": "dns", "alias": "dns" },
-    "openldap": { "baseDN": "abc", "rootDN": "dn=root", "uri": "ldap://" },
+    "openldap": {
+      "baseDN": "${ldap_base}",
+      "rootDN": "dn=root,${ldap_base}",
+      "uri": "ldap://"
+    },
     "chrony": {
       "source": "/GLOBAL"
     }
