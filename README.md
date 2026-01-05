@@ -43,58 +43,71 @@ generates config packages for:
 *   [Base](#base)
     *   [Parameters](#parameters)
     *   [extends](#extends)
-    *   [findService](#findservice)
+    *   [expression](#expression)
         *   [Parameters](#parameters-1)
+    *   [findService](#findservice)
+        *   [Parameters](#parameters-2)
+    *   [expand](#expand)
+        *   [Parameters](#parameters-3)
 *   [PortEndpoint](#portendpoint)
-    *   [Parameters](#parameters-2)
+    *   [Parameters](#parameters-4)
     *   [port](#port)
     *   [socketAddress](#socketaddress)
 *   [HTTPEndpoint](#httpendpoint)
-    *   [Parameters](#parameters-3)
+    *   [Parameters](#parameters-5)
     *   [port](#port-1)
 *   [SkeletonNetworkInterface](#skeletonnetworkinterface)
     *   [networkAddresses](#networkaddresses)
-        *   [Parameters](#parameters-4)
+        *   [Parameters](#parameters-6)
 *   [SystemdJournalRemoteService](#systemdjournalremoteservice)
     *   [Properties](#properties)
     *   [systemdConfigs](#systemdconfigs)
-        *   [Parameters](#parameters-5)
+        *   [Parameters](#parameters-7)
 *   [SystemdJournalUploadService](#systemdjournaluploadservice)
     *   [Properties](#properties-1)
     *   [systemdConfigs](#systemdconfigs-1)
-        *   [Parameters](#parameters-6)
+        *   [Parameters](#parameters-8)
 *   [NetworkAddress](#networkaddress)
-    *   [Parameters](#parameters-7)
+    *   [Parameters](#parameters-9)
     *   [subnet](#subnet)
     *   [networkInterface](#networkinterface)
     *   [address](#address)
 *   [addresses](#addresses)
-    *   [Parameters](#parameters-8)
-*   [cidrAddresses](#cidraddresses)
-    *   [Parameters](#parameters-9)
-*   [serviceEndpoints](#serviceendpoints)
     *   [Parameters](#parameters-10)
-*   [domainName](#domainname)
+*   [cidrAddresses](#cidraddresses)
     *   [Parameters](#parameters-11)
-*   [domainFromDominName](#domainfromdominname)
+*   [serviceEndpoints](#serviceendpoints)
     *   [Parameters](#parameters-12)
-*   [sectionLines](#sectionlines)
+*   [domainName](#domainname)
     *   [Parameters](#parameters-13)
-*   [asArray](#asarray)
+*   [domainFromDominName](#domainfromdominname)
     *   [Parameters](#parameters-14)
-*   [asIterator](#asiterator)
+*   [sectionLines](#sectionlines)
     *   [Parameters](#parameters-15)
+*   [asArray](#asarray)
+    *   [Parameters](#parameters-16)
+*   [asIterator](#asiterator)
+    *   [Parameters](#parameters-17)
 
 ## Base
 
 ### Parameters
 
-*   `owner` &#x20;
-*   `data` &#x20;
+*   `owner` **[Base](#base)**&#x20;
+*   `data` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**&#x20;
 
 ### extends
 
 Returns **Iterable<[Base](#base)>**&#x20;
+
+### expression
+
+#### Parameters
+
+*   `expression` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+*   `options` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**&#x20;
+
+Returns **any**&#x20;
 
 ### findService
 
@@ -103,6 +116,14 @@ Returns **Iterable<[Base](#base)>**&#x20;
 *   `filter` **any**&#x20;
 
 Returns **any** service with the highest priority
+
+### expand
+
+#### Parameters
+
+*   `object` **any**&#x20;
+
+Returns **any**&#x20;
 
 ## PortEndpoint
 
