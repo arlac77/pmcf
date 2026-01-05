@@ -65,6 +65,11 @@ export class Base {
     return "**/" + this.typeFileName;
   }
 
+  /**
+   *
+   * @param {Base} owner
+   * @param {object} data
+   */
   constructor(owner, data) {
     this.owner = owner;
 
@@ -413,8 +418,14 @@ export class Base {
     return this.findService('type="smtp"');
   }
 
+  /**
+   *
+   * @param {string} expression
+   * @param {object} options
+   * @returns {any}
+   */
   expression(expression, options) {
-    return parse(expression, { root: this, globals, ...options });
+    return parse(expression, { root: this, globals: this.globals, ...options });
   }
 
   /**
@@ -495,22 +506,36 @@ export class Base {
     return this._properties;
   }
 
-  property(name) {
-    return this._properties?.[name] ?? this.owner?.property(name);
+  get globals() {
+    return Object.assign(
+      {},
+      this.properties,
+      this.owner?.properties,
+      this.owner?.owner?.properties,
+      this.owner?.owner?.owner?.properties,
+      globals
+    );
   }
 
+  property(name) {
+    return this._properties?.[name] ?? this.owner?.property(name) ?? this.owner?.owner?.property(name);
+  }
+
+  /**
+   *
+   * @param {any} object
+   * @returns {any}
+   */
   expand(object) {
     if (this.isTemplate || object instanceof Base) {
       return object;
     }
 
-    const context = {
+    return expand(object, {
       stopClass: Base,
       root: this,
-      globals: Object.assign({}, this.properties, this.owner?.properties)
-    };
-
-    return expand(object, context);
+      globals: this.globals
+    });
   }
 
   finalize(action) {
