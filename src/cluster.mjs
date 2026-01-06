@@ -213,7 +213,7 @@ export class Cluster extends Host {
             "[Unit]",
             `Description=master state of cluster ${cluster.name}`,
             "PartOf=keepalived.service",
-            `Conflicts=${cluster.name}-fault.target`
+            `Conflicts=${cluster.name}-backup.target ${cluster.name}-fault.target`
           ]
         );
 
@@ -224,7 +224,7 @@ export class Cluster extends Host {
             "[Unit]",
             `Description=backup state of cluster ${cluster.name}`,
             "PartOf=keepalived.service",
-            `Conflicts=${cluster.name}-fault.target`
+            `Conflicts=${cluster.name}-master.target ${cluster.name}-fault.target`
           ]
         );
 
