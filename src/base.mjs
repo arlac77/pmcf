@@ -62,10 +62,6 @@ export class Base {
     return this.typeName + ".json";
   }
 
-  static get fileNameGlob() {
-    return "**/" + this.typeFileName;
-  }
-
   /**
    *
    * @param {Base} owner
