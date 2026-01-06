@@ -90,7 +90,7 @@ export class OpenLDAPService extends Service {
       "openldap",
       name,
       network.name,
-      this.owner.extends.map(o => o.name)
+      this.extends.map(o => o.name)
     );
 
     const packageData = {
