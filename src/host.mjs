@@ -88,7 +88,6 @@ const HostTypeDefinition = {
 };
 
 export class Host extends ServiceOwner {
-  _extends = [];
   _aliases = new Set();
   _networkInterfaces = new Map();
   _provides = new Set();
@@ -114,14 +113,6 @@ export class Host extends ServiceOwner {
   read(data, type) {
     super.read(data, type);
 
-    if (data?.extends) {
-      this.finalize(() => {
-        for (const host of this.extends) {
-          host.execFinalize();
-          this._applyExtends(host);
-        }
-      });
-    }
     this.extra = data.extra;
   }
 
@@ -231,14 +222,6 @@ export class Host extends ServiceOwner {
 
   get aliases() {
     return this.extends.reduce((a, c) => a.union(c.aliases), this._aliases);
-  }
-
-  set extends(value) {
-    this._extends.push(value);
-  }
-
-  get extends() {
-    return this._extends;
   }
 
   set provides(value) {

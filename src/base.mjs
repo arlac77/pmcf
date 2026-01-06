@@ -43,6 +43,7 @@ export class Base {
   _packaging = new Set();
   _directory;
   _finalize;
+  _extends = [];
   _properties;
 
   static {
@@ -68,7 +69,7 @@ export class Base {
   /**
    *
    * @param {Base} owner
-   * @param {object} data
+   * @param {object} [data]
    */
   constructor(owner, data) {
     this.owner = owner;
@@ -210,7 +211,7 @@ export class Base {
                   this.error(
                     "Not found",
                     name,
-                    attribute.type.map(t => t.name),
+                    attribute.type?.map && attribute.type.map(t => t.name),
                     value
                   );
                 });
@@ -270,6 +271,28 @@ export class Base {
         instantiateAndAssign(name, attribute, value);
       }
     }
+
+    if (data?.extends) {
+      this.finalize(() => {
+        for (const object of this.extends) {
+          object.execFinalize();
+          this._applyExtends(object);
+        }
+      });
+    }
+  }
+
+  _applyExtends()
+  {
+   // throw `${this.constructor.name}_applyExtends not implemented`;
+  }
+
+  set extends(value) {
+    this._extends.push(value);
+  }
+
+  get extends() {
+    return this._extends;
   }
 
   named(name) {}
@@ -316,13 +339,6 @@ export class Base {
   get typeName() {
     // @ts-ignore
     return this.constructor.typeDefinition.name;
-  }
-
-  /**
-   * @return {Iterable<Base>}
-   */
-  get extends() {
-    return [];
   }
 
   *_extendedPropertyIterator(propertyName, seen) {
@@ -518,7 +534,11 @@ export class Base {
   }
 
   property(name) {
-    return this._properties?.[name] ?? this.owner?.property(name) ?? this.owner?.owner?.property(name);
+    return (
+      this._properties?.[name] ??
+      this.owner?.property(name) ??
+      this.owner?.owner?.property(name)
+    );
   }
 
   /**

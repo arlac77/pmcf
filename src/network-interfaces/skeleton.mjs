@@ -7,7 +7,6 @@ import { ServiceOwner } from "../service-owner.mjs";
  * 
  */
 export class SkeletonNetworkInterface extends ServiceOwner {
-  _extends = [];
   _network;
 
   static get typeName() {
@@ -16,14 +15,6 @@ export class SkeletonNetworkInterface extends ServiceOwner {
 
   get typeName() {
     return "network_interface";
-  }
-
-  set extends(value) {
-    this._extends.push(value);
-  }
-
-  get extends() {
-    return this._extends;
   }
 
   get isTemplate() {
