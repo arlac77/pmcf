@@ -152,8 +152,9 @@ export class KeaService extends Service {
     const network = this.network;
     const host = this.host;
     const name = host.name;
+    const pkgName = `kea-${this.location.name}-${name}`;
 
-    console.log("kea", name, network.name);
+    console.log(pkgName, this.fullName, network.name);
 
     const dnsServerEndpoints = serviceEndpoints(network, {
       services: 'in("dns",types) && priority>=300',
@@ -165,7 +166,7 @@ export class KeaService extends Service {
       sources: [new FileContentProvider(dir + "/")],
       outputs: this.outputs,
       properties: {
-        name: `kea-${this.location.name}-${name}`,
+        name: pkgName,
         description: `kea definitions for ${this.fullName}@${name}`,
         access: "private",
         dependencies: [`kea>=${keaVersion}`]
