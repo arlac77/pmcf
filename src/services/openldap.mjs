@@ -86,24 +86,30 @@ export class OpenLDAPService extends Service {
     const owner = "ldap";
     const group = "ldap";
 
-    console.log("openldap", name, network.name, this.owner.extends.map(o=>o.name));
-
-    const filePermissions = [
-      {
-        mode: 0o644,
-        owner,
-        group
-      },
-      {
-        mode: 0o755,
-        owner,
-        group
-      }
-    ];
+    console.log(
+      "openldap",
+      name,
+      network.name,
+      this.owner.extends.map(o => o.name)
+    );
 
     const packageData = {
       dir,
-      sources: [new FileContentProvider(dir + "/", ...filePermissions)],
+      sources: [
+        new FileContentProvider(
+          dir + "/",
+          {
+            mode: 0o644,
+            owner,
+            group
+          },
+          {
+            mode: 0o755,
+            owner,
+            group
+          }
+        )
+      ],
       outputs: this.outputs,
       properties: {
         name: `openldap-${this.location.name}-${name}`,
