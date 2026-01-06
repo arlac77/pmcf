@@ -53,7 +53,7 @@ export class Location extends Owner {
         name: `${this.typeName}-${this.name}`,
         description: `${this.typeName} definitions for ${this.fullName}`,
         access: "private",
-        dependencies: { jq: ">=1.6" },
+        dependencies: { jq: ">=1.8" },
         provides: ["location", "mf-location"],
         replaces: [`mf-location-${this.name}`],
         hooks: await loadHooks(
