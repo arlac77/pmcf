@@ -83,18 +83,21 @@ export class OpenLDAPService extends Service {
     const host = this.host;
     const name = host.name;
 
-    console.log("openldap", name, network.name);
+    const owner = "ldap";
+    const group = "ldap";
+
+    console.log("openldap", name, network.name, this.owner.extends.map(o=>o.name));
 
     const filePermissions = [
       {
         mode: 0o644,
-        owner: "ldap",
-        group: "ldap"
+        owner,
+        group
       },
       {
         mode: 0o755,
-        owner: "ldap",
-        group: "ldap"
+        owner,
+        group
       }
     ];
 
@@ -114,13 +117,13 @@ export class OpenLDAPService extends Service {
     addHook(
       packageData.properties.hooks,
       "post_upgrade",
-      "setfacl -m u:ldap:r /etc/letsencrypt/archive/*/privkey*.pem"
+      `setfacl -m u:${owner}:r /etc/letsencrypt/archive/*/privkey*.pem`
     );
 
     addHook(
       packageData.properties.hooks,
       "post_install",
-      "setfacl -m u:ldap:r /etc/letsencrypt/archive/*/privkey*.pem"
+      `setfacl -m u:${owner}:r /etc/letsencrypt/archive/*/privkey*.pem`
     );
 
     await writeLines(
