@@ -104,15 +104,22 @@ export class SystemdJournalRemoteService extends Service {
         configFileName: `etc/systemd/journal-remote.conf.d/${name}.conf`,
         content: [
           "Remote",
-          getAttributesJSON(
-            this,
-            SystemdJournalRemoteServiceTypeDefinition.attributes
-          )
+          {
+            ...getAttributesJSON(
+              this,
+              SystemdJournalRemoteServiceTypeDefinition.attributes
+            ),
+            // TODO extendet properties with getAttribute()
+            ...Object.fromEntries(
+              Object.entries(
+                SystemdJournalRemoteServiceTypeDefinition.attributes
+              )
+                .map(([k, v]) => [k, this.extendedProperty(k)])
+                .filter(([k, v]) => v !== undefined)
+            )
+          }
         ]
-      } /*,
-      {
-        serviceName: "systemd-journal-remote.socket"
-      }*/
+      }
     ];
   }
 }
