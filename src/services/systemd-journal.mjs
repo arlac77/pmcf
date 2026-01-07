@@ -108,7 +108,17 @@ export class SystemdJournalService extends Service {
       configFileName: `etc/systemd/journal.conf.d/${name}.conf`,
       content: [
         "Journal",
-        getAttributesJSON(this, SystemdJournalServiceTypeDefinition.attributes)
+        {
+          ...getAttributesJSON(
+            this,
+            SystemdJournalServiceTypeDefinition.attributes
+          ),
+          ...Object.fromEntries(
+            Object.entries(SystemdJournalServiceTypeDefinition.attributes)
+              .map(([k, v]) => [k, this.extendedProperty(k)])
+              .filter(([k, v]) => v !== undefined)
+          )
+        }
       ]
     };
   }

@@ -71,10 +71,18 @@ export class SystemdJournalUploadService extends Service {
       configFileName: `etc/systemd/journal-upload.conf.d/${name}.conf`,
       content: [
         "Upload",
-        getAttributesJSON(
-          this,
-          SystemdJournalUploadServiceTypeDefinition.attributes
-        )
+        {
+          ...getAttributesJSON(
+            this,
+            SystemdJournalUploadServiceTypeDefinition.attributes
+          ),
+          // TODO extendet properties with getAttribute()
+          ...Object.fromEntries(
+            Object.entries(SystemdJournalUploadServiceTypeDefinition.attributes)
+              .map(([k, v]) => [k, this.extendedProperty(k)])
+              .filter(([k, v]) => v !== undefined)
+          )
+        }
       ]
     };
   }
