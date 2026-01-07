@@ -42,7 +42,7 @@ generates config packages for:
 
 *   [Base](#base)
     *   [Parameters](#parameters)
-    *   [extends](#extends)
+    *   [priority](#priority)
     *   [expression](#expression)
         *   [Parameters](#parameters-1)
     *   [findService](#findservice)
@@ -76,29 +76,34 @@ generates config packages for:
     *   [Parameters](#parameters-10)
 *   [cidrAddresses](#cidraddresses)
     *   [Parameters](#parameters-11)
-*   [serviceEndpoints](#serviceendpoints)
+*   [isTemplate](#istemplate)
+*   [services](#services)
     *   [Parameters](#parameters-12)
-*   [domainName](#domainname)
+*   [named](#named)
     *   [Parameters](#parameters-13)
-*   [domainFromDominName](#domainfromdominname)
+*   [serviceEndpoints](#serviceendpoints)
     *   [Parameters](#parameters-14)
-*   [sectionLines](#sectionlines)
+*   [domainName](#domainname)
     *   [Parameters](#parameters-15)
-*   [asArray](#asarray)
+*   [domainFromDominName](#domainfromdominname)
     *   [Parameters](#parameters-16)
-*   [asIterator](#asiterator)
+*   [sectionLines](#sectionlines)
     *   [Parameters](#parameters-17)
+*   [asArray](#asarray)
+    *   [Parameters](#parameters-18)
+*   [asIterator](#asiterator)
+    *   [Parameters](#parameters-19)
 
 ## Base
 
 ### Parameters
 
 *   `owner` **[Base](#base)**&#x20;
-*   `data` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**&#x20;
+*   `data` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?**&#x20;
 
-### extends
+### priority
 
-Returns **Iterable<[Base](#base)>**&#x20;
+Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
 ### expression
 
@@ -246,6 +251,24 @@ Returns **Iterable<[string](https://developer.mozilla.org/docs/Web/JavaScript/Re
 *   `networkAddresses` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[NetworkAddress](#networkaddress)>**&#x20;
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
+
+## isTemplate
+
+Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
+
+## services
+
+### Parameters
+
+*   `service` **Service**&#x20;
+
+## named
+
+### Parameters
+
+*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+
+Returns **(Service | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ## serviceEndpoints
 
