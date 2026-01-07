@@ -7,8 +7,15 @@ test("Root basics", async t => {
   t.is(root.typeName, "root");
   t.is(root.name, "");
   t.is(root.fullName, "");
+  t.is(root.isTemplate, false);
   t.is(await root.load("/"), root);
   t.is(await root.load(""), root);
+});
+
+test("template from name '*'", t => {
+  const root = new Root("/somewhere");
+  const l1 = new Location(root, { name: "l*" });
+  t.true(l1.isTemplate);
 });
 
 test("expression", t => {
