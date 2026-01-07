@@ -1,4 +1,4 @@
-import { Location, Network, Subnet, Host, Cluster, Root } from "pmcf";
+import { Owner, Location, Network, Subnet, Host, Cluster, Root } from "pmcf";
 
 /**
  *
@@ -101,6 +101,12 @@ export function root1(root, filter) {
     backups: [host2.networkInterfaces.wlan0]
   };
 
+  const model = {
+    name: "model",
+    instanceof: Owner,
+    isTemplate: true
+  };
+
   const all = {
     "/L1": L1,
     "/L1/C1": L1C1,
@@ -109,10 +115,12 @@ export function root1(root, filter) {
     "/L1/n1/host2": host2,
     "/L1/host1": host1,
     "/L2": L2,
+    "/model": model,
+
     "/model/m1": {
-      name: "model/m1",
+      name: "m1",
       instanceof: Host,
-      owner: root,
+      owner: model,
       isModel: true,
       isTemplate: true,
       packaging: new Set(["arch"]),
