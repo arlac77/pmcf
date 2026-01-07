@@ -98,7 +98,7 @@ export class Service extends Base {
   }
 
   toString() {
-    return `${super.toString()}[${this.type}]`;
+    return `${this.fullName}(${this.type})`;
   }
 
   get network() {
