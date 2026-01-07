@@ -1,4 +1,5 @@
 {
+  "extends": ["/services/systemd-journal-remote"],
   "priority": 390,
   "routerId": 77,
   "masters": "/L1/host1/eth0",
@@ -46,8 +47,6 @@
       "ServerKeyFile": "/etc/ssl/${domainName}.key"
     },
     "systemd-journal-remote": {
-      "Seal": false,
-      "SplitMode": "host",
       "ServerKeyFile": "/etc/ssl/server.key"
     }
   }

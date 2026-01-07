@@ -1,0 +1,11 @@
+{
+  "depends": "libmicrohttpd",
+  "services": {
+    "systemd-journal-remote": {
+      "alias": "journal",
+      "Seal": false,
+      "SplitMode": "host",
+      "TrustedCertificateFile": "/etc/ssl/certs/chain.cert.pem"
+    }
+  }
+}
