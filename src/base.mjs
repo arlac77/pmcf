@@ -283,7 +283,6 @@ export class Base {
   }
 
   _applyExtends() {
-    // throw `${this.constructor.name}_applyExtends not implemented`;
   }
 
   set extends(value) {

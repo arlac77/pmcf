@@ -1,4 +1,4 @@
-import { Base } from "pmcf";
+import { Base, Service } from "pmcf";
 
 export class ServiceOwner extends Base {
   _services = [];
@@ -7,21 +7,26 @@ export class ServiceOwner extends Base {
     return this._services;
   }
 
+  /**
+   * @param {Service} service
+   */
   set services(service) {
-    const present = this._services.find(s => s.name === service.name);
-
-    if (!present) {
-      this._services.push(service);
-    }
+    this._services.push(service);
   }
 
-  *findServices(filter) {
-    const services = filter
-      ? this.expression(`services[${filter}]`)
-      : this.services;
+  _applyExtends(owner) {
+    super._applyExtends(owner);
 
-    for (const service of services) {
-      yield service;
+    for (const service of owner.services) {
+      const present = this._services.find(s => s.name === service.name);
+
+      if (present && service.isTemplate) {
+        if (present.extends.indexOf(service) < 0) {
+          present.extends.push(service);
+        }
+      } else {
+        this.services = service.forOwner(this);
+      }
     }
   }
 
@@ -36,6 +41,16 @@ export class ServiceOwner extends Base {
     return false;
   }
 
+  *findServices(filter) {
+    const services = filter
+      ? this.expression(`services[${filter}]`)
+      : this.services;
+
+    for (const service of services) {
+      yield service;
+    }
+  }
+
   typeNamed(typeName, name) {
     if (typeName === "service") {
       const service = this.services.find(s => s.name === name);
@@ -45,16 +60,17 @@ export class ServiceOwner extends Base {
     }
 
     if (typeName === "number") {
-      throw new Error("invalidType");
+      throw new Error("invalidType", { cause: typeName });
     }
-    //console.log("TN***",typeName, name);
     return super.typeNamed(typeName, name);
   }
 
+  /**
+   *
+   * @param {string} name
+   * @returns {Service|undefined}
+   */
   named(name) {
-    const service = this.services.find(s => s.name === name);
-    if (service) {
-      return service;
-    }
+    return this._services.find(s => s.name === name);
   }
 }
