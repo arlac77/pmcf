@@ -39,7 +39,7 @@
     },
     "systemd-resolved": {
       "source": "/GLOBAL",
-      "llmnr": true
+      "LLMNR": true
     },
     "systemd-journal": {},
     "systemd-journal-upload": {
