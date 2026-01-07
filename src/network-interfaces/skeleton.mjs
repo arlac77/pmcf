@@ -17,10 +17,6 @@ export class SkeletonNetworkInterface extends ServiceOwner {
     return "network_interface";
   }
 
-  get isTemplate() {
-    return this.name?.indexOf("*") >= 0;
-  }
-
   get host() {
     if (this.owner instanceof Host) {
       return this.owner;

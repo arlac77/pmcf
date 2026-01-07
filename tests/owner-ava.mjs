@@ -43,11 +43,13 @@ test("Owner read write", t => {
     name: "o1",
     administratorEmail: "master@somewhere",
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"],
-    networks: { n1: { kind: "ethernet" } }
+    networks: { n1: { kind: "ethernet" } },
+    template: true
   });
 
   root.addObject(o1);
 
+  t.is(o1.isTemplate, true);
   t.is(o1.name, "o1");
   t.is(o1.directory, "/o1");
   t.is(o1.administratorEmail, "master@somewhere");

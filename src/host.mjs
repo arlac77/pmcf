@@ -199,7 +199,7 @@ export class Host extends ServiceOwner {
   }
 
   get isTemplate() {
-    return this.isModel || this.name?.match(/services\//); // TODO
+    return this.isModel || super.isTemplate;
   }
 
   get isModel() {

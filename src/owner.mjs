@@ -4,7 +4,9 @@ import {
   string_collection_attribute_writable,
   string_attribute_writable,
   email_attribute,
-  addType, types
+  addType,
+  types,
+  boolean_attribute_writable_false
 } from "pacc";
 import { asIterator } from "./utils.mjs";
 import { Base } from "./base.mjs";
@@ -35,7 +37,8 @@ const OwnerTypeDefinition = {
     timezone: string_attribute_writable,
     architectures: string_collection_attribute_writable,
     locales: string_collection_attribute_writable,
-    administratorEmail: { ...email_attribute, writable: true }
+    administratorEmail: { ...email_attribute, writable: true },
+    template: { ...boolean_attribute_writable_false, private: true }
   }
 };
 
@@ -51,6 +54,13 @@ export class Owner extends Base {
 
   static get typeDefinition() {
     return OwnerTypeDefinition;
+  }
+
+  /**
+   * @return {boolean}
+   */
+  get isTemplate() {
+    return this.template ?? super.isTemplate;
   }
 
   _traverse(...args) {

@@ -276,11 +276,14 @@ export class Base {
         }
       });
     }
+
+    /*if(this.type) {
+      console.log(this.toString(),this.name,this.fullName);
+    }*/
   }
 
-  _applyExtends()
-  {
-   // throw `${this.constructor.name}_applyExtends not implemented`;
+  _applyExtends() {
+    // throw `${this.constructor.name}_applyExtends not implemented`;
   }
 
   set extends(value) {
@@ -422,6 +425,9 @@ export class Base {
     this._priority = value;
   }
 
+  /**
+   * @return {number}
+   */
   get priority() {
     return this._priority ?? this.owner?.priority;
   }
@@ -511,7 +517,7 @@ export class Base {
   }
 
   get isTemplate() {
-    return false;
+    return  this.name?.indexOf("*") >= 0 || this.owner?.isTemplate || false;
   }
 
   get properties() {
@@ -650,6 +656,9 @@ export function extractFrom(
 
   do {
     for (const [path, def] of attributeIterator(typeDefinition.attributes)) {
+      if (def.private) {
+        continue;
+      }
       const name = path.join(".");
       let value = object[name];
 
