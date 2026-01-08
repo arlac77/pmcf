@@ -79,20 +79,10 @@ export class OpenLDAPService extends Service {
   }
 
   async *preparePackages(dir) {
-    const network = this.network;
     const host = this.host;
     const name = host.name;
-    const pkgName = `openldap-${this.location.name}-${name}`;
     const owner = "ldap";
     const group = "ldap";
-
-    console.log(
-      pkgName,
-      this.fullName,
-      this.alias,
-      network.name,
-      this.extends.map(o => o.fullName)
-    );
 
     const packageData = {
       dir,
@@ -113,8 +103,8 @@ export class OpenLDAPService extends Service {
       ],
       outputs: this.outputs,
       properties: {
-        name: pkgName,
-        description: `openldap definitions for ${this.fullName}@${name}`,
+        name: `${this.typeName}-${this.location.name}-${name}`,
+        description: `${this.typeName} definitions for ${this.fullName}@${name}`,
         access: "private",
         dependencies: ["openldap>=2.6.10"],
         hooks: {}

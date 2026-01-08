@@ -41,7 +41,6 @@ export class MosquittoService extends Service {
   }
 
   async *preparePackages(dir) {
-    const network = this.network;
     const host = this.host;
     const name = host.name;
 
@@ -50,8 +49,8 @@ export class MosquittoService extends Service {
       sources: [new FileContentProvider(dir + "/")],
       outputs: this.outputs,
       properties: {
-        name: `mosquitto-${this.location.name}-${host.name}`,
-        description: `mosquitto definitions for ${this.fullName}@${name}`,
+        name: `${this.typeName}-${this.location.name}-${host.name}`,
+        description: `${this.typeName} definitions for ${this.fullName}@${name}`,
         access: "private",
         dependencies: ["mosquitto>=2.0.22"]
       }

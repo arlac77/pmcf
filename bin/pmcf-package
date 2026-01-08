@@ -42,12 +42,20 @@ const publishingDetails = createPublishingDetails(
 );
 
 for (const object of root.find(args)) {
+  if (object.isTemplate) {
+    continue;
+  }
   const stagingDir = join(options.output, object.fullName);
 
   //console.log(`packages for ${object.fullName}`);
   for await (const { sources, outputs, properties } of object.preparePackages(
     stagingDir
   )) {
+    console.log(
+      (object.fullName + "                ").substring(0, 20),
+      properties.name
+    );
+
     for (const outputFactory of outputs) {
       properties.version = pkg.version;
       properties.license = pkg.license;
@@ -66,9 +74,9 @@ for (const object of root.find(args)) {
         options
       );
 
-      if (properties.verbose) {
-        console.log(artifact);
-      }
+      // if (properties.verbose) {
+      console.log(" -> " + artifact);
+      // }
 
       if (!options.dry) {
         await Promise.all(

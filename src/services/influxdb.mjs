@@ -50,7 +50,6 @@ export class InfluxdbService extends Service {
   }
 
   async *preparePackages(dir) {
-    const network = this.network;
     const host = this.host;
     const name = host.name;
 
@@ -59,8 +58,8 @@ export class InfluxdbService extends Service {
       sources: [new FileContentProvider(dir + "/")],
       outputs: this.outputs,
       properties: {
-        name: `influxdb-${this.location.name}-${host.name}`,
-        description: `influxdb definitions for ${this.fullName}@${name}`,
+        name: `${this.typeName}-${this.location.name}-${host.name}`,
+        description: `${this.typeName} definitions for ${this.fullName}@${name}`,
         access: "private",
         dependencies: ["influxdb>=2.7.0"]
       }
