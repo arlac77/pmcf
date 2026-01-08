@@ -58,26 +58,26 @@ generates config packages for:
 *   [HTTPEndpoint](#httpendpoint)
     *   [Parameters](#parameters-6)
     *   [port](#port-1)
+*   [SkeletonNetworkInterface](#skeletonnetworkinterface)
+    *   [networkAddresses](#networkaddresses)
+        *   [Parameters](#parameters-7)
 *   [SystemdJournalRemoteService](#systemdjournalremoteservice)
     *   [Properties](#properties)
     *   [systemdConfigs](#systemdconfigs)
-        *   [Parameters](#parameters-7)
+        *   [Parameters](#parameters-8)
 *   [SystemdJournalUploadService](#systemdjournaluploadservice)
     *   [Properties](#properties-1)
     *   [systemdConfigs](#systemdconfigs-1)
-        *   [Parameters](#parameters-8)
+        *   [Parameters](#parameters-9)
 *   [NetworkAddress](#networkaddress)
-    *   [Parameters](#parameters-9)
+    *   [Parameters](#parameters-10)
     *   [subnet](#subnet)
     *   [networkInterface](#networkinterface)
     *   [address](#address)
 *   [addresses](#addresses)
-    *   [Parameters](#parameters-10)
-*   [cidrAddresses](#cidraddresses)
     *   [Parameters](#parameters-11)
-*   [SkeletonNetworkInterface](#skeletonnetworkinterface)
-    *   [networkAddresses](#networkaddresses)
-        *   [Parameters](#parameters-12)
+*   [cidrAddresses](#cidraddresses)
+    *   [Parameters](#parameters-12)
 *   [isTemplate](#istemplate)
 *   [services](#services)
     *   [Parameters](#parameters-13)
@@ -177,6 +177,18 @@ Endpoint based on http
 
 Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
+## SkeletonNetworkInterface
+
+**Extends ServiceOwner**
+
+### networkAddresses
+
+#### Parameters
+
+*   `filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
+
+Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
+
 ## SystemdJournalRemoteService
 
 **Extends Service**
@@ -251,18 +263,6 @@ Returns **Iterable<[string](https://developer.mozilla.org/docs/Web/JavaScript/Re
 *   `networkAddresses` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[NetworkAddress](#networkaddress)>**&#x20;
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
-
-## SkeletonNetworkInterface
-
-**Extends ServiceOwner**
-
-### networkAddresses
-
-#### Parameters
-
-*   `filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
-
-Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
 
 ## isTemplate
 
