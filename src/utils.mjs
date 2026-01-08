@@ -107,3 +107,6 @@ export function asIterator(value) {
 
   return asArray(value);
 }
+
+
+export const filterConfigurable = (name, attribute) => !attribute.private & attribute.configurable;

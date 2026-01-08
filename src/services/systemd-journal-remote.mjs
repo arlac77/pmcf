@@ -1,10 +1,10 @@
 import {
-  getAttributesJSON,
   addType,
   string_attribute_writable,
   boolean_attribute_writable
 } from "pacc";
 import { Service, ServiceTypeDefinition, addServiceType } from "pmcf";
+import { filterConfigurable } from "../utils.mjs";
 
 const SystemdJournalRemoteServiceTypeDefinition = {
   name: "systemd-journal-remote",
@@ -14,59 +14,66 @@ const SystemdJournalRemoteServiceTypeDefinition = {
   key: "name",
   attributes: {
     Seal: {
-      ...boolean_attribute_writable
+      ...boolean_attribute_writable,
+      configurable: true
     },
     SplitMode: {
       ...string_attribute_writable,
-      values: [false, "host"]
+      values: [false, "host"],
+      configurable: true
     },
     ServerKeyFile: {
-      ...string_attribute_writable
+      ...string_attribute_writable,
+      configurable: true
       //   default: "/etc/ssl/private/journal-upload.pem"
     },
     ServerCertificateFile: {
-      ...string_attribute_writable
+      ...string_attribute_writable,
+      configurable: true
       //   default: "/etc/ssl/certs/journal-upload.pem"
     },
     TrustedCertificateFile: {
-      ...string_attribute_writable
+      ...string_attribute_writable,
+      configurable: true
       //  default: "/etc/ssl/ca/trusted.pem"
     },
     MaxUse: {
-      ...string_attribute_writable
+      ...string_attribute_writable,
+      configurable: true
     },
     KeepFree: {
-      ...string_attribute_writable
+      ...string_attribute_writable,
+      configurable: true
     },
     MaxFileSize: {
-      ...string_attribute_writable
+      ...string_attribute_writable,
+      configurable: true
     },
     MaxFiles: {
-      ...string_attribute_writable
+      ...string_attribute_writable,
+      configurable: true
     },
     Compression: {
-      ...string_attribute_writable
+      ...string_attribute_writable,
+      configurable: true
       //   default: "zstd lz4 xz"
     }
   },
-
   service: {
-    services: {
-      endpoints: [
-        {
-          family: "IPv4",
-          port: 19532,
-          protocol: "tcp",
-          tls: false
-        },
-        {
-          family: "IPv6",
-          port: 19532,
-          protocol: "tcp",
-          tls: false
-        }
-      ]
-    }
+    endpoints: [
+      {
+        family: "IPv4",
+        port: 19532,
+        protocol: "tcp",
+        tls: false
+      },
+      {
+        family: "IPv6",
+        port: 19532,
+        protocol: "tcp",
+        tls: false
+      }
+    ]
   }
 };
 
@@ -102,23 +109,7 @@ export class SystemdJournalRemoteService extends Service {
       {
         serviceName: "systemd-journal-remote.service",
         configFileName: `etc/systemd/journal-remote.conf.d/${name}.conf`,
-        content: [
-          "Remote",
-          {
-            ...getAttributesJSON(
-              this,
-              SystemdJournalRemoteServiceTypeDefinition.attributes
-            ),
-            // TODO extendet properties with getAttribute()
-            ...Object.fromEntries(
-              Object.entries(
-                SystemdJournalRemoteServiceTypeDefinition.attributes
-              )
-                .map(([k, v]) => [k, this.extendedProperty(k)])
-                .filter(([k, v]) => v !== undefined)
-            )
-          }
-        ]
+        content: ["Remote", this.getProperties(filterConfigurable)]
       }
     ];
   }

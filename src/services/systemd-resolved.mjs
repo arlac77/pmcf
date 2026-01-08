@@ -1,6 +1,5 @@
 import {
   addType,
-  toExternal,
   duration_attribute_writable,
   string_attribute_writable,
   boolean_attribute_writable,
@@ -10,9 +9,10 @@ import {
   ExtraSourceService,
   ExtraSourceServiceTypeDefinition,
   ServiceTypeDefinition,
-  serviceEndpoints
+  serviceEndpoints,
+  addServiceType
 } from "pmcf";
-import { yesno } from "../utils.mjs";
+import { filterConfigurable, yesno } from "../utils.mjs";
 
 const SystemdResolvedServiceTypeDefinition = {
   name: "systemd-resolved",
@@ -21,27 +21,32 @@ const SystemdResolvedServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   key: "name",
   attributes: {
-    DNS: string_attribute_writable,
-    FallbackDNS: string_attribute_writable,
-    Domains: string_attribute_writable,
-    MulticastDNS: boolean_attribute_writable,
-    Cache: boolean_attribute_writable,
-    CacheFromLocalhost: boolean_attribute_writable,
-    DNSStubListener: boolean_attribute_writable,
-    DNSStubListenerExtra: string_attribute_writable,
-    ReadEtcHosts: boolean_attribute_writable,
-    ResolveUnicastSingleLabel: boolean_attribute_writable,
-    StaleRetentionSec: duration_attribute_writable,
-    RefuseRecordTypes: string_attribute_writable,
-    DNSSEC: { ...yesno_attribute_writable, default: false },
-    DNSOverTLS: yesno_attribute_writable,
-    LLMNR: yesno_attribute_writable
-  }
+    DNS: { ...string_attribute_writable, configurable: true },
+    FallbackDNS: { ...string_attribute_writable, configurable: true },
+    Domains: { ...string_attribute_writable, configurable: true },
+    MulticastDNS: { ...boolean_attribute_writable, configurable: true },
+    Cache: { ...boolean_attribute_writable, configurable: true },
+    CacheFromLocalhost: { ...boolean_attribute_writable, configurable: true },
+    DNSStubListener: { ...boolean_attribute_writable, configurable: true },
+    DNSStubListenerExtra: { ...string_attribute_writable, configurable: true },
+    ReadEtcHosts: { ...boolean_attribute_writable, configurable: true },
+    ResolveUnicastSingleLabel: {
+      ...boolean_attribute_writable,
+      configurable: true
+    },
+    StaleRetentionSec: { ...duration_attribute_writable, configurable: true },
+    RefuseRecordTypes: { ...string_attribute_writable, configurable: true },
+    DNSSEC: { ...yesno_attribute_writable, default: false, configurable: true },
+    DNSOverTLS: { ...yesno_attribute_writable, configurable: true },
+    LLMNR: { ...yesno_attribute_writable, configurable: true }
+  },
+  service: {}
 };
 
 export class SystemdResolvedService extends ExtraSourceService {
   static {
     addType(this);
+    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
   }
 
   static get typeDefinition() {
@@ -80,13 +85,7 @@ export class SystemdResolvedService extends ExtraSourceService {
           FallbackDNS: serviceEndpoints(this, options(100, 199, 4)),
           Domains: [...this.localDomains].join(" "),
           MulticastDNS: yesno(this.network.multicastDNS),
-
-          // TODO extendet properties with getAttribute()
-          ...Object.fromEntries(
-            Object.entries(SystemdResolvedServiceTypeDefinition.attributes)
-              .map(([k, v]) => [k, toExternal(this.extendedProperty(k), v)])
-              .filter(([k, v]) => v !== undefined)
-          )
+          ...this.getProperties(filterConfigurable)
         }
       ]
     };

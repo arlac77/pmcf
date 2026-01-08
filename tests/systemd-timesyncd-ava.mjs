@@ -1,5 +1,15 @@
 import test from "ava";
-import { Root } from "pmcf";
+
+import { Root, Host, SystemdTimesyncdService } from "pmcf";
+
+test("systemd-timesyncd service type", t => {
+  const root = new Root();
+  const h1 = new Host(root);
+
+  const service = new SystemdTimesyncdService(h1);
+
+  t.deepEqual(service.types, new Set(["systemd-timesyncd"]));
+});
 
 test("systemd-timesyncd basics", async t => {
   const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);

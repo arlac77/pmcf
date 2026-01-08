@@ -1,21 +1,39 @@
-import { addType } from "pacc";
+import {
+  addType,
+  string_attribute_writable,
+  duration_attribute_writable
+} from "pacc";
 import {
   ExtraSourceService,
   ExtraSourceServiceTypeDefinition,
   ServiceTypeDefinition,
-  serviceEndpoints
+  serviceEndpoints,
+  addServiceType
 } from "pmcf";
+import { filterConfigurable } from "../utils.mjs";
 
 const SystemdTimesyncdServiceTypeDefinition = {
   name: "systemd-timesyncd",
   extends: ExtraSourceServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
+
+  attributes: {
+    NTP: {...string_attribute_writable, configurable: true },
+    FallbackNTP: {...string_attribute_writable, configurable: true },
+    RootDistanceMaxSec: {...duration_attribute_writable, configurable: true },
+    PollIntervalMinSec: {...duration_attribute_writable, configurable: true },
+    PollIntervalMaxSec: {...duration_attribute_writable, configurable: true },
+    ConnectionRetrySec: {...duration_attribute_writable, configurable: true },
+    SaveIntervalSec: {...duration_attribute_writable, configurable: true }
+  },
+  service: {}
 };
 
 export class SystemdTimesyncdService extends ExtraSourceService {
   static {
     addType(this);
+    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
   }
 
   static get typeDefinition() {
@@ -49,7 +67,8 @@ export class SystemdTimesyncdService extends ExtraSourceService {
         "Time",
         {
           NTP: serviceEndpoints(this, options(300, 399)),
-          FallbackNTP: serviceEndpoints(this, options(100, 199))
+          FallbackNTP: serviceEndpoints(this, options(100, 199)),
+          ...this.getProperties(filterConfigurable)
         }
       ]
     };

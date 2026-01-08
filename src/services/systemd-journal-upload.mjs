@@ -1,10 +1,10 @@
 import {
   string_attribute_writable,
   boolean_attribute_writable,
-  addType,
-  getAttributesJSON
+  addType
 } from "pacc";
 import { Service, ServiceTypeDefinition, addServiceType } from "pmcf";
+import { filterConfigurable } from "../utils.mjs";
 
 const SystemdJournalUploadServiceTypeDefinition = {
   name: "systemd-journal-upload",
@@ -13,28 +13,34 @@ const SystemdJournalUploadServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   key: "name",
   attributes: {
-    URL: string_attribute_writable,
+    URL: { ...string_attribute_writable, configurable: true },
     ServerKeyFile: {
-      ...string_attribute_writable
+      ...string_attribute_writable,
+      configurable: true
       //   default: "/etc/ssl/private/journal-upload.pem"
     },
     ServerCertificateFile: {
-      ...string_attribute_writable
+      ...string_attribute_writable,
+      configurable: true
       //   default: "/etc/ssl/certs/journal-upload.pem"
     },
     TrustedCertificateFile: {
-      ...string_attribute_writable
+      ...string_attribute_writable,
+      configurable: true
       //  default: "/etc/ssl/ca/trusted.pem"
     },
     Compression: {
-      ...string_attribute_writable
+      ...string_attribute_writable,
+      configurable: true
       //   default: "zstd lz4 xz"
     },
     ForceCompression: {
-      ...boolean_attribute_writable
+      ...boolean_attribute_writable,
+      configurable: true
       //   default: false
     }
-  }
+  },
+  service: {}
 };
 
 /**
@@ -69,21 +75,7 @@ export class SystemdJournalUploadService extends Service {
     return {
       serviceName: "systemd-journal-upload.service",
       configFileName: `etc/systemd/journal-upload.conf.d/${name}.conf`,
-      content: [
-        "Upload",
-        {
-          ...getAttributesJSON(
-            this,
-            SystemdJournalUploadServiceTypeDefinition.attributes
-          ),
-          // TODO extendet properties with getAttribute()
-          ...Object.fromEntries(
-            Object.entries(SystemdJournalUploadServiceTypeDefinition.attributes)
-              .map(([k, v]) => [k, this.extendedProperty(k)])
-              .filter(([k, v]) => v !== undefined)
-          )
-        }
-      ]
+      content: ["Upload", this.getProperties(filterConfigurable)]
     };
   }
 }

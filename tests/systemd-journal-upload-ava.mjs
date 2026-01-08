@@ -1,5 +1,14 @@
 import test from "ava";
-import { Root } from "pmcf";
+import { Root, Host, SystemdJournalUploadService } from "pmcf";
+
+test("systemd-journal-upload service type", t => {
+  const root = new Root();
+  const h1 = new Host(root);
+
+  const service = new SystemdJournalUploadService(h1);
+
+  t.deepEqual(service.types, new Set(["systemd-journal-upload"]));
+});
 
 test("systemd-journal-upload", async t => {
   const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);

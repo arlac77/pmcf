@@ -1,5 +1,17 @@
 import test from "ava";
-import { Root } from "pmcf";
+import { Root, Host, SystemdJournalRemoteService, ServiceTypes, serviceTypeEndpoints } from "pmcf";
+
+test("systemd-journal-remote service type", t => {
+  const root = new Root();
+  const h1 = new Host(root);
+
+  const service = new SystemdJournalRemoteService(h1);
+
+  t.deepEqual(service.types, new Set(["systemd-journal-remote"]));
+
+  t.is(ServiceTypes[service.type].endpoints[0].port, 19532);
+  t.is(serviceTypeEndpoints(ServiceTypes[service.type])[0].port, 19532);
+});
 
 test("systemd-journal-remote", async t => {
   const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);

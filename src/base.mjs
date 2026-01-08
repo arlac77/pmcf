@@ -6,6 +6,8 @@ import {
   parse,
   globals,
   expand,
+  toExternal,
+  filterPublic,
   attributeIterator,
   default_attribute,
   name_attribute_writable,
@@ -16,6 +18,7 @@ import {
   description_attribute_writable,
   boolean_attribute_writable
 } from "pacc";
+
 import { asArray } from "./utils.mjs";
 
 /**
@@ -282,8 +285,7 @@ export class Base {
     }*/
   }
 
-  _applyExtends() {
-  }
+  _applyExtends() {}
 
   set extends(value) {
     this._extends.push(value);
@@ -374,6 +376,35 @@ export class Base {
     }
 
     return this._extendedProperty(propertyName, new Set());
+  }
+
+  /**
+   * Retrive attribute values from an object.
+   * @return {Object} values
+   */
+  getProperties(filter = filterPublic) {
+    const result = {};
+
+    for (
+      let typeDefinition = this.constructor.typeDefinition;
+      typeDefinition;
+      typeDefinition = typeDefinition.extends
+    ) {
+      for (const [path, def] of attributeIterator(
+        typeDefinition.attributes,
+        filter
+      )) {
+        const name = path.join(".");
+
+        let value = this.extendedProperty(name);
+
+        if (value !== undefined) {
+          result[def.externalName ?? name] = toExternal(value, def);
+        }
+      }
+    }
+
+    return result;
   }
 
   get root() {
@@ -516,7 +547,7 @@ export class Base {
   }
 
   get isTemplate() {
-    return  this.name?.indexOf("*") >= 0 || this.owner?.isTemplate || false;
+    return this.name?.indexOf("*") >= 0 || this.owner?.isTemplate || false;
   }
 
   get properties() {
@@ -654,10 +685,10 @@ export function extractFrom(
   const json = {};
 
   do {
-    for (const [path, def] of attributeIterator(typeDefinition.attributes)) {
-      if (def.private) {
-        continue;
-      }
+    for (const [path, def] of attributeIterator(
+      typeDefinition.attributes,
+      filterPublic
+    )) {
       const name = path.join(".");
       let value = object[name];
 
