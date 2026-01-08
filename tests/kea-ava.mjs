@@ -11,20 +11,33 @@ import {
 test("kea basics", t => {
   const owner = new Root("/");
 
+  const linux = new Host(owner);
+  linux.read({
+    name: "linux",
+    os: "linux",
+    networkInterfaces: {
+      lo: {
+        kind: "loopback"
+      }
+    }
+  });
+
   const h1 = new Host(owner);
   h1.read({
+    extends: [linux],
     name: "h1",
     networkInterfaces: {
       eth0: { ipAddresses: "10.0.0.1/16" }
     }
   });
   owner.addObject(h1);
+  h1.execFinalize();
 
-  /*
-  const la = h1.networkAddresses(
+  /*const la = h1.networkAddresses(
     na => na.networkInterface.kind === "loopback" && na.family === "IPv4"
-  );
-  */
+  );*/
+
+  // console.log(h1.networkInterfaces, [...la].map(l=>l.toString()));
 
   const kea = new KeaService(h1);
   kea.read({
@@ -41,7 +54,7 @@ test("kea basics", t => {
   h1.services = kea;
 
   t.is(kea.endpoint("dhcp").toString(), "dhcp:IPv4/10.0.0.1[547]");
-  t.is(kea.endpoint("kea-ddns").toString(), "kea-ddns:dns/h1[53001]");
+  t.is(kea.endpoint("kea-ddns").toString(), "kea-ddns:IPv4/127.0.0.1[53001]");
   t.is(
     kea.endpoint("kea-control-dhcp4").toString(),
     "kea-control-dhcp4:unix:/run/kea/ctrl-4"

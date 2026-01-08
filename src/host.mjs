@@ -119,15 +119,12 @@ export class Host extends ServiceOwner {
   _applyExtends(host) {
     super._applyExtends(host);
     for (const [name, ni] of host.networkInterfaces) {
-      if (!ni.isTemplate) {
-        let present = this._networkInterfaces.get(name);
+      const present = this._networkInterfaces.get(name);
 
-        if (!present) {
-          present = ni.forOwner(this);
-          this._networkInterfaces.set(name, present);
-        }
-
+      if (present) {
         present.extends.push(ni);
+      } else {
+        this._networkInterfaces.set(name, ni.forOwner(this));
       }
     }
   }

@@ -52,11 +52,23 @@ test("Host all", async t => {
 
 test("Host extends", t => {
   const owner = new Root("/");
-  const e1 = new Host(owner);
-  e1.read({
-    name: "e1",
+
+  const linux = new Host(owner);
+  linux.read({
+    name: "linux",
     os: "linux",
     distribution: "suse",
+    networkInterfaces: {
+      lo: {
+        kind: "loopback"
+      }
+    }
+  });
+
+  const e1 = new Host(owner);
+  e1.read({
+    extends: [linux],
+    name: "e1",
     aliases: "e1a",
     deployment: "production",
     chassis: "phone",
@@ -72,6 +84,10 @@ test("Host extends", t => {
       }
     }
   });
+
+  e1.execFinalize();
+
+  t.deepEqual([...e1.networkInterfaces.keys()].sort(), ["eth0", "lo" ]);
 
   const e2 = new Host(owner);
   e2.read({
