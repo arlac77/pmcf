@@ -66,15 +66,16 @@ export class ChronyService extends ExtraSourceService {
     const network = this.network;
     const host = this.host;
     const name = host.name;
+    const pkgName = `chrony-${this.location.name}-${host.name}`;
 
-    console.log("chrony", host.name, network.name);
+    console.log(pkgName, this.fullName, network.name);
 
     const packageData = {
       dir,
       sources: [new FileContentProvider(dir + "/")],
       outputs: this.outputs,
       properties: {
-        name: `chrony-${this.location.name}-${host.name}`,
+        name: pkgName,
         description: `chrony definitions for ${this.fullName}@${name}`,
         access: "private",
         dependencies: ["chrony>=4.6.1"]
