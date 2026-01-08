@@ -1,5 +1,6 @@
 import {
   addType,
+  toExternal,
   duration_attribute_writable,
   string_attribute_writable,
   boolean_attribute_writable,
@@ -32,7 +33,7 @@ const SystemdResolvedServiceTypeDefinition = {
     ResolveUnicastSingleLabel: boolean_attribute_writable,
     StaleRetentionSec: duration_attribute_writable,
     RefuseRecordTypes: string_attribute_writable,
-    DNSSEC: yesno_attribute_writable,
+    DNSSEC: { ...yesno_attribute_writable, default: false },
     DNSOverTLS: yesno_attribute_writable,
     LLMNR: yesno_attribute_writable
   }
@@ -80,16 +81,12 @@ export class SystemdResolvedService extends ExtraSourceService {
           Domains: [...this.localDomains].join(" "),
           MulticastDNS: yesno(this.network.multicastDNS),
 
-          DNSSEC: yesno(this.DNSSEC),
-
           // TODO extendet properties with getAttribute()
           ...Object.fromEntries(
             Object.entries(SystemdResolvedServiceTypeDefinition.attributes)
-              .map(([k, v]) => [k, this.extendedProperty(k)])
+              .map(([k, v]) => [k, toExternal(this.extendedProperty(k), v)])
               .filter(([k, v]) => v !== undefined)
-          ),
-          LLMNR: yesno(this.LLMNR),
-
+          )
         }
       ]
     };
