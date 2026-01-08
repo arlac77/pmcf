@@ -42,23 +42,22 @@ generates config packages for:
 
 *   [Base](#base)
     *   [Parameters](#parameters)
+    *   [getProperties](#getproperties)
+        *   [Parameters](#parameters-1)
     *   [priority](#priority)
     *   [expression](#expression)
-        *   [Parameters](#parameters-1)
-    *   [findService](#findservice)
         *   [Parameters](#parameters-2)
-    *   [expand](#expand)
+    *   [findService](#findservice)
         *   [Parameters](#parameters-3)
+    *   [expand](#expand)
+        *   [Parameters](#parameters-4)
 *   [PortEndpoint](#portendpoint)
-    *   [Parameters](#parameters-4)
+    *   [Parameters](#parameters-5)
     *   [port](#port)
     *   [socketAddress](#socketaddress)
 *   [HTTPEndpoint](#httpendpoint)
-    *   [Parameters](#parameters-5)
+    *   [Parameters](#parameters-6)
     *   [port](#port-1)
-*   [SkeletonNetworkInterface](#skeletonnetworkinterface)
-    *   [networkAddresses](#networkaddresses)
-        *   [Parameters](#parameters-6)
 *   [SystemdJournalRemoteService](#systemdjournalremoteservice)
     *   [Properties](#properties)
     *   [systemdConfigs](#systemdconfigs)
@@ -76,23 +75,26 @@ generates config packages for:
     *   [Parameters](#parameters-10)
 *   [cidrAddresses](#cidraddresses)
     *   [Parameters](#parameters-11)
+*   [SkeletonNetworkInterface](#skeletonnetworkinterface)
+    *   [networkAddresses](#networkaddresses)
+        *   [Parameters](#parameters-12)
 *   [isTemplate](#istemplate)
 *   [services](#services)
-    *   [Parameters](#parameters-12)
-*   [named](#named)
     *   [Parameters](#parameters-13)
-*   [serviceEndpoints](#serviceendpoints)
+*   [named](#named)
     *   [Parameters](#parameters-14)
-*   [domainName](#domainname)
+*   [serviceEndpoints](#serviceendpoints)
     *   [Parameters](#parameters-15)
-*   [domainFromDominName](#domainfromdominname)
+*   [domainName](#domainname)
     *   [Parameters](#parameters-16)
-*   [sectionLines](#sectionlines)
+*   [domainFromDominName](#domainfromdominname)
     *   [Parameters](#parameters-17)
-*   [asArray](#asarray)
+*   [sectionLines](#sectionlines)
     *   [Parameters](#parameters-18)
-*   [asIterator](#asiterator)
+*   [asArray](#asarray)
     *   [Parameters](#parameters-19)
+*   [asIterator](#asiterator)
+    *   [Parameters](#parameters-20)
 
 ## Base
 
@@ -100,6 +102,16 @@ generates config packages for:
 
 *   `owner` **[Base](#base)**&#x20;
 *   `data` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?**&#x20;
+
+### getProperties
+
+Retrive attribute values from an object.
+
+#### Parameters
+
+*   `filter`   (optional, default `filterPublic`)
+
+Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** values
 
 ### priority
 
@@ -164,18 +176,6 @@ Endpoint based on http
 ### port
 
 Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
-
-## SkeletonNetworkInterface
-
-**Extends ServiceOwner**
-
-### networkAddresses
-
-#### Parameters
-
-*   `filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
-
-Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
 
 ## SystemdJournalRemoteService
 
@@ -251,6 +251,18 @@ Returns **Iterable<[string](https://developer.mozilla.org/docs/Web/JavaScript/Re
 *   `networkAddresses` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[NetworkAddress](#networkaddress)>**&#x20;
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
+
+## SkeletonNetworkInterface
+
+**Extends ServiceOwner**
+
+### networkAddresses
+
+#### Parameters
+
+*   `filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
+
+Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
 
 ## isTemplate
 
