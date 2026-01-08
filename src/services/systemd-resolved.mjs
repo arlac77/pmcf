@@ -2,7 +2,8 @@ import {
   addType,
   duration_attribute_writable,
   string_attribute_writable,
-  boolean_attribute_writable
+  boolean_attribute_writable,
+  yesno_attribute_writable
 } from "pacc";
 import {
   ExtraSourceService,
@@ -31,9 +32,9 @@ const SystemdResolvedServiceTypeDefinition = {
     ResolveUnicastSingleLabel: boolean_attribute_writable,
     StaleRetentionSec: duration_attribute_writable,
     RefuseRecordTypes: string_attribute_writable,
-    DNSSEC: boolean_attribute_writable,
-    DNSOverTLS: boolean_attribute_writable,
-    LLMNR: boolean_attribute_writable
+    DNSSEC: yesno_attribute_writable,
+    DNSOverTLS: yesno_attribute_writable,
+    LLMNR: yesno_attribute_writable
   }
 };
 
