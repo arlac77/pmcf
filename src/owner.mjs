@@ -3,10 +3,10 @@ import {
   default_attribute_writable,
   string_collection_attribute_writable,
   string_attribute_writable,
+  boolean_attribute_writable_false,
   email_attribute,
   addType,
-  types,
-  boolean_attribute_writable_false
+  types
 } from "pacc";
 import { asIterator } from "./utils.mjs";
 import { Base } from "./base.mjs";
@@ -147,6 +147,15 @@ export class Owner extends Base {
   }
 
   addObject(object) {
+    if (object.owner && object.owner !== this) {
+      this.addTypeObject(
+        object.typeName,
+        object.owner.name + "/" + object.name,
+        object
+      );
+
+      return;
+    }
     this.addTypeObject(object.typeName, object.name, object);
   }
 
