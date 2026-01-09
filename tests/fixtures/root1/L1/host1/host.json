@@ -4,7 +4,7 @@
   "depends": ["d1", "d2-${os}"],
   "replaces": ["r1", "r2-${os}"],
   "provides": ["p1", "p2-${os}"],
-  "extends": ["/model/m1", "/model/${os}"],
+  "extends": ["/model/m1", "/model/${os}", "/services/timemachine"],
   "networkInterfaces": {
     "eth0": {
       "kind": "ethernet",
@@ -14,17 +14,20 @@
   },
   "services": {
     "mosquitto": {
+      "alias": "mqtt",
       "persistence_location": "/var/lib/mosquitto",
       "password_file": "/etc/mosquitto/passwd",
       "acl_file": "/etc/mosquitto/acl"
     },
     "dns": { "type": "dns", "alias": "dns" },
     "openldap": {
+      "alias": "ldap",
       "baseDN": "${ldap_base}",
       "rootDN": "dn=root,${ldap_base}",
       "uri": "ldap://"
     },
     "chrony": {
+      "alias": "ntp",
       "source": "/GLOBAL"
     }
   }

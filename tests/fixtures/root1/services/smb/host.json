@@ -1,0 +1,6 @@
+{
+  "depends": "samba",
+  "services": {
+    "smb": { "systemd": "smb.service" }
+  }
+}

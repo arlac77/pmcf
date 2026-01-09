@@ -1,0 +1,8 @@
+{
+  "extends": "/services/smb",
+  "depends": "mf-backup",
+  "services": {
+    "timemachine": { "path": "/backup/timemachine" },
+    "mdns": {}
+  }
+}

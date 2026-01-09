@@ -61,12 +61,17 @@ export function root1(root, filter) {
       eth0: {
         network: L1n1,
         metric: 1010,
-        addresses: ["192.168.1.1"],
+        addresses: ["192.168.1.1"]
       }
     },
     services: {
       dns: { type: "dns", alias: "dns" },
-      smb: { type: "smb" }
+      smb: { type: "smb" },
+      timemachine: { type: "timemachine" },
+      mdns: {},
+      mosquitto: { type: "mosquitto", alias: "mqtt" },
+      openldap: { type: "openldap", alias: "ldap" },
+      chrony: { type: "chrony", alias: "ntp" }
     }
   };
 
