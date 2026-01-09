@@ -13,6 +13,11 @@
     }
   },
   "services": {
+    "mosquitto": {
+      "persistence_location": "/var/lib/mosquitto",
+      "password_file": "/etc/mosquitto/passwd",
+      "acl_file": "/etc/mosquitto/acl"
+    },
     "dns": { "type": "dns", "alias": "dns" },
     "openldap": {
       "baseDN": "${ldap_base}",

@@ -1,8 +1,13 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
-import { boolean_attribute_writable_true, addType } from "pacc";
+import {
+  boolean_attribute_writable_true,
+  port_attribute,
+  string_attribute_writable,
+  addType
+} from "pacc";
 import { addServiceType } from "pmcf";
-import { writeLines } from "../utils.mjs";
+import { writeLines, filterConfigurable } from "../utils.mjs";
 import { Service, ServiceTypeDefinition } from "../service.mjs";
 
 const MosquittoServiceTypeDefinition = {
@@ -12,13 +17,30 @@ const MosquittoServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   key: "name",
   attributes: {
-    log_timestamp: {
+    /*log_timestamp: {
       ...boolean_attribute_writable_true,
-      isCommonOption: true
+      configurable: true
     },
     allow_anonymous: {
       ...boolean_attribute_writable_true,
-      isCommonOption: true
+      configurable: true
+    },*/
+    listener: {
+      ...port_attribute,
+      writable: true,
+      configurable: true
+    },
+    persistence_location: {
+      ...string_attribute_writable,
+      configurable: true
+    },
+    password_file: {
+      ...string_attribute_writable,
+      configurable: true
+    },
+    acl_file: {
+      ...string_attribute_writable,
+      configurable: true
     }
   },
   service: {
@@ -40,6 +62,10 @@ export class MosquittoService extends Service {
     return MosquittoServiceTypeDefinition.name;
   }
 
+  get listener() {
+    return this.endpoint("mqtt").port;
+  }
+
   async *preparePackages(dir) {
     const host = this.host;
     const name = host.name;
@@ -56,23 +82,13 @@ export class MosquittoService extends Service {
       }
     };
 
-    const lines = Object.entries(MosquittoServiceTypeDefinition.attributes)
-      .filter(
-        ([key, attribute]) =>
-          attribute.isCommonOption && this[key] !== undefined
+    await writeLines(
+      join(dir, "etc", "mosquitto"),
+      "mosquitto.conf",
+      Object.entries(this.getProperties(filterConfigurable)).map(
+        ([name, value]) => `${name} ${value}`
       )
-      .map(([key]) => `${key}: ${this[key]}`);
-
-    const endpoint = this.endpoint("mqtt");
-
-    lines.push(
-      `listener ${endpoint.port}`,
-      "persistence_location /var/lib/mosquitto",
-      "password_file /etc/mosquitto/passwd",
-      "acl_file /etc/mosquitto/acl"
     );
-
-    await writeLines(join(dir, "etc", "mosquitto"), "mosquitto.conf", lines);
 
     yield packageData;
   }
