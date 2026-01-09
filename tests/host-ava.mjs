@@ -59,9 +59,7 @@ test("Host extends", t => {
     os: "linux",
     distribution: "suse",
     networkInterfaces: {
-      lo: {
-        kind: "loopback"
-      }
+      lo: {}
     }
   });
 
@@ -87,7 +85,7 @@ test("Host extends", t => {
 
   e1.execFinalize();
 
-  t.deepEqual([...e1.networkInterfaces.keys()].sort(), ["eth0", "lo" ]);
+  t.deepEqual([...e1.networkInterfaces.keys()].sort(), ["eth0", "lo"]);
 
   const e2 = new Host(owner);
   e2.read({
@@ -212,11 +210,8 @@ test("Host addresses", t => {
   h1.read({
     name: "h1",
     networkInterfaces: {
-      lo: {
-        kind: "loopback"
-      },
+      lo: {},
       eth0: {
-        kind: "ethernet",
         scope: "global",
         ipAddresses: ["${ipv4_prefix}.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
       }
@@ -353,7 +348,6 @@ test("clone NetworkInterface", t => {
     name: "h1",
     networkInterfaces: {
       eth0: {
-        kind: "ethernet",
         hwaddr: "00:01:02:03:04:05"
       }
     }
@@ -366,7 +360,6 @@ test("clone NetworkInterface", t => {
     extends: [h1],
     networkInterfaces: {
       eth0: {
-        kind: "ethernet",
         network: n1,
         ipAddresses: ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f"]
       }
