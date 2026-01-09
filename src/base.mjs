@@ -682,7 +682,7 @@ export function extractFrom(
 
   const json = {};
 
-  do {
+  for (; typeDefinition; typeDefinition = typeDefinition.extends) {
     for (const [path, def] of attributeIterator(
       typeDefinition.attributes,
       filterPublic
@@ -737,8 +737,7 @@ export function extractFrom(
           json[name] = value;
       }
     }
-    typeDefinition = typeDefinition?.extends;
-  } while (typeDefinition);
+  }
 
   return json;
 }
