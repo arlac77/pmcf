@@ -10,7 +10,7 @@ import {
   ServiceTypes
 } from "pmcf";
 
-test("Service basics", t => {
+function setup() {
   const root = new Root("/somwhere");
 
   const n1 = new Network(root);
@@ -26,6 +26,12 @@ test("Service basics", t => {
   });
 
   root.addObject(l1);
+
+  return { root, n1, l1 };
+}
+
+test("Service basics", t => {
+  const { root, l1 } = setup();
 
   const h1 = new Host(l1);
   h1.read({
@@ -183,13 +189,7 @@ test("Service basics", t => {
 });
 
 test("Service without protocol", t => {
-  const root = new Root("/somwhere");
-  const n1 = new Network(root);
-  n1.read({
-    name: "n1",
-    subnets: "10.0/16"
-  });
-  root.addObject(n1);
+  const { root } = setup();
 
   const h1 = new Host(root);
   h1.read({
@@ -224,13 +224,7 @@ test("Service without protocol", t => {
 });
 
 test("Service load", t => {
-  const root = new Root("/somwhere");
-  const n1 = new Network(root);
-  n1.read({
-    name: "n1",
-    subnets: "10.0/16"
-  });
-  root.addObject(n1);
+  const { root } = setup();
 
   const h1 = new Host(root);
   h1.read({
@@ -248,14 +242,7 @@ test("Service load", t => {
 });
 
 test("Service owner", t => {
-  const root = new Root("/somwhere");
-
-  const n1 = new Network(root);
-  n1.read({
-    name: "n1",
-    subnets: "10.0/16"
-  });
-  root.addObject(n1);
+  const { root } = setup();
 
   const h1 = new Host(root);
   h1.read({
@@ -303,13 +290,7 @@ test("Service owner", t => {
 });
 
 test("Service type extension", t => {
-  const root = new Root("/somwhere");
-  const n1 = new Network(root);
-  n1.read({
-    name: "n1",
-    subnets: "10.0/16"
-  });
-  root.addObject(n1);
+  const { root } = setup();
 
   const h1 = new Host(root);
   h1.read({
