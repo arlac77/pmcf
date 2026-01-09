@@ -119,7 +119,7 @@ test("Service basics", t => {
   h2.read({
     name: "h2",
     priority: 3,
-    networkInterfaces: { eth0: { kind: "ethernet", ipAddresses: "10.0.0.2" } }
+    networkInterfaces: { eth0: { ipAddresses: "10.0.0.2" } }
   });
   const s2 = s1.forOwner(h2);
   h2.services = s2;
