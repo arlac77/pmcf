@@ -62,7 +62,7 @@ async function _assertObject(t, visited, object, expected, path = []) {
       case "services":
         for (const [name, sd] of Object.entries(v)) {
           const service = [...object.findServices(`name="${name}"`)][0];
-          _assertObject(t, visited, service, sd, [...path, name]);
+          await _assertObject(t, visited, service, sd, [...path, name]);
         }
         break;
 
