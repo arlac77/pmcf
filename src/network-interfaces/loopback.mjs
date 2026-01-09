@@ -28,7 +28,7 @@ export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
   }
 
   static isCommonName(name) {
-    return name.match(/lo\d+$/);
+    return name.match(/lo\d*$/);
   }
 
   get kind() {
