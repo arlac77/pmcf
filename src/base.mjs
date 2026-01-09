@@ -208,11 +208,8 @@ export class Base {
                   }
 
                   this.error(
-                    "Not found",
-                    name,
-                    value, "of", attribute.type.name,
-                    this.root.named(value)?.type,
-                    attribute.type?.map && attribute.type.map(t => t.name)
+                    `No such object "${value}" (${attribute.type.name}) for attribute ${name}`,
+                    this.root.named(value)?.toString()
                   );
                 });
               }
