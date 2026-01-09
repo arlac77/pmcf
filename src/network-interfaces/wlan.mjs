@@ -1,6 +1,10 @@
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
-import { string_attribute_writable, secret_attribute, addType } from "pacc";
+import {
+  string_attribute_writable,
+  secret_attribute_writable,
+  addType
+} from "pacc";
 import { writeLines, sectionLines } from "../utils.mjs";
 import { NetworkInterfaceTypeDefinition } from "./network-interface.mjs";
 import {
@@ -16,7 +20,7 @@ const WLANNetworkInterfaceTypeDefinition = {
   key: "name",
   attributes: {
     ssid: string_attribute_writable,
-    psk: { ...secret_attribute, writable: true },
+    psk: secret_attribute_writable,
     secretName: string_attribute_writable
   }
 };
@@ -31,7 +35,7 @@ export class WLANNetworkInterface extends EthernetNetworkInterface {
   }
 
   static isCommonName(name) {
-    return name.match(/wlan\d+$/);
+    return name.match(/^wlan\d+$/);
   }
 
   static get typeDefinition() {

@@ -31,7 +31,7 @@ export class EthernetNetworkInterface extends NetworkInterface {
   }
 
   static isCommonName(name) {
-    return name.match(/eth\d+$/);
+    return name.match(/^eth\d+$/);
   }
 
   get kind() {
