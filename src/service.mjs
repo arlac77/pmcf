@@ -119,6 +119,10 @@ export class Service extends Base {
     return this.host.subnets;
   }
 
+  get services() {
+    return [this];
+  }
+
   get serviceTypeEndpoints() {
     return serviceTypeEndpoints(ServiceTypes[this.type]);
   }
