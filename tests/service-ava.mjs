@@ -2,6 +2,7 @@ import test from "ava";
 import {
   Root,
   Location,
+  Network,
   Host,
   Service,
   Endpoint,
@@ -11,10 +12,17 @@ import {
 
 test("Service basics", t => {
   const root = new Root("/somwhere");
+
+  const n1 = new Network(root);
+  n1.read({
+    name: "n1",
+    subnets: "10.0/16"
+  });
+  root.addObject(n1);
+
   const l1 = new Location(root);
   l1.read({
-    name: "l1",
-    networks: { ethernet: { subnets: "10.0/16" } }
+    name: "l1"
   });
 
   root.addObject(l1);
@@ -23,8 +31,8 @@ test("Service basics", t => {
   h1.read({
     name: "h1",
     networkInterfaces: {
-      l0: { kind: "loopback" },
-      eth0: { kind: "ethernet", ipAddresses: "10.0.0.1/16" }
+      lo: {},
+      eth0: { network: "/n1", ipAddresses: "10.0.0.1/16" }
     },
     priority: 19
   });
@@ -176,11 +184,17 @@ test("Service basics", t => {
 
 test("Service without protocol", t => {
   const root = new Root("/somwhere");
+  const n1 = new Network(root);
+  n1.read({
+    name: "n1",
+    subnets: "10.0/16"
+  });
+  root.addObject(n1);
 
   const h1 = new Host(root);
   h1.read({
     name: "h1",
-    networkInterfaces: { eth0: { kind: "ethernet", ipAddresses: "10.0.0.1" } }
+    networkInterfaces: { eth0: { network: "/n1", ipAddresses: "10.0.0.1" } }
   });
   root.addObject(h1);
 
@@ -211,11 +225,17 @@ test("Service without protocol", t => {
 
 test("Service load", t => {
   const root = new Root("/somwhere");
+  const n1 = new Network(root);
+  n1.read({
+    name: "n1",
+    subnets: "10.0/16"
+  });
+  root.addObject(n1);
 
   const h1 = new Host(root);
   h1.read({
     name: "h1",
-    networkInterfaces: { eth0: { kind: "ethernet", ipAddresses: "10.0.0.1" } },
+    networkInterfaces: { eth0: { network: "/n1", ipAddresses: "10.0.0.1" } },
     services: {
       dns: {}
     }
@@ -229,6 +249,13 @@ test("Service load", t => {
 
 test("Service owner", t => {
   const root = new Root("/somwhere");
+
+  const n1 = new Network(root);
+  n1.read({
+    name: "n1",
+    subnets: "10.0/16"
+  });
+  root.addObject(n1);
 
   const h1 = new Host(root);
   h1.read({
@@ -244,7 +271,7 @@ test("Service owner", t => {
     priority: 8,
     weight: 7,
     networkInterfaces: {
-      eth0: { kind: "ethernet", ipAddresses: "10.0.0.1" }
+      eth0: { network: "/n1", ipAddresses: "10.0.0.1" }
     }
   });
   root.addObject(h2);
@@ -277,11 +304,17 @@ test("Service owner", t => {
 
 test("Service type extension", t => {
   const root = new Root("/somwhere");
+  const n1 = new Network(root);
+  n1.read({
+    name: "n1",
+    subnets: "10.0/16"
+  });
+  root.addObject(n1);
 
   const h1 = new Host(root);
   h1.read({
     name: "h1",
-    networkInterfaces: { eth0: { kind: "ethernet", ipAddresses: "10.0.0.1" } },
+    networkInterfaces: { eth0: { network: "/n1", ipAddresses: "10.0.0.1" } },
     services: {
       bind: {}
     }
