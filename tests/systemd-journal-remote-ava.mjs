@@ -1,5 +1,11 @@
 import test from "ava";
-import { Root, Host, SystemdJournalRemoteService, ServiceTypes, serviceTypeEndpoints } from "pmcf";
+import {
+  Root,
+  Host,
+  SystemdJournalRemoteService,
+  ServiceTypes,
+  serviceTypeEndpoints
+} from "pmcf";
 
 test("systemd-journal-remote service type", t => {
   const root = new Root();
@@ -51,19 +57,17 @@ test("systemd-journal-remote", async t => {
 
   t.deepEqual(journalRemote.extends, [journalRemoteTemplate]);
 
-  t.deepEqual(journalRemote.systemdConfigs("ABC"), [
-    {
-      serviceName: "systemd-journal-remote.service",
-      configFileName: "etc/systemd/journal-remote.conf.d/ABC.conf",
-      content: [
-        "Remote",
-        {
-          Seal: false,
-          SplitMode: "host",
-          ServerKeyFile: "/etc/ssl/server.key",
-          TrustedCertificateFile: "/etc/ssl/certs/chain.cert.pem"
-        }
-      ]
-    }
-  ]);
+  t.deepEqual(journalRemote.systemdConfigs("ABC"), {
+    serviceName: "systemd-journal-remote.service",
+    configFileName: "etc/systemd/journal-remote.conf.d/ABC.conf",
+    content: [
+      "Remote",
+      {
+        Seal: false,
+        SplitMode: "host",
+        ServerKeyFile: "/etc/ssl/server.key",
+        TrustedCertificateFile: "/etc/ssl/certs/chain.cert.pem"
+      }
+    ]
+  });
 });

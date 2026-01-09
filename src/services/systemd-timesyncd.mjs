@@ -19,13 +19,13 @@ const SystemdTimesyncdServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
 
   attributes: {
-    NTP: {...string_attribute_writable, configurable: true },
-    FallbackNTP: {...string_attribute_writable, configurable: true },
-    RootDistanceMaxSec: {...duration_attribute_writable, configurable: true },
-    PollIntervalMinSec: {...duration_attribute_writable, configurable: true },
-    PollIntervalMaxSec: {...duration_attribute_writable, configurable: true },
-    ConnectionRetrySec: {...duration_attribute_writable, configurable: true },
-    SaveIntervalSec: {...duration_attribute_writable, configurable: true }
+    NTP: { ...string_attribute_writable, configurable: true },
+    FallbackNTP: { ...string_attribute_writable, configurable: true },
+    RootDistanceMaxSec: { ...duration_attribute_writable, configurable: true },
+    PollIntervalMinSec: { ...duration_attribute_writable, configurable: true },
+    PollIntervalMaxSec: { ...duration_attribute_writable, configurable: true },
+    ConnectionRetrySec: { ...duration_attribute_writable, configurable: true },
+    SaveIntervalSec: { ...duration_attribute_writable, configurable: true }
   },
   service: {}
 };
@@ -61,7 +61,7 @@ export class SystemdTimesyncdService extends ExtraSourceService {
     };
 
     return {
-      serviceName: "systemd-timesyncd.service",
+      serviceName: `${this.type}.service`,
       configFileName: `etc/systemd/timesyncd.conf.d/${name}.conf`,
       content: [
         "Time",

@@ -41,7 +41,7 @@
       "source": "/GLOBAL",
       "LLMNR": true
     },
-    "systemd-journal": {
+    "systemd-journald": {
       "SplitMode" : "host"
     },
     "systemd-journal-upload": {

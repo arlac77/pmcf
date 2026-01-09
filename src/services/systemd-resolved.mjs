@@ -76,7 +76,7 @@ export class SystemdResolvedService extends ExtraSourceService {
     };
 
     return {
-      serviceName: "systemd-resolved.service",
+      serviceName: `${this.type}.service`,
       configFileName: `etc/systemd/resolved.conf.d/${name}.conf`,
       content: [
         "Resolve",

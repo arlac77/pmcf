@@ -7,7 +7,7 @@ import { Service, ServiceTypeDefinition, addServiceType } from "pmcf";
 import { filterConfigurable } from "../utils.mjs";
 
 const SystemdJournalServiceTypeDefinition = {
-  name: "systemd-journal",
+  name: "systemd-journald",
   extends: ServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
@@ -109,7 +109,7 @@ const SystemdJournalServiceTypeDefinition = {
   service: {}
 };
 
-export class SystemdJournalService extends Service {
+export class SystemdJournaldService extends Service {
   static {
     addType(this);
     addServiceType(this.typeDefinition.service, this.typeDefinition.name);
@@ -129,7 +129,7 @@ export class SystemdJournalService extends Service {
 
   systemdConfigs(name) {
     return {
-      serviceName: "systemd-journald.service",
+      serviceName: `${this.type}.service`,
       configFileName: `etc/systemd/journal.conf.d/${name}.conf`,
       content: ["Journal", this.getProperties(filterConfigurable)]
     };
