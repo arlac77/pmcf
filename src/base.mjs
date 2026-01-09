@@ -313,6 +313,17 @@ export class Base {
     return this.owner.addObject(object);
   }
 
+  *owners() {
+    if (this.owner) {
+      yield* this.owner.thisAndOwners();
+    }
+  }
+
+  *thisAndOwners() {
+    yield this;
+    yield* this.owners();
+  }
+
   forOwner(owner) {
     if (this.owner !== owner) {
       const newObject = Object.create(this);
@@ -548,27 +559,31 @@ export class Base {
     return this.name?.indexOf("*") >= 0 || this.owner?.isTemplate || false;
   }
 
-  get properties() {
-    return this._properties;
-  }
-
   get globals() {
     return Object.assign(
       {},
       this.properties,
-      this.owner?.properties,
-      this.owner?.owner?.properties,
-      this.owner?.owner?.owner?.properties,
+      ...[...this.owners()].map(o => o.properties),
       globals
     );
   }
 
+  get properties() {
+    return this._properties;
+  }
+
   property(name) {
-    return (
-      this._properties?.[name] ??
-      this.owner?.property(name) ??
-      this.owner?.owner?.property(name)
-    );
+    let value = this._properties?.[name];
+    if (value !== undefined) {
+      return value;
+    }
+
+    for (const o of this.owners()) {
+      const value = o.property(name);
+      if (value !== undefined) {
+        return value;
+      }
+    }
   }
 
   /**

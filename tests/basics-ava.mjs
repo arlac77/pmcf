@@ -1,5 +1,43 @@
 import test from "ava";
-import { extractFrom, Root, Host, Location, Owner } from "pmcf";
+import { extractFrom, Root, Network, Host, Location, Owner } from "pmcf";
+
+function setup() {
+  const root = new Root("/somewhere");
+
+  const n1 = new Network(root);
+  n1.read({
+    name: "n1",
+    subnets: "10.0/16"
+  });
+  root.addObject(n1);
+
+  const l1 = new Location(root);
+  l1.read({
+    name: "l1",
+    properties: { p1: "v1", n1: 7 }
+  });
+  root.addObject(l1);
+  const h1 = new Host(l1);
+  h1.read({
+    name: "h1",
+    properties: { p1: "v2" },
+    networkInterfaces: {
+      eth0: {
+        network: "/n1",
+        metric: 1,
+        ipAddresses: "10.0.0.1"
+      },
+      eth1: {
+        network: "/n1",
+        metric: 2,
+        ipAddresses: "10.1.0.1"
+      }
+    }
+  });
+  l1.addObject(h1);
+
+  return { root, n1, l1, h1 };
+}
 
 test("Root basics", async t => {
   const root = new Root("/somewhere");
@@ -18,29 +56,20 @@ test("template from name '*'", t => {
   t.true(l1.isTemplate);
 });
 
+test("owners", t => {
+  const { root, l1, h1 } = setup();
+
+  t.deepEqual([...h1.owners()], [l1, root]);
+
+  t.is(h1.property("n1"), 7);
+  t.is(h1.property("p1"), "v2");
+
+  t.is(l1.property("n1"), 7);
+  t.is(l1.property("p1"), "v1");
+});
+
 test("expression", t => {
-  const root = new Root("/somewhere");
-  const l1 = new Location(root);
-  l1.read({
-    name: "l1",
-    properties: { p1: "v1", n1: 7 }
-  });
-  root.addObject(l1);
-  const h1 = new Host(l1);
-  h1.read({
-    name: "h1",
-    networkInterfaces: {
-      eth0: {
-        metric: 1,
-        ipAddresses: "10.0.0.1"
-      },
-      eth1: {
-        metric: 2,
-        ipAddresses: "10.1.0.1"
-      }
-    }
-  });
-  l1.addObject(h1);
+  const { root, l1, h1 } = setup();
 
   t.is(l1.expression("name"), "l1");
   t.is(l1.expression("owner.name"), "");
