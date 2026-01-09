@@ -65,6 +65,14 @@ async function _assertObject(t, visited, object, expected, path = []) {
           _assertObject(t, visited, service, sd, [...path, name]);
         }
         break;
+
+      case "extends":
+        t.deepEqual(
+          object.extends.map(a => a.fullName).sort(),
+          v,
+          `${pathToString(path)}: extends`
+        );
+        break;
       default: {
         let o;
         if (object instanceof Map) {

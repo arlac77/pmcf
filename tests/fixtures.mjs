@@ -18,6 +18,7 @@ import {
 export function root1(root, filter) {
   const mosquitto = {
     name: "mosquitto",
+    fullName: "services/mosquitto/mosquitto",
     instanceof: MosquittoService,
     isTemplate: true
   };
@@ -82,10 +83,15 @@ export function root1(root, filter) {
     services: {
       dns: { type: "dns", alias: "dns" },
       smb: { type: "smb" },
-      timemachine: { type: "timemachine" },
-      mdns: {},
+      timemachine: {
+        extends: ["/services/timemachine/timemachine"],
+        type: "timemachine"
+      },
+      mdns: {
+        extends: ["/services/timemachine/mdns"]
+      },
       mosquitto: {
-      //  extends: [mosquitto, "/services/mosquitto/mosquitto"],
+        extends: ["/services/mosquitto/mosquitto"],
         type: "mosquitto",
         alias: "mqtt",
         port: 1883,
@@ -93,8 +99,13 @@ export function root1(root, filter) {
         password_file: "/etc/mosquitto/passwd",
         acl_file: "/etc/mosquitto/acl"
       },
-      openldap: { type: "openldap", alias: "ldap", uri: "ldap://" },
-      chrony: { type: "chrony", alias: "ntp", port: 323 }
+      openldap: {
+        extends: [],
+        type: "openldap",
+        alias: "ldap",
+        uri: "ldap://"
+      },
+      chrony: { extends: [], type: "chrony", alias: "ntp", port: 323 }
     }
   };
 
