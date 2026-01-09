@@ -1,0 +1,10 @@
+{
+  "depends": ["mosquitto"],
+  "services": {
+    "mosquitto": {
+      "alias": "mqtt",
+      "persistence_location": "/var/lib/mosquitto",
+      "password_file": "/etc/mosquitto/passwd"
+    }
+  }
+}

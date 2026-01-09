@@ -4,7 +4,12 @@
   "depends": ["d1", "d2-${os}"],
   "replaces": ["r1", "r2-${os}"],
   "provides": ["p1", "p2-${os}"],
-  "extends": ["/model/m1", "/model/${os}", "/services/timemachine"],
+  "extends": [
+    "/model/m1",
+    "/model/${os}",
+    "/services/timemachine",
+    "/services/mosquitto"
+  ],
   "networkInterfaces": {
     "eth0": {
       "kind": "ethernet",

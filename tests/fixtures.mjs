@@ -1,4 +1,13 @@
-import { Owner, Location, Network, Subnet, Host, Cluster, Root } from "pmcf";
+import {
+  Owner,
+  Location,
+  Network,
+  Subnet,
+  Host,
+  Cluster,
+  Root,
+  MosquittoService
+} from "pmcf";
 
 /**
  *
@@ -7,6 +16,12 @@ import { Owner, Location, Network, Subnet, Host, Cluster, Root } from "pmcf";
  * @returns {Object}
  */
 export function root1(root, filter) {
+  const mosquitto = {
+    name: "mosquitto",
+    instanceof: MosquittoService,
+    isTemplate: true
+  };
+
   const L1 = {
     instanceof: Location,
     owner: root,
@@ -69,9 +84,17 @@ export function root1(root, filter) {
       smb: { type: "smb" },
       timemachine: { type: "timemachine" },
       mdns: {},
-      mosquitto: { type: "mosquitto", alias: "mqtt" },
-      openldap: { type: "openldap", alias: "ldap" },
-      chrony: { type: "chrony", alias: "ntp" }
+      mosquitto: {
+      //  extends: [mosquitto, "/services/mosquitto/mosquitto"],
+        type: "mosquitto",
+        alias: "mqtt",
+        port: 1883,
+        persistence_location: "/var/lib/mosquitto",
+        password_file: "/etc/mosquitto/passwd",
+        acl_file: "/etc/mosquitto/acl"
+      },
+      openldap: { type: "openldap", alias: "ldap", uri: "ldap://" },
+      chrony: { type: "chrony", alias: "ntp", port: 323 }
     }
   };
 
@@ -112,6 +135,12 @@ export function root1(root, filter) {
     isTemplate: true
   };
 
+  const services = {
+    name: "services",
+    instanceof: Owner,
+    isTemplate: true
+  };
+
   const all = {
     "/L1": L1,
     "/L1/C1": L1C1,
@@ -120,8 +149,9 @@ export function root1(root, filter) {
     "/L1/n1/host2": host2,
     "/L1/host1": host1,
     "/L2": L2,
+    "/services": services,
+    "/services/mosquitto/mosquitto": mosquitto,
     "/model": model,
-
     "/model/m1": {
       name: "m1",
       instanceof: Host,
