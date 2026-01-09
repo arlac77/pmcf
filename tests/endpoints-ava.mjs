@@ -2,6 +2,7 @@ import test from "ava";
 import {
   Root,
   Host,
+  Network,
   Service,
   ServiceTypes,
   addServiceType,
@@ -14,13 +15,20 @@ import {
 function prepare() {
   const root = new Root("/somwhere");
 
+  const n1 = new Network(root);
+  n1.read({
+    name: "n1",
+    subnets: "10.0/16"
+  });
+  root.addObject(n1);
+
   addServiceType({}, "http-control");
   const h1 = new Host(root);
   h1.read({
     name: "h1",
     networkInterfaces: {
-      l0: { kind: "loopback" },
-      eth0: { ipAddresses: "10.0.0.1/16" }
+      lo: {},
+      eth0: { network: "/n1", ipAddresses: "10.0.0.1/16" }
     },
     priority: 19
   });
