@@ -242,9 +242,9 @@ export class BindService extends ExtraSourceService {
 
     const configPackageDir = join(dir, "config") + "/";
     const packageData = {
+      outputs: this.outputs,
       dir: configPackageDir,
       sources: [new FileContentProvider(configPackageDir)],
-      outputs: this.outputs,
       properties: {
         name: `named-${name}`,
         description: `named definitions for ${names}`,
@@ -302,13 +302,15 @@ export class BindService extends ExtraSourceService {
     const zonesPackageDir = join(dir, "zones") + "/";
 
     packageData.dir = zonesPackageDir;
+    packageData.sources = [
+      new FileContentProvider(zonesPackageDir, ...filePermissions)
+    ];
     packageData.properties = {
       name: `named-zones-${name}`,
       description: `zone definitions for ${names}`,
       dependencies: ["mf-named"],
       access: "private",
-      hooks: {},
-      sources: [new FileContentProvider(zonesPackageDir, ...filePermissions)]
+      hooks: {}
     };
 
     yield this.generateZoneDefs(sources, packageData);
@@ -316,14 +318,14 @@ export class BindService extends ExtraSourceService {
     const outfacingZonesPackageDir = join(dir, "outfacingZones") + "/";
 
     packageData.dir = outfacingZonesPackageDir;
+    packageData.sources = [
+      new FileContentProvider(outfacingZonesPackageDir, ...filePermissions)
+    ];
     packageData.properties = {
       name: `named-zones-${name}-outfacing`,
       description: `outfacing zone definitions for ${names}`,
       access: "private",
-      hooks: {},
-      sources: [
-        new FileContentProvider(outfacingZonesPackageDir, ...filePermissions)
-      ]
+      hooks: {}
     };
 
     yield* this.generateOutfacingDefs(sources, packageData);
