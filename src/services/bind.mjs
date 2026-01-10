@@ -236,8 +236,8 @@ export class BindService extends ExtraSourceService {
   }
 
   async *preparePackages(dir) {
-    const zoneSources = this.zones.length ? this.zones : [this.owner];
-    const names = zoneSources.map(a => a.fullName).join(" ");
+    const sources = this.zones.length ? this.zones : [this.owner];
+    const names = sources.map(a => a.fullName).join(" ");
     const name = this.owner.owner.name || this.owner.name;
 
     const configPackageDir = join(dir, "config") + "/";
@@ -293,6 +293,12 @@ export class BindService extends ExtraSourceService {
       yield packageData;
     }
 
+    const ownerAndGroup = { owner: "named", group: "named" };
+    const filePermissions = [
+      { ...ownerAndGroup, mode: 0o644 },
+      { ...ownerAndGroup, mode: 0o755 }
+    ];
+
     const zonesPackageDir = join(dir, "zones") + "/";
 
     packageData.dir = zonesPackageDir;
@@ -301,20 +307,11 @@ export class BindService extends ExtraSourceService {
       description: `zone definitions for ${names}`,
       dependencies: ["mf-named"],
       access: "private",
-      hooks: {}
+      hooks: {},
+      sources: [new FileContentProvider(zonesPackageDir, ...filePermissions)]
     };
 
-    const ownerAndGroup = { owner: "named", group: "named" };
-    const filePermissions = [
-      { ...ownerAndGroup, mode: 0o644 },
-      { ...ownerAndGroup, mode: 0o755 }
-    ];
-
-    packageData.sources = [
-      new FileContentProvider(zonesPackageDir, ...filePermissions)
-    ];
-
-    yield this.generateZoneDefs(zoneSources, packageData);
+    yield this.generateZoneDefs(sources, packageData);
 
     const outfacingZonesPackageDir = join(dir, "outfacingZones") + "/";
 
@@ -323,14 +320,13 @@ export class BindService extends ExtraSourceService {
       name: `named-zones-${name}-outfacing`,
       description: `outfacing zone definitions for ${names}`,
       access: "private",
-      hooks: {}
+      hooks: {},
+      sources: [
+        new FileContentProvider(outfacingZonesPackageDir, ...filePermissions)
+      ]
     };
 
-    packageData.sources = [
-      new FileContentProvider(outfacingZonesPackageDir, ...filePermissions)
-    ];
-
-    yield* this.generateOutfacingDefs(zoneSources, packageData);
+    yield* this.generateOutfacingDefs(sources, packageData);
   }
 
   async *generateOutfacingDefs(sources, packageData) {
@@ -361,18 +357,18 @@ export class BindService extends ExtraSourceService {
     }
   }
 
-  async generateZoneDefs(zoneSources, packageData) {
+  async generateZoneDefs(sources, packageData) {
     const configs = [];
 
-    for (const zoneSource of zoneSources) {
+    for (const source of sources) {
       console.log(
         "ZONE",
-        zoneSource.toString(),
-        [...zoneSource.localDomains].join(" ")
+        source.toString(),
+        [...source.localDomains].join(" ")
       );
 
-      for (const domain of zoneSource.localDomains) {
-        const locationName = zoneSource.location.name;
+      for (const domain of source.localDomains) {
+        const locationName = source.location.name;
         const reverseZones = new Map();
 
         const config = {
@@ -425,7 +421,7 @@ export class BindService extends ExtraSourceService {
           networkInterface,
           domainNames,
           family
-        } of zoneSource.networkAddresses()) {
+        } of source.networkAddresses()) {
           if (
             !this.exclude.has(networkInterface.network) &&
             !this.excludeInterfaceKinds.has(networkInterface.kind)
