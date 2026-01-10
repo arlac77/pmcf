@@ -7,8 +7,8 @@ export function yesno(flag) {
 
 /**
  * Appends default domain if name does not already have a domain.
- * @param {string} name 
- * @param {string} [defaultDomain] 
+ * @param {string} name
+ * @param {string} [defaultDomain]
  * @returns {string|undefined}
  */
 export function domainName(name, defaultDomain) {
@@ -20,7 +20,7 @@ export function domainName(name, defaultDomain) {
 
 /**
  * Extracts domain name from a name.
- * @param {string} domainName 
+ * @param {string} domainName
  * @param {string} [defaultDomain]
  * @returns {string|undefined}
  */
@@ -62,9 +62,9 @@ export async function writeLines(dir, name, lines) {
 }
 
 /**
- * 
- * @param {string} sectionName 
- * @param {Object} values 
+ *
+ * @param {string} sectionName
+ * @param {Object} values
  * @returns {Array<string>}
  */
 export function sectionLines(sectionName, values) {
@@ -77,12 +77,22 @@ export function sectionLines(sectionName, values) {
   return lines;
 }
 
+export function* setionLinesFromPropertyIterator(properties) {
+  for (const [name, value, path, attribute] of properties) {
+    if (attribute.attributes) {
+      yield `[${name}]`;
+    } else {
+      yield `${name}=${value}`;
+    }
+  }
+}
+
 export function bridgeToJSON(bridge) {
   return [...bridge].map(n => n.fullName || `(${n})`).sort();
 }
 
 /**
- * @param {any} value 
+ * @param {any} value
  * @returns {Array<any>}
  */
 export function asArray(value) {
@@ -90,7 +100,7 @@ export function asArray(value) {
 }
 
 /**
- * @param {any} value 
+ * @param {any} value
  * @returns {Iterable<any>}
  */
 export function asIterator(value) {
@@ -108,5 +118,5 @@ export function asIterator(value) {
   return asArray(value);
 }
 
-
-export const filterConfigurable = (name, attribute) => !attribute.private & attribute.configurable;
+export const filterConfigurable = (name, attribute) =>
+  !attribute.private & attribute.configurable;

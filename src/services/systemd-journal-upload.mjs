@@ -4,7 +4,7 @@ import {
   addType
 } from "pacc";
 import { Service, ServiceTypeDefinition, addServiceType } from "pmcf";
-import { filterConfigurable } from "../utils.mjs";
+import { filterConfigurable, sectionLines } from "../utils.mjs";
 
 const SystemdJournalUploadServiceTypeDefinition = {
   name: "systemd-journal-upload",
@@ -73,7 +73,7 @@ export class SystemdJournalUploadService extends Service {
     return {
       serviceName: this.systemdService,
       configFileName: `etc/systemd/journal-upload.conf.d/${name}.conf`,
-      content: ["Upload", this.getProperties(filterConfigurable)]
+      content: sectionLines("Upload", this.getProperties(filterConfigurable))
     };
   }
 }

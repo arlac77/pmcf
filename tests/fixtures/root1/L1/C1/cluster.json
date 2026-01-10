@@ -42,7 +42,7 @@
       "LLMNR": true
     },
     "systemd-journald": {
-      "SplitMode" : "host"
+      "SplitMode": "host"
     },
     "systemd-journal-upload": {
       "URL": "https://journal.examle.com/",

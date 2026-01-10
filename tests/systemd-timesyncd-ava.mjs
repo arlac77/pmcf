@@ -22,11 +22,9 @@ test("systemd-timesyncd basics", async t => {
     serviceName: "systemd-timesyncd.service",
     configFileName: "etc/systemd/timesyncd.conf.d/ABC.conf",
     content: [
-      "Time",
-      {
-        NTP: "192.168.1.11 c1.mydomain.com",
-        FallbackNTP: '2.arch.pool.ntp.org'
-      }
+      "[Time]",
+      "NTP=192.168.1.11 c1.mydomain.com",
+      "FallbackNTP=2.arch.pool.ntp.org"
     ]
   });
 });

@@ -62,13 +62,11 @@ test("systemd-journal-remote", async t => {
     serviceName: "systemd-journal-remote.service",
     configFileName: "etc/systemd/journal-remote.conf.d/ABC.conf",
     content: [
-      "Remote",
-      {
-        Seal: false,
-        SplitMode: "host",
-        ServerKeyFile: "/etc/ssl/server.key",
-        TrustedCertificateFile: "/etc/ssl/certs/chain.cert.pem"
-      }
+      "[Remote]",
+      "Seal=false",
+      "SplitMode=host",
+      "ServerKeyFile=/etc/ssl/server.key",
+      "TrustedCertificateFile=/etc/ssl/certs/chain.cert.pem"
     ]
   });
 });

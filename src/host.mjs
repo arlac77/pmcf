@@ -475,7 +475,7 @@ export class Host extends ServiceOwner {
         for (const { serviceName, configFileName, content } of asArray(
           service.expand(service.systemdConfigs(this.name))
         )) {
-          await writeLines(dir, configFileName, sectionLines(...content));
+          await writeLines(dir, configFileName, content);
 
           addHook(
             packageData.properties.hooks,

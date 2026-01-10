@@ -1,6 +1,7 @@
 import { join } from "node:path";
 import { allOutputs } from "npm-pkgbuild";
 import {
+  getAttribute,
   typeFactory,
   addType,
   parse,
@@ -346,7 +347,7 @@ export class Base {
     if (!seen.has(this)) {
       seen.add(this);
 
-      const value = this[propertyName];
+      const value = getAttribute(e, propertyName);
       if (value !== undefined) {
         yield value;
       }
@@ -362,7 +363,8 @@ export class Base {
       seen.add(this);
       for (const e of this.extends) {
         const value =
-          e[propertyName] ?? e._extendedProperty(propertyName, seen);
+          getAttribute(e, propertyName) ??
+          e._extendedProperty(propertyName, seen);
         if (value !== undefined) {
           return value;
         }
@@ -371,7 +373,7 @@ export class Base {
   }
 
   extendedProperty(propertyName) {
-    const value = this[propertyName];
+    const value = getAttribute(this, propertyName);
     if (value !== undefined) {
       return value;
     }

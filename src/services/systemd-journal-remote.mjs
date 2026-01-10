@@ -4,7 +4,7 @@ import {
   boolean_attribute_writable
 } from "pacc";
 import { Service, ServiceTypeDefinition, addServiceType } from "pmcf";
-import { filterConfigurable } from "../utils.mjs";
+import { filterConfigurable, sectionLines } from "../utils.mjs";
 
 const SystemdJournalRemoteServiceTypeDefinition = {
   name: "systemd-journal-remote",
@@ -105,7 +105,7 @@ export class SystemdJournalRemoteService extends Service {
     return {
       serviceName: this.systemdService,
       configFileName: `etc/systemd/journal-remote.conf.d/${name}.conf`,
-      content: ["Remote", this.getProperties(filterConfigurable)]
+      content: sectionLines("Remote", this.getProperties(filterConfigurable))
     };
   }
 }

@@ -4,7 +4,7 @@ import {
   duration_attribute_writable
 } from "pacc";
 import { Service, ServiceTypeDefinition, addServiceType } from "pmcf";
-import { filterConfigurable } from "../utils.mjs";
+import { filterConfigurable, sectionLines } from "../utils.mjs";
 
 const SystemdJournalServiceTypeDefinition = {
   name: "systemd-journald",
@@ -129,7 +129,7 @@ export class SystemdJournaldService extends Service {
     return {
       serviceName: this.systemdService,
       configFileName: `etc/systemd/journal.conf.d/${name}.conf`,
-      content: ["Journal", this.getProperties(filterConfigurable)]
+      content: sectionLines("Journal", this.getProperties(filterConfigurable))
     };
   }
 }

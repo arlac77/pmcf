@@ -7,7 +7,7 @@ test("systemd-journal-upload service type", t => {
 
   const service = new SystemdJournalUploadService(h1);
 
-    t.is(service.systemdService, "systemd-journal-upload.service");
+  t.is(service.systemdService, "systemd-journal-upload.service");
   t.deepEqual(service.types, new Set(["systemd-journal-upload"]));
 });
 
@@ -21,11 +21,9 @@ test("systemd-journal-upload", async t => {
     serviceName: "systemd-journal-upload.service",
     configFileName: "etc/systemd/journal-upload.conf.d/ABC.conf",
     content: [
-      "Upload",
-      {
-        URL: "https://journal.examle.com/",
-        ServerKeyFile: "/etc/ssl/c1.mydomain.com.key"
-      }
+      "[Upload]",
+      "URL=https://journal.examle.com/",
+      "ServerKeyFile=/etc/ssl/c1.mydomain.com.key"
     ]
   });
 });

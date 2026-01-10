@@ -20,11 +20,6 @@ test("systemd-journald", async t => {
   t.deepEqual(journalUpload.systemdConfigs("ABC"), {
     serviceName: "systemd-journald.service",
     configFileName: "etc/systemd/journal.conf.d/ABC.conf",
-    content: [
-      "Journal",
-      {
-        SplitMode: "host"
-      }
-    ]
+    content: ["[Journal]", "SplitMode=host"]
   });
 });

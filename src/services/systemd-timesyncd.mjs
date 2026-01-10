@@ -10,7 +10,7 @@ import {
   serviceEndpoints,
   addServiceType
 } from "pmcf";
-import { filterConfigurable } from "../utils.mjs";
+import { filterConfigurable, sectionLines } from "../utils.mjs";
 
 const SystemdTimesyncdServiceTypeDefinition = {
   name: "systemd-timesyncd",
@@ -61,14 +61,14 @@ export class SystemdTimesyncdService extends ExtraSourceService {
     return {
       serviceName: this.systemdService,
       configFileName: `etc/systemd/timesyncd.conf.d/${name}.conf`,
-      content: [
+      content: sectionLines(
         "Time",
         {
           NTP: serviceEndpoints(this, options(300, 399)),
           FallbackNTP: serviceEndpoints(this, options(100, 199)),
           ...this.getProperties(filterConfigurable)
-        }
-      ]
+        })
+      
     };
   }
 }
