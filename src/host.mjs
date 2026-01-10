@@ -425,6 +425,7 @@ export class Host extends ServiceOwner {
   }
 
   async *preparePackages(dir) {
+    const pkgName = `${this.typeName}-${this.owner.name}-${this.name}`;
     let packageData = {
       dir,
       sources: [
@@ -440,7 +441,7 @@ export class Host extends ServiceOwner {
       ],
       outputs: this.outputs,
       properties: {
-        name: `${this.typeName}-${this.owner.name}-${this.name}`,
+        name: pkgName,
         description: `${this.typeName} definitions for ${this.fullName}`,
         access: "private",
         dependencies: [
@@ -448,7 +449,7 @@ export class Host extends ServiceOwner {
           ...this.depends
         ],
         provides: [...this.provides],
-        replaces: [`mf-${this.hostName}`, ...this.replaces],
+        replaces: [...this.replaces],
         requires: [],
         backup: "root/.ssh/known_hosts",
         hooks: await loadHooks(
@@ -496,7 +497,7 @@ export class Host extends ServiceOwner {
           name: `${this.typeName}-extra-${this.owner.name}-${this.name}`,
           description: `additional files for ${this.fullName}`,
           access: "private",
-          dependencies: [`${this.typeName}-${this.owner.name}-${this.name}`]
+          dependencies: [pkgName]
         }
       };
 
