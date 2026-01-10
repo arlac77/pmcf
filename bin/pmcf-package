@@ -74,11 +74,9 @@ for (const object of root.find(args)) {
         options
       );
 
-      // if (properties.verbose) {
-      console.log(" -> " + artifact);
-      // }
-
-      if (!options.dry) {
+      if (options.dry) {
+        console.log(" -> " + artifact);
+      } else {
         await Promise.all(
           publishingDetails.map(publishDetail =>
             output.publish(artifact, publishDetail)
