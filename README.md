@@ -42,59 +42,61 @@ generates config packages for:
 
 *   [Base](#base)
     *   [Parameters](#parameters)
-    *   [getProperties](#getproperties)
+    *   [propertyIterator](#propertyiterator)
         *   [Parameters](#parameters-1)
+    *   [getProperties](#getproperties)
+        *   [Parameters](#parameters-2)
     *   [priority](#priority)
     *   [expression](#expression)
-        *   [Parameters](#parameters-2)
-    *   [findService](#findservice)
         *   [Parameters](#parameters-3)
-    *   [expand](#expand)
+    *   [findService](#findservice)
         *   [Parameters](#parameters-4)
+    *   [expand](#expand)
+        *   [Parameters](#parameters-5)
 *   [PortEndpoint](#portendpoint)
-    *   [Parameters](#parameters-5)
+    *   [Parameters](#parameters-6)
     *   [port](#port)
     *   [socketAddress](#socketaddress)
 *   [HTTPEndpoint](#httpendpoint)
-    *   [Parameters](#parameters-6)
+    *   [Parameters](#parameters-7)
     *   [port](#port-1)
 *   [SkeletonNetworkInterface](#skeletonnetworkinterface)
     *   [networkAddresses](#networkaddresses)
-        *   [Parameters](#parameters-7)
+        *   [Parameters](#parameters-8)
 *   [SystemdJournalRemoteService](#systemdjournalremoteservice)
     *   [Properties](#properties)
     *   [systemdConfigs](#systemdconfigs)
-        *   [Parameters](#parameters-8)
+        *   [Parameters](#parameters-9)
 *   [SystemdJournalUploadService](#systemdjournaluploadservice)
     *   [Properties](#properties-1)
     *   [systemdConfigs](#systemdconfigs-1)
-        *   [Parameters](#parameters-9)
+        *   [Parameters](#parameters-10)
 *   [NetworkAddress](#networkaddress)
-    *   [Parameters](#parameters-10)
+    *   [Parameters](#parameters-11)
     *   [subnet](#subnet)
     *   [networkInterface](#networkinterface)
     *   [address](#address)
 *   [addresses](#addresses)
-    *   [Parameters](#parameters-11)
-*   [cidrAddresses](#cidraddresses)
     *   [Parameters](#parameters-12)
+*   [cidrAddresses](#cidraddresses)
+    *   [Parameters](#parameters-13)
 *   [isTemplate](#istemplate)
 *   [services](#services)
-    *   [Parameters](#parameters-13)
-*   [named](#named)
     *   [Parameters](#parameters-14)
-*   [serviceEndpoints](#serviceendpoints)
+*   [named](#named)
     *   [Parameters](#parameters-15)
-*   [domainName](#domainname)
+*   [serviceEndpoints](#serviceendpoints)
     *   [Parameters](#parameters-16)
-*   [domainFromDominName](#domainfromdominname)
+*   [domainName](#domainname)
     *   [Parameters](#parameters-17)
-*   [sectionLines](#sectionlines)
+*   [domainFromDominName](#domainfromdominname)
     *   [Parameters](#parameters-18)
-*   [asArray](#asarray)
+*   [sectionLines](#sectionlines)
     *   [Parameters](#parameters-19)
-*   [asIterator](#asiterator)
+*   [asArray](#asarray)
     *   [Parameters](#parameters-20)
+*   [asIterator](#asiterator)
+    *   [Parameters](#parameters-21)
 
 ## Base
 
@@ -103,13 +105,23 @@ generates config packages for:
 *   `owner` **[Base](#base)**&#x20;
 *   `data` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?**&#x20;
 
+### propertyIterator
+
+Retrive attribute values from an object.
+
+#### Parameters
+
+*   `filter` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?**&#x20;
+
+Returns **Iterable<\[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any]>** values
+
 ### getProperties
 
 Retrive attribute values from an object.
 
 #### Parameters
 
-*   `filter`   (optional, default `filterPublic`)
+*   `filter` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?**  (optional, default `filterPublic`)
 
 Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** values
 
