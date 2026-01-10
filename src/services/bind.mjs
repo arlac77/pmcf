@@ -86,7 +86,7 @@ const BindServiceTypeDefinition = {
       collection: true
     },
     notify: boolean_attribute_writable_false,
-    recordTTL: string_attribute_writable,
+    recordTTL: { ...string_attribute_writable, default: "1W" },
     serial: number_attribute_writable,
     refresh: { ...string_attribute_writable, default: 36000 },
     retry: { ...string_attribute_writable, default: 72000 },
@@ -304,20 +304,10 @@ export class BindService extends ExtraSourceService {
       hooks: {}
     };
 
-    const group = "named";
-    const owner = "named";
-
+    const ownerAndGroup = { owner: "named", group: "named" };
     const filePermissions = [
-      {
-        mode: 0o644,
-        owner,
-        group
-      },
-      {
-        mode: 0o755,
-        owner,
-        group
-      }
+      { ...ownerAndGroup, mode: 0o644 },
+      { ...ownerAndGroup, mode: 0o755 }
     ];
 
     packageData.sources = [
@@ -376,7 +366,7 @@ export class BindService extends ExtraSourceService {
 
     for (const zoneSource of zoneSources) {
       console.log(
-        "SOURCE",
+        "ZONE",
         zoneSource.toString(),
         [...zoneSource.localDomains].join(" ")
       );
