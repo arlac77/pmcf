@@ -12,13 +12,6 @@ import {
   string_collection_attribute_writable,
   name_attribute_writable
 } from "pacc";
-import { yesno, writeLines, asArray } from "../utils.mjs";
-import {
-  DNSRecord,
-  dnsFullName,
-  dnsRecordTypeForAddressFamily,
-  sortZoneRecords
-} from "../dns-utils.mjs";
 import {
   ExtraSourceService,
   serviceEndpoints,
@@ -26,6 +19,13 @@ import {
   networkAddressType,
   addServiceType
 } from "pmcf";
+import { yesno, writeLines, asArray } from "../utils.mjs";
+import {
+  DNSRecord,
+  dnsFullName,
+  dnsRecordTypeForAddressFamily,
+  sortZoneRecords
+} from "../dns-utils.mjs";
 import { ServiceTypeDefinition } from "../service.mjs";
 import { ExtraSourceServiceTypeDefinition } from "../extra-source-service.mjs";
 import { addHook } from "../hooks.mjs";
@@ -304,16 +304,19 @@ export class BindService extends ExtraSourceService {
       hooks: {}
     };
 
+    const group = "named";
+    const owner = "named";
+
     const filePermissions = [
       {
         mode: 0o644,
-        owner: "named",
-        group: "named"
+        owner,
+        group
       },
       {
         mode: 0o755,
-        owner: "named",
-        group: "named"
+        owner,
+        group
       }
     ];
 
