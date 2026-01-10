@@ -381,11 +381,10 @@ export class Base {
 
   /**
    * Retrive attribute values from an object.
-   * @return {Object} values
+   * @param {Function} [filter]
+   * @return {Iterable<[string,any]>} values
    */
-  getProperties(filter = filterPublic) {
-    const result = {};
-
+  *propertyIterator(filter) {
     for (
       let typeDefinition = this.constructor.typeDefinition;
       typeDefinition;
@@ -396,16 +395,22 @@ export class Base {
         filter
       )) {
         const name = path.join(".");
-
-        let value = this.extendedProperty(name);
+        const value = this.extendedProperty(name);
 
         if (value !== undefined) {
-          result[def.externalName ?? name] = toExternal(value, def);
+          yield [def.externalName ?? name, toExternal(value, def), path, def];
         }
       }
     }
+  }
 
-    return result;
+  /**
+   * Retrive attribute values from an object.
+   * @param {Function} [filter]
+   * @return {Object} values
+   */
+  getProperties(filter = filterPublic) {
+    return Object.fromEntries(this.propertyIterator(filter));
   }
 
   get root() {
