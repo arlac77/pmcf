@@ -27,7 +27,9 @@ const SystemdTimesyncdServiceTypeDefinition = {
     ConnectionRetrySec: { ...duration_attribute_writable, configurable: true },
     SaveIntervalSec: { ...duration_attribute_writable, configurable: true }
   },
-  service: {}
+  service: {
+    systemdService: "systemd-timesyncd.service"
+  }
 };
 
 export class SystemdTimesyncdService extends ExtraSourceService {
@@ -44,10 +46,6 @@ export class SystemdTimesyncdService extends ExtraSourceService {
     return SystemdTimesyncdServiceTypeDefinition.name;
   }
 
-  get systemdServices() {
-    return this.type;
-  }
-
   systemdConfigs(name) {
     const options = (lower, upper) => {
       return {
@@ -61,7 +59,7 @@ export class SystemdTimesyncdService extends ExtraSourceService {
     };
 
     return {
-      serviceName: `${this.type}.service`,
+      serviceName: this.systemdService,
       configFileName: `etc/systemd/timesyncd.conf.d/${name}.conf`,
       content: [
         "Time",

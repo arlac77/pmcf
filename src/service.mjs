@@ -70,7 +70,7 @@ export const ServiceTypeDefinition = {
     ...endpointAttributes,
     alias: string_attribute_writable,
     weight: { ...number_attribute_writable /*default: 1*/ },
-    systemd: string_collection_attribute_writable
+    systemdService: string_attribute_writable
   }
 };
 
@@ -79,7 +79,7 @@ export class Service extends Base {
   _weight;
   _type;
   _port;
-  _systemd;
+  _systemdService;
 
   static {
     addType(this);
@@ -245,8 +245,8 @@ export class Service extends Base {
     return serviceTypes(ServiceTypes[this.type]);
   }
 
-  get systemdServices() {
-    return this.extendedProperty("_systemd");
+  get systemdService() {
+    return this.extendedProperty("_systemdService") ?? ServiceTypes[this.type]?.systemdService;
   }
 
   dnsRecordsForDomainName(domainName, hasSVRRecords) {

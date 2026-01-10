@@ -40,7 +40,9 @@ const SystemdJournalUploadServiceTypeDefinition = {
       //   default: false
     }
   },
-  service: {}
+  service: {
+    systemdService: "systemd-journal-upload.service"
+  }
 };
 
 /**
@@ -62,10 +64,6 @@ export class SystemdJournalUploadService extends Service {
     return SystemdJournalUploadServiceTypeDefinition.name;
   }
 
-  get systemdServices() {
-    return this.type;
-  }
-
   /**
    *
    * @param {string} name
@@ -73,7 +71,7 @@ export class SystemdJournalUploadService extends Service {
    */
   systemdConfigs(name) {
     return {
-      serviceName: `${this.type}.service`,
+      serviceName: this.systemdService,
       configFileName: `etc/systemd/journal-upload.conf.d/${name}.conf`,
       content: ["Upload", this.getProperties(filterConfigurable)]
     };

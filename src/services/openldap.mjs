@@ -18,6 +18,7 @@ const OpenLDAPServiceTypeDefinition = {
     uri: string_attribute_writable
   },
   service: {
+    systemdService: "slapd.service",
     extends: ["ldap"],
     services: {
       ldap: {
@@ -44,11 +45,6 @@ export class OpenLDAPService extends Service {
 
   _baseDN;
   _rootDN;
-
-  constructor(owner, data) {
-    super(owner, data);
-    this._systemd = "slapd.service";
-  }
 
   get type() {
     return OpenLDAPServiceTypeDefinition.name;

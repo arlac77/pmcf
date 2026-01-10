@@ -15,6 +15,7 @@ test("systemd-journal-remote service type", t => {
 
   t.deepEqual(service.types, new Set(["systemd-journal-remote"]));
 
+  t.is(service.systemdService, "systemd-journal-remote.service");
   t.is(ServiceTypes[service.type].endpoints[0].port, 19532);
   t.is(serviceTypeEndpoints(ServiceTypes[service.type])[0].port, 19532);
 });

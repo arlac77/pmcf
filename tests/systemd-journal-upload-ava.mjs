@@ -7,6 +7,7 @@ test("systemd-journal-upload service type", t => {
 
   const service = new SystemdJournalUploadService(h1);
 
+    t.is(service.systemdService, "systemd-journal-upload.service");
   t.deepEqual(service.types, new Set(["systemd-journal-upload"]));
 });
 

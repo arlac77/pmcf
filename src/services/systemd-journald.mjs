@@ -106,7 +106,9 @@ const SystemdJournalServiceTypeDefinition = {
       configurable: true
     }
   },
-  service: {}
+  service: {
+    systemdService: "systemd-journald.service"
+  }
 };
 
 export class SystemdJournaldService extends Service {
@@ -123,13 +125,9 @@ export class SystemdJournaldService extends Service {
     return SystemdJournalServiceTypeDefinition.name;
   }
 
-  get systemdServices() {
-    return this.type;
-  }
-
   systemdConfigs(name) {
     return {
-      serviceName: `${this.type}.service`,
+      serviceName: this.systemdService,
       configFileName: `etc/systemd/journal.conf.d/${name}.conf`,
       content: ["Journal", this.getProperties(filterConfigurable)]
     };

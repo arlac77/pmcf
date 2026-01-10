@@ -95,6 +95,7 @@ const BindServiceTypeDefinition = {
     allowedUpdates: string_collection_attribute_writable
   },
   service: {
+    systemdService: "bind.service",
     extends: ["dns"],
     services: {
       "bind-statistics": {
@@ -163,9 +164,7 @@ export class BindService extends ExtraSourceService {
 
   constructor(owner, data) {
     super(owner, data);
-
-    this._systemd = "bind.service";
-
+  
     this.views = {};
 
     for (const name of ["internal", "protected"]) {

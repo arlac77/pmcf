@@ -60,6 +60,7 @@ const SystemdJournalRemoteServiceTypeDefinition = {
     }
   },
   service: {
+    systemdService: "systemd-journal-remote.service",
     endpoints: [
       {
         family: "IPv4",
@@ -95,10 +96,6 @@ export class SystemdJournalRemoteService extends Service {
     return SystemdJournalRemoteServiceTypeDefinition.name;
   }
 
-  get systemdServices() {
-    return this.type;
-  }
-
   /**
    *
    * @param {string} name
@@ -106,7 +103,7 @@ export class SystemdJournalRemoteService extends Service {
    */
   systemdConfigs(name) {
     return {
-      serviceName: `${this.type}.service`,
+      serviceName: this.systemdService,
       configFileName: `etc/systemd/journal-remote.conf.d/${name}.conf`,
       content: ["Remote", this.getProperties(filterConfigurable)]
     };

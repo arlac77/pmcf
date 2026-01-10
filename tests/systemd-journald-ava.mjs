@@ -7,6 +7,7 @@ test("systemd-journald service type", t => {
 
   const service = new SystemdJournaldService(h1);
 
+  t.is(service.systemdService, "systemd-journald.service");
   t.deepEqual(service.types, new Set(["systemd-journald"]));
 });
 

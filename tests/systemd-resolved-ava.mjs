@@ -7,6 +7,7 @@ test("systemd-resolved service type", t => {
 
   const service = new SystemdResolvedService(h1);
 
+  t.is(service.systemdService, "systemd-resolved.service");
   t.deepEqual(service.types, new Set(["systemd-resolved"]));
 });
 

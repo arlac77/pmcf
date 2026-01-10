@@ -8,6 +8,7 @@ test("systemd-timesyncd service type", t => {
 
   const service = new SystemdTimesyncdService(h1);
 
+  t.is(service.systemdService, "systemd-timesyncd.service");
   t.deepEqual(service.types, new Set(["systemd-timesyncd"]));
 });
 

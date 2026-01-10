@@ -40,7 +40,9 @@ const SystemdResolvedServiceTypeDefinition = {
     DNSOverTLS: { ...yesno_attribute_writable, configurable: true },
     LLMNR: { ...yesno_attribute_writable, configurable: true }
   },
-  service: {}
+  service: {
+    systemdService: "systemd-resolved.service"
+  }
 };
 
 export class SystemdResolvedService extends ExtraSourceService {
@@ -55,10 +57,6 @@ export class SystemdResolvedService extends ExtraSourceService {
 
   get type() {
     return SystemdResolvedServiceTypeDefinition.name;
-  }
-
-  get systemdServices() {
-    return this.type;
   }
 
   systemdConfigs(name) {
@@ -76,7 +74,7 @@ export class SystemdResolvedService extends ExtraSourceService {
     };
 
     return {
-      serviceName: `${this.type}.service`,
+      serviceName: this.systemdService,
       configFileName: `etc/systemd/resolved.conf.d/${name}.conf`,
       content: [
         "Resolve",

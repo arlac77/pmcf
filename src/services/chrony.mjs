@@ -17,6 +17,7 @@ const ChronyServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   key: "name",
   service: {
+    systemdService: "chronyd.service",
     extends: ["ntp"],
     services: {
       "chrony-cmd": {
@@ -51,11 +52,6 @@ export class ChronyService extends ExtraSourceService {
 
   static get typeDefinition() {
     return ChronyServiceTypeDefinition;
-  }
-
-  constructor(owner, data) {
-    super(owner, data);
-    this._systemd = "chronyd.service";
   }
 
   get type() {
