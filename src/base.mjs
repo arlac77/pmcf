@@ -42,11 +42,11 @@ export class Base {
   owner;
   description;
   name;
+  extends = [];
   _tags = new Set();
   _packaging = new Set();
   _directory;
   _finalize;
-  _extends = [];
   _properties;
 
   static {
@@ -285,14 +285,6 @@ export class Base {
 
   _applyExtends() {}
 
-  set extends(value) {
-    this._extends.push(value);
-  }
-
-  get extends() {
-    return this._extends;
-  }
-
   named(name) {}
 
   typeNamed(typeName, name) {
@@ -327,7 +319,7 @@ export class Base {
   forOwner(owner) {
     if (this.owner !== owner) {
       const newObject = Object.create(this);
-
+      newObject.extends = [...this.extends];
       newObject.owner = owner;
       return newObject;
     }
