@@ -7,7 +7,7 @@ import {
   addType
 } from "pacc";
 import { addServiceType } from "pmcf";
-import { writeLines, filterConfigurable } from "../utils.mjs";
+import { writeLines, filterConfigurable, setionLinesFromPropertyIterator } from "../utils.mjs";
 import { Service, ServiceTypeDefinition } from "../service.mjs";
 
 const MosquittoServiceTypeDefinition = {
@@ -85,11 +85,9 @@ export class MosquittoService extends Service {
     await writeLines(
       join(dir, "etc", "mosquitto"),
       "mosquitto.conf",
-      Object.entries(this.getProperties(filterConfigurable)).map(
-        ([name, value]) => `${name} ${value}`
-      )
+          setionLinesFromPropertyIterator(this.propertyIterator(filterConfigurable))
     );
-
+    
     yield packageData;
   }
 }

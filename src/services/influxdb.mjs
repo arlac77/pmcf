@@ -2,7 +2,11 @@ import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { boolean_attribute_writable_true, addType } from "pacc";
 import { addServiceType } from "pmcf";
-import { writeLines } from "../utils.mjs";
+import {
+  writeLines,
+  setionLinesFromPropertyIterator,
+  filterConfigurable
+} from "../utils.mjs";
 import { Service, ServiceTypeDefinition } from "../service.mjs";
 
 const InfluxdbServiceTypeDefinition = {
@@ -12,7 +16,8 @@ const InfluxdbServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   key: "name",
   attributes: {
-    "metrics-disabled": {
+    "metricsDisabled": {
+      externalName: "metrics-disabled",
       ...boolean_attribute_writable_true,
       configurable: true
     }
@@ -65,14 +70,11 @@ export class InfluxdbService extends Service {
       }
     };
 
-    const lines = Object.entries(InfluxdbServiceTypeDefinition.attributes)
-      .filter(
-        ([key, attribute]) =>
-          attribute.configurable && this[key] !== undefined
-      )
-      .map(([key]) => `${key}: ${this[key]}`);
-
-    await writeLines(join(dir, "etc", "influxdb"), "config.yml", lines);
+    await writeLines(
+      join(dir, "etc", "influxdb"),
+      "config.yml",
+      setionLinesFromPropertyIterator(this.propertyIterator(filterConfigurable))
+    );
 
     yield packageData;
   }
