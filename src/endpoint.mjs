@@ -115,6 +115,15 @@ export class DomainNameEndpoint extends PortEndpoint {
  * Endpoint based on http
  */
 export class HTTPEndpoint extends BaseEndpoint {
+
+  /**
+   * 
+   * @param {Service} service 
+   * @param {*} address 
+   * @param {object} data 
+   * @param {number} data.port
+   * @param {string} data.pathname
+   */
   constructor(service, address, data) {
     super(service, data);
 

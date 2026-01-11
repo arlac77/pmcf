@@ -1,5 +1,5 @@
 export const ServiceTypes = {
-  "pacman-repo": {
+  "alpm-repo": {
     extends: ["https"]
   },
   syslog: {

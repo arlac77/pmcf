@@ -18,6 +18,14 @@
     }
   },
   "services": {
+    "alpm-repo": {
+      "base": "/binaries/linux/arch/$repo/$arch",
+      "architectures": ["aarch64", "x86", "armv7"],
+      "repositories": {
+        "mf-private" : {},
+        "mf-public" : {}
+      }
+    },
     "influxdb": {},
     "mosquitto": {
       "acl_file": "/etc/mosquitto/acl"

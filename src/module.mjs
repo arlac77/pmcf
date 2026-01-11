@@ -27,6 +27,7 @@ export * from "./services/influxdb.mjs";
 export * from "./services/mosquitto.mjs";
 export * from "./services/headscale.mjs";
 export * from "./services/tailscale.mjs";
+export * from "./services/alpm-repo.mjs";
 export * from "./services/systemd-journald.mjs";
 export * from "./services/systemd-journal-remote.mjs";
 export * from "./services/systemd-journal-upload.mjs";
