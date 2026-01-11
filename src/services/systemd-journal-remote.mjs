@@ -66,13 +66,15 @@ const SystemdJournalRemoteServiceTypeDefinition = {
         family: "IPv4",
         port: 19532,
         protocol: "tcp",
-        tls: false
+        tls: false,
+        pathname: "/"
       },
       {
         family: "IPv6",
         port: 19532,
         protocol: "tcp",
-        tls: false
+        tls: false,
+        pathname: "/"
       }
     ]
   }

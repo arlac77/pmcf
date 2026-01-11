@@ -10,5 +10,7 @@ test("influxdb basics", async t => {
 
   t.true(influxdb instanceof InfluxdbService);
   t.is(influxdb.port, 8086);
+  t.is(influxdb.url.toString(), "http://192.168.1.1:8086/");
+
   t.is(influxdb.metricsDisabled, true);
 });

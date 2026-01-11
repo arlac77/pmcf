@@ -16,7 +16,7 @@ const InfluxdbServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   key: "name",
   attributes: {
-    "metricsDisabled": {
+    metricsDisabled: {
       externalName: "metrics-disabled",
       ...boolean_attribute_writable_true,
       configurable: true
@@ -28,13 +28,15 @@ const InfluxdbServiceTypeDefinition = {
         family: "IPv4",
         port: 8086,
         protocol: "tcp",
-        tls: false
+        tls: false,
+        pathname: "/"
       },
       {
         family: "IPv6",
         port: 8086,
         protocol: "tcp",
-        tls: false
+        tls: false,
+        pathname: "/"
       }
     ]
   }

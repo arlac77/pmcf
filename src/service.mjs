@@ -119,6 +119,10 @@ export class Service extends Base {
     return this.host.subnets;
   }
 
+  get url() {
+    return this.endpoint()?.url;
+  }
+
   get services() {
     return [this];
   }
@@ -246,7 +250,10 @@ export class Service extends Base {
   }
 
   get systemdService() {
-    return this.extendedProperty("_systemdService") ?? ServiceTypes[this.type]?.systemdService;
+    return (
+      this.extendedProperty("_systemdService") ??
+      ServiceTypes[this.type]?.systemdService
+    );
   }
 
   dnsRecordsForDomainName(domainName, hasSVRRecords) {

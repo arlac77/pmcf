@@ -1,6 +1,7 @@
 import test from "ava";
 import {
   Root,
+  Network,
   Host,
   SystemdJournalRemoteService,
   ServiceTypes,
@@ -9,8 +10,20 @@ import {
 
 test("systemd-journal-remote service type", t => {
   const root = new Root();
-  const h1 = new Host(root);
+  const n1 = new Network(root);
+  n1.read({
+    name: "n1",
+    subnets: "10.0/16"
+  });
+  root.addObject(n1);
 
+  const h1 = new Host(root);
+  h1.read({
+    name: "h1",
+    networkInterfaces: {
+      eth0: { network: "/n1", ipAddresses: "10.0.0.1/16" }
+    }
+  });
   const service = new SystemdJournalRemoteService(h1);
 
   t.deepEqual(service.types, new Set(["systemd-journal-remote"]));
@@ -18,6 +31,8 @@ test("systemd-journal-remote service type", t => {
   t.is(service.systemdService, "systemd-journal-remote.service");
   t.is(ServiceTypes[service.type].endpoints[0].port, 19532);
   t.is(serviceTypeEndpoints(ServiceTypes[service.type])[0].port, 19532);
+
+  //t.is(service.url.toString(), "http://10.0.0.1:19532/");
 });
 
 test("systemd-journal-remote", async t => {
