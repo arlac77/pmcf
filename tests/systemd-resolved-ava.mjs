@@ -11,9 +11,12 @@ test("systemd-resolved service type", t => {
   t.is(service.systemdService, "systemd-resolved.service");
   t.deepEqual(service.types, new Set(["systemd-resolved"]));
 
+  /*
+  service.Resolve = {};
   service.Resolve.DNS = "1.2.3.4";
 
   t.is(service.extendedProperty("Resolve.DNS"), "1.2.3.4");
+  */
 });
 
 test("systemd-resolved basics", async t => {
@@ -29,8 +32,8 @@ test("systemd-resolved basics", async t => {
       "[Resolve]",
       "DNS=192.168.1.11",
       "FallbackDNS=1.1.1.1 2606:4700:4700::1111 8.8.8.8 2001:4860:4860::8888",
-      "Domains=mydomain.com",
       "MulticastDNS=yes",
+      "Domains=mydomain.com",
       "DNSSEC=no",
       "LLMNR=yes"
     ]

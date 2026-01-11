@@ -1,6 +1,7 @@
 import {
   addType,
   object_attribute,
+  string_collection_attribute_writable,
   duration_attribute_writable,
   string_attribute_writable,
   boolean_attribute_writable,
@@ -32,7 +33,10 @@ const SystemdResolvedServiceTypeDefinition = {
       attributes: {*/
         DNS: { ...string_attribute_writable, configurable: true },
         FallbackDNS: { ...string_attribute_writable, configurable: true },
-        Domains: { ...string_attribute_writable, configurable: true },
+        
+        domains: { externalName: "Domains", ...string_collection_attribute_writable, configurable: true },
+
+
         MulticastDNS: { ...yesno_attribute_writable, configurable: true },
         Cache: { ...boolean_attribute_writable, configurable: true },
         CacheFromLocalhost: {
@@ -83,8 +87,6 @@ export class SystemdResolvedService extends ExtraSourceService {
     return SystemdResolvedServiceTypeDefinition.name;
   }
 
-  Resolve = {};
-
   systemdConfigs(name) {
     const options = (lower, upper, limit) => {
       return {
@@ -99,6 +101,8 @@ export class SystemdResolvedService extends ExtraSourceService {
       };
     };
 
+   //console.log([...this.owner.expression('services[in("dns",types) && priority>=300 && priority<=399].owner.name')]);
+
     return {
       serviceName: this.systemdService,
       configFileName: `etc/systemd/resolved.conf.d/${name}.conf`,
@@ -106,7 +110,6 @@ export class SystemdResolvedService extends ExtraSourceService {
       content: sectionLines("Resolve", {
         DNS: serviceEndpoints(this, options(300, 399, 4)),
         FallbackDNS: serviceEndpoints(this, options(100, 199, 4)),
-        Domains: [...this.localDomains].join(" "),
         MulticastDNS: yesno(this.network.multicastDNS),
         ...this.getProperties(filterConfigurable)
       })
