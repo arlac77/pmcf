@@ -181,9 +181,9 @@ Endpoint based on http
 
 ### Parameters
 
-*   `service` &#x20;
-*   `address` &#x20;
-*   `data` &#x20;
+*   `service` **Service**&#x20;
+*   `address` **any**&#x20;
+*   `data` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**&#x20;
 
 ### port
 
