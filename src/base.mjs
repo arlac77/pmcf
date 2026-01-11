@@ -481,7 +481,11 @@ export class Base {
    * @returns {any}
    */
   expression(expression, options) {
-    return parse(expression, { root: this, globals: this.globals, ...options });
+    return parse(expression, {
+      root: this,
+      getGlobal: x => this.getGlobal(x),
+      ...options
+    });
   }
 
   /**
@@ -558,13 +562,8 @@ export class Base {
     return this.name?.indexOf("*") >= 0 || this.owner?.isTemplate || false;
   }
 
-  get globals() {
-    return Object.assign(
-      {},
-      this.properties,
-      ...[...this.owners()].map(o => o.properties),
-      globals
-    );
+  getGlobal(a) {
+    return globals[a] ?? this.property(a);
   }
 
   get properties() {
@@ -598,7 +597,7 @@ export class Base {
     return expand(object, {
       stopClass: Base,
       root: this,
-      globals: this.globals
+      getGlobal: x => this.getGlobal(x)
     });
   }
 
