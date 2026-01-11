@@ -27,27 +27,27 @@ const KeaServiceTypeDefinition = {
   attributes: {
     "ddns-send-updates": {
       ...boolean_attribute_writable_true,
-      isCommonOption: true
+      configurable: true
     },
     "renew-timer": {
       ...number_attribute_writable,
-      isCommonOption: true,
+      configurable: true,
       default: 900
     },
     "rebind-timer": {
       ...number_attribute_writable,
-      isCommonOption: true,
+      configurable: true,
       default: 1800
     },
     "valid-lifetime": {
       ...number_attribute_writable,
       mandatory: true,
-      isCommonOption: true,
+      configurable: true,
       default: 86400
     },
     "ddns-conflict-resolution-mode": {
       ...string_attribute_writable,
-      isCommonOption: true
+      configurable: true
       //values: ["check-exists-with-dhcid","no-check-with-dhcid"]
     }
   },
@@ -282,7 +282,7 @@ export class KeaService extends Service {
         KeaServiceTypeDefinition.attributes
       ).filter(
         ([key, attribute]) =>
-          attribute.isCommonOption && this[key] !== undefined
+          attribute.configurable && this[key] !== undefined
       )) {
         cfg[key] = this[key];
       }
