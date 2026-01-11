@@ -14,7 +14,7 @@ const InfluxdbServiceTypeDefinition = {
   attributes: {
     "metrics-disabled": {
       ...boolean_attribute_writable_true,
-      isCommonOption: true
+      configurable: true
     }
   },
   service: {
@@ -68,7 +68,7 @@ export class InfluxdbService extends Service {
     const lines = Object.entries(InfluxdbServiceTypeDefinition.attributes)
       .filter(
         ([key, attribute]) =>
-          attribute.isCommonOption && this[key] !== undefined
+          attribute.configurable && this[key] !== undefined
       )
       .map(([key]) => `${key}: ${this[key]}`);
 
