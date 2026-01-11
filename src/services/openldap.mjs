@@ -1,9 +1,14 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
-import { string_attribute_writable, addType } from "pacc";
+import {
+  string_attribute_writable,
+  number_attribute_writable,
+  object_attribute,
+  addType
+} from "pacc";
 import { addServiceType } from "pmcf";
 import { ServiceTypeDefinition, Service } from "../service.mjs";
-import { writeLines } from "../utils.mjs";
+import { writeLines, filterConfigurable } from "../utils.mjs";
 import { addHook } from "../hooks.mjs";
 
 const OpenLDAPServiceTypeDefinition = {
@@ -15,7 +20,28 @@ const OpenLDAPServiceTypeDefinition = {
   attributes: {
     baseDN: string_attribute_writable,
     rootDN: string_attribute_writable,
-    uri: string_attribute_writable
+    uri: string_attribute_writable,
+
+    DB_CONFIG: {
+      ...object_attribute,
+      attributes: {
+        set_cachesize: {
+          ...string_attribute_writable,
+          configurable: true,
+          default: "0 16777216 1"
+        },
+        set_lg_regionmax: {
+          ...number_attribute_writable,
+          configurable: true,
+          default: 65536
+        },
+        set_lg_bsize: {
+          ...number_attribute_writable,
+          configurable: true,
+          default: 524288
+        }
+      }
+    }
   },
   service: {
     systemdService: "slapd.service",
@@ -43,6 +69,7 @@ export class OpenLDAPService extends Service {
     return OpenLDAPServiceTypeDefinition;
   }
 
+  DB_CONFIG = {};
   _baseDN;
   _rootDN;
 
@@ -131,6 +158,13 @@ export class OpenLDAPService extends Service {
     await writeLines(
       join(packageData.dir, "/var/lib/openldap/openldap-data"),
       "DB_CONFIG",
+
+      /*
+      ...[...this.propertyIterator(filterConfigurable)].map(
+        ([name, value]) => `${name} ${value}`
+      )
+    */
+
       this.expand([
         "set_cachesize 0 16777216 1",
         "set_lg_regionmax 65536",

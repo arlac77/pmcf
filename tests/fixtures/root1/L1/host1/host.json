@@ -27,7 +27,12 @@
       "alias": "ldap",
       "baseDN": "${ldap_base}",
       "rootDN": "dn=root,${ldap_base}",
-      "uri": "ldap://"
+      "uri": "ldap://",
+      "DB_CONFIG": {
+        "set_cachesize": "0 16777216 1",
+        "set_lg_regionmax": "65536",
+        "set_lg_bsize": "524288"
+      }
     },
     "chrony": {
       "alias": "ntp",
