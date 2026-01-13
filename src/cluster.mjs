@@ -4,6 +4,7 @@ import {
   default_attribute_writable,
   default_attribute,
   number_attribute_writable,
+  duration_attribute_writable,
   addType
 } from "pacc";
 import { Owner } from "./owner.mjs";
@@ -17,7 +18,7 @@ const ClusterTypeDefinition = {
   extends: Host.typeDefinition,
   key: "name",
   attributes: {
-    routerId: number_attribute_writable,
+    routerId: { ...number_attribute_writable, default: 100 },
     masters: {
       ...default_attribute_writable,
       type: "network_interface",
@@ -33,7 +34,7 @@ const ClusterTypeDefinition = {
       type: "network_interface",
       collection: true
     },
-    checkInterval: number_attribute_writable
+    checkInterval: { ...duration_attribute_writable, default: 60 }
   }
 };
 
