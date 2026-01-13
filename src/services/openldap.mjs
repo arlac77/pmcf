@@ -39,6 +39,10 @@ const OpenLDAPServiceTypeDefinition = {
           ...number_attribute_writable,
           configurable: true,
           default: 524288
+        },
+        txn_checkpoint: {
+          ...string_attribute_writable,
+          configurable: true,
         }
       }
     }
@@ -51,7 +55,8 @@ const OpenLDAPServiceTypeDefinition = {
         endpoints: [
           {
             family: "unix",
-            path: "/run/ldapi"
+            path: "/run/ldapi",
+            scheme: "ldapi"
           }
         ]
       }
