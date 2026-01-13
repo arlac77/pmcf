@@ -9,6 +9,7 @@ import {
   Endpoint,
   HTTPEndpoint,
   DomainNameEndpoint,
+  UnixEndpoint,
   sortByFamilyAndAddress
 } from "pmcf";
 
@@ -156,4 +157,32 @@ test("DomainNameEndpoint", t => {
   };
 
   t.deepEqual(s1.endpoint(), new DomainNameEndpoint(s1, "h1", options));
+});
+
+test("UnixEndpoint", t => {
+  const root = new Root("/somwhere");
+
+  const h1 = new Host(root);
+  h1.read({
+    name: "h1"
+  });
+  root.addObject(h1);
+
+  const s1 = new Service(h1, {
+    name: "ntp"
+  });
+
+  h1.services = s1;
+
+  const options = {
+    type: ServiceTypes.ntp,
+    path: "/run/xyz",
+    family: "unix",
+    scheme: "ldapi",
+    tls: false
+  };
+
+  const e1 = new UnixEndpoint(s1, "/run/xyz", options);
+
+  t.deepEqual(e1.url, "ldapi:/run/xyz");
 });

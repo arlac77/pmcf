@@ -182,6 +182,7 @@ export class UnixEndpoint extends BaseEndpoint {
   constructor(service, path, data) {
     super(service, data);
     this.path = path;
+    this.scheme = data.scheme;
   }
 
   get family() {
@@ -194,6 +195,13 @@ export class UnixEndpoint extends BaseEndpoint {
 
   get address() {
     return this.path;
+  }
+
+  get url()
+  {
+    if(this.scheme) {
+      return `${this.scheme}:${this.path}`;
+    }
   }
 
   toString() {
