@@ -597,7 +597,7 @@ export class Base {
     return expand(object, {
       stopClass: Base,
       root: this,
-      getGlobal: x => this.getGlobal(x)
+      getGlobal: name => this.getGlobal(name)
     });
   }
 
