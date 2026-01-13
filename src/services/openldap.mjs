@@ -42,25 +42,15 @@ const OpenLDAPServiceTypeDefinition = {
         },
         txn_checkpoint: {
           ...string_attribute_writable,
-          configurable: true,
+          configurable: true
         }
       }
     }
   },
   service: {
     systemdService: "slapd.service",
-    extends: ["ldap","ldapi"],
-    services: {
-   /*   ldap: {
-        endpoints: [
-          {
-            family: "unix",
-            path: "/run/ldapi",
-            scheme: "ldapi"
-          }
-        ]
-      }*/
-    }
+    extends: ["ldap", "ldapi"],
+    services: {}
   }
 };
 
