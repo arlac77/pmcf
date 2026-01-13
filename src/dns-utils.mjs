@@ -106,5 +106,5 @@ export function dnsMergeParameters(a, b) {
 }
 
 export function dnsPriority(priority) {
-  return 500 - (priority ?? 10);
+  return Math.min(500 - (priority ?? 10), 65535);
 }
