@@ -1,5 +1,5 @@
 import test from "ava";
-import { Root, UnixEndpoint, ServiceTypes,  } from "pmcf";
+import { Root, UnixEndpoint, ServiceTypes } from "pmcf";
 import { filterConfigurable } from "../src/utils.mjs";
 import { OpenLDAPService } from "../src/services/openldap.mjs";
 
@@ -15,10 +15,18 @@ test("OpenLDAPService basics", async t => {
   t.is(openldap.uri, "ldap://");
 
   //console.log([...openldap.propertyIterator(filterConfigurable)]);
-  
+
   t.deepEqual(
-    openldap.endpoint("ldap"),
-    new UnixEndpoint(openldap, "/run/ldapi", { type: ServiceTypes.ldap })
+    openldap.endpoint("ldapi"),
+    new UnixEndpoint(openldap, "/run/ldapi", {
+      type: ServiceTypes.ldapi,
+      scheme: "ldapi"
+    })
+  );
+
+  t.deepEqual(
+    openldap.endpoint("ldapi").url.toString(),
+    new URL("ldapi:///run/ldapi").toString()
   );
 
   /*

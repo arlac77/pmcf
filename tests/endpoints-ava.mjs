@@ -184,5 +184,5 @@ test("UnixEndpoint", t => {
 
   const e1 = new UnixEndpoint(s1, "/run/xyz", options);
 
-  t.deepEqual(e1.url, "ldapi:/run/xyz");
+  t.deepEqual(e1.url, "ldapi:///run/xyz");
 });

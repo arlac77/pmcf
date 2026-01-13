@@ -49,9 +49,9 @@ const OpenLDAPServiceTypeDefinition = {
   },
   service: {
     systemdService: "slapd.service",
-    extends: ["ldap"],
+    extends: ["ldap","ldapi"],
     services: {
-      ldap: {
+   /*   ldap: {
         endpoints: [
           {
             family: "unix",
@@ -59,7 +59,7 @@ const OpenLDAPServiceTypeDefinition = {
             scheme: "ldapi"
           }
         ]
-      }
+      }*/
     }
   }
 };

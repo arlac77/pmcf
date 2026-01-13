@@ -68,6 +68,9 @@ export const ServiceTypes = {
       { family: "IPv6", protocol: "tcp", port: 636, tls: true }
     ]
   },
+  ldapi: {
+    endpoints: [{ family: "unix", scheme: "ldapi", path: "/run/ldapi" }]
+  },
   http: {
     endpoints: [
       { family: "IPv4", protocol: "tcp", port: 80, tls: false },

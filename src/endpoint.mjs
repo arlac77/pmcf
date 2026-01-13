@@ -200,7 +200,7 @@ export class UnixEndpoint extends BaseEndpoint {
   get url()
   {
     if(this.scheme) {
-      return `${this.scheme}:${this.path}`;
+      return `${this.scheme}://${this.path}`;
     }
   }
 
