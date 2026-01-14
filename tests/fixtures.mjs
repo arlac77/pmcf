@@ -100,7 +100,7 @@ export function root1(root, filter) {
         acl_file: "/etc/mosquitto/acl"
       },
       openldap: {
-        extends: [],
+        extends: ["/services/openldap/openldap"],
         type: "openldap",
         alias: "ldap",
         uri: "ldap://"

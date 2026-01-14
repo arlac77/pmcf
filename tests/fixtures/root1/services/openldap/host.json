@@ -1,0 +1,6 @@
+{
+  "depends": "mf-ldap",
+  "services": {
+    "openldap": { "alias": "ldap" }
+  }
+}

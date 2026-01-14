@@ -8,6 +8,7 @@
     "/model/m1",
     "/model/${os}",
     "/services/timemachine",
+    "/services/openldap",
     "/services/mosquitto"
   ],
   "networkInterfaces": {

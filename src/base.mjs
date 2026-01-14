@@ -306,6 +306,13 @@ export class Base {
     return this.owner.addObject(object);
   }
 
+  *allExtends() {
+    for (const e of this.extends) {
+      yield e;
+      yield* e.allExtends();
+    }
+  }
+
   *owners() {
     if (this.owner) {
       yield* this.owner.thisAndOwners();
@@ -352,7 +359,7 @@ export class Base {
         yield value;
       }
 
-      for (const e of this.extends) {
+      for (const e of this.allExtends()) {
         yield* e._extendedPropertyIterator(propertyName, seen);
       }
     }
@@ -361,7 +368,7 @@ export class Base {
   _extendedProperty(propertyName, seen) {
     if (!seen.has(this)) {
       seen.add(this);
-      for (const e of this.extends) {
+      for (const e of this.allExtends()) {
         const value =
           getAttribute(e, propertyName) ??
           e._extendedProperty(propertyName, seen);

@@ -1,6 +1,6 @@
 import test from "ava";
+import { join } from "node:path";
 import { Root, UnixEndpoint, ServiceTypes } from "pmcf";
-import { filterConfigurable } from "../src/utils.mjs";
 import { OpenLDAPService } from "../src/services/openldap.mjs";
 
 test("OpenLDAPService basics", async t => {
@@ -29,22 +29,16 @@ test("OpenLDAPService basics", async t => {
     new URL("ldapi:///run/ldapi").toString()
   );
 
-  /*
+  const r = new URL("fixtures/root1", import.meta.url).pathname;
+
   t.deepEqual(
-    openldap.endpoints('ldapi').map(e => {
-      return {
-        type: e.type,
-        port: e.port,
-        address: e.address
-      };
-    }),
+    (await Array.fromAsync(openldap.preparePackages("/tmp")))
+      .map(result => result.sources.map(source => source.base))
+      .flat(),
     [
-      {
-        type: "ldap",
-        address: "192.168.1.1",
-        port: 636
-      }
+      join(r, "services/openldap/openldap/content"),
+      join(r, "L1/host1/openldap/content"),
+      "/tmp"
     ]
   );
-*/
 });

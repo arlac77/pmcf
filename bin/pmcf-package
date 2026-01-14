@@ -47,7 +47,6 @@ for (const object of root.find(args)) {
   }
   const stagingDir = join(options.output, object.fullName);
 
-  //console.log(`packages for ${object.fullName}`);
   for await (const { sources, outputs, properties } of object.preparePackages(
     stagingDir
   )) {
