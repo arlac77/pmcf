@@ -1,0 +1,2 @@
+SLAPD_OPTIONS=
+SLAPD_URLS=ldap:/// ldaps:/// ldapi://%2Frun%2Fldapi

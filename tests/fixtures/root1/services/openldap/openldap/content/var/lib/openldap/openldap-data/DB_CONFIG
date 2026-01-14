@@ -1,0 +1,3 @@
+set_cachesize 0 16777216 1
+set_lg_regionmax 65536
+set_lg_bsize 524288

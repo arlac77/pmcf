@@ -10,7 +10,7 @@ import { addServiceType } from "pmcf";
 import { ServiceTypeDefinition, Service } from "../service.mjs";
 import { writeLines, filterConfigurable } from "../utils.mjs";
 import { addHook } from "../hooks.mjs";
-import { createExpressionTransformer } from "content-entry-transform";
+import { createExpressionTransformer, transform } from "content-entry-transform";
 
 const OpenLDAPServiceTypeDefinition = {
   name: "openldap",
@@ -114,19 +114,18 @@ export class OpenLDAPService extends Service {
       group
     };
     const transformers = [
-      createExpressionTransformer(e => true, { base: "ABC123" })
+      createExpressionTransformer(e => true, { base: this.baseDN })
     ];
 
     const templateDirs = [];
     for (const e of [...this.allExtends(), this]) {
       const base = join(e.directory, "content") + "/";
-      console.log("TEMPLATE", e.fullName, base);
       templateDirs.push(
-        new FileContentProvider(
+        transform(new FileContentProvider(
           { transformers, base },
           entryProperties,
           directoryProperties
-        )
+        ), transformers)
       );
     }
 
