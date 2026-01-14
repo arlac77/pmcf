@@ -8,7 +8,6 @@ import {
 } from "pacc";
 import { addServiceType } from "pmcf";
 import { ServiceTypeDefinition, Service } from "../service.mjs";
-import { writeLines, filterConfigurable } from "../utils.mjs";
 import { addHook } from "../hooks.mjs";
 import { createExpressionTransformer, transform } from "content-entry-transform";
 
@@ -65,7 +64,6 @@ export class OpenLDAPService extends Service {
     return OpenLDAPServiceTypeDefinition;
   }
 
-  DB_CONFIG = {};
   _baseDN;
   _rootDN;
 
@@ -114,7 +112,7 @@ export class OpenLDAPService extends Service {
       group
     };
     const transformers = [
-      createExpressionTransformer(e => true, { base: this.baseDN })
+      createExpressionTransformer(e => true, { base: this.baseDN, uri: this.uri })
     ];
 
     const templateDirs = [];
@@ -155,38 +153,6 @@ export class OpenLDAPService extends Service {
       packageData.properties.hooks,
       "post_install",
       `setfacl -m u:${owner}:r /etc/letsencrypt/archive/*/privkey*.pem`
-    );
-
-    await writeLines(
-      join(packageData.dir, "etc/conf.d"),
-      "slapd",
-      this.expand([
-        "SLAPD_OPTIONS=",
-        "SLAPD_URLS=ldap:/// ldaps:/// ldapi://%2Frun%2Fldapi"
-      ])
-    );
-
-    await writeLines(
-      join(packageData.dir, "/var/lib/openldap/openldap-data"),
-      "DB_CONFIG",
-
-      /*
-      ...[...this.propertyIterator(filterConfigurable)].map(
-        ([name, value]) => `${name} ${value}`
-      )
-    */
-
-      this.expand([
-        "set_cachesize 0 16777216 1",
-        "set_lg_regionmax 65536",
-        "set_lg_bsize 524288"
-      ])
-    );
-
-    await writeLines(
-      join(packageData.dir, "etc/openldap"),
-      "ldap.conf",
-      this.expand([`BASE  ${this.baseDN}`, `URI   ${this.uri}`])
     );
 
     yield packageData;
