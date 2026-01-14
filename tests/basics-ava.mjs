@@ -3,7 +3,6 @@ import { extractFrom, Root, Network, Host, Location, Owner } from "pmcf";
 
 function setup() {
   const root = new Root("/somewhere");
-
   const n1 = new Network(root);
   n1.read({
     name: "n1",
@@ -76,8 +75,8 @@ test("expression", t => {
   t.is(l1.expression("location.name"), "l1");
   t.is(h1.expression("networkInterfaces.eth0.name"), "eth0");
   t.is(h1.expression("networkInterfaces.eth0.metric"), 1);
-  //t.is(h1.expression("networkInterfaces.eth0.ipAddresses"), ["10.0.0.1"]);
-  //t.is(h1.expression("networkInterfaces[name='eth1'].name"), "eth1");
+  t.is(h1.expression("networkInterfaces.eth0.ipAddresses['10.0.0.1'].network.name"), "n1");
+  //t.is(h1.expression("networkInterfaces[name='eth0']"), "eth0");
 });
 
 test("expand", t => {
