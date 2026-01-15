@@ -37,7 +37,7 @@ test("OpenLDAPService basics", async t => {
   //console.log(packageDef);
 
   const files = Object.fromEntries(
-    (await Array.fromAsync(packageDef.sources[0])).map(entry => [
+    (await Array.fromAsync(packageDef.sources[1])).map(entry => [
       entry.name,
       entry
     ])
@@ -50,11 +50,6 @@ test("OpenLDAPService basics", async t => {
   //console.log(Object.keys(files));
 
   /*
-  for await(const file of packageDef.sources[0]) {
-    console.log(file.name);
-  }*/
-
-  /*
   t.deepEqual(
     (await Array.fromAsync(openldap.preparePackages("/tmp")))
       .map(result => result.sources.map(source => source.base))
@@ -65,6 +60,5 @@ test("OpenLDAPService basics", async t => {
       "/tmp"
     ]
   );
-
   */
 });

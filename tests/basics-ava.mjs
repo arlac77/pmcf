@@ -3,6 +3,14 @@ import { extractFrom, Root, Network, Host, Location, Owner } from "pmcf";
 
 function setup() {
   const root = new Root("/somewhere");
+
+  const ht1 = new Host(root);
+  ht1.read({ name: "ht1", properties: { p1: "ht1" } });
+  root.addObject(ht1);
+  const ht2 = new Host(root);
+  ht2.read({ name: "ht2", extends: "/ht1" });
+  root.addObject(ht2);
+
   const n1 = new Network(root);
   n1.read({
     name: "n1",
@@ -19,6 +27,7 @@ function setup() {
   const h1 = new Host(l1);
   h1.read({
     name: "h1",
+    extends: "/ht2",
     properties: { p1: "v2" },
     networkInterfaces: {
       eth0: {
@@ -35,7 +44,7 @@ function setup() {
   });
   l1.addObject(h1);
 
-  return { root, n1, l1, h1 };
+  return { root, ht1, ht2, n1, l1, h1 };
 }
 
 test("Root basics", async t => {
@@ -55,16 +64,23 @@ test("template from name '*'", t => {
   t.true(l1.isTemplate);
 });
 
-test("owners", t => {
+test("aggregate properties", t => {
   const { root, l1, h1 } = setup();
-
-  t.deepEqual([...h1.owners()], [l1, root]);
 
   t.is(h1.property("n1"), 7);
   t.is(h1.property("p1"), "v2");
 
   t.is(l1.property("n1"), 7);
   t.is(l1.property("p1"), "v1");
+});
+
+test("waking", t => {
+  const { root, n1, l1, h1, ht1, ht2 } = setup();
+
+  t.deepEqual([...h1.walkDirections(["this", "owner"])], [h1, l1, root]);
+  t.deepEqual([...h1.walkDirections(["owner"])], [l1, root]);
+  t.deepEqual([...h1.walkDirections(["this"])], [h1]);
+  t.deepEqual([...h1.walkDirections(["extends"])], [ht2, ht1]);
 });
 
 test("expression", t => {
@@ -75,7 +91,12 @@ test("expression", t => {
   t.is(l1.expression("location.name"), "l1");
   t.is(h1.expression("networkInterfaces.eth0.name"), "eth0");
   t.is(h1.expression("networkInterfaces.eth0.metric"), 1);
-  t.is(h1.expression("networkInterfaces.eth0.ipAddresses['10.0.0.1'].network.name"), "n1");
+  t.is(
+    h1.expression(
+      "networkInterfaces.eth0.ipAddresses['10.0.0.1'].network.name"
+    ),
+    "n1"
+  );
   //t.is(h1.expression("networkInterfaces[name='eth0']"), "eth0");
 });
 

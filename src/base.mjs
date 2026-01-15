@@ -310,29 +310,35 @@ export class Base {
     return this.owner.addObject(object);
   }
 
-  *_allExtends(all) {
-    for (const e of this.extends) {
-      if (!all.has(e)) {
-        all.add(e);
-        yield e;
-        yield* e._allExtends(all);
+  *walkDirections(directions = ["this", "extends", "owner"]) {
+    yield* this._walkDirections(
+      directions,
+      directions.indexOf("this") >= 0,
+      new Set()
+    );
+  }
+
+  *_walkDirections(directions, withThis, seen) {
+    if (!seen.has(this)) {
+      seen.add(this);
+
+      if (withThis) {
+        yield this;
+      }
+      for (const direction of directions) {
+        const value = this[direction];
+
+        if (value) {
+          if (value[Symbol.iterator]) {
+            for (const node of value) {
+              yield* node._walkDirections(directions, true, seen);
+            }
+          } else {
+            yield* value._walkDirections(directions, true, seen);
+          }
+        }
       }
     }
-  }
-
-  *allExtends() {
-    yield* this._allExtends(new Set());
-  }
-
-  *owners() {
-    if (this.owner) {
-      yield* this.owner.thisAndOwners();
-    }
-  }
-
-  *thisAndOwners() {
-    yield this;
-    yield* this.owners();
   }
 
   forOwner(owner) {
@@ -375,7 +381,7 @@ export class Base {
         }
       }
 
-      for (const e of this.allExtends()) {
+      for (const e of this.walkDirections(["extends"])) {
         yield* e._extendedPropertyIterator(propertyName, seen);
       }
     }
@@ -384,7 +390,7 @@ export class Base {
   _extendedProperty(propertyName, seen) {
     if (!seen.has(this)) {
       seen.add(this);
-      for (const e of this.allExtends()) {
+      for (const e of this.walkDirections(["extends"])) {
         const value =
           getAttribute(e, propertyName) ??
           e._extendedProperty(propertyName, seen);
@@ -581,15 +587,16 @@ export class Base {
       )
     ];
 
-    return [...this.allExtends(), this].map(e => {
-      const dir = join(e.directory, "content") + "/";
-      console.log("DIR", dir);
-
-      return transform(
-        new FileContentProvider(dir, entryProperties, directoryProperties),
+    return [...this.walkDirections(["this", "extends"])].map(e =>
+      transform(
+        new FileContentProvider(
+          { dir: join(e.directory, "content"), pattern: "**/*" },
+          entryProperties,
+          directoryProperties
+        ),
         transformers
-      );
-    });
+      )
+    );
   }
 
   get tags() {
@@ -616,14 +623,14 @@ export class Base {
     return this._properties;
   }
 
+  /**
+   *
+   * @param {string} name
+   * @returns {any}
+   */
   property(name) {
-    let value = this._properties?.[name];
-    if (value !== undefined) {
-      return value;
-    }
-
-    for (const o of this.owners()) {
-      const value = o.property(name);
+    for (const node of this.walkDirections(["this", "extends", "owner"])) {
+      const value = node._properties?.[name];
       if (value !== undefined) {
         return value;
       }
