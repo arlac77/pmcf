@@ -10,8 +10,7 @@ test("OpenLDAPService basics", async t => {
   const openldap = await root.named("/L1/host1/openldap");
 
   t.true(openldap instanceof OpenLDAPService);
-  t.is(openldap.baseDN, "dc=mydomain,dc=com");
-  t.is(openldap.rootDN, "dn=root,dc=mydomain,dc=com");
+  t.is(openldap.base, "dc=mydomain,dc=com");
   t.is(openldap.uri, "ldap://");
 
   //console.log([...openldap.propertyIterator(filterConfigurable)]);

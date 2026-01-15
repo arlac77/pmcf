@@ -1,6 +1,11 @@
 import { join } from "node:path";
 import { allOutputs } from "npm-pkgbuild";
 import {
+  createExpressionTransformer,
+  transform
+} from "content-entry-transform";
+import { FileContentProvider } from "npm-pkgbuild";
+import {
   getAttribute,
   typeFactory,
   addType,
@@ -19,7 +24,6 @@ import {
   description_attribute_writable,
   boolean_attribute_writable
 } from "pacc";
-
 import { asArray } from "./utils.mjs";
 
 /**
@@ -559,6 +563,29 @@ export class Base {
   }
 
   async *preparePackages(stagingDir) {}
+
+  templateContent(entryProperties, directoryProperties) {
+    const transformers = [
+      createExpressionTransformer(
+        e => e.isBlob,
+        expression =>
+          parse(expression, {
+            root: this,
+            getGlobal: id => this.getGlobal(id)
+          })
+      )
+    ];
+
+    return [...this.allExtends(), this].map(e => {
+      const dir = join(e.directory, "content") + "/";
+      console.log("DIR", dir);
+
+      return transform(
+        new FileContentProvider(dir, entryProperties, directoryProperties),
+        transformers
+      );
+    });
+  }
 
   get tags() {
     return this._tags;

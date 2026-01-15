@@ -1,4 +1,3 @@
-import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import {
   string_attribute_writable,
@@ -9,10 +8,6 @@ import {
 import { addServiceType } from "pmcf";
 import { ServiceTypeDefinition, Service } from "../service.mjs";
 import { addHook } from "../hooks.mjs";
-import {
-  createExpressionTransformer,
-  transform
-} from "content-entry-transform";
 
 const OpenLDAPServiceTypeDefinition = {
   name: "openldap",
@@ -21,8 +16,7 @@ const OpenLDAPServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   key: "name",
   attributes: {
-    baseDN: string_attribute_writable,
-    rootDN: string_attribute_writable,
+    base: string_attribute_writable,
     uri: string_attribute_writable,
 
     DB_CONFIG: {
@@ -67,27 +61,18 @@ export class OpenLDAPService extends Service {
     return OpenLDAPServiceTypeDefinition;
   }
 
-  _baseDN;
-  _rootDN;
+  _base;
 
   get type() {
     return OpenLDAPServiceTypeDefinition.name;
   }
 
-  get baseDN() {
-    return this.expand(this._baseDN);
+  get base() {
+    return this.expand(this._base);
   }
 
-  set baseDN(value) {
-    this._baseDN = value;
-  }
-
-  get rootDN() {
-    return this.expand(this._rootDN);
-  }
-
-  set rootDN(value) {
-    this._rootDN = value;
+  set base(value) {
+    this._base = value;
   }
 
   get uri() {
@@ -96,25 +81,6 @@ export class OpenLDAPService extends Service {
 
   set uri(value) {
     this._uri = value;
-  }
-
-  templateContent(entryProperties, directoryProperties) {
-    const transformers = [
-      createExpressionTransformer(e => true, {
-        base: this.baseDN,
-        uri: this.uri
-      })
-    ];
-
-    return [...this.allExtends(), this].map(e => {
-      const dir = join(e.directory, "content") + "/";
-      console.log("DIR", dir);
-
-      return transform(
-        new FileContentProvider(dir, entryProperties, directoryProperties),
-        transformers
-      );
-    });
   }
 
   async *preparePackages(dir) {

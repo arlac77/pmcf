@@ -23,19 +23,18 @@
       "base": "/binaries/linux/arch/$repo/$arch",
       "architectures": ["aarch64", "x86", "armv7"],
       "repositories": {
-        "mf-private" : {},
-        "mf-public" : {}
+        "mf-private": {},
+        "mf-public": {}
       }
     },
     "influxdb": {},
     "mosquitto": {
       "acl_file": "/etc/mosquitto/acl"
     },
-    "dns": { "type": "dns", "alias": "dns" },
+    "dns": { "alias": "dns" },
     "openldap": {
       "alias": "ldap",
-      "baseDN": "${ldap_base}",
-      "rootDN": "dn=root,${ldap_base}",
+      "base": "${ldap_base}",
       "uri": "ldap://",
       "DB_CONFIG": {
         "set_cachesize": "0 16777216 1",
