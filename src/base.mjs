@@ -365,9 +365,13 @@ export class Base {
     if (!seen.has(this)) {
       seen.add(this);
 
-      const value = getAttribute(e, propertyName);
+      const value = getAttribute(this, propertyName);
       if (value !== undefined) {
         yield value;
+      } else {
+        if (this._properties?.[propertyName] !== undefined) {
+          yield this._properties?.[propertyName];
+        }
       }
 
       for (const e of this.allExtends()) {
