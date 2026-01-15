@@ -306,11 +306,18 @@ export class Base {
     return this.owner.addObject(object);
   }
 
-  *allExtends() {
+  *_allExtends(all) {
     for (const e of this.extends) {
-      yield e;
-      yield* e.allExtends();
+      if (!all.has(e)) {
+        all.add(e);
+        yield e;
+        yield* e._allExtends(all);
+      }
     }
+  }
+
+  *allExtends() {
+    yield* this._allExtends(new Set());
   }
 
   *owners() {
