@@ -98,6 +98,25 @@ export class OpenLDAPService extends Service {
     this._uri = value;
   }
 
+  templateContent(entryProperties, directoryProperties) {
+    const transformers = [
+      createExpressionTransformer(e => true, {
+        base: this.baseDN,
+        uri: this.uri
+      })
+    ];
+
+    return [...this.allExtends(), this].map(e => {
+      const dir = join(e.directory, "content") + "/";
+      console.log("DIR", dir);
+
+      return transform(
+        new FileContentProvider(dir, entryProperties, directoryProperties),
+        transformers
+      );
+    });
+  }
+
   async *preparePackages(dir) {
     const host = this.host;
     const name = host.name;
@@ -114,33 +133,11 @@ export class OpenLDAPService extends Service {
       owner,
       group
     };
-    const transformers = [
-      createExpressionTransformer(e => true, {
-        base: this.baseDN,
-        uri: this.uri
-      })
-    ];
-
-    const templateDirs = [];
-    for (const e of [...this.allExtends(), this]) {
-      const dir = join(e.directory, "content") + "/";
-      console.log("DIR", dir);
-      templateDirs.push(
-        transform(
-          new FileContentProvider(
-            { transformers, dir },
-            entryProperties,
-            directoryProperties
-          ),
-          transformers
-        )
-      );
-    }
 
     const packageData = {
       dir,
       sources: [
-        ...templateDirs,
+        ...this.templateContent(entryProperties, directoryProperties),
         new FileContentProvider(dir + "/", entryProperties, directoryProperties)
       ],
       outputs: this.outputs,
