@@ -7,6 +7,7 @@
   "extends": [
     "/model/m1",
     "/model/${os}",
+    "/services/arch-linux",
     "/services/timemachine",
     "/services/openldap",
     "/services/mosquitto"
@@ -35,12 +36,7 @@
     "openldap": {
       "alias": "ldap",
       "base": "${ldap_base}",
-      "uri": "ldap://",
-      "DB_CONFIG": {
-        "set_cachesize": "0 16777216 1",
-        "set_lg_regionmax": "65536",
-        "set_lg_bsize": "524288"
-      }
+      "uri": "ldap://"
     },
     "chrony": {
       "alias": "ntp",

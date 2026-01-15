@@ -70,7 +70,7 @@ export function root1(root, filter) {
     owner: L1,
     location: L1,
     os: "linux",
-    depends: ["d1", "d2-linux", "d3"],
+    depends: ["btrfs-progs", "d1", "d2-linux", "d3"],
     replaces: ["r1", "r2-linux", "r3"],
     provides: ["p1", "p2-linux", "p3-host1", "p4"],
     networkInterfaces: {
@@ -103,7 +103,13 @@ export function root1(root, filter) {
         extends: ["/services/openldap/openldap"],
         type: "openldap",
         alias: "ldap",
-        uri: "ldap://"
+        uri: "ldap://",
+        properties: {
+          datadir: "/var/lib/openldap",
+          rundir: "/run/openldap",
+          rootpw: "{SHA}XXXX",
+          rootdn: "cn=Manager,${base_dn}"
+        }
       },
       chrony: { extends: [], type: "chrony", alias: "ntp", port: 323 }
     }

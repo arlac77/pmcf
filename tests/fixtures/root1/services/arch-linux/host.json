@@ -1,0 +1,10 @@
+{
+  "depends": ["btrfs-progs"],
+  "packaging": "arch",
+  "distribution": "arch-linux",
+  "properties": {
+    "trustdir": "/etc/ca-certificates/trust-source",
+    "certsdir": "/etc/ssl/certs",
+    "keydir": "/etc/ssl/private"
+  }
+}

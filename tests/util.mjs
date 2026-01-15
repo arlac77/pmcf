@@ -73,6 +73,11 @@ async function _assertObject(t, visited, object, expected, path = []) {
           `${pathToString(path)}: extends`
         );
         break;
+
+      case "properties":
+        console.log("CXXX", object.fullName);
+        //t.deepEqual(object?._properties, v);
+        break;
       default: {
         let o;
         if (object instanceof Map) {

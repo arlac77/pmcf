@@ -369,8 +369,9 @@ export class Base {
       if (value !== undefined) {
         yield value;
       } else {
-        if (this._properties?.[propertyName] !== undefined) {
-          yield this._properties?.[propertyName];
+        const value = this._properties?.[propertyName];
+        if (value !== undefined) {
+          yield value;
         }
       }
 
