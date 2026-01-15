@@ -1,6 +1,13 @@
 {
-  "depends": "mf-ldap",
   "services": {
-    "openldap": { "alias": "ldap" }
+    "openldap": {
+      "alias": "ldap",
+      "properties": {
+        "datadir": "/var/lib/openldap",
+        "rundir": "/run/openldap",
+        "rootpw": "{SHA}XXXX",
+        "rootdn": "cn=Manager,${base_dn}"
+      }
+    }
   }
 }
