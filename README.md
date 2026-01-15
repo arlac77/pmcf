@@ -51,52 +51,54 @@ generates config packages for:
         *   [Parameters](#parameters-3)
     *   [findService](#findservice)
         *   [Parameters](#parameters-4)
-    *   [expand](#expand)
+    *   [property](#property)
         *   [Parameters](#parameters-5)
+    *   [expand](#expand)
+        *   [Parameters](#parameters-6)
 *   [PortEndpoint](#portendpoint)
-    *   [Parameters](#parameters-6)
+    *   [Parameters](#parameters-7)
     *   [port](#port)
     *   [socketAddress](#socketaddress)
 *   [HTTPEndpoint](#httpendpoint)
-    *   [Parameters](#parameters-7)
+    *   [Parameters](#parameters-8)
     *   [port](#port-1)
 *   [SkeletonNetworkInterface](#skeletonnetworkinterface)
     *   [networkAddresses](#networkaddresses)
-        *   [Parameters](#parameters-8)
+        *   [Parameters](#parameters-9)
 *   [SystemdJournalRemoteService](#systemdjournalremoteservice)
     *   [Properties](#properties)
     *   [systemdConfigs](#systemdconfigs)
-        *   [Parameters](#parameters-9)
+        *   [Parameters](#parameters-10)
 *   [SystemdJournalUploadService](#systemdjournaluploadservice)
     *   [Properties](#properties-1)
     *   [systemdConfigs](#systemdconfigs-1)
-        *   [Parameters](#parameters-10)
+        *   [Parameters](#parameters-11)
 *   [NetworkAddress](#networkaddress)
-    *   [Parameters](#parameters-11)
+    *   [Parameters](#parameters-12)
     *   [subnet](#subnet)
     *   [networkInterface](#networkinterface)
     *   [address](#address)
 *   [addresses](#addresses)
-    *   [Parameters](#parameters-12)
-*   [cidrAddresses](#cidraddresses)
     *   [Parameters](#parameters-13)
+*   [cidrAddresses](#cidraddresses)
+    *   [Parameters](#parameters-14)
 *   [isTemplate](#istemplate)
 *   [services](#services)
-    *   [Parameters](#parameters-14)
-*   [named](#named)
     *   [Parameters](#parameters-15)
-*   [serviceEndpoints](#serviceendpoints)
+*   [named](#named)
     *   [Parameters](#parameters-16)
-*   [domainName](#domainname)
+*   [serviceEndpoints](#serviceendpoints)
     *   [Parameters](#parameters-17)
-*   [domainFromDominName](#domainfromdominname)
+*   [domainName](#domainname)
     *   [Parameters](#parameters-18)
-*   [sectionLines](#sectionlines)
+*   [domainFromDominName](#domainfromdominname)
     *   [Parameters](#parameters-19)
-*   [asArray](#asarray)
+*   [sectionLines](#sectionlines)
     *   [Parameters](#parameters-20)
-*   [asIterator](#asiterator)
+*   [asArray](#asarray)
     *   [Parameters](#parameters-21)
+*   [asIterator](#asiterator)
+    *   [Parameters](#parameters-22)
 
 ## Base
 
@@ -145,6 +147,14 @@ Returns **any**&#x20;
 *   `filter` **any**&#x20;
 
 Returns **any** service with the highest priority
+
+### property
+
+#### Parameters
+
+*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+
+Returns **any**&#x20;
 
 ### expand
 
