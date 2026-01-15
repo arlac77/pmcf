@@ -17,7 +17,6 @@ import {
   domainFromDominName,
   domainName,
   writeLines,
-  sectionLines,
   asArray
 } from "./utils.mjs";
 import { loadHooks } from "./hooks.mjs";
@@ -451,13 +450,14 @@ export class Host extends ServiceOwner {
         provides: [...this.provides],
         replaces: [...this.replaces],
         requires: [],
-        backup: "root/.ssh/known_hosts",
-        hooks: await loadHooks(
-          {},
-          new URL("host.install", import.meta.url).pathname
-        )
+        backup: "root/.ssh/known_hosts"
       }
     };
+
+    await loadHooks(
+      packageData,
+      new URL("host.install", import.meta.url).pathname
+    );
 
     for (const ni of this.networkInterfaces.values()) {
       await ni.systemdDefinitions(packageData);
@@ -478,7 +478,7 @@ export class Host extends ServiceOwner {
           await writeLines(dir, configFileName, content);
 
           addHook(
-            packageData.properties.hooks,
+            packageData,
             "post_install",
             `systemctl enable ${serviceName}`
           );

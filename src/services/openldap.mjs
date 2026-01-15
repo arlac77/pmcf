@@ -145,19 +145,18 @@ export class OpenLDAPService extends Service {
         name: `${this.typeName}-${this.location.name}-${name}`,
         description: `${this.typeName} definitions for ${this.fullName}@${name}`,
         access: "private",
-        dependencies: ["openldap>=2.6.10"],
-        hooks: {}
+        dependencies: ["openldap>=2.6.10"]
       }
     };
 
     addHook(
-      packageData.properties.hooks,
+      packageData,
       "post_upgrade",
       `setfacl -m u:${owner}:r /etc/letsencrypt/archive/*/privkey*.pem`
     );
 
     addHook(
-      packageData.properties.hooks,
+      packageData,
       "post_install",
       `setfacl -m u:${owner}:r /etc/letsencrypt/archive/*/privkey*.pem`
     );

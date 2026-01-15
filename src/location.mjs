@@ -55,13 +55,14 @@ export class Location extends Owner {
         access: "private",
         dependencies: { jq: ">=1.8" },
         provides: ["location", "mf-location"],
-        replaces: [`mf-location-${this.name}`],
-        hooks: await loadHooks(
-          {},
-          new URL("location.install", import.meta.url).pathname
-        )
+        replaces: [`mf-location-${this.name}`]
       }
     };
+
+    await loadHooks(
+      packageData,
+      new URL("location.install", import.meta.url).pathname
+    );
 
     yield packageData;
   }
