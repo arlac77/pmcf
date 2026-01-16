@@ -58,10 +58,10 @@ test("systemd-journal-remote", async t => {
   t.is(journalRemote.type, "systemd-journal-remote");
   t.is(journalRemote.name, "systemd-journal-remote");
   t.is(journalRemote.alias, "journal");
-  t.is(journalRemote.extendedProperty("Seal"), false);
-  t.is(journalRemote.extendedProperty("SplitMode"), "host");
+  t.is(journalRemote.extendedAttribute("Seal"), false);
+  t.is(journalRemote.extendedAttribute("SplitMode"), "host");
   t.is(
-    journalRemote.extendedProperty("TrustedCertificateFile"),
+    journalRemote.extendedAttribute("TrustedCertificateFile"),
     "/etc/ssl/certs/chain.cert.pem"
   );
   t.is(journalRemote.ServerKeyFile, "/etc/ssl/server.key");

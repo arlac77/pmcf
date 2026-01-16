@@ -15,7 +15,7 @@ test("systemd-resolved service type", t => {
   service.Resolve = {};
   service.Resolve.DNS = "1.2.3.4";
 
-  t.is(service.extendedProperty("Resolve.DNS"), "1.2.3.4");
+  t.is(service.extendedAttribute("Resolve.DNS"), "1.2.3.4");
   */
 });
 

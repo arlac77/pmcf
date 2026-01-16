@@ -52,7 +52,7 @@ export class WLANNetworkInterface extends EthernetNetworkInterface {
 
   get secretName() {
     return (
-      this.extendedProperty("_secretName") ??
+      this.extendedAttribute("_secretName") ??
       this.network?.secretName ??
       `${this.network.name}.password`
     );
@@ -63,7 +63,7 @@ export class WLANNetworkInterface extends EthernetNetworkInterface {
   }
 
   get ssid() {
-    return this.extendedProperty("_ssid") ?? this.network?.ssid;
+    return this.extendedAttribute("_ssid") ?? this.network?.ssid;
   }
 
   set psk(value) {
@@ -71,7 +71,7 @@ export class WLANNetworkInterface extends EthernetNetworkInterface {
   }
 
   get psk() {
-    return this.extendedProperty("_psk") ?? this.network?.psk;
+    return this.extendedAttribute("_psk") ?? this.network?.psk;
   }
 
   async systemdDefinitions(packageData) {

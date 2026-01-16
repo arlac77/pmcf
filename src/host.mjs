@@ -143,7 +143,7 @@ export class Host extends ServiceOwner {
   }
 
   get serial() {
-    return this.extendedProperty("_serial");
+    return this.extendedAttribute("_serial");
   }
 
   set deployment(value) {
@@ -151,7 +151,7 @@ export class Host extends ServiceOwner {
   }
 
   get deployment() {
-    return this.extendedProperty("_deployment");
+    return this.extendedAttribute("_deployment");
   }
 
   set chassis(value) {
@@ -159,7 +159,7 @@ export class Host extends ServiceOwner {
   }
 
   get chassis() {
-    return this.extendedProperty("_chassis");
+    return this.extendedAttribute("_chassis");
   }
 
   set vendor(value) {
@@ -167,7 +167,7 @@ export class Host extends ServiceOwner {
   }
 
   get vendor() {
-    return this.extendedProperty("_vendor");
+    return this.extendedAttribute("_vendor");
   }
 
   set keymap(value) {
@@ -175,7 +175,7 @@ export class Host extends ServiceOwner {
   }
 
   get keymap() {
-    return this.extendedProperty("_keymap");
+    return this.extendedAttribute("_keymap");
   }
 
   set architecture(value) {
@@ -183,7 +183,7 @@ export class Host extends ServiceOwner {
   }
 
   get architecture() {
-    return this.extendedProperty("_architecture");
+    return this.extendedAttribute("_architecture");
   }
 
   get derivedPackaging() {
@@ -261,7 +261,7 @@ export class Host extends ServiceOwner {
   }
 
   get os() {
-    return this.extendedProperty("_os");
+    return this.extendedAttribute("_os");
   }
 
   set distribution(value) {
@@ -269,7 +269,7 @@ export class Host extends ServiceOwner {
   }
 
   get distribution() {
-    return this.extendedProperty("_distribution");
+    return this.extendedAttribute("_distribution");
   }
 
   get modelName() {

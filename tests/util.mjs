@@ -83,7 +83,7 @@ async function _assertObject(t, visited, object, expected, path = []) {
         if (object instanceof Map) {
           o = object.get(k);
         } else {
-          o = object.extendedProperty(k); // ?? object[k];
+          o = object.extendedAttribute(k); // ?? object[k];
           if (typeof o === "function") {
             o = await object[k]();
           }

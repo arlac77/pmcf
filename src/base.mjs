@@ -367,47 +367,18 @@ export class Base {
     return this.constructor.typeDefinition.name;
   }
 
-  *_extendedPropertyIterator(propertyName, seen) {
-    if (!seen.has(this)) {
-      seen.add(this);
-
-      const value = getAttribute(this, propertyName);
+  /**
+   * 
+   * @param {string} name 
+   * @returns {any}
+   */
+  extendedAttribute(name) {
+    for (const node of this.walkDirections(["this", "extends"])) {
+      const value = getAttribute(node, name);
       if (value !== undefined) {
-        yield value;
-      } else {
-        const value = this._properties?.[propertyName];
-        if (value !== undefined) {
-          yield value;
-        }
-      }
-
-      for (const e of this.walkDirections(["extends"])) {
-        yield* e._extendedPropertyIterator(propertyName, seen);
+        return value;
       }
     }
-  }
-
-  _extendedProperty(propertyName, seen) {
-    if (!seen.has(this)) {
-      seen.add(this);
-      for (const e of this.walkDirections(["extends"])) {
-        const value =
-          getAttribute(e, propertyName) ??
-          e._extendedProperty(propertyName, seen);
-        if (value !== undefined) {
-          return value;
-        }
-      }
-    }
-  }
-
-  extendedProperty(propertyName) {
-    const value = getAttribute(this, propertyName);
-    if (value !== undefined) {
-      return value;
-    }
-
-    return this._extendedProperty(propertyName, new Set());
   }
 
   /**
@@ -426,7 +397,7 @@ export class Base {
         filter
       )) {
         const name = path.join(".");
-        const value = this.extendedProperty(name);
+        const value = this.extendedAttribute(name);
 
         if (value !== undefined) {
           yield [def.externalName ?? name, toExternal(value, def), path, def];
@@ -616,7 +587,7 @@ export class Base {
   }
 
   getGlobal(a) {
-    return globals[a] ?? this.property(a);
+    return globals[a] ?? this.extendedAttribute(a) ?? this.property(a);
   }
 
   get properties() {

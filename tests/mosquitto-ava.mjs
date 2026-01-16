@@ -13,14 +13,14 @@ test("mosquitto basics", async t => {
   t.is(mosquitto.listener, 1883);
 
   t.is(
-    mosquitto.extendedProperty("persistence_location"),
+    mosquitto.extendedAttribute("persistence_location"),
     "/var/lib/mosquitto"
   );
 
   t.is(
-    mosquitto.extendedProperty("persistence_location"),
+    mosquitto.extendedAttribute("persistence_location"),
     "/var/lib/mosquitto"
   );
-  t.is(mosquitto.extendedProperty("password_file"), "/etc/mosquitto/passwd");
-  t.is(mosquitto.extendedProperty("acl_file"), "/etc/mosquitto/acl");
+  t.is(mosquitto.extendedAttribute("password_file"), "/etc/mosquitto/passwd");
+  t.is(mosquitto.extendedAttribute("acl_file"), "/etc/mosquitto/acl");
 });

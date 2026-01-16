@@ -218,7 +218,7 @@ export class Service extends Base {
   }
 
   get alias() {
-    return this.extendedProperty("_alias");
+    return this.extendedAttribute("_alias");
   }
 
   set port(value) {
@@ -234,7 +234,7 @@ export class Service extends Base {
   }
 
   get weight() {
-    return this.extendedProperty("_weight") ?? this.owner.weight ?? 1;
+    return this.extendedAttribute("_weight") ?? this.owner.weight ?? 1;
   }
 
   set type(value) {
@@ -251,7 +251,7 @@ export class Service extends Base {
 
   get systemdService() {
     return (
-      this.extendedProperty("_systemdService") ??
+      this.extendedAttribute("_systemdService") ??
       ServiceTypes[this.type]?.systemdService
     );
   }
