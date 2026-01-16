@@ -7,7 +7,6 @@ import {
 } from "pacc";
 import { addServiceType } from "pmcf";
 import { ServiceTypeDefinition, Service } from "../service.mjs";
-import { addHook } from "../hooks.mjs";
 
 const OpenLDAPServiceTypeDefinition = {
   name: "openldap",
@@ -84,8 +83,6 @@ export class OpenLDAPService extends Service {
   }
 
   async *preparePackages(dir) {
-    const host = this.host;
-    const name = host.name;
     const owner = "ldap";
     const group = "ldap";
 
@@ -108,24 +105,12 @@ export class OpenLDAPService extends Service {
       ],
       outputs: this.outputs,
       properties: {
-        name: `${this.typeName}-${this.location.name}-${name}`,
-        description: `${this.typeName} definitions for ${this.fullName}@${name}`,
+        name: `${this.typeName}-${this.location.name}-${this.host.name}`,
+        description: `${this.typeName} definitions for ${this.fullName}@${this.host.name}`,
         access: "private",
         dependencies: ["openldap>=2.6.10"]
       }
     };
-
-    addHook(
-      packageData,
-      "post_upgrade",
-      `setfacl -m u:${owner}:r /etc/letsencrypt/archive/*/privkey*.pem`
-    );
-
-    addHook(
-      packageData,
-      "post_install",
-      `setfacl -m u:${owner}:r /etc/letsencrypt/archive/*/privkey*.pem`
-    );
 
     yield packageData;
   }
