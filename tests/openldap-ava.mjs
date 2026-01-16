@@ -13,8 +13,6 @@ test("OpenLDAPService basics", async t => {
   t.is(openldap.base, "dc=mydomain,dc=com");
   t.is(openldap.uri, "ldap://");
 
-  //console.log([...openldap.propertyIterator(filterConfigurable)]);
-
   t.deepEqual(
     openldap.endpoint("ldapi"),
     new UnixEndpoint(openldap, "/run/ldapi", {

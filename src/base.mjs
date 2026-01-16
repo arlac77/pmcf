@@ -28,6 +28,8 @@ import { asArray } from "./utils.mjs";
 
 /**
  *
+ * attributes: essential values
+ * properties: use defined values to support attribute value definitions
  */
 export class Base {
   static name = "base";
