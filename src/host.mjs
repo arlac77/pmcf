@@ -428,6 +428,7 @@ export class Host extends ServiceOwner {
     let packageData = {
       dir,
       sources: [
+        ...this.templateContent(),
         new FileContentProvider(
           { dir: this.directory, pattern: "*.pub" },
           { destination: "/etc/ssh/", mode: 0o644 }
