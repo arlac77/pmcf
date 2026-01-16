@@ -68,7 +68,7 @@ export class OpenLDAPService extends Service {
   }
 
   get base() {
-    return this.expand(this._base);
+    return this.extendedAttribute("_base");
   }
 
   set base(value) {
@@ -76,7 +76,7 @@ export class OpenLDAPService extends Service {
   }
 
   get uri() {
-    return this._uri;
+    return this.extendedAttribute("_uri");
   }
 
   set uri(value) {

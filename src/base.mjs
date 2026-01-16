@@ -378,7 +378,7 @@ export class Base {
     for (const node of this.walkDirections(["this", "extends"])) {
       const value = getAttribute(node, name);
       if (value !== undefined) {
-        return value;
+        return this.expand(value);
       }
     }
   }

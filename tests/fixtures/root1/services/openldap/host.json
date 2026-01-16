@@ -2,11 +2,14 @@
   "services": {
     "openldap": {
       "alias": "ldap",
+      "base": "dc=mf,dc=de",
       "properties": {
-        "datadir": "/var/lib/openldap",
-        "rundir": "/run/openldap",
-        "rootpw": "{SHA}XXXX",
-        "rootdn": "cn=Manager,${base_dn}"
+        "certname": "primary",
+        "configdir": "/etc/openldap/slapd.d/",
+        "datadir": "/var/lib/openldap/",
+        "rundir": "/run/openldap/",
+        "rootpw": "{SSHA}XXXX",
+        "rootdn": "cn=admin,${base}"
       }
     }
   }
