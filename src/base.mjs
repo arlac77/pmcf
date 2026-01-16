@@ -605,7 +605,7 @@ export class Base {
     for (const node of this.walkDirections(["this", "extends", "owner"])) {
       const value = node._properties?.[name];
       if (value !== undefined) {
-        return value;
+        return this.expand(value);
       }
     }
   }
