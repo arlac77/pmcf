@@ -104,6 +104,9 @@ generates config packages for:
 
 ## Base
 
+attributes: essential values
+properties: use defined values to support attribute value definitions
+
 ### Parameters
 
 *   `owner` **[Base](#base)**&#x20;
