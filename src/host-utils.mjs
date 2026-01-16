@@ -21,13 +21,15 @@ export async function generateMachineInfo(host, packageData) {
 
 export async function generateKnownHosts(hosts, dir) {
   const keys = [];
-  for await (const host of hosts) {
+  for (const host of hosts) {
     try {
       const [alg, key, desc] = (await host.publicKey("ed25519")).split(/\s+/);
 
-      keys.push(`${host.domainName} ${alg} ${key}`);
+      for(const domainName of host.domainNames) {
+        keys.push(`${domainName} ${alg} ${key}`);
+      }
 
-      for await (const addr of host.networkAddresses(
+      for (const addr of host.networkAddresses(
         na => na.networkInterface.kind !== "loopback"
       )) {
         keys.push(`${addr.address} ${alg} ${key}`);
