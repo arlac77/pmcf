@@ -44,7 +44,7 @@ export class Location extends Owner {
       sources: [
         new FileContentProvider(dir + "/"),
         new FileContentProvider(
-          { base: this.directory, pattern: "location.json" },
+          { dir: this.directory, pattern: "location.json" },
           { destination: "/etc/location/location.json" }
         )
       ],
@@ -54,8 +54,7 @@ export class Location extends Owner {
         description: `${this.typeName} definitions for ${this.fullName}`,
         access: "private",
         dependencies: { jq: ">=1.8" },
-        provides: ["location", "mf-location"],
-        replaces: [`mf-location-${this.name}`]
+        provides: ["location", "mf-location"]
       }
     };
 

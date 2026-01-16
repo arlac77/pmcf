@@ -429,11 +429,11 @@ export class Host extends ServiceOwner {
       dir,
       sources: [
         new FileContentProvider(
-          { base: this.directory, pattern: "*.pub" },
+          { dir: this.directory, pattern: "*.pub" },
           { destination: "/etc/ssh/", mode: 0o644 }
         ),
         new FileContentProvider(
-          { base: this.directory, pattern: "*_key" },
+          { dir: this.directory, pattern: "*_key" },
           { destination: "/etc/ssh/", mode: 0o600 }
         ),
         new FileContentProvider(dir + "/")
