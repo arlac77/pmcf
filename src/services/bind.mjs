@@ -164,7 +164,7 @@ export class BindService extends ExtraSourceService {
 
   constructor(owner, data) {
     super(owner, data);
-  
+
     this.views = {};
 
     for (const name of ["internal", "protected"]) {
@@ -323,8 +323,7 @@ export class BindService extends ExtraSourceService {
     packageData.properties = {
       name: `named-zones-${name}-outfacing`,
       description: `outfacing zone definitions for ${names}`,
-      access: "private",
-      hooks: {}
+      access: "private"
     };
 
     yield* this.generateOutfacingDefs(sources, packageData);
@@ -345,7 +344,7 @@ export class BindService extends ExtraSourceService {
 
     if (outfacingZones.length) {
       addHook(
-        packageData.properties.hooks,
+        packageData,
         "post_upgrade",
         `/usr/bin/named-hostname-update ${outfacingZones
           .map(zone => zone.id)
