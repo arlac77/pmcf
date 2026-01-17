@@ -107,6 +107,12 @@ export const ServiceTypes = {
     ],
     dnsRecord: { type: "MX" }
   },
+  lmtp: {
+    endpoints: [
+      { family: "IPv4", protocol: "tcp", port: 24, tls: false },
+      { family: "IPv6", protocol: "tcp", port: 24, tls: false }
+    ]
+  },
   ssh: {
     endpoints: [
       { family: "IPv4", protocol: "tcp", port: 22, tls: false },
