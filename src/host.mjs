@@ -492,7 +492,12 @@ export class Host extends ServiceOwner {
     if (this.extra) {
       packageData = {
         dir,
-        sources: [new FileContentProvider(join(this.directory, "extra") + "/")],
+        sources: [
+          new FileContentProvider({
+            dir: join(this.directory, "extra"),
+            pattern: "**/*"
+          })
+        ],
         outputs: this.outputs,
         properties: {
           name: `${this.typeName}-extra-${this.owner.name}-${this.name}`,
