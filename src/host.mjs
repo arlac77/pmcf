@@ -437,7 +437,7 @@ export class Host extends ServiceOwner {
           { dir: this.directory, pattern: "*_key" },
           { destination: "/etc/ssh/", mode: 0o600 }
         ),
-        new FileContentProvider(dir + "/")
+        new FileContentProvider({ dir, pattern: ["**/*", "**/.ssh/*"] })
       ],
       outputs: this.outputs,
       properties: {
@@ -490,7 +490,7 @@ export class Host extends ServiceOwner {
     yield packageData;
 
     if (this.extra) {
-      packageData = {
+      yield {
         dir,
         sources: [
           new FileContentProvider({
@@ -506,8 +506,6 @@ export class Host extends ServiceOwner {
           dependencies: [pkgName]
         }
       };
-
-      yield packageData;
     }
   }
 }
