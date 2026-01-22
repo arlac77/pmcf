@@ -456,7 +456,8 @@ export class BindService extends ExtraSourceService {
               }
 
               for (const domainName of domainNames) {
-                if (domainName[0] !== "*") {
+                if (domainName.endsWith(zone.id) && domainName[0] !== "*") {
+                  
                   zone.records.add(
                     DNSRecord(
                       dnsFullName(domainName),
