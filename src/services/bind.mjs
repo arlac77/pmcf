@@ -456,7 +456,7 @@ export class BindService extends ExtraSourceService {
               }
 
               for (const domainName of domainNames) {
-                if (domainName[0] != "*") {
+                if (domainName[0] !== "*") {
                   zone.records.add(
                     DNSRecord(
                       dnsFullName(domainName),
@@ -488,7 +488,7 @@ export class BindService extends ExtraSourceService {
 
               const sm = new Map();
 
-              for (const service of host._services) {
+              for (const service of host.services) {
                 for (const record of service.dnsRecordsForDomainName(
                   host.domainName,
                   this.hasSVRRecords
