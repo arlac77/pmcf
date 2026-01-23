@@ -548,8 +548,9 @@ export class Base {
 
   async *preparePackages(stagingDir) {}
 
-  templateContent(entryProperties, directoryProperties) {
-    const transformers = [
+  get templateTransformers()
+  {
+    return [
       createExpressionTransformer(
         e => e.isBlob,
         expression =>
@@ -559,7 +560,9 @@ export class Base {
           })
       )
     ];
+  }
 
+  templateContent(entryProperties, directoryProperties) {
     return [...this.walkDirections(["this", "extends"])].map(e =>
       transform(
         new FileContentProvider(
@@ -567,7 +570,7 @@ export class Base {
           entryProperties,
           directoryProperties
         ),
-        transformers
+        this.templateTransformers
       )
     );
   }
