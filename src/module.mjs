@@ -23,6 +23,7 @@ export * from "./services/bind.mjs";
 export * from "./services/chrony.mjs";
 export * from "./services/kea.mjs";
 export * from "./services/openldap.mjs";
+export * from "./services/postfix.mjs";
 export * from "./services/influxdb.mjs";
 export * from "./services/mosquitto.mjs";
 export * from "./services/headscale.mjs";
