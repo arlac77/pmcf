@@ -97,6 +97,15 @@ test("expression", t => {
     ),
     "n1"
   );
+
+  /*
+    t.is(
+    h1.expression(
+      "subnets[1=1].name"
+    ),
+    ["10.0/16"]
+  );*/
+
   //t.is(h1.expression("networkInterfaces[name='eth0']"), "eth0");
 });
 
