@@ -9,14 +9,6 @@ const MosquittoServiceTypeDefinition = {
   owners: ServiceTypeDefinition.owners,
   key: "name",
   attributes: {
-    /*log_timestamp: {
-      ...boolean_attribute_writable_true,
-      configurable: true
-    },
-    allow_anonymous: {
-      ...boolean_attribute_writable_true,
-      configurable: true
-    },*/
     listener: {
       ...port_attribute,
       writable: true,
