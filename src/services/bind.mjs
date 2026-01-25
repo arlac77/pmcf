@@ -314,28 +314,32 @@ export class BindService extends ExtraSourceService {
 
     yield this.generateZoneDefs(sources, packageData);
 
-    const outfacingZonesPackageDir = join(dir, "outfacingZones") + "/";
+    const location = "outfacing";
+
+    const outfacingZonesPackageDir = join(dir, location) + "/";
 
     packageData.dir = outfacingZonesPackageDir;
     packageData.sources = [
       new FileContentProvider(outfacingZonesPackageDir, ...filePermissions)
     ];
     packageData.properties = {
-      name: `named-zones-${name}-outfacing`,
-      description: `outfacing zone definitions for ${names}`,
+      name: `named-zones-${name}-${location}`,
+      description: `${location} zone definitions for ${names}`,
       access: "private"
     };
 
-    yield* this.generateOutfacingDefs(sources, packageData);
+    yield* this.generateOutfacingDefs(sources, packageData, location);
   }
 
-  async *generateOutfacingDefs(sources, packageData) {
+  async *generateOutfacingDefs(sources, packageData, location) {
     const configs = [];
+
+    const view = this.views.internal;
 
     for (const source of sources) {
       for (const host of source.hosts()) {
         configs.push(
-          ...this.outfacingZones(host, this.views.internal, this.defaultRecords)
+          ...this.outfacingZones(host, view, this.defaultRecords)
         );
       }
     }
@@ -343,6 +347,12 @@ export class BindService extends ExtraSourceService {
     const outfacingZones = configs.map(c => c.zones).flat();
 
     if (outfacingZones.length) {
+      if (this.hasCatalog) {
+        const { catalogZone, config } = this.createCatalogZone(location, view, location);
+        configs.push(config);
+        outfacingZones.forEach(zone=>zone.catalogZone=catalogZone);
+      }
+
       addHook(
         packageData,
         "post_upgrade",
@@ -357,8 +367,32 @@ export class BindService extends ExtraSourceService {
     }
   }
 
+  createCatalogZone(name, view, location) {
+    const config = {
+      view,
+      name: `catalog.${name}.zone.conf`,
+      type: "master",
+      zones: []
+    };
+
+    const catalogZone = {
+      catalog: true,
+      id: `catalog.${name}`,
+      file: `${location}/catalog.${name}.zone`,
+      records: new Set([
+        ...this.defaultRecords,
+        DNSRecord(dnsFullName(`version.catalog.${name}`), "TXT", '"1"')
+      ])
+    };
+    config.zones.push(catalogZone);
+
+    return { config, catalogZone };
+  }
+
   async generateZoneDefs(sources, packageData) {
     const configs = [];
+
+    const view = this.views.internal;
 
     for (const source of sources) {
       console.log(
@@ -372,7 +406,7 @@ export class BindService extends ExtraSourceService {
         const reverseZones = new Map();
 
         const config = {
-          view: this.views.internal,
+          view,
           name: `${domain}.zone.conf`,
           type: "master",
           zones: []
@@ -392,24 +426,9 @@ export class BindService extends ExtraSourceService {
         config.zones.push(zone);
 
         if (this.hasCatalog) {
-          const catalogConfig = {
-            view: this.views.internal,
-            name: `catalog.${domain}.zone.conf`,
-            type: "master",
-            zones: []
-          };
-          configs.push(catalogConfig);
-
-          zone.catalogZone = {
-            catalog: true,
-            id: `catalog.${domain}`,
-            file: `${locationName}/catalog.${domain}.zone`,
-            records: new Set([
-              ...this.defaultRecords,
-              DNSRecord(dnsFullName(`version.catalog.${domain}`), "TXT", '"1"')
-            ])
-          };
-          catalogConfig.zones.push(zone.catalogZone);
+          const { catalogZone, config } = this.createCatalogZone(domain, view, locationName);
+          configs.push(config);
+          zone.catalogZone = catalogZone;
         }
 
         const hosts = new Set();
@@ -457,7 +476,6 @@ export class BindService extends ExtraSourceService {
 
               for (const domainName of domainNames) {
                 if (domainName.endsWith(zone.id) && domainName[0] !== "*") {
-                  
                   zone.records.add(
                     DNSRecord(
                       dnsFullName(domainName),
