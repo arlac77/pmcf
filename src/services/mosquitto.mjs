@@ -1,13 +1,5 @@
-import { join } from "node:path";
-import { FileContentProvider } from "npm-pkgbuild";
-import {
-  boolean_attribute_writable_true,
-  port_attribute,
-  string_attribute_writable,
-  addType
-} from "pacc";
+import { port_attribute, string_attribute_writable, addType } from "pacc";
 import { addServiceType } from "pmcf";
-import { writeLines, filterConfigurable, setionLinesFromPropertyIterator } from "../utils.mjs";
 import { Service, ServiceTypeDefinition } from "../service.mjs";
 
 const MosquittoServiceTypeDefinition = {
@@ -70,9 +62,22 @@ export class MosquittoService extends Service {
     const host = this.host;
     const name = host.name;
 
+    const owner = "mosquitto";
+    const group = "mosquitto";
+
+    const entryProperties = {
+      mode: 0o644,
+      owner,
+      group
+    };
+    const directoryProperties = {
+      mode: 0o755,
+      owner,
+      group
+    };
     const packageData = {
       dir,
-      sources: [new FileContentProvider(dir + "/")],
+      sources: [...this.templateContent(entryProperties, directoryProperties)],
       outputs: this.outputs,
       properties: {
         name: `${this.typeName}-${this.location.name}-${host.name}`,
@@ -82,12 +87,6 @@ export class MosquittoService extends Service {
       }
     };
 
-    await writeLines(
-      join(dir, "etc", "mosquitto"),
-      "mosquitto.conf",
-          setionLinesFromPropertyIterator(this.propertyIterator(filterConfigurable))
-    );
-    
     yield packageData;
   }
 }
