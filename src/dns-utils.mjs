@@ -20,9 +20,14 @@ export function sortZoneRecords(a, b) {
     return order;
   }
 
-  if (a.type === "PTR") {
-    const toNum = a => {
-      const s = a.split(".");
+  if (
+    a.type === "PTR" &&
+    b.type === "PTR" &&
+    a.key.indexOf(".arpa") > 0 &&
+    b.key.indexOf(".arpa") > 0
+  ) {
+    const toNum = key => {
+      const s = key.split(".");
       s.pop();
       s.pop();
       s.pop();
