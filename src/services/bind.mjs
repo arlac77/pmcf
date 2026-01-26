@@ -308,8 +308,7 @@ export class BindService extends ExtraSourceService {
       name: `named-zones-${name}`,
       description: `zone definitions for ${names}`,
       dependencies: ["mf-named"],
-      access: "private",
-      hooks: {}
+      access: "private"
     };
 
     yield this.generateZoneDefs(sources, packageData);
@@ -367,7 +366,7 @@ export class BindService extends ExtraSourceService {
     }
   }
 
-  createCatalogZone(name, view, location) {
+  createCatalogZone(name, view, directory) {
     const config = {
       view,
       name: `catalog.${name}.zone.conf`,
@@ -378,7 +377,7 @@ export class BindService extends ExtraSourceService {
     const catalogZone = {
       catalog: true,
       id: `catalog.${name}`,
-      file: `${location}/catalog.${name}.zone`,
+      file: `${directory}/catalog.${name}.zone`,
       records: new Set([
         ...this.defaultRecords,
         DNSRecord(dnsFullName(`version.catalog.${name}`), "TXT", '"1"')
