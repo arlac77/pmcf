@@ -337,9 +337,7 @@ export class BindService extends ExtraSourceService {
 
     for (const source of sources) {
       for (const host of source.hosts()) {
-        configs.push(
-          ...this.outfacingZones(host, view, this.defaultRecords)
-        );
+        configs.push(...this.outfacingZones(host, view, this.defaultRecords));
       }
     }
 
@@ -347,9 +345,13 @@ export class BindService extends ExtraSourceService {
 
     if (outfacingZones.length) {
       if (this.hasCatalog) {
-        const { catalogZone, config } = this.createCatalogZone(location, view, location);
+        const { catalogZone, config } = this.createCatalogZone(
+          location,
+          view,
+          location
+        );
         configs.push(config);
-        outfacingZones.forEach(zone=>zone.catalogZone=catalogZone);
+        outfacingZones.forEach(zone => (zone.catalogZone = catalogZone));
       }
 
       addHook(
@@ -364,28 +366,6 @@ export class BindService extends ExtraSourceService {
 
       yield packageData;
     }
-  }
-
-  createCatalogZone(name, view, directory) {
-    const config = {
-      view,
-      name: `catalog.${name}.zone.conf`,
-      type: "master",
-      zones: []
-    };
-
-    const catalogZone = {
-      catalog: true,
-      id: `catalog.${name}`,
-      file: `${directory}/catalog.${name}.zone`,
-      records: new Set([
-        ...this.defaultRecords,
-        DNSRecord(dnsFullName(`version.catalog.${name}`), "TXT", '"1"')
-      ])
-    };
-    config.zones.push(catalogZone);
-
-    return { config, catalogZone };
   }
 
   async generateZoneDefs(sources, packageData) {
@@ -425,7 +405,11 @@ export class BindService extends ExtraSourceService {
         config.zones.push(zone);
 
         if (this.hasCatalog) {
-          const { catalogZone, config } = this.createCatalogZone(domain, view, locationName);
+          const { catalogZone, config } = this.createCatalogZone(
+            domain,
+            view,
+            locationName
+          );
           configs.push(config);
           zone.catalogZone = catalogZone;
         }
@@ -433,7 +417,7 @@ export class BindService extends ExtraSourceService {
         const hosts = new Set();
         const addresses = new Set();
 
-        for await (const {
+        for (const {
           address,
           subnet,
           networkInterface,
@@ -573,6 +557,28 @@ export class BindService extends ExtraSourceService {
 
       return config;
     });
+  }
+
+  createCatalogZone(name, view, directory) {
+    const config = {
+      view,
+      name: `catalog.${name}.zone.conf`,
+      type: "master",
+      zones: []
+    };
+
+    const catalogZone = {
+      catalog: true,
+      id: `catalog.${name}`,
+      file: `${directory}/catalog.${name}.zone`,
+      records: new Set([
+        ...this.defaultRecords,
+        DNSRecord(dnsFullName(`version.catalog.${name}`), "TXT", '"1"')
+      ])
+    };
+    config.zones.push(catalogZone);
+
+    return { config, catalogZone };
   }
 
   get defaultRecords() {
