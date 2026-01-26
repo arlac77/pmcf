@@ -1,4 +1,4 @@
-import { join } from "node:path";
+import { join, dirname } from "node:path";
 import { createHmac } from "node:crypto";
 import { FileContentProvider } from "npm-pkgbuild";
 import { isLinkLocal, reverseArpa } from "ip-utilties";
@@ -311,7 +311,7 @@ export class BindService extends ExtraSourceService {
       access: "private"
     };
 
-    yield this.generateZoneDefs(sources, packageData);
+    yield this.generateZoneDefs(newOutputControl(packageData), sources);
 
     const location = "outfacing";
 
@@ -327,50 +327,38 @@ export class BindService extends ExtraSourceService {
       access: "private"
     };
 
-    yield* this.generateOutfacingDefs(sources, packageData, location);
+    yield* this.generateOutfacingDefs(newOutputControl(packageData), sources);
   }
 
-  async *generateOutfacingDefs(sources, packageData, location) {
-    const configs = [];
-
-    const view = this.views.internal;
-
+  async *generateOutfacingDefs(outputControl, sources) {
     for (const source of sources) {
       for (const host of source.hosts()) {
-        configs.push(...this.outfacingZones(host, view, this.defaultRecords));
+        this.outfacingZones(
+          outputControl,
+          host,
+          this.views.internal,
+          this.defaultRecords
+        );
       }
     }
 
-    const outfacingZones = configs.map(c => c.zones).flat();
-
-    if (outfacingZones.length) {
-      if (this.hasCatalog) {
-        const { catalogZone, config } = this.createCatalogZone(
-          location,
-          view,
-          location
-        );
-        configs.push(config);
-        outfacingZones.forEach(zone => (zone.catalogZone = catalogZone));
-      }
-
+    if (outputControl.configs.length) {
       addHook(
-        packageData,
+        outputControl.packageData,
         "post_upgrade",
-        `/usr/bin/named-hostname-update ${outfacingZones
-          .map(zone => zone.id)
+        `/usr/bin/named-hostname-update ${outputControl.configs
+          .map(config => config.zones.map(zone => zone.id))
+          .flat()
           .join(" ")}`
       );
 
-      await this.writeZones(packageData, configs);
+      await this.writeZones(outputControl.packageData, outputControl.configs);
 
-      yield packageData;
+      yield outputControl.packageData;
     }
   }
 
-  async generateZoneDefs(sources, packageData) {
-    const configs = [];
-
+  async generateZoneDefs(outputControl, sources) {
     const view = this.views.internal;
 
     for (const source of sources) {
@@ -390,10 +378,11 @@ export class BindService extends ExtraSourceService {
           type: "master",
           zones: []
         };
-        configs.push(config);
+        outputControl.configs.push(config);
 
         const zone = {
           id: domain,
+          config,
           file: `${locationName}/${domain}.zone`,
           records: new Set(this.defaultRecords)
         };
@@ -404,15 +393,7 @@ export class BindService extends ExtraSourceService {
 
         config.zones.push(zone);
 
-        if (this.hasCatalog) {
-          const { catalogZone, config } = this.createCatalogZone(
-            domain,
-            view,
-            locationName
-          );
-          configs.push(config);
-          zone.catalogZone = catalogZone;
-        }
+        this.assignCatalog(outputControl, zone, domain);
 
         const hosts = new Set();
         const addresses = new Set();
@@ -449,12 +430,15 @@ export class BindService extends ExtraSourceService {
                 const id = reverseArpa(subnet.prefix);
                 reverseZone = {
                   id,
+                  config,
                   type: "plain",
                   file: `${locationName}/${id}.zone`,
                   records: new Set(this.defaultRecords)
                 };
                 config.zones.push(reverseZone);
                 reverseZones.set(subnet, reverseZone);
+
+                this.assignCatalog(outputControl, reverseZone, domain);
               }
 
               for (const domainName of domainNames) {
@@ -505,7 +489,7 @@ export class BindService extends ExtraSourceService {
             }
           }
         }
-        configs.push({
+        outputControl.configs.push({
           view: this.views.protected,
           inView: this.views.protected.inView,
           name: config.name,
@@ -514,13 +498,13 @@ export class BindService extends ExtraSourceService {
       }
     }
 
-    await this.writeZones(packageData, configs);
+    await this.writeZones(outputControl.packageData, outputControl.configs);
 
-    return packageData;
+    return outputControl.packageData;
   }
 
-  outfacingZones(host, view, records) {
-    return host.foreignDomainNames.map(domain => {
+  outfacingZones(outputControl, host, view, records) {
+    host.foreignDomainNames.map(domain => {
       const wildcard = domain.startsWith("*.");
       if (wildcard) {
         domain = domain.substring(2);
@@ -528,7 +512,7 @@ export class BindService extends ExtraSourceService {
 
       const zone = {
         id: domain,
-        file: `outfacing/${domain}.zone`,
+        file: `${host.location.name}/outfacing/${domain}.zone`,
         records: new Set(records)
       };
       const config = {
@@ -537,6 +521,8 @@ export class BindService extends ExtraSourceService {
         type: "master",
         zones: [zone]
       };
+      zone.config = config;
+      outputControl.configs.push(config);
 
       if (this.hasLocationRecord) {
         zone.records.add(DNSRecord("location", "TXT", host.location.name));
@@ -555,30 +541,51 @@ export class BindService extends ExtraSourceService {
         }
       }
 
-      return config;
+      this.assignCatalog(
+        outputControl,
+        zone,
+        `outfacting.${host.location.name}`
+      );
     });
   }
 
-  createCatalogZone(name, view, directory) {
-    const config = {
-      view,
-      name: `catalog.${name}.zone.conf`,
-      type: "master",
-      zones: []
-    };
+  assignCatalog(outputControl, zone, name) {
+    if (!this.hasCatalog) {
+      return;
+    }
 
-    const catalogZone = {
-      catalog: true,
-      id: `catalog.${name}`,
-      file: `${directory}/catalog.${name}.zone`,
-      records: new Set([
-        ...this.defaultRecords,
-        DNSRecord(dnsFullName(`version.catalog.${name}`), "TXT", '"1"')
-      ])
-    };
-    config.zones.push(catalogZone);
+    const directory = dirname(zone.file);
 
-    return { config, catalogZone };
+    let catalogZone = outputControl.catalogs.get(directory);
+
+    if (!catalogZone) {
+      catalogZone = {
+        catalog: true,
+        id: `catalog.${name}`,
+        file: `${directory}/catalog.${name}.zone`,
+        records: new Set([
+          ...this.defaultRecords,
+          DNSRecord(dnsFullName(`version.catalog.${name}`), "TXT", '"2"')
+        ])
+      };
+      outputControl.catalogs.set(directory, catalogZone);
+      const config = {
+        view: zone.config.view,
+        name: `catalog.${name}.zone.conf`,
+        type: "master",
+        zones: [catalogZone]
+      };
+      catalogZone.config = config;
+      outputControl.configs.push(config);
+    }
+    zone.catalogZone = catalogZone;
+
+    const hash = createHmac("sha1", zone.id).digest("hex");
+    catalogZone.records.add(
+        DNSRecord(`${hash}.zones.${zone.id}.`, "PTR", dnsFullName(zone.id))
+    );
+
+    return catalogZone;
   }
 
   get defaultRecords() {
@@ -605,17 +612,6 @@ export class BindService extends ExtraSourceService {
 
       for (const zone of config.zones) {
         console.log(`  file: ${zone.file}`);
-
-        if (zone.catalogZone) {
-          const hash = createHmac("md5", zone.id).digest("hex");
-          zone.catalogZone.records.add(
-            DNSRecord(
-              `${hash}.zones.catalog.${zone.id}.`,
-              "PTR",
-              dnsFullName(zone.id)
-            )
-          );
-        }
 
         content.push(`zone \"${zone.id}\" {`);
 
@@ -658,4 +654,8 @@ export class BindService extends ExtraSourceService {
       );
     }
   }
+}
+
+function newOutputControl(packageData) {
+  return { configs: [], catalogs: new Map(), packageData };
 }
