@@ -92,7 +92,12 @@ const BindServiceTypeDefinition = {
     retry: { ...string_attribute_writable, default: 72000 },
     expire: { ...string_attribute_writable, default: 600000 },
     minimum: { ...string_attribute_writable, default: 60000 },
-    allowedUpdates: string_collection_attribute_writable
+    allowedUpdates: string_collection_attribute_writable,
+    primaries: {
+      ...default_attribute_writable,
+      type: networkAddressType,
+      collection: true
+    }
   },
   service: {
     systemdService: "bind.service",
@@ -180,6 +185,11 @@ export class BindService extends ExtraSourceService {
 
   get type() {
     return BindServiceTypeDefinition.name;
+  }
+
+  get serverType()
+  {
+    return this.primaries ? "secondary" : "primary";
   }
 
   get soaUpdates() {
@@ -375,7 +385,7 @@ export class BindService extends ExtraSourceService {
         const config = {
           view,
           name: `${domain}.zone.conf`,
-          type: "master",
+          type: this.serverType,
           zones: []
         };
         outputControl.configs.push(config);
@@ -431,7 +441,6 @@ export class BindService extends ExtraSourceService {
                 reverseZone = {
                   id,
                   config,
-                  type: "plain",
                   file: `${locationName}/${id}.zone`,
                   records: new Set(this.defaultRecords)
                 };
@@ -518,7 +527,7 @@ export class BindService extends ExtraSourceService {
       const config = {
         view,
         name: `${domain}.zone.conf`,
-        type: "master",
+        type: this.serverType,
         zones: [zone]
       };
       zone.config = config;
@@ -572,7 +581,7 @@ export class BindService extends ExtraSourceService {
       const config = {
         view: zone.config.view,
         name: `catalog.${name}.zone.conf`,
-        type: "master",
+        type: this.serverType,
         zones: [catalogZone]
       };
       catalogZone.config = config;
@@ -582,7 +591,7 @@ export class BindService extends ExtraSourceService {
 
     const hash = createHmac("sha1", zone.id).digest("hex");
     catalogZone.records.add(
-        DNSRecord(`${hash}.zones`, "PTR", dnsFullName(zone.id))
+      DNSRecord(`${hash}.zones`, "PTR", dnsFullName(zone.id))
     );
 
     return catalogZone;
