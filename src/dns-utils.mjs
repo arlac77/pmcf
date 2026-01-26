@@ -20,7 +20,8 @@ export function sortZoneRecords(a, b) {
     return order;
   }
 
-  const numSortable = (record) => record.type === "PTR" && record.key.indexOf(".arpa") > 0 && record.key.indexOf("zones") < 0;
+  const numSortable = record =>
+    record.type === "PTR" && record.key.indexOf(".arpa") > 0;
 
   if (numSortable(a) && numSortable(b)) {
     const toNum = key => {

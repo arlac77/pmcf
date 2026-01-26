@@ -565,7 +565,7 @@ export class BindService extends ExtraSourceService {
         file: `${directory}/catalog.${name}.zone`,
         records: new Set([
           ...this.defaultRecords,
-          DNSRecord(dnsFullName(`version.catalog.${name}`), "TXT", '"2"')
+          DNSRecord("version", "TXT", '"2"')
         ])
       };
       outputControl.catalogs.set(directory, catalogZone);
@@ -582,7 +582,7 @@ export class BindService extends ExtraSourceService {
 
     const hash = createHmac("sha1", zone.id).digest("hex");
     catalogZone.records.add(
-        DNSRecord(`${hash}.zones.${zone.id}.`, "PTR", dnsFullName(zone.id))
+        DNSRecord(`${hash}.zones`, "PTR", dnsFullName(zone.id))
     );
 
     return catalogZone;
