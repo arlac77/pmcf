@@ -29,7 +29,6 @@ export function sortZoneRecords(a, b) {
       s.pop();
       s.pop();
 
-      console.log(key,s);
       return s
         .reverse()
         .reduce((a, c) => BigInt(parseInt(c, 16)) + 256n * 256n * a, 0n);
