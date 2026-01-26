@@ -20,17 +20,16 @@ export function sortZoneRecords(a, b) {
     return order;
   }
 
-  if (
-    a.type === "PTR" &&
-    b.type === "PTR" &&
-    a.key.indexOf(".arpa") > 0 &&
-    b.key.indexOf(".arpa") > 0
-  ) {
+  const numSortable = (record) => record.type === "PTR" && record.key.indexOf(".arpa") > 0 && record.key.indexOf("zones") < 0;
+
+  if (numSortable(a) && numSortable(b)) {
     const toNum = key => {
       const s = key.split(".");
       s.pop();
       s.pop();
       s.pop();
+
+      console.log(key,s);
       return s
         .reverse()
         .reduce((a, c) => BigInt(parseInt(c, 16)) + 256n * 256n * a, 0n);
