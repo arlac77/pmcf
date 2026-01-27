@@ -10,7 +10,8 @@
     "/services/arch-linux",
     "/services/timemachine",
     "/services/openldap",
-    "/services/mosquitto"
+    "/services/mosquitto",
+    "/services/postfix"
   ],
   "networkInterfaces": {
     "eth0": {
@@ -29,6 +30,7 @@
       }
     },
     "influxdb": {},
+    "postfix": {},
     "mosquitto": {
       "acl_file": "/etc/mosquitto/acl"
     },

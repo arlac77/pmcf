@@ -4,7 +4,7 @@ import { addServiceType } from "pmcf";
 import { ServiceTypeDefinition, Service } from "../service.mjs";
 
 const PostfixServiceTypeDefinition = {
-  name: "üpstfix",
+  name: "postfix",
   extends: ServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
@@ -12,7 +12,7 @@ const PostfixServiceTypeDefinition = {
   attributes: {},
   service: {
     systemdService: "postfix.service",
-    extends: ["smtp", "lmpt"],
+    extends: ["smtp", "lmpt", "submission"],
     services: {}
   }
 };

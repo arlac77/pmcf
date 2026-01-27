@@ -1,0 +1,8 @@
+{
+  "services": {
+    "postfix": {
+      "alias": "smtp",
+      "properties": {}
+    }
+  }
+}
