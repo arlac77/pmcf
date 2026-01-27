@@ -57,7 +57,7 @@ export class PostfixService extends Service {
         name: `${this.typeName}-${this.location.name}-${this.host.name}`,
         description: `${this.typeName} definitions for ${this.fullName}@${this.host.name}`,
         access: "private",
-        dependencies: ["openldap>=3.10.7"]
+        dependencies: ["postfix>=3.10.7"]
       }
     };
 
