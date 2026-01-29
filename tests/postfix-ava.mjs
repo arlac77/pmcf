@@ -10,5 +10,5 @@ test("postfix basics", async t => {
 
   t.true(postfix instanceof PostfixService);
 
-  t.deepEqual(Array.from(postfix.expression("subnets[].prefix")), ["192.168.1"]);
+  t.is(postfix.expression("join(',',subnets[].prefix)"), "192.168.1");
 });
