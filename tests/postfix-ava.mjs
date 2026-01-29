@@ -9,4 +9,6 @@ test("postfix basics", async t => {
   const postfix = await root.named("/L1/host1/postfix");
 
   t.true(postfix instanceof PostfixService);
+
+  t.deepEqual(Array.from(postfix.expression("subnets[].prefix")), ["192.168.1"]);
 });
