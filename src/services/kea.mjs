@@ -174,9 +174,7 @@ export class KeaService extends Service {
       (
         await Array.fromAsync(
           network.findServices(
-            `type="kea" && priority>=${
-              this.priority < 100 ? this.priority : 100
-            }`
+            `type="kea" && priority>=${Math.min(this.priority, 100)}`
           )
         )
       )
@@ -281,8 +279,7 @@ export class KeaService extends Service {
       for (const [key] of Object.entries(
         KeaServiceTypeDefinition.attributes
       ).filter(
-        ([key, attribute]) =>
-          attribute.configurable && this[key] !== undefined
+        ([key, attribute]) => attribute.configurable && this[key] !== undefined
       )) {
         cfg[key] = this[key];
       }
