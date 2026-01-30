@@ -49,7 +49,7 @@ export class Root extends Location {
   }
 
   async load(name, options) {
-    name = name.replace(/\/([^\/]+\.json)?$/, "");
+    name = name.replace(/\/?([^\/]+\.json)?$/, "");
 
     const object = this.named(name);
     if (object) {
@@ -75,10 +75,17 @@ export class Root extends Location {
       (a, b) => (b.priority || 1.0) - (a.priority || 1.0)
     )) {
       if (type.clazz?.typeFileName) {
-        for await (const name of glob( "**/" + type.clazz.typeFileName, {
+        for await (const name of glob("**/" + type.clazz.typeFileName, {
           cwd: this.directory
         })) {
-          await this.load(name, { type });
+          if (type === this.constructor) {
+            const data = JSON.parse(
+              await readFile(join(this.directory, name), "utf8")
+            );
+            this._properties = data.properties;
+          } else {
+            await this.load(name, { type });
+          }
         }
       }
     }
