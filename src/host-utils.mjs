@@ -25,8 +25,10 @@ export async function generateKnownHosts(hosts, dir) {
     try {
       const [alg, key, desc] = (await host.publicKey("ed25519")).split(/\s+/);
 
-      for(const domainName of host.domainNames) {
-        keys.push(`${domainName} ${alg} ${key}`);
+      for (const domainName of host.domainNames) {
+        if (domainName !== "localhost") {
+          keys.push(`${domainName} ${alg} ${key}`);
+        }
       }
 
       for (const addr of host.networkAddresses(

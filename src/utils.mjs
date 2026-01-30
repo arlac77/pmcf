@@ -13,7 +13,7 @@ export function yesno(flag) {
  */
 export function domainName(name, defaultDomain) {
   const dcs = name.split(".");
-  return defaultDomain === undefined || dcs.length > 1
+  return defaultDomain === undefined || dcs.length > 1 || name === "localhost"
     ? name
     : [name, defaultDomain].join(".");
 }
