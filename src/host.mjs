@@ -20,7 +20,7 @@ import {
   asArray
 } from "./utils.mjs";
 import { loadHooks } from "./hooks.mjs";
-import { generateMachineInfo, generateKnownHosts } from "./host-utils.mjs";
+import { generateKnownHosts } from "./host-utils.mjs";
 import { NetworkInterfaceTypeDefinition } from "./network-interfaces/network-interface.mjs";
 
 const HostTypeDefinition = {
@@ -468,7 +468,6 @@ export class Host extends ServiceOwner {
       await writeLines(dir, "etc/vconsole.conf", `KEYMAP=${this.keymap}`);
     }
 
-    await generateMachineInfo(this, packageData);
     await generateKnownHosts(this.owner.hosts(), join(dir, "root", ".ssh"));
 
     for (const service of this.services) {
