@@ -15,6 +15,18 @@ export const ServiceTypes = {
         family: "IPv6",
         port: 514,
         tls: false
+      },
+      {
+        protocol: "tcp",
+        family: "IPv4",
+        port: 514,
+        tls: false
+      },
+      {
+        protocol: "tcp",
+        family: "IPv6",
+        port: 514,
+        tls: false
       }
     ]
   },
