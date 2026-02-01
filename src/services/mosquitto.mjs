@@ -69,7 +69,7 @@ export class MosquittoService extends Service {
     };
     const packageData = {
       dir,
-      sources: [...this.templateContent(entryProperties, directoryProperties)],
+      sources: this.templateContent(entryProperties, directoryProperties),
       outputs: this.outputs,
       properties: {
         name: `${this.typeName}-${this.location.name}-${host.name}`,
