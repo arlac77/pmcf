@@ -262,8 +262,8 @@ export class Service extends Base {
       sources: this.templateContent(),
       outputs: this.outputs,
       properties: {
-        name: `${this.typeName}-${this.location.name}-${this.host.name}`,
-        description: `${this.typeName} definitions for ${this.fullName}@${this.host.name}`,
+        name: `${this.type}-${this.location.name}-${this.host.name}`,
+        description: `${this.type} definitions for ${this.fullName}@${this.host.name}`,
         access: "private",
         dependencies: this.depends
       }
