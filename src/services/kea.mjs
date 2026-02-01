@@ -159,7 +159,6 @@ export class KeaService extends Service {
     });
 
     const packageData = {
-      dir,
       sources: [new FileContentProvider(dir + "/")],
       outputs: this.outputs,
       properties: {

@@ -47,7 +47,6 @@ export class PostfixService extends Service {
     };
 
     const packageData = {
-      dir,
       sources: [
         ...this.templateContent(entryProperties, directoryProperties),
         new FileContentProvider(dir + "/", entryProperties, directoryProperties)

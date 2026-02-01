@@ -252,7 +252,6 @@ export class BindService extends ExtraSourceService {
     const configPackageDir = join(dir, "config") + "/";
     const packageData = {
       outputs: this.outputs,
-      dir: configPackageDir,
       sources: [new FileContentProvider(configPackageDir)],
       properties: {
         name: `named-${name}`,
@@ -310,7 +309,6 @@ export class BindService extends ExtraSourceService {
 
     const zonesPackageDir = join(dir, "zones") + "/";
 
-    packageData.dir = zonesPackageDir;
     packageData.sources = [
       new FileContentProvider(zonesPackageDir, ...filePermissions)
     ];
@@ -325,11 +323,8 @@ export class BindService extends ExtraSourceService {
 
     const location = "outfacing";
 
-    const outfacingZonesPackageDir = join(dir, location) + "/";
-
-    packageData.dir = outfacingZonesPackageDir;
     packageData.sources = [
-      new FileContentProvider(outfacingZonesPackageDir, ...filePermissions)
+      new FileContentProvider(join(dir, location) + "/", ...filePermissions)
     ];
     packageData.properties = {
       name: `named-zones-${name}-${location}`,

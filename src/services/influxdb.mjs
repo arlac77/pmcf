@@ -61,7 +61,6 @@ export class InfluxdbService extends Service {
     const name = host.name;
 
     const packageData = {
-      dir,
       sources: [new FileContentProvider(dir + "/")],
       outputs: this.outputs,
       properties: {

@@ -68,7 +68,6 @@ export class MosquittoService extends Service {
       group
     };
     const packageData = {
-      dir,
       sources: this.templateContent(entryProperties, directoryProperties),
       outputs: this.outputs,
       properties: {
