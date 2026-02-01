@@ -468,7 +468,7 @@ export class KeaService extends Service {
     })) {
       loggers[0].name = name;
       await writeLines(
-        join(packageData.dir, "etc/kea"),
+        join(dir, "etc/kea"),
         `${name}.conf`,
         JSON.stringify(data, undefined, 2)
       );
