@@ -256,6 +256,20 @@ export class Service extends Base {
     );
   }
 
+  async *preparePackages(dir) {
+    yield {
+      dir,
+      sources: this.templateContent(),
+      outputs: this.outputs,
+      properties: {
+        name: `${this.typeName}-${this.location.name}-${this.host.name}`,
+        description: `${this.typeName} definitions for ${this.fullName}@${this.host.name}`,
+        access: "private",
+        dependencies: this.depends
+      }
+    };
+  }
+
   dnsRecordsForDomainName(domainName, hasSVRRecords) {
     const records = [];
     if (this.priority >= 390 && this.alias) {
