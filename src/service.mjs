@@ -258,7 +258,6 @@ export class Service extends Base {
 
   async *preparePackages(dir) {
     yield {
-      dir,
       sources: this.templateContent(),
       outputs: this.outputs,
       properties: {

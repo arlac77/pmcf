@@ -426,7 +426,6 @@ export class Host extends ServiceOwner {
   async *preparePackages(dir) {
     const pkgName = `${this.typeName}-${this.owner.name}-${this.name}`;
     let packageData = {
-      dir,
       sources: [
         ...this.templateContent(),
         new FileContentProvider(
@@ -490,7 +489,6 @@ export class Host extends ServiceOwner {
 
     if (this.extra) {
       yield {
-        dir,
         sources: [
           new FileContentProvider({
             dir: join(this.directory, "extra"),

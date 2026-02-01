@@ -40,7 +40,6 @@ export class Location extends Owner {
 
   async *preparePackages(dir) {
     const packageData = {
-      dir,
       sources: [
         new FileContentProvider(dir + "/"),
         new FileContentProvider(

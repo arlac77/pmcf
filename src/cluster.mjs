@@ -81,7 +81,6 @@ export class Cluster extends Host {
       new Set()
     )) {
       const host = ni.host;
-
       const packageStagingDir = join(stagingDir, host.name);
       const result = {
         sources: [
