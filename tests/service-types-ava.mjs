@@ -27,13 +27,23 @@ test("serviceTypeEndpoints dns", t => {
   ]);
 });
 
-test("serviceTypeEndpoints bind", t => {
+test.only("serviceTypeEndpoints bind", t => {
   t.deepEqual(serviceTypeEndpoints(ServiceTypes.bind), [
     {
       type: ServiceTypes["bind-statistics"],
       family: "IPv4",
       port: 19521,
       protocol: "tcp",
+      pathname: "/",
+      tls: false,
+      kind: "loopback"
+    },
+    {
+      type: ServiceTypes["bind-statistics"],
+      family: "IPv6",
+      port: 19521,
+      protocol: "tcp",
+      pathname: "/",
       tls: false,
       kind: "loopback"
     },

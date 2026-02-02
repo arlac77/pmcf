@@ -109,6 +109,15 @@ const BindServiceTypeDefinition = {
             family: "IPv4",
             port: 19521,
             protocol: "tcp",
+            pathname: "/",
+            tls: false,
+            kind: "loopback"
+          },
+          {
+            family: "IPv6",
+            port: 19521,
+            protocol: "tcp",
+            pathname: "/",
             tls: false,
             kind: "loopback"
           }
