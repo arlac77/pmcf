@@ -17,7 +17,8 @@ import {
   domainFromDominName,
   domainName,
   writeLines,
-  asArray
+  asArray,
+  union
 } from "./utils.mjs";
 import { loadHooks } from "./hooks.mjs";
 import { generateKnownHosts } from "./host-utils.mjs";
@@ -203,11 +204,7 @@ export class Host extends ServiceOwner {
   }
 
   set aliases(value) {
-    if (value instanceof Set) {
-      this._aliases = this._aliases.union(value);
-    } else {
-      this._aliases.add(value);
-    }
+    this._aliases = union(value, this._aliases);
   }
 
   get aliases() {
@@ -215,11 +212,7 @@ export class Host extends ServiceOwner {
   }
 
   set provides(value) {
-    if (value instanceof Set) {
-      this._provides = this._provides.union(value);
-    } else {
-      this._provides.add(value);
-    }
+    this._provides = union(value, this._provides);
   }
 
   get provides() {
@@ -229,11 +222,7 @@ export class Host extends ServiceOwner {
   }
 
   set replaces(value) {
-    if (value instanceof Set) {
-      this._replaces = this._replaces.union(value);
-    } else {
-      this._replaces.add(value);
-    }
+    this._replaces = union(value, this._replaces);
   }
 
   get replaces() {
@@ -243,11 +232,7 @@ export class Host extends ServiceOwner {
   }
 
   set depends(value) {
-    if (value instanceof Set) {
-      this._depends = this._depends.union(value);
-    } else {
-      this._depends.add(value);
-    }
+    this._depends = union(value, this._depends);
   }
 
   get depends() {
@@ -506,3 +491,4 @@ export class Host extends ServiceOwner {
     }
   }
 }
+

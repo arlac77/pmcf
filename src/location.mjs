@@ -1,5 +1,5 @@
 import { FileContentProvider } from "npm-pkgbuild";
-import { string_collection_attribute_writable, addType } from "pacc";
+import { addType } from "pacc";
 import { Owner } from "pmcf";
 import { loadHooks } from "./hooks.mjs";
 
@@ -9,7 +9,6 @@ const LocationTypeDefinition = {
   extends: Owner.typeDefinition,
   key: "name",
   attributes: {
-    locales: string_collection_attribute_writable
   }
 };
 

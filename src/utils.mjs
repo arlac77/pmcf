@@ -120,3 +120,14 @@ export function asIterator(value) {
 
 export const filterConfigurable = (name, attribute) =>
   !attribute.private & attribute.configurable;
+
+
+export function union(value, present= new Set()) {
+  if (value instanceof Set) {
+    return present.union(value);
+  } else if (value instanceof Array) {
+    return present.union(new Set(value));
+  }
+  present.add(value);
+  return present;
+}

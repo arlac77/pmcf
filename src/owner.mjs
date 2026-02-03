@@ -8,7 +8,7 @@ import {
   addType,
   types
 } from "pacc";
-import { asIterator } from "./utils.mjs";
+import { asIterator, union } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { Subnet, SUBNET_GLOBAL_IPV4, SUBNET_GLOBAL_IPV6 } from "./subnet.mjs";
 import { networks_attribute } from "./network-support.mjs";
@@ -364,11 +364,7 @@ export class Owner extends Base {
   _locales = new Set();
 
   set locales(value) {
-    if (value instanceof Set) {
-      this._locales = this._locales.union(value);
-    } else {
-      this._locales.add(value);
-    }
+    this._locales = union(value, this._locales);
   }
 
   get locales() {
@@ -443,13 +439,7 @@ export class Owner extends Base {
   _architectures;
 
   set architectures(value) {
-    if (value instanceof Set) {
-      this._architectures = this._architectures
-        ? this._architectures.union(value)
-        : value;
-    } else {
-      this._architectures = new Set(value);
-    }
+    this._architectures = union(value, this._architectures);
   }
 
   get architectures() {

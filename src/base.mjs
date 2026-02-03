@@ -7,6 +7,7 @@ import {
 import { FileContentProvider } from "npm-pkgbuild";
 import {
   getAttribute,
+  toInternal,
   typeFactory,
   addType,
   parse,
@@ -114,6 +115,7 @@ export class Base {
     }
 
     const assign = (name, attribute, value) => {
+      value = toInternal(value, attribute);
       value ??= attribute.default;
 
       if (value !== undefined) {
@@ -132,7 +134,11 @@ export class Base {
               break;
             case "object":
               if (Array.isArray(current)) {
-                current.push(value);
+                if (Array.isArray(value)) {
+                  current.push(...value);
+                } else {
+                  current.push(value);
+                }
               } else {
                 if (current instanceof Set) {
                   // TODO
@@ -370,8 +376,8 @@ export class Base {
   }
 
   /**
-   * 
-   * @param {string} name 
+   *
+   * @param {string} name
    * @returns {any}
    */
   extendedAttribute(name) {
@@ -548,8 +554,7 @@ export class Base {
 
   async *preparePackages(stagingDir) {}
 
-  get templateTransformers()
-  {
+  get templateTransformers() {
     return [
       createExpressionTransformer(
         e => e.isBlob,
