@@ -328,12 +328,14 @@ export class BindService extends ExtraSourceService {
       access: "private"
     };
 
-    yield this.generateZoneDefs(newOutputControl(packageData), sources);
+    yield this.generateZoneDefs(newOutputControl(packageData, zonesPackageDir), sources);
 
     const location = "outfacing";
 
+    const outfacingZonesPackageDir = join(dir, location) + "/";
+
     packageData.sources = [
-      new FileContentProvider(join(dir, location) + "/", ...filePermissions)
+      new FileContentProvider(outfacingZonesPackageDir, ...filePermissions)
     ];
     packageData.properties = {
       name: `named-zones-${name}-${location}`,
@@ -341,7 +343,7 @@ export class BindService extends ExtraSourceService {
       access: "private"
     };
 
-    yield* this.generateOutfacingDefs(newOutputControl(packageData), sources);
+    yield* this.generateOutfacingDefs(newOutputControl(packageData, outfacingZonesPackageDir), sources);
   }
 
   async *generateOutfacingDefs(outputControl, sources) {
@@ -366,7 +368,7 @@ export class BindService extends ExtraSourceService {
           .join(" ")}`
       );
 
-      await this.writeZones(outputControl.packageData, outputControl.configs);
+      await this.writeZones(outputControl);
 
       yield outputControl.packageData;
     }
@@ -511,7 +513,7 @@ export class BindService extends ExtraSourceService {
       }
     }
 
-    await this.writeZones(outputControl.packageData, outputControl.configs);
+    await this.writeZones(outputControl);
 
     return outputControl.packageData;
   }
@@ -617,8 +619,8 @@ export class BindService extends ExtraSourceService {
     return [SOARecord, NSRecord];
   }
 
-  async writeZones(packageData, configs) {
-    for (const config of configs) {
+  async writeZones(outputControl) {
+    for (const config of outputControl.configs) {
       console.log(`config: ${config.view.name}/${config.name}`);
 
       const content = [];
@@ -652,7 +654,7 @@ export class BindService extends ExtraSourceService {
         }
 
         await writeLines(
-          join(packageData.dir, "var/lib/named"),
+          join(outputControl.dir, "var/lib/named"),
           zone.file,
           [...zone.records]
             .sort(sortZoneRecords)
@@ -661,7 +663,7 @@ export class BindService extends ExtraSourceService {
       }
 
       await writeLines(
-        join(packageData.dir, `etc/named/${config.view.name}`),
+        join(outputControl.dir, `etc/named/${config.view.name}`),
         config.name,
         content
       );
@@ -669,6 +671,6 @@ export class BindService extends ExtraSourceService {
   }
 }
 
-function newOutputControl(packageData) {
-  return { configs: [], catalogs: new Map(), packageData };
+function newOutputControl(packageData, dir) {
+  return { configs: [], catalogs: new Map(), packageData, dir };
 }
