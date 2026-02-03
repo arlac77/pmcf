@@ -460,7 +460,7 @@ export class Host extends ServiceOwner {
     );
 
     for (const ni of this.networkInterfaces.values()) {
-      await ni.systemdDefinitions(packageData);
+      await ni.systemdDefinitions(dir, packageData);
     }
 
     if (this.keymap) {

@@ -197,10 +197,10 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     return this.extendedAttribute("_kind") ?? this.network?.kind;
   }
 
-  async systemdDefinitions(packageData) {
-    await super.systemdDefinitions(packageData);
+  async systemdDefinitions(dir, packageData) {
+    await super.systemdDefinitions(dir, packageData);
 
-    const networkDir = join(packageData.dir, "etc/systemd/network");
+    const networkDir = join(dir, "etc/systemd/network");
 
     if (this.name !== "eth0" && this.hwaddr) {
       const disabled = {};

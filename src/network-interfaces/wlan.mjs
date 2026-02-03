@@ -74,20 +74,20 @@ export class WLANNetworkInterface extends EthernetNetworkInterface {
     return this.extendedAttribute("_psk") ?? this.network?.psk;
   }
 
-  async systemdDefinitions(packageData) {
-    await super.systemdDefinitions(packageData);
-    await mkdir(join(packageData.dir, "var/lib/iwd/"), { recursive: true });
+  async systemdDefinitions(dir, packageData) {
+    await super.systemdDefinitions(dir, packageData);
+    await mkdir(join(dir, "var/lib/iwd/"), { recursive: true });
 
     const secretName = this.secretName;
 
-    await writeLines(join(packageData.dir, "/etc/iwd"), "main.conf", [
+    await writeLines(join(dir, "/etc/iwd"), "main.conf", [
       sectionLines("General", {
         SystemdEncrypt: secretName
       })
     ]);
 
     await writeLines(
-      join(packageData.dir, "usr/lib/systemd/system/iwd.service.d/"),
+      join(dir, "usr/lib/systemd/system/iwd.service.d/"),
       "pmcf.conf",
       [
         sectionLines("Service", {

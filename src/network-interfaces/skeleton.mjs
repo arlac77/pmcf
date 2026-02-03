@@ -96,8 +96,8 @@ export class SkeletonNetworkInterface extends ServiceOwner {
     return [...this.ipAddresses].map(([address]) => address);
   }
 
-  async systemdDefinitions(packageData) {
-    const networkDir = join(packageData.dir, "etc/systemd/network");
+  async systemdDefinitions(dir) {
+    const networkDir = join(dir, "etc/systemd/network");
 
     if (this.name !== "eth0" && this.hwaddr) {
       await writeLines(networkDir, `${this.name}.link`, [

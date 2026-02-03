@@ -23,5 +23,5 @@ export class TUNNetworkInterface extends NetworkInterface {
     return TUNdNetworkInterfaceTypeDefinition.name;
   }
 
-  async systemdDefinitions(packageData) {}
+  async systemdDefinitions(dir, packageData) {}
 }
