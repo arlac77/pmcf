@@ -93,7 +93,7 @@ export class SystemdResolvedService extends ExtraSourceService {
         services: `in("dns",types) && priority>=${lower} && priority<=${upper}`,
         endpoints: e =>
           e.family == "IPv4" &&
-         // e.networkInterface &&
+          e.networkInterface &&
           e.networkInterface.kind !== "loopback",
           //e.family !== "dns",
         select: endpoint => endpoint.address,
