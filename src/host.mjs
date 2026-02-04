@@ -6,6 +6,7 @@ import {
   string_attribute,
   string_attribute_writable,
   string_collection_attribute_writable,
+  string_set_attribute_writable,
   number_attribute_writable,
   boolean_attribute_false,
   addType
@@ -41,7 +42,7 @@ const HostTypeDefinition = {
       type: "service",
       collection: true
     },
-    aliases: string_collection_attribute_writable,
+    aliases: string_set_attribute_writable,
     os: {
       ...string_attribute_writable,
       values: ["osx", "windows", "linux"]
@@ -78,9 +79,9 @@ const HostTypeDefinition = {
       ...string_attribute_writable,
       values: ["x86", "x86_64", "aarch64", "armv7"]
     },
-    replaces: string_collection_attribute_writable,
-    depends: string_collection_attribute_writable,
-    provides: string_collection_attribute_writable,
+    replaces: string_set_attribute_writable,
+    depends: string_set_attribute_writable,
+    provides: string_set_attribute_writable,
     extends: { ...default_attribute_writable, type: "host", collection: true },
     model: string_attribute,
     isModel: boolean_attribute_false

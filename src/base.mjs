@@ -20,7 +20,7 @@ import {
   name_attribute_writable,
   string_attribute,
   string_attribute_writable,
-  string_collection_attribute_writable,
+  string_set_attribute_writable,
   number_attribute_writable,
   description_attribute_writable,
   boolean_attribute_writable
@@ -44,7 +44,7 @@ export class Base {
     directory: string_attribute_writable,
     packaging: string_attribute_writable,
     disabled: boolean_attribute_writable,
-    tags: string_collection_attribute_writable
+    tags: string_set_attribute_writable
   };
 
   owner;

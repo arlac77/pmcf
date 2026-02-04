@@ -2,6 +2,7 @@ import { normalizeCIDR, familyIP } from "ip-utilties";
 import {
   default_attribute_writable,
   string_collection_attribute_writable,
+  string_set_attribute_writable,
   string_attribute_writable,
   boolean_attribute_writable_false,
   email_attribute,
@@ -33,10 +34,10 @@ const OwnerTypeDefinition = {
     },
     country: string_attribute_writable,
     domain: string_attribute_writable,
-    domains: string_collection_attribute_writable,
+    domains: string_set_attribute_writable,
     timezone: string_attribute_writable,
     architectures: string_collection_attribute_writable,
-    locales: string_collection_attribute_writable,
+    locales: string_set_attribute_writable,
     administratorEmail: { ...email_attribute, writable: true },
     template: { ...boolean_attribute_writable_false, private: true }
   }
