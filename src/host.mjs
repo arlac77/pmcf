@@ -5,7 +5,6 @@ import {
   default_attribute_writable,
   string_attribute,
   string_attribute_writable,
-  string_collection_attribute_writable,
   string_set_attribute_writable,
   number_attribute_writable,
   boolean_attribute_false,

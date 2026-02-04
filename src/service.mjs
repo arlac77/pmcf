@@ -1,7 +1,6 @@
 import {
   string_attribute_writable,
-  string_collection_attribute,
-  string_collection_attribute_writable,
+  string_set_attribute,
   number_attribute_writable,
   boolean_attribute_false,
   addType
@@ -36,7 +35,7 @@ export const endpointAttributes = {
     values: ["tcp", "udp"]
   },
   type: string_attribute_writable,
-  types: string_collection_attribute,
+  types: string_set_attribute,
   tls: boolean_attribute_false
 };
 
