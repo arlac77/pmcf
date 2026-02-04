@@ -36,7 +36,6 @@ const SystemdResolvedServiceTypeDefinition = {
         
         domains: { externalName: "Domains", ...string_collection_attribute_writable, configurable: true },
 
-
         MulticastDNS: { ...yesno_attribute_writable, configurable: true },
         Cache: { ...boolean_attribute_writable, configurable: true },
         CacheFromLocalhost: {

@@ -27,7 +27,7 @@ test("serviceTypeEndpoints dns", t => {
   ]);
 });
 
-test.only("serviceTypeEndpoints bind", t => {
+test("serviceTypeEndpoints bind", t => {
   t.deepEqual(serviceTypeEndpoints(ServiceTypes.bind), [
     {
       type: ServiceTypes["bind-statistics"],
