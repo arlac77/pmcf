@@ -16,32 +16,7 @@ const OpenLDAPServiceTypeDefinition = {
   key: "name",
   attributes: {
     base: string_attribute_writable,
-    uri: string_attribute_writable,
-
-    DB_CONFIG: {
-      ...object_attribute,
-      attributes: {
-        set_cachesize: {
-          ...string_attribute_writable,
-          configurable: true,
-          default: "0 16777216 1"
-        },
-        set_lg_regionmax: {
-          ...number_attribute_writable,
-          configurable: true,
-          default: 65536
-        },
-        set_lg_bsize: {
-          ...number_attribute_writable,
-          configurable: true,
-          default: 524288
-        },
-        txn_checkpoint: {
-          ...string_attribute_writable,
-          configurable: true
-        }
-      }
-    }
+    uri: string_attribute_writable
   },
   service: {
     systemdService: "slapd.service",
@@ -86,24 +61,20 @@ export class OpenLDAPService extends Service {
     const owner = "ldap";
     const group = "ldap";
 
-    const entryProperties = {
-      mode: 0o644,
-      owner,
-      group
-    };
-    const directoryProperties = {
-      mode: 0o755,
-      owner,
-      group
-    };
-
     const packageData = this.packageData;
 
-    packageData.sources = [
-      ...this.templateContent(entryProperties, directoryProperties),
-      new FileContentProvider(dir + "/", entryProperties, directoryProperties)
-    ];
-    packageData.properties.dependencies = ["openldap>=2.6.10"];
+    packageData.sources = this.templateContent(
+      {
+        mode: 0o644,
+        owner,
+        group
+      },
+      {
+        mode: 0o755,
+        owner,
+        group
+      }
+    );
 
     yield packageData;
   }
