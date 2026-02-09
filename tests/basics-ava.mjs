@@ -146,6 +146,15 @@ test("expand", t => {
   //t.deepEqual(h1.expand("${owner.domains}"), new Set()); // TODO empty array ?
 });
 
+test("tags", t => {
+  const root = new Root("/somewhere");
+  const l1 = new Owner(root, { name: "l1", tags: "t1" });
+
+  l1.tags = "t2";
+
+  t.deepEqual(l1.tags, new Set(["t1", "t2"]));
+});
+
 test("extract", t => {
   const root = new Root("/somewhere");
   const l1 = new Owner(root, { name: "l1" });

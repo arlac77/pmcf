@@ -25,7 +25,7 @@ import {
   description_attribute_writable,
   boolean_attribute_writable
 } from "pacc";
-import { asArray } from "./utils.mjs";
+import { asArray, union } from "./utils.mjs";
 
 /**
  *
@@ -530,12 +530,12 @@ export class Base {
       : this.owner.fullName;
   }
 
-  set packaging(value) {
-    this._packaging.add(value);
-  }
-
   get derivedPackaging() {
     return this.owner?.packaging;
+  }
+
+  set packaging(value) {
+    this._packaging = union(value, this._packaging);
   }
 
   get packaging() {
@@ -585,11 +585,7 @@ export class Base {
   }
 
   set tags(value) {
-    if (value instanceof Set) {
-      this._tags = this._tags.union(value);
-    } else {
-      this._tags.add(value);
-    }
+    this._tags = union(value, this._tags);
   }
 
   get isTemplate() {
