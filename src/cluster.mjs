@@ -82,6 +82,8 @@ export class Cluster extends Host {
     )) {
       const host = ni.host;
       const packageStagingDir = join(stagingDir, host.name);
+      const location = `${this.location.name}-${host.name}`;
+
       const result = {
         sources: [
           new FileContentProvider(packageStagingDir + "/")[
@@ -90,10 +92,11 @@ export class Cluster extends Host {
         ],
         outputs: host.outputs,
         properties: {
-          name: `keepalived-${host.location.name}-${host.name}`,
+          name: `keepalived-${location}`,
           description: `${this.typeName} definitions for ${this.fullName}`,
           access: "private",
-          dependencies: ["keepalived>=2.3.4"]
+          dependencies: ["keepalived>=2.3.4"],
+          groups: ["service-config", location, "keepalived"]
         }
       };
 

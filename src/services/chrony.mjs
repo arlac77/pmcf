@@ -60,8 +60,7 @@ export class ChronyService extends ExtraSourceService {
 
   async *preparePackages(dir) {
     const packageData = this.packageData;
-    packageData.sources = [new FileContentProvider(dir + "/")];
-    packageData.properties.dependencies = ["chrony>=4.6.1"];
+    packageData.sources.push(new FileContentProvider(dir + "/"));
 
     const host = this.host;
 

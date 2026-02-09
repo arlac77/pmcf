@@ -158,16 +158,9 @@ export class KeaService extends Service {
       endpoints: endpoint => endpoint.networkInterface?.kind !== "loopback"
     });
 
-    const packageData = {
-      sources: [new FileContentProvider(dir + "/")],
-      outputs: this.outputs,
-      properties: {
-        name: `${this.typeName}-${this.location.name}-${name}`,
-        description: `${this.typeName} definitions for ${this.fullName}@${name}`,
-        access: "private",
-        dependencies: [`kea>=${keaVersion}`]
-      }
-    };
+    const packageData = this.packageData;
+
+    packageData.sources.push(new FileContentProvider(dir + "/"));
 
     const peers = async family =>
       (
@@ -264,7 +257,10 @@ export class KeaService extends Service {
           {
             name: family == 4 ? "domain-name-servers" : "dns-servers",
             data: dnsServerEndpoints
-              .filter(endpoint => endpoint.family === `IPv${family}` && endpoint.type === 'dns')
+              .filter(
+                endpoint =>
+                  endpoint.family === `IPv${family}` && endpoint.type === "dns"
+              )
               .map(endpoint => endpoint.address)
               .join(",")
           },
@@ -311,7 +307,9 @@ export class KeaService extends Service {
         return {
           name,
           "dns-servers": dnsServerEndpoints
-            .filter(endpoint => endpoint.family === "IPv4" && endpoint.type === 'dns')
+            .filter(
+              endpoint => endpoint.family === "IPv4" && endpoint.type === "dns"
+            )
             .map(endpoint => {
               return { "ip-address": endpoint.address };
             })

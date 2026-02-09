@@ -57,19 +57,9 @@ export class InfluxdbService extends Service {
   }
 
   async *preparePackages(dir) {
-    const host = this.host;
-    const name = host.name;
+    const packageData = this.packageData;
 
-    const packageData = {
-      sources: [new FileContentProvider(dir + "/")],
-      outputs: this.outputs,
-      properties: {
-        name: `${this.typeName}-${this.location.name}-${host.name}`,
-        description: `${this.typeName} definitions for ${this.fullName}@${name}`,
-        access: "private",
-        dependencies: ["influxdb>=2.7.0"]
-      }
-    };
+    packageData.sources.push(new FileContentProvider(dir + "/"));
 
     await writeLines(
       join(dir, "etc", "influxdb"),

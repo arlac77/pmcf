@@ -54,23 +54,19 @@ export class MosquittoService extends Service {
     const owner = "mosquitto";
     const group = "mosquitto";
 
-    const entryProperties = {
-      mode: 0o644,
-      owner,
-      group
-    };
-    const directoryProperties = {
-      mode: 0o755,
-      owner,
-      group
-    };
-
     const packageData = this.packageData;
     packageData.sources = this.templateContent(
-      entryProperties,
-      directoryProperties
+      {
+        mode: 0o644,
+        owner,
+        group
+      },
+      {
+        mode: 0o755,
+        owner,
+        group
+      }
     );
-    packageData.properties.dependencies = ["mosquitto>=2.0.22"];
 
     yield packageData;
   }
