@@ -264,7 +264,7 @@ export class KeaService extends Service {
           {
             name: family == 4 ? "domain-name-servers" : "dns-servers",
             data: dnsServerEndpoints
-              .filter(endpoint => endpoint.family === `IPv${family}`)
+              .filter(endpoint => endpoint.family === `IPv${family}` && endpoint.type === 'dns')
               .map(endpoint => endpoint.address)
               .join(",")
           },
@@ -311,7 +311,7 @@ export class KeaService extends Service {
         return {
           name,
           "dns-servers": dnsServerEndpoints
-            .filter(endpoint => endpoint.family === "IPv4")
+            .filter(endpoint => endpoint.family === "IPv4" && endpoint.type === 'dns')
             .map(endpoint => {
               return { "ip-address": endpoint.address };
             })
