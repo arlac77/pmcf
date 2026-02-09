@@ -114,7 +114,7 @@ test("expand", t => {
   const l1 = new Location(root);
   l1.read({
     name: "l1",
-    properties: { p1: "v1", n1: 7 }
+    properties: { p1: "v1", n1: 7, deep: { d2: 8 } }
   });
   root.addObject(l1);
   const h1 = new Host(l1);
@@ -129,6 +129,7 @@ test("expand", t => {
   t.is(h1.expand("${owner.fullName}"), "/l1");
   t.is(h1.expand("${p1}"), "v1");
   t.is(h1.expand("${n1 + 2}"), 9);
+  t.is(h1.expand("${deep.d2 + 2}"), 10);
   t.deepEqual(
     h1.expand(
       new Map([
