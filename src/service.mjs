@@ -255,17 +255,27 @@ export class Service extends Base {
     );
   }
 
-  async *preparePackages(dir) {
-    yield {
-      sources: this.templateContent(),
+  get packageData() {
+    const location = `${this.location.name}-${this.host.name}`;
+    return {
+      sources: [],
       outputs: this.outputs,
       properties: {
-        name: `${this.type}-${this.location.name}-${this.host.name}`,
-        description: `${this.type} definitions for ${this.fullName}@${this.host.name}`,
+        name: `${this.type}-${location}`,
+        description: `${this.type} service definitions for ${this.fullName}`,
         access: "private",
-        dependencies: this.depends
+        dependencies: this.depends,
+        groups: ["service-config", location, this.type]
       }
     };
+  }
+
+  async *preparePackages(dir) {
+    const pd = this.packageData;
+    pd.sources = this.templateContent();
+    if (pd.sources.length) {
+      yield pd;
+    }
   }
 
   dnsRecordsForDomainName(domainName, hasSVRRecords) {

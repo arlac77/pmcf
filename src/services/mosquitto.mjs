@@ -51,9 +51,6 @@ export class MosquittoService extends Service {
   }
 
   async *preparePackages(dir) {
-    const host = this.host;
-    const name = host.name;
-
     const owner = "mosquitto";
     const group = "mosquitto";
 
@@ -67,16 +64,13 @@ export class MosquittoService extends Service {
       owner,
       group
     };
-    const packageData = {
-      sources: this.templateContent(entryProperties, directoryProperties),
-      outputs: this.outputs,
-      properties: {
-        name: `${this.typeName}-${this.location.name}-${host.name}`,
-        description: `${this.typeName} definitions for ${this.fullName}@${name}`,
-        access: "private",
-        dependencies: ["mosquitto>=2.0.22"]
-      }
-    };
+
+    const packageData = this.packageData;
+    packageData.sources = this.templateContent(
+      entryProperties,
+      directoryProperties
+    );
+    packageData.properties.dependencies = ["mosquitto>=2.0.22"];
 
     yield packageData;
   }

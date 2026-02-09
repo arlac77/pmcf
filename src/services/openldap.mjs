@@ -97,19 +97,13 @@ export class OpenLDAPService extends Service {
       group
     };
 
-    const packageData = {
-      sources: [
-        ...this.templateContent(entryProperties, directoryProperties),
-        new FileContentProvider(dir + "/", entryProperties, directoryProperties)
-      ],
-      outputs: this.outputs,
-      properties: {
-        name: `${this.typeName}-${this.location.name}-${this.host.name}`,
-        description: `${this.typeName} definitions for ${this.fullName}@${this.host.name}`,
-        access: "private",
-        dependencies: ["openldap>=2.6.10"]
-      }
-    };
+    const packageData = this.packageData;
+
+    packageData.sources = [
+      ...this.templateContent(entryProperties, directoryProperties),
+      new FileContentProvider(dir + "/", entryProperties, directoryProperties)
+    ];
+    packageData.properties.dependencies = ["openldap>=2.6.10"];
 
     yield packageData;
   }

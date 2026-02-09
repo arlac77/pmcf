@@ -59,19 +59,11 @@ export class ChronyService extends ExtraSourceService {
   }
 
   async *preparePackages(dir) {
-    const host = this.host;
-    const name = host.name;
+    const packageData = this.packageData;
+    packageData.sources = [new FileContentProvider(dir + "/")];
+    packageData.properties.dependencies = ["chrony>=4.6.1"];
 
-    const packageData = {
-      sources: [new FileContentProvider(dir + "/")],
-      outputs: this.outputs,
-      properties: {
-        name: `${this.typeName}-${this.location.name}-${host.name}`,
-        description: `${this.typeName} definitions for ${this.fullName}@${name}`,
-        access: "private",
-        dependencies: ["chrony>=4.6.1"]
-      }
-    };
+    const host = this.host;
 
     const lines = [
       ...serviceEndpoints(this, {
