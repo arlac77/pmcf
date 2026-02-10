@@ -67,7 +67,7 @@ for (const object of root.find(args)) {
       const output = new outputFactory(properties);
 
       const artifact = await output.create(
-        sources.map(source => source[Symbol.asyncIterator]()),
+        sources.flat().map(source => source[Symbol.asyncIterator]()),
         [],
         publishingDetails,
         options

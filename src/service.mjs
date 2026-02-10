@@ -272,7 +272,7 @@ export class Service extends Base {
 
   async *preparePackages(dir) {
     const pd = this.packageData;
-    pd.sources = this.templateContent();
+    pd.sources = await Array.fromAsync(this.templateContent());
     if (pd.sources.length) {
       yield pd;
     }

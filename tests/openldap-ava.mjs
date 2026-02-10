@@ -26,19 +26,16 @@ test("OpenLDAPService basics", async t => {
     new URL("ldapi:///run/ldapi").toString()
   );
 
-  const r = new URL("fixtures/root1", import.meta.url).pathname;
+  //const r = new URL("fixtures/root1", import.meta.url).pathname;
 
   const packageDef = (
     await Array.fromAsync(openldap.preparePackages("/tmp"))
   )[0];
 
-  //console.log(packageDef);
+  const sources = await Array.fromAsync(packageDef.sources);
 
   const files = Object.fromEntries(
-    (await Array.fromAsync(packageDef.sources[1])).map(entry => [
-      entry.name,
-      entry
-    ])
+    (await Array.fromAsync(sources[0])).map(entry => [entry.name, entry])
   );
 
   t.truthy(files["var/lib/openldap/openldap-data/DB_CONFIG"]);

@@ -1,4 +1,5 @@
 import { join } from "node:path";
+import { stat } from "node:fs/promises";
 import { allOutputs } from "npm-pkgbuild";
 import {
   createExpressionTransformer,
@@ -318,6 +319,11 @@ export class Base {
     return this.owner.addObject(object);
   }
 
+  /**
+   * Walk the object graph in some directions and deliver seen nodes.
+   * @param {string[]} directions
+   * @return {Iterable<Base>}
+   */
   *walkDirections(directions = ["this", "extends", "owner"]) {
     yield* this._walkDirections(
       directions,
@@ -567,17 +573,33 @@ export class Base {
     ];
   }
 
-  templateContent(entryProperties, directoryProperties) {
-    return [...this.walkDirections(["this", "extends"])].map(e =>
-      transform(
-        new FileContentProvider(
-          { dir: join(e.directory, "content"), pattern: "**/*" },
-          entryProperties,
-          directoryProperties
-        ),
-        this.templateTransformers
-      )
-    );
+  /**
+   *
+   * @param {*} entryProperties
+   * @param {*} directoryProperties
+   * @returns {AsyncIterable<ContentProvider>}
+   */
+  async *templateContent(entryProperties, directoryProperties) {
+    for (const node of this.walkDirections(["this", "extends"])) {
+      const dir = join(node.directory, "content");
+
+      try {
+        if ((await stat(dir)).isDirectory) {
+          yield transform(
+            new FileContentProvider(
+              { dir, pattern: "**/*" },
+              entryProperties,
+              directoryProperties
+            ),
+            this.templateTransformers
+          );
+        }
+      } catch (e) {
+        if (e.code !== "ENOENT") {
+          throw e;
+        }
+      }
+    }
   }
 
   get tags() {

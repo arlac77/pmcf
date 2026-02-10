@@ -412,7 +412,7 @@ export class Host extends ServiceOwner {
     const pkgName = `${this.typeName}-${this.owner.name}-${this.name}`;
     let packageData = {
       sources: [
-        ...this.templateContent(),
+        await Array.fromAsync(this.templateContent()),
         new FileContentProvider(
           { dir: this.directory, pattern: "*.pub" },
           { destination: "/etc/ssh/", mode: 0o644 }
@@ -491,4 +491,3 @@ export class Host extends ServiceOwner {
     }
   }
 }
-

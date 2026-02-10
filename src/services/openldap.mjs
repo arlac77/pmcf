@@ -63,17 +63,19 @@ export class OpenLDAPService extends Service {
 
     const packageData = this.packageData;
 
-    packageData.sources = this.templateContent(
-      {
-        mode: 0o644,
-        owner,
-        group
-      },
-      {
-        mode: 0o755,
-        owner,
-        group
-      }
+    packageData.sources = await Array.fromAsync(
+      this.templateContent(
+        {
+          mode: 0o644,
+          owner,
+          group
+        },
+        {
+          mode: 0o755,
+          owner,
+          group
+        }
+      )
     );
 
     yield packageData;
