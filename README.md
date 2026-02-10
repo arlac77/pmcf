@@ -42,65 +42,69 @@ generates config packages for:
 
 *   [Base](#base)
     *   [Parameters](#parameters)
-    *   [extendedAttribute](#extendedattribute)
+    *   [walkDirections](#walkdirections)
         *   [Parameters](#parameters-1)
-    *   [propertyIterator](#propertyiterator)
+    *   [extendedAttribute](#extendedattribute)
         *   [Parameters](#parameters-2)
-    *   [getProperties](#getproperties)
+    *   [propertyIterator](#propertyiterator)
         *   [Parameters](#parameters-3)
+    *   [getProperties](#getproperties)
+        *   [Parameters](#parameters-4)
     *   [priority](#priority)
     *   [expression](#expression)
-        *   [Parameters](#parameters-4)
-    *   [findService](#findservice)
         *   [Parameters](#parameters-5)
-    *   [property](#property)
+    *   [findService](#findservice)
         *   [Parameters](#parameters-6)
-    *   [expand](#expand)
+    *   [templateContent](#templatecontent)
         *   [Parameters](#parameters-7)
+    *   [property](#property)
+        *   [Parameters](#parameters-8)
+    *   [expand](#expand)
+        *   [Parameters](#parameters-9)
 *   [PortEndpoint](#portendpoint)
-    *   [Parameters](#parameters-8)
+    *   [Parameters](#parameters-10)
     *   [port](#port)
     *   [socketAddress](#socketaddress)
 *   [HTTPEndpoint](#httpendpoint)
-    *   [Parameters](#parameters-9)
+    *   [Parameters](#parameters-11)
     *   [port](#port-1)
 *   [SkeletonNetworkInterface](#skeletonnetworkinterface)
     *   [networkAddresses](#networkaddresses)
-        *   [Parameters](#parameters-10)
+        *   [Parameters](#parameters-12)
 *   [SystemdJournalRemoteService](#systemdjournalremoteservice)
     *   [Properties](#properties)
     *   [systemdConfigs](#systemdconfigs)
-        *   [Parameters](#parameters-11)
+        *   [Parameters](#parameters-13)
 *   [SystemdJournalUploadService](#systemdjournaluploadservice)
     *   [Properties](#properties-1)
     *   [systemdConfigs](#systemdconfigs-1)
-        *   [Parameters](#parameters-12)
+        *   [Parameters](#parameters-14)
 *   [NetworkAddress](#networkaddress)
-    *   [Parameters](#parameters-13)
+    *   [Parameters](#parameters-15)
     *   [subnet](#subnet)
     *   [networkInterface](#networkinterface)
     *   [address](#address)
 *   [addresses](#addresses)
-    *   [Parameters](#parameters-14)
+    *   [Parameters](#parameters-16)
 *   [cidrAddresses](#cidraddresses)
-    *   [Parameters](#parameters-15)
+    *   [Parameters](#parameters-17)
 *   [isTemplate](#istemplate)
 *   [services](#services)
-    *   [Parameters](#parameters-16)
-*   [named](#named)
-    *   [Parameters](#parameters-17)
-*   [serviceEndpoints](#serviceendpoints)
     *   [Parameters](#parameters-18)
-*   [domainName](#domainname)
+*   [named](#named)
     *   [Parameters](#parameters-19)
-*   [domainFromDominName](#domainfromdominname)
+*   [serviceEndpoints](#serviceendpoints)
     *   [Parameters](#parameters-20)
-*   [sectionLines](#sectionlines)
+*   [domainName](#domainname)
     *   [Parameters](#parameters-21)
-*   [asArray](#asarray)
+*   [domainFromDominName](#domainfromdominname)
     *   [Parameters](#parameters-22)
-*   [asIterator](#asiterator)
+*   [sectionLines](#sectionlines)
     *   [Parameters](#parameters-23)
+*   [asArray](#asarray)
+    *   [Parameters](#parameters-24)
+*   [asIterator](#asiterator)
+    *   [Parameters](#parameters-25)
 
 ## Base
 
@@ -111,6 +115,16 @@ properties: use defined values to support attribute value definitions
 
 *   `owner` **[Base](#base)**&#x20;
 *   `data` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?**&#x20;
+
+### walkDirections
+
+Walk the object graph in some directions and deliver seen nodes.
+
+#### Parameters
+
+*   `directions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**  (optional, default `["this","extends","owner"]`)
+
+Returns **Iterable<[Base](#base)>**&#x20;
 
 ### extendedAttribute
 
@@ -160,6 +174,15 @@ Returns **any**&#x20;
 *   `filter` **any**&#x20;
 
 Returns **any** service with the highest priority
+
+### templateContent
+
+#### Parameters
+
+*   `entryProperties` **any**&#x20;
+*   `directoryProperties` **any**&#x20;
+
+Returns **AsyncIterable\<ContentProvider>**&#x20;
 
 ### property
 
