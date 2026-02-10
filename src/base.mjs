@@ -148,8 +148,13 @@ export class Base {
                     this[name].add(value);
                   }
                 } else if (current instanceof Map) {
-                  // TODO
-                  this[name] = value;
+                  const keyName = attribute.type.key;
+                  if (keyName) {
+                    current.set(value[keyName], value);
+                  } else {
+                    // TODO
+                    this[name] = value;
+                  }
                 } else {
                   this.error("Unknown collection type", name, current);
                 }
@@ -566,6 +571,7 @@ export class Base {
       sources: [],
       outputs: this.outputs,
       properties: {
+        name: `${this.typeName}-${this.owner.name}-${this.name}`,
         access: "private",
         dependencies: this.depends,
         groups: [this.type]
