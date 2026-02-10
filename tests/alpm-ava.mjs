@@ -9,7 +9,9 @@ test("alpm basics", async t => {
   const alpm = await root.named("/L1/host1/alpm");
 
   t.true(alpm instanceof ALPMService);
-  //console.log(alpm._repositories);
 
-  //console.log(alpm.endpoints());
+  const r1 = alpm.repositories.get("mf-public");
+  t.is(r1.name, "mf-public");
+  t.deepEqual(r1.architectures, new Set(["aarch64", "x86", "armv7"]));
+  t.deepEqual(r1.base, "/binaries/linux/arch/$repo/$arch");
 });

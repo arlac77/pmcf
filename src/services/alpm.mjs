@@ -11,6 +11,7 @@ import { ServiceTypeDefinition, Service } from "../service.mjs";
 const ALPMRepositoryTypeDefinition = {
   name: "alpm_repository",
   extends: Base.typeDefinition,
+  key: "name",
   attributes: {
     name: name_attribute_writable,
     base: string_attribute_writable,
@@ -26,6 +27,9 @@ class ALPMRepository extends Base {
   static get typeDefinition() {
     return ALPMRepositoryTypeDefinition;
   }
+
+  architectures = new Set();
+  
 }
 
 const ALPMServiceTypeDefinition = {
@@ -56,9 +60,5 @@ export class ALPMService extends Service {
     return ALPMServiceTypeDefinition;
   }
 
-  _repositories = new Map();
-
-  set repositories(repository) {
-    this._repositories.set(repository.name, repository);
-  }
+  repositories = new Map();
 }
