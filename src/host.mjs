@@ -409,34 +409,30 @@ export class Host extends ServiceOwner {
   }
 
   async *preparePackages(dir) {
-    const pkgName = `${this.typeName}-${this.owner.name}-${this.name}`;
-    let packageData = {
-      sources: [
-        await Array.fromAsync(this.templateContent()),
-        new FileContentProvider(
-          { dir: this.directory, pattern: "*.pub" },
-          { destination: "/etc/ssh/", mode: 0o644 }
-        ),
-        new FileContentProvider(
-          { dir: this.directory, pattern: "*_key" },
-          { destination: "/etc/ssh/", mode: 0o600 }
-        ),
-        new FileContentProvider({ dir, pattern: ["**/*", "**/.ssh/*"] })
+    const packageData = this.packageData;
+    packageData.sources.push(
+      await Array.fromAsync(this.templateContent()),
+      new FileContentProvider(
+        { dir: this.directory, pattern: "*.pub" },
+        { destination: "/etc/ssh/", mode: 0o644 }
+      ),
+      new FileContentProvider(
+        { dir: this.directory, pattern: "*_key" },
+        { destination: "/etc/ssh/", mode: 0o600 }
+      ),
+      new FileContentProvider({ dir, pattern: ["**/*", "**/.ssh/*"] })
+    );
+
+    Object.assign(packageData.properties, {
+      description: `${this.typeName} definitions for ${this.fullName}`,
+      dependencies: [
+        `${this.location.typeName}-${this.location.name}`,
+        ...this.depends
       ],
-      outputs: this.outputs,
-      properties: {
-        name: pkgName,
-        description: `${this.typeName} definitions for ${this.fullName}`,
-        access: "private",
-        dependencies: [
-          `${this.location.typeName}-${this.location.name}`,
-          ...this.depends
-        ],
-        provides: [...this.provides],
-        replaces: [...this.replaces],
-        backup: "root/.ssh/known_hosts"
-      }
-    };
+      provides: [...this.provides],
+      replaces: [...this.replaces],
+      backup: "root/.ssh/known_hosts"
+    });
 
     await loadHooks(
       packageData,
@@ -484,7 +480,7 @@ export class Host extends ServiceOwner {
           name: `${this.typeName}-extra-${this.owner.name}-${this.name}`,
           description: `additional files for ${this.fullName}`,
           access: "private",
-          dependencies: [pkgName]
+          dependencies: [packageData.properties.name]
         }
       };
     }
