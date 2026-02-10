@@ -142,8 +142,11 @@ export class Base {
                 }
               } else {
                 if (current instanceof Set) {
-                  // TODO
-                  this[name] = value;
+                  if (value instanceof Set) {
+                    this[name] = current.union(value);
+                  } else {
+                    this[name].add(value);
+                  }
                 } else if (current instanceof Map) {
                   // TODO
                   this[name] = value;
