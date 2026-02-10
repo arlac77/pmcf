@@ -169,7 +169,7 @@ export class Owner extends Base {
     return this.typeNamed("location", name);
   }
 
-  locations() {
+  get locations() {
     return this.typeList("location");
   }
 

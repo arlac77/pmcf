@@ -15,5 +15,5 @@ test("Location basics", async t => {
 test("Location all", async t => {
   const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
   await root.loadAll();
-  await assertObjects(t, root.locations(), root1(root, ["/L1", "/L2"]));
+  await assertObjects(t, root.locations, root1(root, ["/L1", "/L2"]));
 });
