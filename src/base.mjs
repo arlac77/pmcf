@@ -574,7 +574,7 @@ export class Base {
         name: `${this.typeName}-${this.owner.name}-${this.name}`,
         access: "private",
         dependencies: this.depends,
-        groups: [this.type]
+        groups: [this.typeName]
       }
     };
   }
