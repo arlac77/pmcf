@@ -1,26 +1,18 @@
 #!/usr/bin/env node
 import { prepare } from "../src/cli.mjs";
 
-const { root, args, options } = await prepare({
-  service: {
-    type: "string"
-  },
-  address: {
-    type: "boolean"
-  }
-});
+const { root, args, options } = await prepare({});
 
 for (const name of args) {
-  const object = await root.load(name);
-  if (options.service) {
-    for (const service of root.findServices(`type="${options.service}"`)) {
-      console.log(service.toString());
-    }
-  } else if (options.address) {
-    for (const na of object.networkAddresses()) {
-      console.log(na.toString());
-    }
-  } else {
-    console.log(object.toJSON());
+  const [path, expression] = name.split("?");
+
+  const object = await root.load(path);
+
+  let result = object.expression(expression);
+
+  if (result instanceof Iterator) {
+    result = Array.from(result);
   }
+
+  console.log(result);
 }
