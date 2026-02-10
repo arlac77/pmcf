@@ -6,10 +6,11 @@ import {
   addType,
   default_attribute_writable,
   string_attribute_writable,
+  string_collection_attribute_writable,
+  string_set_attribute_writable,
   boolean_attribute_writable_true,
   boolean_attribute_writable_false,
   number_attribute_writable,
-  string_collection_attribute_writable,
   name_attribute_writable
 } from "pacc";
 import {
@@ -79,7 +80,7 @@ const BindServiceTypeDefinition = {
     hasCatalog: boolean_attribute_writable_true,
     hasLinkLocalAdresses: boolean_attribute_writable_false,
     hasLocationRecord: boolean_attribute_writable_true,
-    excludeInterfaceKinds: string_collection_attribute_writable,
+    excludeInterfaceKinds: string_set_attribute_writable,
     exclude: {
       ...default_attribute_writable,
       type: networkAddressType,
@@ -160,7 +161,8 @@ export class BindService extends ExtraSourceService {
   _zones = [];
   _trusted = [];
   _exclude = new Set([]);
-  _excludeInterfaceKinds = new Set();
+
+  excludeInterfaceKinds = new Set();
 
   serial = Math.ceil(Date.now() / 1000);
   refresh = 36000;
@@ -243,14 +245,6 @@ export class BindService extends ExtraSourceService {
 
   get exclude() {
     return this._exclude;
-  }
-
-  set excludeInterfaceKinds(value) {
-    this._excludeInterfaceKinds.add(value);
-  }
-
-  get excludeInterfaceKinds() {
-    return this._excludeInterfaceKinds;
   }
 
   async *preparePackages(dir) {
