@@ -26,10 +26,7 @@ class ALPMRepository extends Base {
 
   static get typeDefinition() {
     return ALPMRepositoryTypeDefinition;
-  }
-
-  architectures = new Set();
-  
+  }  
 }
 
 const ALPMServiceTypeDefinition = {

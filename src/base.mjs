@@ -131,7 +131,11 @@ export class Base {
 
           switch (typeof current) {
             case "undefined":
-              this[name] = asArray(value);
+              if (attribute.constructor === value.constructor) {
+                this[name] = value;
+              } else {
+                this[name] = asArray(value);
+              }
               break;
             case "object":
               if (Array.isArray(current)) {
