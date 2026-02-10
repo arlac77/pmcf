@@ -434,7 +434,6 @@ export class Host extends ServiceOwner {
         ],
         provides: [...this.provides],
         replaces: [...this.replaces],
-        requires: [],
         backup: "root/.ssh/known_hosts"
       }
     };

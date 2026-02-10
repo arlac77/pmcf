@@ -558,6 +558,18 @@ export class Base {
     return new Set(allOutputs.filter(o => this.packaging.has(o.name)));
   }
 
+  get packageData() {
+    return {
+      sources: [],
+      outputs: this.outputs,
+      properties: {
+        access: "private",
+        dependencies: this.depends,
+        groups: [this.type]
+      }
+    };
+  }
+
   async *preparePackages(stagingDir) {}
 
   get templateTransformers() {

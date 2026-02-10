@@ -84,17 +84,17 @@ export class Cluster extends Host {
       const packageStagingDir = join(stagingDir, host.name);
       const location = `${this.location.name}-${host.name}`;
 
-      const result = {
-        sources: [new FileContentProvider(packageStagingDir + "/")],
-        outputs: host.outputs,
-        properties: {
-          name: `keepalived-${location}`,
-          description: `${this.typeName} definitions for ${this.fullName}`,
-          access: "private",
-          dependencies: ["keepalived>=2.3.4"],
-          groups: ["service-config", location, "keepalived"]
-        }
-      };
+      const packageData = host.packageData;
+      packageData.sources.push(
+        new FileContentProvider(packageStagingDir + "/")
+      );
+      packageData.properties.name = `keepalived-${location}`;
+      packageData.properties.description = `${this.typeName} definitions for ${this.fullName}`;
+      packageData.properties.groups.push(
+        "service-config",
+        location,
+        "keepalived"
+      );
 
       const extra = [];
 
@@ -251,7 +251,7 @@ export class Cluster extends Host {
         cfg
       );
 
-      yield result;
+      yield packageData;
     }
   }
 }

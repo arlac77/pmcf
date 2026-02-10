@@ -256,18 +256,12 @@ export class Service extends Base {
   }
 
   get packageData() {
+    const packageData = super.packageData;
     const location = `${this.location.name}-${this.host.name}`;
-    return {
-      sources: [],
-      outputs: this.outputs,
-      properties: {
-        name: `${this.type}-${location}`,
-        description: `${this.type} service definitions for ${this.fullName}`,
-        access: "private",
-        dependencies: this.depends,
-        groups: ["service-config", location, this.type]
-      }
-    };
+    packageData.properties.name = `${this.type}-${location}`;
+    packageData.properties.description =`${this.type} service definitions for ${this.fullName}`;
+    packageData.properties.groups.push("service-config", location);
+    return packageData;
   }
 
   async *preparePackages(dir) {
