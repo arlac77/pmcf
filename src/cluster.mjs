@@ -85,11 +85,7 @@ export class Cluster extends Host {
       const location = `${this.location.name}-${host.name}`;
 
       const result = {
-        sources: [
-          new FileContentProvider(packageStagingDir + "/")[
-            Symbol.asyncIterator
-          ]()
-        ],
+        sources: [new FileContentProvider(packageStagingDir + "/")],
         outputs: host.outputs,
         properties: {
           name: `keepalived-${location}`,
@@ -100,12 +96,19 @@ export class Cluster extends Host {
         }
       };
 
+      const extra = [];
+
+      const smtp = this.smtp;
+      if (smtp) {
+        extra.push(`  smtp_server ${smtp.address()}`);
+      }
+
       const cfg = [
         "global_defs {",
         "   notification_email {",
         "    " + this.administratorEmail,
         "  }",
-        `  smtp_server ${this.smtp.address()}`,
+        ...extra,
         `  notification_email_from keepalived@${host.domainName}`,
         "  enable_script_security",
         "  script_user root",
