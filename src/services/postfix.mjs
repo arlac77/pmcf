@@ -11,7 +11,7 @@ const PostfixServiceTypeDefinition = {
   attributes: {},
   service: {
     systemdService: "postfix.service",
-    extends: ["smtp", "lmpt", "submission"],
+    extends: ["smtp", "lmtp", "submission"],
     services: {}
   }
 };
