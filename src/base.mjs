@@ -160,7 +160,8 @@ export class Base {
                     this[name] = value;
                   }
                 } else {
-                  this.error("Unknown collection type", name, current);
+                  const keyName = attribute.type.key;
+                  this[name][value[keyName]] = value;
                 }
               }
               break;
@@ -497,7 +498,7 @@ export class Base {
   }
 
   get smtp() {
-    return this.findService('type="smtp"');
+    return this.findService('in("smtp",types)');
   }
 
   /**
