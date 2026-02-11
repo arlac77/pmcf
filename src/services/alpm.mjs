@@ -26,7 +26,7 @@ class ALPMRepository extends Base {
 
   static get typeDefinition() {
     return ALPMRepositoryTypeDefinition;
-  }  
+  }
 }
 
 const ALPMServiceTypeDefinition = {
@@ -58,4 +58,12 @@ export class ALPMService extends Service {
   }
 
   repositories = new Map();
+
+  typeNamed(type, name) {
+    if (type === ALPMRepositoryTypeDefinition.name) {
+      return this.repositories.get(name);
+    }
+
+    return super.typeNamed(type, name);
+  }
 }
