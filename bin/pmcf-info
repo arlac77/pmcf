@@ -3,12 +3,8 @@ import { prepare } from "../src/cli.mjs";
 
 const { root, args, options } = await prepare({});
 
-for (const name of args) {
-  const [path, expression] = name.split("?");
-
-  const object = await root.load(path);
-
-  let result = object.expression(expression);
+for (const expression of args) {
+  let result = root.expression(expression);
 
   if (result instanceof Iterator) {
     result = Array.from(result);
