@@ -17,7 +17,7 @@ export const ExtraSourceServiceTypeDefinition = {
 };
 
 export class ExtraSourceService extends Service {
-  _source = [];
+  source = [];
 
   static {
     addType(this);
@@ -29,14 +29,6 @@ export class ExtraSourceService extends Service {
 
   get type() {
     return ExtraSourceServiceTypeDefinition.name;
-  }
-
-  set source(value) {
-    this._source.push(value);
-  }
-
-  get source() {
-    return this._source;
   }
 
   *findServices(filter) {
