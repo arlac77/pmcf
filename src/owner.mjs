@@ -202,7 +202,7 @@ export class Owner extends Base {
     return this.typeNamed("network", name);
   }
 
-  networks() {
+  get networks() {
     return this.typeList("network");
   }
 

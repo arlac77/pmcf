@@ -751,7 +751,7 @@ export function extractFrom(
   }
 
   if (typeof object[Symbol.iterator] === "function") {
-    object = [...object];
+    object = [...object].map(o => o instanceof Base ? extractFrom(o) : o);
 
     if (object.length === 0) {
       return undefined;
@@ -805,6 +805,7 @@ export function extractFrom(
           } else {
             if (typeof value[Symbol.iterator] === "function") {
               value = extractFrom(value);
+
               if (value !== undefined) {
                 json[name] = value;
               }

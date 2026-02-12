@@ -74,6 +74,11 @@ async function _assertObject(t, visited, object, expected, path = []) {
         );
         break;
 
+      case "networks":
+        // TODO general case
+        await _assertObject(t, visited, object[k], v, [...path, k]);
+        break;
+
       case "properties":
         console.log("CXXX", object.fullName);
         //t.deepEqual(object?._properties, v);
@@ -84,10 +89,16 @@ async function _assertObject(t, visited, object, expected, path = []) {
           o = object.get(k);
         } else {
           o = object.extendedAttribute(k); // ?? object[k];
-          if (typeof o === "function") {
-            o = await object[k]();
+
+          switch (typeof o) {
+            case "function":
+              o = await object[k]();
+              break;
+            case "undefined":
+              o = object[k];
           }
         }
+
         await _assertObject(t, visited, o, v, [...path, k]);
       }
     }

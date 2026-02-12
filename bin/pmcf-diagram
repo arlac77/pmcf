@@ -25,7 +25,7 @@ for await (const host of location.hosts()) {
   }
 }
 
-for await (const network of location.networks()) {
+for await (const network of location.networks) {
   console.log(
     `  ${q(network.name)} [label="${network.name}\\n${[...network.subnets()]
       .map(s => s.address)

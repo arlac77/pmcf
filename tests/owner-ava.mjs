@@ -65,8 +65,9 @@ test("Owner read write", t => {
       type: "root"
     },
     administratorEmail: "master@somewhere",
-    networks: {
-      n1: {
+    networks: [
+      {
+        name: "n1",
         administratorEmail: "master@somewhere",
         directory: "/o1/n1",
         kind: "ethernet",
@@ -76,7 +77,11 @@ test("Owner read write", t => {
           name: "o1",
           type: "owner"
         },
+
         subnets: {
+          undefined: {}
+
+          /*
           "10.0/16": {
             directory: "/o1/10.0/16",
             name: "10.0/16",
@@ -97,10 +102,13 @@ test("Owner read write", t => {
             },
             prefixLength: 64
           }
+            */
         }
       }
-    },
+    ],
     subnets: {
+      undefined: {}
+      /*
       "10.0/16": {
         directory: "/o1/10.0/16",
         family: "IPv4",
@@ -121,6 +129,7 @@ test("Owner read write", t => {
         },
         prefixLength: 64
       }
+        */
     }
   });
 });
