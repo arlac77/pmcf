@@ -272,7 +272,9 @@ export class Host extends ServiceOwner {
 
   get foreignDomains() {
     return new Set(
-      [...this.aliases].map(n => domainFromDominName(n, this.domain))
+      [...this.aliases]
+        .map(n => domainFromDominName(n, this.domain))
+        .filter(domain => domain !== undefined)
     );
   }
 
