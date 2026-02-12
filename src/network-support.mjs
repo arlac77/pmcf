@@ -2,7 +2,7 @@ import {
   default_attribute_writable,
   string_collection_attribute_writable,
   string_attribute_writable,
-  number_attribute_writable,
+  integer_attribute_writable,
   hostname_attribute,
   boolean_attribute_writable
 } from "pacc";
@@ -32,8 +32,8 @@ export const networkAttributes = {
   ssid: string_attribute_writable,
   psk: string_attribute_writable,
   secretName: string_attribute_writable,
-  metric: { ...number_attribute_writable /*default: 1004*/ },
-  mtu: { ...number_attribute_writable, default: 1500 },
+  metric: { ...integer_attribute_writable /*default: 1004*/ },
+  mtu: { ...integer_attribute_writable, default: 1500 },
   gateway: { ...default_attribute_writable, type: "host" },
   multicastDNS: boolean_attribute_writable
 };
