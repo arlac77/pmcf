@@ -572,11 +572,12 @@ export class Base {
   }
 
   get packageData() {
+    const nameParts = [this.typeName, this.owner?.name, this.name];
     return {
       sources: [],
       outputs: this.outputs,
       properties: {
-        name: `${this.typeName}-${this.owner.name}-${this.name}`,
+        name: nameParts.filter(n => n !== undefined && n.length > 0).join("-"),
         access: "private",
         dependencies: this.depends,
         groups: [this.typeName]
@@ -751,7 +752,7 @@ export function extractFrom(
   }
 
   if (typeof object[Symbol.iterator] === "function") {
-    object = [...object].map(o => o instanceof Base ? extractFrom(o) : o);
+    object = [...object].map(o => (o instanceof Base ? extractFrom(o) : o));
 
     if (object.length === 0) {
       return undefined;
