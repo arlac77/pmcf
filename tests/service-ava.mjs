@@ -58,7 +58,7 @@ test("Service basics", t => {
     priority: 3,
     alias: "primary-dns"
   });
-  h1.services = s1;
+  h1.services.push(s1);
 
   t.deepEqual(
     s1.endpoints(e => e.family === "IPv4"),
@@ -122,7 +122,7 @@ test("Service basics", t => {
     networkInterfaces: { eth0: { ipAddresses: "10.0.0.2" } }
   });
   const s2 = s1.forOwner(h2);
-  h2.services = s2;
+  h2.services.push(s2);
   t.is(s2.name, "dns");
   t.is(s2.type, "dns");
   t.deepEqual(s2.types, new Set(["dns"]));

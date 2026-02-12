@@ -159,6 +159,11 @@ export class Owner extends Base {
     this.addTypeObject(object.typeName, object.name, object);
   }
 
+  get services()
+  {
+    return [...this.hosts].map(host=>host.services).flat();
+  }
+
   *findServices(filter) {
     for (const host of this.hosts) {
       yield* host.findServices(filter);

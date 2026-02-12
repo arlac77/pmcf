@@ -1,38 +1,27 @@
 import { Base, Service } from "pmcf";
 
 export class ServiceOwner extends Base {
-  _services = [];
-
-  get services() {
-    return this._services;
-  }
-
-  /**
-   * @param {Service} service
-   */
-  set services(service) {
-    this._services.push(service);
-  }
+  services = [];
 
   _applyExtends(owner) {
     super._applyExtends(owner);
 
     for (const service of owner.services) {
-      const present = this._services.find(s => s.name === service.name);
+      const present = this.services.find(s => s.name === service.name);
 
       if (present && service.isTemplate) {
         if (present.extends.indexOf(service) < 0) {
           present.extends.push(service);
         }
       } else {
-        this.services = service.forOwner(this);
+        this.services.push(service.forOwner(this));
       }
     }
   }
 
   _traverse(...args) {
     if (super._traverse(...args)) {
-      for (const service of this._services) {
+      for (const service of this.services) {
         service._traverse(...args);
       }
 
@@ -71,6 +60,6 @@ export class ServiceOwner extends Base {
    * @returns {Service|undefined}
    */
   named(name) {
-    return this._services.find(s => s.name === name);
+    return this.services.find(s => s.name === name);
   }
 }
