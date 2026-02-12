@@ -23,11 +23,12 @@ export class SkeletonNetworkInterface extends ServiceOwner {
     }
   }
 
-  *hosts() {
+  get hosts() {
     const host = this.host;
     if (host) {
-      yield host;
+      return [host];
     }
+    return [];
   }
 
   get network_interface() {

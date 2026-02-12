@@ -45,7 +45,7 @@ test("Host all", async t => {
 
   await assertObjects(
     t,
-    root.hosts(),
+    root.hosts,
     root1(root, ["/L1/n1/host2", "/L1/host1"])
   );
 });

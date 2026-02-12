@@ -58,7 +58,7 @@ export class Network extends Owner {
     }
   }
 
-  hosts() {
+  get hosts() {
     if (this.bridge) {
       let hosts = new Set();
       for (const network of this.bridge) {
@@ -67,7 +67,7 @@ export class Network extends Owner {
       return hosts;
     }
 
-    return super.hosts();
+    return super.hosts;
   }
 
   get bridge() {

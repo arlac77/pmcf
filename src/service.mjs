@@ -102,8 +102,9 @@ export class Service extends Base {
     }
   }
 
-  *hosts() {
-    yield* this.owner.hosts();
+  get hosts()
+  {
+    return this.owner.hosts;
   }
 
   get domainName() {

@@ -160,7 +160,7 @@ export class Owner extends Base {
   }
 
   *findServices(filter) {
-    for (const host of this.hosts()) {
+    for (const host of this.hosts) {
       yield* host.findServices(filter);
     }
   }
@@ -186,12 +186,12 @@ export class Owner extends Base {
     return hosts;
   }
 
-  hosts() {
+  get hosts() {
     let hosts = this.directHosts();
 
     for (const type of types.host.owners) {
       for (const object of this.typeList(type)) {
-        hosts = hosts.union(object.hosts());
+        hosts = hosts.union(object.hosts);
       }
     }
 
@@ -338,7 +338,7 @@ export class Owner extends Base {
 
   get derivedPackaging() {
     let all = new Set();
-    for (const host of this.hosts()) {
+    for (const host of this.hosts) {
       all = all.union(host.packaging);
     }
 
@@ -346,7 +346,7 @@ export class Owner extends Base {
   }
 
   *networkAddresses(filter) {
-    for (const host of this.hosts()) {
+    for (const host of this.hosts) {
       yield* host.networkAddresses(filter);
     }
   }
@@ -415,7 +415,7 @@ export class Owner extends Base {
   get domains() {
     let domains = new Set();
 
-    for (const object of this.hosts()) {
+    for (const object of this.hosts) {
       domains = domains.union(object.domains);
     }
 
@@ -429,7 +429,7 @@ export class Owner extends Base {
   get domainNames() {
     let names = new Set();
 
-    for (const host of this.hosts()) {
+    for (const host of this.hosts) {
       names = names.union(new Set(host.domainNames));
     }
 
@@ -449,7 +449,7 @@ export class Owner extends Base {
 
     const architectures = new Set();
 
-    for (const host of this.hosts()) {
+    for (const host of this.hosts) {
       architectures.add(host.architecture);
     }
 

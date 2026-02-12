@@ -327,8 +327,8 @@ export class Host extends ServiceOwner {
     return this;
   }
 
-  *hosts() {
-    yield this;
+  get hosts() {
+    return [this];
   }
 
   typeNamed(typeName, name) {
@@ -449,7 +449,7 @@ export class Host extends ServiceOwner {
       await writeLines(dir, "etc/vconsole.conf", `KEYMAP=${this.keymap}`);
     }
 
-    await generateKnownHosts(this.owner.hosts(), join(dir, "root", ".ssh"));
+    await generateKnownHosts(this.owner.hosts, join(dir, "root", ".ssh"));
 
     for (const service of this.services) {
       if (service.systemdConfigs) {
