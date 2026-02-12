@@ -89,22 +89,20 @@ generates config packages for:
 *   [cidrAddresses](#cidraddresses)
     *   [Parameters](#parameters-17)
 *   [isTemplate](#istemplate)
-*   [services](#services)
-    *   [Parameters](#parameters-18)
 *   [named](#named)
-    *   [Parameters](#parameters-19)
+    *   [Parameters](#parameters-18)
 *   [serviceEndpoints](#serviceendpoints)
-    *   [Parameters](#parameters-20)
+    *   [Parameters](#parameters-19)
 *   [domainName](#domainname)
-    *   [Parameters](#parameters-21)
+    *   [Parameters](#parameters-20)
 *   [domainFromDominName](#domainfromdominname)
-    *   [Parameters](#parameters-22)
+    *   [Parameters](#parameters-21)
 *   [sectionLines](#sectionlines)
-    *   [Parameters](#parameters-23)
+    *   [Parameters](#parameters-22)
 *   [asArray](#asarray)
-    *   [Parameters](#parameters-24)
+    *   [Parameters](#parameters-23)
 *   [asIterator](#asiterator)
-    *   [Parameters](#parameters-25)
+    *   [Parameters](#parameters-24)
 
 ## Base
 
@@ -325,12 +323,6 @@ Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Gl
 ## isTemplate
 
 Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
-
-## services
-
-### Parameters
-
-*   `service` **Service**&#x20;
 
 ## named
 
