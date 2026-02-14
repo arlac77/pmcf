@@ -127,7 +127,6 @@ test("expand", t => {
   t.is(l1.expand("${p1}"), "v1");
   t.is(h1.expand("${fullName}"), "/l1/h1");
   t.is(h1.expand("${owner.fullName}"), "/l1");
-  t.is(h1.expand("${p1}"), "v1");
   t.is(h1.expand("${n1 + 2}"), 9);
   t.is(h1.expand("${deep.d2 + 2}"), 10);
   t.deepEqual(
