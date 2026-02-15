@@ -510,7 +510,7 @@ export class Base {
   expression(expression, options) {
     return parse(expression, {
       root: this,
-      getGlobal: x => this.getGlobal(x),
+      valueFor: (name, at) => this.valueFor(name, at),
       ...options
     });
   }
@@ -594,7 +594,7 @@ export class Base {
         expression =>
           parse(expression, {
             root: this,
-            getGlobal: id => this.getGlobal(id)
+            valueFor: (name, at) => this.valueFor(name, at)
           })
       )
     ];
@@ -641,8 +641,12 @@ export class Base {
     return this.name?.indexOf("*") >= 0 || this.owner?.isTemplate || false;
   }
 
-  getGlobal(a) {
-    return globals[a] ?? this.extendedAttribute(a) ?? this.property(a);
+  valueFor(name, at) {
+    if (at !== undefined) {
+      return this.extendedAttribute(name) ?? this.property(name);
+    }
+
+    return globals[name];
   }
 
   get properties() {
@@ -676,7 +680,7 @@ export class Base {
     return expand(object, {
       stopClass: Base,
       root: this,
-      getGlobal: name => this.getGlobal(name)
+      valueFor: (name, at) => this.valueFor(name, at)
     });
   }
 
