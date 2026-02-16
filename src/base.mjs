@@ -515,6 +515,11 @@ export class Base {
     });
   }
 
+  get services()
+  {
+    return this.owner?.services;
+  }
+
   /**
    *
    * @param {any} filter

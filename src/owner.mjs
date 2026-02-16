@@ -258,7 +258,7 @@ export class Owner extends Base {
     return this.typeNamed("cluster", name);
   }
 
-  clusters() {
+  get clusters() {
     return this.typeList("cluster");
   }
 

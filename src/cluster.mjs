@@ -76,7 +76,7 @@ export class Cluster extends Host {
   }
 
   async *preparePackages(stagingDir) {
-    for (const ni of [...this.owner.clusters()].reduce(
+    for (const ni of [...this.owner.clusters].reduce(
       (all, cluster) => all.union(cluster.members),
       new Set()
     )) {
@@ -117,7 +117,7 @@ export class Cluster extends Host {
         ""
       ];
 
-      for (const cluster of [...this.owner.clusters()].sort((a, b) =>
+      for (const cluster of [...this.owner.clusters].sort((a, b) =>
         a.name.localeCompare(b.name)
       )) {
         cfg.push(`vrrp_instance ${cluster.name} {`);
