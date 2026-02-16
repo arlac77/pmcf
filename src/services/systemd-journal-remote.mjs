@@ -1,7 +1,9 @@
 import {
   addType,
   string_attribute_writable,
-  boolean_attribute_writable
+  string_collection_attribute_writable,
+  boolean_attribute_writable,
+  integer_attribute_writable
 } from "pacc";
 import { Service, ServiceTypeDefinition, addServiceType } from "pmcf";
 import { filterConfigurable, sectionLines } from "../utils.mjs";
@@ -50,11 +52,11 @@ const SystemdJournalRemoteServiceTypeDefinition = {
       configurable: true
     },
     MaxFiles: {
-      ...string_attribute_writable,
+      ...integer_attribute_writable,
       configurable: true
     },
     Compression: {
-      ...string_attribute_writable,
+      ...string_collection_attribute_writable,
       configurable: true
       //   default: "zstd lz4 xz"
     }
