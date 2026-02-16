@@ -630,7 +630,7 @@ export class Base {
   }
 
   get tags() {
-    return this._tags;
+    return this.extends.reduce((a, c) => a.union(c.tags), this._tags);
   }
 
   set tags(value) {
