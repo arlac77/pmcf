@@ -305,7 +305,7 @@ export class Service extends Base {
       let parameters = dnsRecord.parameters;
 
       if (parameters) {
-        for (const service of this.findServices()) {
+        for (const service of this.services) {
           if (service !== this) {
             const serviceType = ServiceTypes[service.type];
             /*if(!serviceType) {
