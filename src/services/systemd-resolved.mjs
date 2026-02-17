@@ -89,7 +89,7 @@ export class SystemdResolvedService extends ExtraSourceService {
   systemdConfigs(name) {
     const options = (lower, upper, limit) => {
       return {
-        services: `in("dns",types) && priority>=${lower} && priority<=${upper}`,
+        services: `types[dns] && priority>=${lower} && priority<=${upper}`,
         endpoints: e =>
           e.family == "IPv4" &&
           e.networkInterface &&
