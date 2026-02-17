@@ -17,17 +17,20 @@
   },
   "services": {
     "bind": {
-      "zones": "/L1/n1",
       "source": ["/GLOBAL", "/L1/n2"],
-      "trusted": ["/LOCAL", "/L1/n1"],
-      "allowedUpdates": ["trusted"],
-      "recordTTL": "1W",
-      "views": {
-        "v1": {
-          "access": "/L1/n1"
+      "groups": {
+        "trusted": {
+          "access": ["/LOCAL", "/L1/n1"]
         },
-        "v2": {
-          "access": "/L1/n1"
+        "internal": {
+          "entries": "/L1/n1",
+          "recordTTL": "1W",
+          "access": "/L1/n1",
+          "allowedUpdates": "trusted"
+        },
+        "protected": {
+          "access": "/L1/n1",
+          "sharedWith": "internal"
         }
       }
     },

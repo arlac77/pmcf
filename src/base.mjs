@@ -113,6 +113,10 @@ export class Base {
   read(data, type = this.constructor.typeDefinition) {
     if (type.extends) {
       this.read(data, type.extends);
+      for (const object of this.extends) {
+        object.execFinalize();
+        this._applyExtends(object);
+      }
     }
 
     const assign = (name, attribute, value) => {
@@ -299,7 +303,7 @@ export class Base {
     if (data?.extends) {
       this.finalize(() => {
         for (const object of this.extends) {
-          object.execFinalize();
+        //  object.execFinalize();
           this._applyExtends(object);
         }
       });
@@ -515,8 +519,7 @@ export class Base {
     });
   }
 
-  get services()
-  {
+  get services() {
     return this.owner?.services;
   }
 

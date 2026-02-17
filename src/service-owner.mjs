@@ -11,6 +11,7 @@ export class ServiceOwner extends Base {
 
       if (present && service.isTemplate) {
         if (present.extends.indexOf(service) < 0) {
+          present._applyExtends(service);
           present.extends.push(service);
         }
       } else {
