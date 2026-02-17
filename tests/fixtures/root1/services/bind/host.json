@@ -1,0 +1,12 @@
+{
+  "depends": ["bind"],
+  "services": {
+    "bind": {
+      "groups": {
+        "trusted": {
+          "access": ["/LOCAL", "/L1/n1"]
+        }
+      }
+    }
+  }
+}

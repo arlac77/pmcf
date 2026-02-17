@@ -1,5 +1,5 @@
 {
-  "extends": ["/services/systemd-journal-remote"],
+  "extends": ["/services/systemd-journal-remote", "/services/bind"],
   "priority": 390,
   "routerId": 77,
   "masters": "/L1/host1/eth0",
@@ -19,9 +19,6 @@
     "bind": {
       "source": ["/GLOBAL", "/L1/n2"],
       "groups": {
-        "trusted": {
-          "access": ["/LOCAL", "/L1/n1"]
-        },
         "internal": {
           "entries": "/L1/n1",
           "recordTTL": "1W",
