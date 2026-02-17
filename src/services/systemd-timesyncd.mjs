@@ -49,7 +49,8 @@ export class SystemdTimesyncdService extends ExtraSourceService {
   systemdConfigs(name) {
     const options = (lower, upper) => {
       return {
-        services: `types[ntp] && priority >= ${lower} && priority <= ${upper}`,
+        // TODO types[ntp]
+        services: `in("ntp",types) && priority >= ${lower} && priority <= ${upper}`,
         endpoints: e =>
           e.networkInterface && e.networkInterface.kind !== "loopback",
         select: endpoint => endpoint.address,
