@@ -166,7 +166,7 @@ export class KeaService extends Service {
       (
         await Array.fromAsync(
           network.findServices(
-            `type="kea" && priority>=${Math.min(this.priority, 100)}`
+            `types[kea] && priority>=${Math.min(this.priority, 100)}`
           )
         )
       )
