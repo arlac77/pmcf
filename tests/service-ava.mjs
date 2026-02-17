@@ -171,7 +171,7 @@ test("Service basics", t => {
     [s1]
   );
 
-  t.is(s1, l1.findService('type="dns"'));
+  t.is(s1, l1.expression('services[types[dns]][0]'));
 
   const s3 = new Service(h1);
   s3.read({
