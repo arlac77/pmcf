@@ -101,7 +101,7 @@ export class SystemdResolvedService extends ExtraSourceService {
       };
     };
 
-   //console.log([...this.owner.expression('services[in("dns",types) && priority>=300 && priority<=399].owner.name')]);
+   //console.log([...this.owner.expression('services[types[dns] && priority>=300 && priority<=399].owner.name')]);
 
     return {
       serviceName: this.systemdService,

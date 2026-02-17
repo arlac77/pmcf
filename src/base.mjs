@@ -502,7 +502,7 @@ export class Base {
   }
 
   get smtp() {
-    return this.findService('in("smtp",types)');
+    return this.findService('types[smtp]');
   }
 
   /**

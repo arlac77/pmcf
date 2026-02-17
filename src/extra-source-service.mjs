@@ -38,4 +38,8 @@ export class ExtraSourceService extends Service {
       yield* s.findServices(filter);
     }
   }
+
+  get services() {
+    return [this.owner.owner.services, this.source.map(s => s.services)].flat();
+  }
 }
