@@ -178,7 +178,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   }
 
   get mtu() {
-    return this.extendedAttribute("_mtu"); // ?? networkAttributes.mtu.default;
+    return this.extendedAttribute("_mtu");
   }
 
   set class(value) {
