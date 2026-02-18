@@ -102,8 +102,7 @@ export class Service extends Base {
     }
   }
 
-  get hosts()
-  {
+  get hosts() {
     return this.owner.hosts;
   }
 
@@ -121,10 +120,6 @@ export class Service extends Base {
 
   get url() {
     return this.endpoint()?.url;
-  }
-
-  get services() {
-    return [this];
   }
 
   get serviceTypeEndpoints() {
@@ -242,7 +237,7 @@ export class Service extends Base {
   }
 
   get type() {
-    return this._type ?? this.name;
+    return this.extendedAttribute("_type") ?? this.name;
   }
 
   get types() {
@@ -260,7 +255,7 @@ export class Service extends Base {
     const packageData = super.packageData;
     const location = `${this.location.name}-${this.host.name}`;
     packageData.properties.name = `${this.type}-${location}`;
-    packageData.properties.description =`${this.type} service definitions for ${this.fullName}`;
+    packageData.properties.description = `${this.type} service definitions for ${this.fullName}`;
     packageData.properties.groups.push("service-config", location);
     return packageData;
   }
@@ -360,7 +355,7 @@ export const sortDescendingByPriority = (a, b) => b.priority - a.priority;
  */
 export function serviceEndpoints(sources, options = {}) {
   const all = asArray(sources)
-    .map(ft => Array.from(ft.findServices(options.services)))
+    .map(source => Array.from(source.expression(options.services)))
     .flat()
     .sort(sortDescendingByPriority)
     .map(service => service.endpoints(options.endpoints))
