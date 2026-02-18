@@ -43,7 +43,7 @@ const ALPMServiceTypeDefinition = {
   },
 
   service: {
-    extends: ["https"]
+    extends: ["https", "http"]
   }
 };
 
