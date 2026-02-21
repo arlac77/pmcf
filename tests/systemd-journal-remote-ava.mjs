@@ -67,8 +67,8 @@ test("systemd-journal-remote", async t => {
   t.is(journalRemote.ServerKeyFile, "/etc/ssl/server.key");
 
   t.deepEqual(
-    journalRemote.extends.map(s => s.name),
-    ["systemd-journal-remote"]
+    journalRemote.extends.map(s => s.fullName),
+    ["/services/systemd-journal-remote/systemd-journal-remote"]
   );
 
   t.deepEqual(journalRemote.extends, [journalRemoteTemplate]);
