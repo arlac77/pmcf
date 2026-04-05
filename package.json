@@ -54,13 +54,13 @@
   },
   "dependencies": {
     "content-entry-transform": "^1.6.7",
-    "ip-utilties": "^3.0.2",
+    "ip-utilties": "^3.0.3",
     "npm-pkgbuild": "^20.6.4",
     "pacc": "^9.2.6",
     "package-directory": "^8.2.0"
   },
   "devDependencies": {
-    "@types/node": "^25.5.0",
+    "@types/node": "^25.5.2",
     "ava": "^7.0.0",
     "c8": "^11.0.0",
     "documentation": "^14.0.3",
