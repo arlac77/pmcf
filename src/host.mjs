@@ -140,6 +140,11 @@ export class Host extends ServiceOwner {
     return false;
   }
 
+  get id()
+  {
+    return this['machine-id'];
+  }
+
   set serial(value) {
     this._serial = value;
   }
