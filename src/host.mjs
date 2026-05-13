@@ -110,22 +110,19 @@ export class Host extends ServiceOwner {
     return HostTypeDefinition;
   }
 
-  read(data, type) {
-    super.read(data, type);
+  materializeExtends() {
+    super.materializeExtends();
 
-    this.extra = data.extra;
-  }
+    for (const host of this.walkDirections(["extends"])) {
+      for (const [name, ni] of host.networkInterfaces) {
+        const present = this._networkInterfaces.get(name);
 
-  _applyExtends(host) {
-    super._applyExtends(host);
-    for (const [name, ni] of host.networkInterfaces) {
-      const present = this._networkInterfaces.get(name);
-
-      if (present) {
-        present._applyExtends(ni);
-        present.extends.push(ni);
-      } else {
-        this._networkInterfaces.set(name, ni.forOwner(this));
+        if (present) {
+          console.log("LINK",present.fullName,ni.fullName);
+          present.extends.push(ni);
+        } else {
+          this._networkInterfaces.set(name, ni.forOwner(this));
+        }
       }
     }
   }
@@ -170,6 +167,14 @@ export class Host extends ServiceOwner {
 
   get vendor() {
     return this.extendedAttribute("_vendor");
+  }
+
+  /**
+   * @return {string}
+   */
+  get id()
+  {
+    return this["machine-id"];
   }
 
   set keymap(value) {
@@ -452,7 +457,11 @@ export class Host extends ServiceOwner {
 
     await generateKnownHosts(this.owner.hosts, join(dir, "root", ".ssh"));
 
+    console.log([...this.walkDirections(["extends"])].map(e => e.fullName));
+
     for (const service of this.services) {
+      //console.log("SERVICE",service.name);
+
       if (service.systemdConfigs) {
         for (const { serviceName, configFileName, content } of asArray(
           service.expand(service.systemdConfigs(this.name))
@@ -469,23 +478,5 @@ export class Host extends ServiceOwner {
     }
 
     yield packageData;
-
-    if (this.extra) {
-      yield {
-        sources: [
-          new FileContentProvider({
-            dir: join(this.directory, "extra"),
-            pattern: "**/*"
-          })
-        ],
-        outputs: this.outputs,
-        properties: {
-          name: `${this.typeName}-extra-${this.owner.name}-${this.name}`,
-          description: `additional files for ${this.fullName}`,
-          access: "private",
-          dependencies: [packageData.properties.name]
-        }
-      };
-    }
   }
 }
