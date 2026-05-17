@@ -67,6 +67,7 @@ generates config packages for:
 *   [HTTPEndpoint](#httpendpoint)
     *   [Parameters](#parameters-11)
     *   [port](#port-1)
+*   [id](#id)
 *   [SkeletonNetworkInterface](#skeletonnetworkinterface)
     *   [networkAddresses](#networkaddresses)
         *   [Parameters](#parameters-12)
@@ -231,6 +232,10 @@ Endpoint based on http
 ### port
 
 Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+
+## id
+
+Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
 ## SkeletonNetworkInterface
 
