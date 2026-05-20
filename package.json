@@ -50,10 +50,10 @@
     "lint:docs": "documentation lint ./src**/*.mjs"
   },
   "dependencies": {
-    "content-entry-transform": "^1.6.8",
+    "content-entry-transform": "^1.6.9",
     "ip-utilties": "^3.0.4",
     "npm-pkgbuild": "^20.6.4",
-    "pacc": "^9.2.8",
+    "pacc": "^9.2.7",
     "package-directory": "^8.2.0"
   },
   "devDependencies": {
