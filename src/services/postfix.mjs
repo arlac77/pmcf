@@ -4,6 +4,7 @@ import { ServiceTypeDefinition, Service } from "../service.mjs";
 
 const PostfixServiceTypeDefinition = {
   name: "postfix",
+  priority: 1,
   extends: ServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
@@ -17,13 +18,10 @@ const PostfixServiceTypeDefinition = {
 };
 
 export class PostfixService extends Service {
+  static typeDefinition = PostfixServiceTypeDefinition;
   static {
     addType(this);
     addServiceType(this.typeDefinition.service, this.typeDefinition.name);
-  }
-
-  static get typeDefinition() {
-    return PostfixServiceTypeDefinition;
   }
 
   get type() {

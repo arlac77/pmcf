@@ -1,6 +1,6 @@
 import test from "ava";
 import {
-  Root,
+  InitializationContext,
   Host,
   Network,
   Service,
@@ -14,10 +14,11 @@ import {
 } from "pmcf";
 
 function prepare() {
-  const root = new Root("/somwhere");
+  const ic = new InitializationContext();
+  const root = ic.root
 
   const n1 = new Network(root);
-  n1.read({
+  ic.read(n1, {
     name: "n1",
     subnets: "10.0/16"
   });
@@ -25,7 +26,7 @@ function prepare() {
 
   addServiceType({}, "http-control");
   const h1 = new Host(root);
-  h1.read({
+  ic.read(h1, {
     name: "h1",
     networkInterfaces: {
       lo: {},
@@ -36,7 +37,7 @@ function prepare() {
   root.addObject(h1);
 
   const s1 = new Service(h1);
-  s1.read({
+  ic.read(s1, {
     name: "dns",
     weight: 5,
     priority: 3,
@@ -45,7 +46,7 @@ function prepare() {
 
   h1.services = s1;
 
-  return { h1, s1 };
+  return { ic, root, h1, s1 };
 }
 
 test("Endpoint from Service basics", t => {
@@ -132,10 +133,11 @@ test("HTTPEndpoint from URL with port", t => {
 });
 
 test("DomainNameEndpoint", t => {
-  const root = new Root("/somwhere");
+  const ic = new InitializationContext();
+  const root = ic.root;
 
   const h1 = new Host(root);
-  h1.read({
+  ic.read(h1, {
     name: "h1"
     /* networkInterfaces: {
       eth0: { ipAddresses: "10.0.0.1/16" }
@@ -143,7 +145,9 @@ test("DomainNameEndpoint", t => {
   });
   root.addObject(h1);
 
-  const s1 = new Service(h1, {
+  const s1 = new Service(h1);
+
+  ic.read(s1, {
     name: "ntp"
   });
 
@@ -160,10 +164,11 @@ test("DomainNameEndpoint", t => {
 });
 
 test("UnixEndpoint", t => {
-  const root = new Root("/somwhere");
+  const ic = new InitializationContext();
+  const root = ic.root;
 
   const h1 = new Host(root);
-  h1.read({
+  ic.read(h1, {
     name: "h1"
   });
   root.addObject(h1);

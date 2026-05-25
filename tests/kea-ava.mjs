@@ -1,6 +1,6 @@
 import test from "ava";
 import {
-  Root,
+  InitializationContext,
   Host,
   KeaService,
   Endpoint,
@@ -9,10 +9,11 @@ import {
 } from "pmcf";
 
 test("kea basics", t => {
-  const owner = new Root("/");
+  const ic = new InitializationContext();
+  const owner = ic.root;
 
   const linux = new Host(owner);
-  linux.read({
+  ic.read(linux, {
     name: "linux",
     os: "linux",
     networkInterfaces: {
@@ -23,7 +24,7 @@ test("kea basics", t => {
   });
 
   const h1 = new Host(owner);
-  h1.read({
+  ic.read(h1, {
     extends: [linux],
     name: "h1",
     networkInterfaces: {
@@ -40,7 +41,7 @@ test("kea basics", t => {
   // console.log(h1.networkInterfaces, [...la].map(l=>l.toString()));
 
   const kea = new KeaService(h1);
-  kea.read({
+  ic.read(kea, {
     name: "kea",
     subsystems: {
       "kea-control-agent": {

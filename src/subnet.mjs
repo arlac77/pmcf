@@ -6,12 +6,18 @@ import {
   familyIP,
   matchPrefixIP
 } from "ip-utilties";
-import { string_attribute, name_attribute, number_attribute, addType } from "pacc";
+import {
+  string_attribute,
+  name_attribute,
+  number_attribute,
+  addType
+} from "pacc";
 import { networks_attribute } from "./network-support.mjs";
 import { Base } from "./base.mjs";
 
 const SubnetTypeDefinition = {
   name: "subnet",
+  priority: 1,
   owners: ["location", "owner", "network", "root"],
   constructWithIdentifierOnly: true,
   key: "address",
@@ -24,15 +30,13 @@ const SubnetTypeDefinition = {
 };
 
 export class Subnet extends Base {
-  networks = new Set();
+  static typeDefinition = SubnetTypeDefinition;
 
   static {
     addType(this);
   }
 
-  static get typeDefinition() {
-    return SubnetTypeDefinition;
-  }
+  networks = new Set();
 
   constructor(owner, address) {
     const { longPrefix, prefix, prefixLength, cidr } = normalizeCIDR(address);

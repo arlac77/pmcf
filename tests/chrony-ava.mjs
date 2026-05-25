@@ -1,12 +1,12 @@
 import test from "ava";
-import { Root, Endpoint } from "pmcf";
+import { InitializationContext, Endpoint } from "pmcf";
 import { ChronyService } from "../src/services/chrony.mjs";
 
 test("ChronyService basics", async t => {
-  const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
-  await root.loadAll();
+  const ic = new InitializationContext(new URL("fixtures/root1", import.meta.url).pathname);
+  await ic.loadAll();
 
-  const chrony = await root.named("/L1/host1/chrony");
+  const chrony = await ic.named("/L1/host1/chrony");
 
   t.true(chrony instanceof ChronyService);
   t.deepEqual(chrony.types, new Set(["chrony", "ntp"]));

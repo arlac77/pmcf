@@ -1,6 +1,6 @@
 import test from "ava";
 import {
-  Root,
+  InitializationContext,
   Host,
   Network,
   Subnet,
@@ -12,30 +12,21 @@ import { assertObject, assertObjects } from "./util.mjs";
 import { root1 } from "./fixtures.mjs";
 
 test("Host minimal", async t => {
-  const root = new Root(new URL("fixtures/minimal", import.meta.url).pathname);
-  await root.loadAll();
+  const ic = new InitializationContext(
+    new URL("fixtures/minimal", import.meta.url).pathname
+  );
+  await ic.loadAll();
 
-  const host1 = root.named("/L1/host1");
-  t.is(host1.fullName, "/L1/host1");
+  const host1 = ic.named("/L1/host1");
   t.is(host1.name, "host1");
-});
-
-test("Host basics", async t => {
-  const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
-  await root.loadAll();
-
-  const host1 = await root.named("/L1/host1");
-  t.deepEqual(host1.packaging, new Set(["arch"]));
-
-  const eth0 = host1.typeNamed("network_interface", "eth0");
-  t.is(eth0.network, root.named("/L1/n1"));
-
-  await assertObject(t, host1, root1(root, "/L1/host1"));
+  t.is(host1.fullName, "/L1/host1");
 });
 
 test("Host all", async t => {
-  const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
-  await root.loadAll();
+  const ic = new InitializationContext(
+    new URL("fixtures/root1", import.meta.url).pathname
+  );
+  await ic.loadAll();
 
   /*
   const host2 = await root.named("/L1/n1/host2");
@@ -43,18 +34,27 @@ test("Host all", async t => {
   console.log(wlan0.constructor.name);
   */
 
+  const host1 = await ic.named("/L1/host1");
+  t.deepEqual(host1.packaging, new Set(["arch"]));
+
+  const eth0 = host1.typeNamed("network_interface", "eth0");
+  t.is(eth0.network, ic.named("/L1/n1"));
+
+  await assertObject(t, host1, root1(ic.root, "/L1/host1"));
+
   await assertObjects(
     t,
-    root.hosts,
-    root1(root, ["/L1/n1/host2", "/L1/host1"])
+    ic.root.hosts,
+    root1(ic.root, ["/L1/n1/host2", "/L1/host1"])
   );
 });
 
 test("Host extends", t => {
-  const owner = new Root("/");
+  const ic = new InitializationContext();
+  const owner = ic.root;
 
   const linux = new Host(owner);
-  linux.read({
+  ic.read(linux, {
     name: "linux",
     os: "linux",
     distribution: "suse",
@@ -64,7 +64,7 @@ test("Host extends", t => {
   });
 
   const e1 = new Host(owner);
-  e1.read({
+  ic.read(e1, {
     extends: [linux],
     name: "e1",
     aliases: "e1a",
@@ -88,7 +88,7 @@ test("Host extends", t => {
   t.deepEqual([...e1.networkInterfaces.keys()].sort(), ["eth0", "lo"]);
 
   const e2 = new Host(owner);
-  e2.read({
+  ic.read(e2, {
     name: "e2",
     extends: e1,
     aliases: "e2a",
@@ -98,8 +98,9 @@ test("Host extends", t => {
   });
 
   const h1 = new Host(owner);
-  h1.read({
+  ic.read(h1, {
     name: "h1",
+    "machine-id": "1234",
     extends: e2,
     aliases: "h1a",
     provides: "pkgh1",
@@ -115,6 +116,7 @@ test("Host extends", t => {
   t.is(h1.vendor, "vendor e1");
   t.is(h1.architecture, "aarch64");
   t.is(h1.serial, "123");
+  t.is(h1.id, "1234");
   t.deepEqual([...h1.provides].sort(), ["pkge1", "pkge2", "pkgh1"].sort());
   t.deepEqual([...h1.depends].sort(), ["dpkge1", "dpkge2", "dpkgh1"].sort());
   t.deepEqual([...h1.replaces].sort(), ["rpkge1", "rpkge2", "rpkgh1"].sort());
@@ -125,16 +127,17 @@ test("Host extends", t => {
 });
 
 test("Host domains & aliases", t => {
-  const owner = new Root("/");
+  const ic = new InitializationContext();
+  const owner = ic.root;
   const n1 = new Network(owner);
-  n1.read({
+  ic.read(n1, {
     name: "n1",
     domain: "example.com"
   });
   owner.addObject(n1);
 
   const h1 = new Host(n1);
-  h1.read({
+  ic.read(h1, {
     name: "h1",
     networkInterfaces: {
       eth0: {
@@ -198,16 +201,17 @@ test("Host domains & aliases", t => {
 });
 
 test("Host addresses", t => {
-  const owner = new Root("/");
+  const ic = new InitializationContext();
+  const owner = ic.root;
   const n1 = new Network(owner);
-  n1.read({
+  ic.read(n1, {
     name: "n1",
     properties: { ipv4_prefix: "10.0" }
   });
   owner.addObject(n1);
 
   const h1 = new Host(n1);
-  h1.read({
+  ic.read(h1, {
     name: "h1",
     networkInterfaces: {
       lo: {},
@@ -296,17 +300,18 @@ test("Host addresses", t => {
 });
 
 test("Host addresses with network", t => {
-  const owner = new Root("/");
+  const ic = new InitializationContext();
+  const owner = ic.root;
 
   const n1 = new Network(owner);
-  n1.read({
+  ic.read(n1, {
     name: "n1",
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
   });
   owner.addObject(n1);
 
   const h1 = new Host(owner);
-  h1.read({
+  ic.read(h1, {
     name: "h1",
     networkInterfaces: {
       eth0: {
@@ -334,17 +339,18 @@ test("Host addresses with network", t => {
 });
 
 test("clone NetworkInterface", t => {
-  const owner = new Root("/");
+  const ic = new InitializationContext();
+  const owner = ic.root;
 
   const n1 = new Network(owner);
-  n1.read({
+  ic.read(n1, {
     name: "n1",
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
   });
   owner.addObject(n1);
 
   const h1 = new Host(owner);
-  h1.read({
+  ic.read(h1, {
     name: "h1",
     networkInterfaces: {
       eth0: {
@@ -355,7 +361,7 @@ test("clone NetworkInterface", t => {
   owner.addObject(h1);
 
   const h2 = new Host(owner);
-  h2.read({
+  ic.read(h2, {
     name: "h2",
     extends: [h1],
     networkInterfaces: {

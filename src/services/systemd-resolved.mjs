@@ -23,48 +23,53 @@ import {
 
 const SystemdResolvedServiceTypeDefinition = {
   name: "systemd-resolved",
+  priority: 1,
   extends: ExtraSourceServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
   key: "name",
   attributes: {
-   /* Resolve: {
+    /* Resolve: {
       ...object_attribute,
       attributes: {*/
-        DNS: { ...string_attribute_writable, configurable: true },
-        FallbackDNS: { ...string_attribute_writable, configurable: true },
-        
-        domains: { externalName: "Domains", ...string_collection_attribute_writable, configurable: true },
+    DNS: { ...string_attribute_writable, configurable: true },
+    FallbackDNS: { ...string_attribute_writable, configurable: true },
 
-        MulticastDNS: { ...yesno_attribute_writable, configurable: true },
-        Cache: { ...boolean_attribute_writable, configurable: true },
-        CacheFromLocalhost: {
-          ...boolean_attribute_writable,
-          configurable: true
-        },
-        DNSStubListener: { ...boolean_attribute_writable, configurable: true },
-        DNSStubListenerExtra: {
-          ...string_attribute_writable,
-          configurable: true
-        },
-        ReadEtcHosts: { ...boolean_attribute_writable, configurable: true },
-        ResolveUnicastSingleLabel: {
-          ...boolean_attribute_writable,
-          configurable: true
-        },
-        StaleRetentionSec: {
-          ...duration_attribute_writable,
-          configurable: true
-        },
-        RefuseRecordTypes: { ...string_attribute_writable, configurable: true },
-        DNSSEC: {
-          ...yesno_attribute_writable,
-          default: false,
-          configurable: true
-        },
-        DNSOverTLS: { ...yesno_attribute_writable, configurable: true },
-        LLMNR: { ...yesno_attribute_writable, configurable: true }
-     /* }
+    domains: {
+      externalName: "Domains",
+      ...string_collection_attribute_writable,
+      configurable: true
+    },
+
+    MulticastDNS: { ...yesno_attribute_writable, configurable: true },
+    Cache: { ...boolean_attribute_writable, configurable: true },
+    CacheFromLocalhost: {
+      ...boolean_attribute_writable,
+      configurable: true
+    },
+    DNSStubListener: { ...boolean_attribute_writable, configurable: true },
+    DNSStubListenerExtra: {
+      ...string_attribute_writable,
+      configurable: true
+    },
+    ReadEtcHosts: { ...boolean_attribute_writable, configurable: true },
+    ResolveUnicastSingleLabel: {
+      ...boolean_attribute_writable,
+      configurable: true
+    },
+    StaleRetentionSec: {
+      ...duration_attribute_writable,
+      configurable: true
+    },
+    RefuseRecordTypes: { ...string_attribute_writable, configurable: true },
+    DNSSEC: {
+      ...yesno_attribute_writable,
+      default: false,
+      configurable: true
+    },
+    DNSOverTLS: { ...yesno_attribute_writable, configurable: true },
+    LLMNR: { ...yesno_attribute_writable, configurable: true }
+    /* }
     }*/
   },
   service: {
@@ -73,13 +78,10 @@ const SystemdResolvedServiceTypeDefinition = {
 };
 
 export class SystemdResolvedService extends ExtraSourceService {
+  static typeDefinition = SystemdResolvedServiceTypeDefinition;
   static {
     addType(this);
     addServiceType(this.typeDefinition.service, this.typeDefinition.name);
-  }
-
-  static get typeDefinition() {
-    return SystemdResolvedServiceTypeDefinition;
   }
 
   get type() {
@@ -89,19 +91,17 @@ export class SystemdResolvedService extends ExtraSourceService {
   systemdConfigs(name) {
     const options = (lower, upper, limit) => {
       return {
-        services: `types[dns] && priority>=${lower} && priority<=${upper}`,
+        services: `services[types[dns] && priority>=${lower} && priority<=${upper}]`,
         endpoints: e =>
           e.family == "IPv4" &&
           e.networkInterface &&
           e.networkInterface.kind !== "loopback",
-          //e.family !== "dns",
+        //e.family !== "dns",
         select: endpoint => endpoint.address,
         join: " ",
         limit
       };
     };
-
-   //console.log([...this.owner.expression('services[types[dns] && priority>=300 && priority<=399].owner.name')]);
 
     return {
       serviceName: this.systemdService,

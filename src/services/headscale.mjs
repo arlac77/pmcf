@@ -4,6 +4,7 @@ import { ServiceTypeDefinition, Service } from "../service.mjs";
 
 const HeadscaleServiceTypeDefinition = {
   name: "headscale",
+  priority: 1,
   extends: ServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
@@ -39,12 +40,9 @@ const HeadscaleServiceTypeDefinition = {
 };
 
 export class HeadscaleService extends Service {
+  static typeDefinition = HeadscaleServiceTypeDefinition;
   static {
     addType(this);
     addServiceType(this.typeDefinition.service, this.typeDefinition.name);
-  }
-
-  static get typeDefinition() {
-    return HeadscaleServiceTypeDefinition;
   }
 }

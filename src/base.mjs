@@ -8,8 +8,6 @@ import {
 import { FileContentProvider } from "npm-pkgbuild";
 import {
   getAttribute,
-  toInternal,
-  typeFactory,
   addType,
   parse,
   globals,
@@ -26,7 +24,7 @@ import {
   description_attribute_writable,
   boolean_attribute_writable
 } from "pacc";
-import { asArray, union } from "./utils.mjs";
+import { union } from "./utils.mjs";
 
 /**
  *
@@ -36,6 +34,7 @@ import { asArray, union } from "./utils.mjs";
 export class Base {
   static name = "base";
   static key = "name";
+  static priority = 0;
   static attributes = {
     owner: { ...default_attribute, type: "base" },
     type: string_attribute,
@@ -48,15 +47,7 @@ export class Base {
     tags: string_set_attribute_writable
   };
 
-  owner;
-  description;
-  name;
-  extends = [];
-  _tags = new Set();
-  _packaging = new Set();
-  _directory;
-  _finalize;
-  _properties;
+  static typeDefinition = this;
 
   static {
     addType(this);
@@ -66,13 +57,19 @@ export class Base {
     return this.typeDefinition.name;
   }
 
-  static get typeDefinition() {
-    return this;
-  }
-
   static get typeFileName() {
     return this.typeName + ".json";
   }
+
+  owner;
+  description;
+  name;
+  extends = [];
+  _tags = new Set();
+  _packaging = new Set();
+  _directory;
+  _finalize;
+  _properties = {};
 
   /**
    *
@@ -86,8 +83,6 @@ export class Base {
       case "string":
         this.name = data;
         break;
-      case "object":
-        this.read(data, this.constructor);
     }
   }
 
@@ -110,211 +105,7 @@ export class Base {
     return this;
   }
 
-  read(data, type = this.constructor.typeDefinition) {
-    if (type.extends) {
-      this.read(data, type.extends);
-      for (const object of this.extends) {
-        object.execFinalize();
-        this._applyExtends(object);
-      }
-    }
-
-    const assign = (name, attribute, value) => {
-      value = toInternal(value, attribute);
-      value ??= attribute.default;
-
-      if (value !== undefined) {
-        if (attribute.values) {
-          if (attribute.values.indexOf(value) < 0) {
-            this.error(name, "unknown value", value, attribute.values);
-          }
-        }
-
-        if (attribute.collection) {
-          const current = this[name];
-
-          switch (typeof current) {
-            case "undefined":
-              if (attribute.constructor === value.constructor) {
-                this[name] = value;
-              } else {
-                this[name] = asArray(value);
-              }
-              break;
-            case "object":
-              if (Array.isArray(current)) {
-                if (Array.isArray(value)) {
-                  current.push(...value);
-                } else {
-                  current.push(value);
-                }
-              } else {
-                if (current instanceof Set) {
-                  if (value instanceof Set) {
-                    this[name] = current.union(value);
-                  } else {
-                    this[name].add(value);
-                  }
-                } else if (current instanceof Map) {
-                  const keyName = attribute.type.key;
-                  if (keyName) {
-                    current.set(value[keyName], value);
-                  } else {
-                    // TODO
-                    this[name] = value;
-                  }
-                } else {
-                  const keyName = attribute.type.key;
-                  this[name][value[keyName]] = value;
-                }
-              }
-              break;
-            case "function":
-              if (value instanceof Base) {
-                this.addObject(value);
-              } else {
-                this.error("Unknown collection type", name, current);
-              }
-              break;
-          }
-        } else {
-          this[name] = value;
-        }
-      }
-    };
-
-    const instantiateAndAssign = (name, attribute, value) => {
-      if (attribute.type.primitive) {
-        assign(name, attribute, value);
-        return;
-      }
-
-      switch (typeof value) {
-        case "undefined":
-          return;
-        case "function":
-          this.error("Invalid value", name, value);
-          break;
-
-        case "boolean":
-        case "bigint":
-        case "number":
-        case "string":
-          {
-            let object;
-
-            for (const type of attribute.type.members || [attribute.type]) {
-              object = this.typeNamed(type.name, value);
-              if (object) {
-                break;
-              }
-            }
-
-            if (object) {
-              assign(name, attribute, object);
-            } else {
-              if (attribute.type.constructWithIdentifierOnly) {
-                object = new attribute.type.clazz(
-                  this.ownerFor(attribute, value),
-                  value
-                );
-                object.read(value);
-                this.addObject(object);
-              } else {
-                this.finalize(() => {
-                  value = this.expand(value);
-
-                  for (const type of attribute.type.members || [
-                    attribute.type
-                  ]) {
-                    const object =
-                      this.typeNamed(type.name, value) ||
-                      this.owner.typeNamed(type.name, value) ||
-                      this.root.typeNamed(type.name, value); // TODO
-
-                    if (object) {
-                      assign(name, attribute, object);
-                      return;
-                    }
-                  }
-
-                  this.error(
-                    `No such object "${value}" (${attribute.type.name}) for attribute ${name}`,
-                    this.root.named(value)?.toString()
-                  );
-                });
-              }
-            }
-          }
-          break;
-        case "object":
-          if (attribute.type.clazz && value instanceof attribute.type.clazz) {
-            assign(name, attribute, value);
-          } else {
-            assign(
-              name,
-              attribute,
-              typeFactory(
-                attribute.type,
-                this.ownerFor(attribute, value),
-                value
-              )
-            );
-          }
-          break;
-      }
-    };
-
-    if (data?.properties) {
-      this._properties = data.properties;
-    }
-
-    for (const [path, attribute] of attributeIterator(type.attributes)) {
-      if (attribute.writable) {
-        const name = path.join(".");
-        const value = this.expand(data[name]);
-
-        if (attribute.collection) {
-          if (typeof value === "object") {
-            if (Array.isArray(value)) {
-              for (const v of value) {
-                instantiateAndAssign(name, attribute, v);
-              }
-            } else {
-              if (value instanceof Base) {
-                assign(name, attribute, value);
-              } else {
-                for (const [objectName, objectData] of Object.entries(value)) {
-                  if (typeof objectData === "object") {
-                    //console.log("KEY", objectName, type.name, type.key);
-                    objectData[attribute.type.key] = objectName;
-                  }
-                  instantiateAndAssign(name, attribute, objectData);
-                }
-              }
-            }
-            continue;
-          }
-        }
-        instantiateAndAssign(name, attribute, value);
-      }
-    }
-
-    if (data?.extends) {
-      this.finalize(() => {
-        for (const object of this.extends) {
-        //  object.execFinalize();
-          this._applyExtends(object);
-        }
-      });
-    }
-
-    /*if(this.type) {
-      console.log(this.toString(),this.name,this.fullName);
-    }*/
-  }
-
-  _applyExtends() {}
+  materializeExtends() {}
 
   named(name) {}
 
@@ -502,7 +293,7 @@ export class Base {
   }
 
   get smtp() {
-    return this.findService('types[smtp]');
+    return this.expression("services[types[smtp]][0]");
   }
 
   /**
@@ -520,27 +311,12 @@ export class Base {
   }
 
   get services() {
-    return this.owner?.services;
+    return this.owner?.services || [];
   }
 
-  /**
-   *
-   * @param {any} filter
-   * @returns service with the highest priority
-   */
-  findService(filter) {
-    let best;
-    for (const service of this.findServices(filter)) {
-      if (!best || service.priority > best.priority) {
-        best = service;
-      }
-    }
-
-    return best;
-  }
-
-  *findServices(filter) {
-    yield* this.owner?.findServices(filter);
+  // TODO get rid of
+  get aggregatedServices() {
+    return this.services;
   }
 
   set directory(directory) {
@@ -645,6 +421,9 @@ export class Base {
     this._tags = union(value, this._tags);
   }
 
+  /**
+   * @return {boolean}
+   */
   get isTemplate() {
     return this.name?.indexOf("*") >= 0 || this.owner?.isTemplate || false;
   }

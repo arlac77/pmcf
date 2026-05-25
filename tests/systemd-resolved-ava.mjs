@@ -1,12 +1,10 @@
 import test from "ava";
-import { Root, Host, SystemdResolvedService } from "pmcf";
+import { InitializationContext, Host, SystemdResolvedService } from "pmcf";
 import { filterConfigurable } from "../src/utils.mjs";
 
 test("systemd-resolved service type", t => {
-  const root = new Root();
-  const h1 = new Host(root);
-
-  const service = new SystemdResolvedService(h1);
+  const ic = new InitializationContext();
+  const service = new SystemdResolvedService(new Host(ic.root));
 
   t.is(service.systemdService, "systemd-resolved.service");
   t.deepEqual(service.types, new Set(["systemd-resolved"]));
@@ -20,10 +18,10 @@ test("systemd-resolved service type", t => {
 });
 
 test("systemd-resolved basics", async t => {
-  const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
-  await root.loadAll();
+  const ic = new InitializationContext(new URL("fixtures/root1", import.meta.url).pathname);
+  await ic.loadAll();
 
-  const resolved = await root.named("/L1/C1/systemd-resolved");
+  const resolved = await ic.named("/L1/C1/systemd-resolved");
 
   t.deepEqual(resolved.systemdConfigs("ABC"), {
     serviceName: "systemd-resolved.service",

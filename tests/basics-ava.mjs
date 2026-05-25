@@ -1,31 +1,32 @@
 import test from "ava";
-import { extractFrom, Root, Network, Host, Location, Owner } from "pmcf";
+import { InitializationContext, extractFrom, Network, Host, Location, Owner } from "pmcf";
 
 function setup() {
-  const root = new Root("/somewhere");
+  const ic = new InitializationContext("/somewhere");
+  const root = ic.root;
 
   const ht1 = new Host(root);
-  ht1.read({ name: "ht1", properties: { p1: "ht1" } });
+  ic.read(ht1, { name: "ht1", properties: { p1: "ht1" } });
   root.addObject(ht1);
   const ht2 = new Host(root);
-  ht2.read({ name: "ht2", extends: "/ht1" });
+  ic.read(ht2, { name: "ht2", extends: "/ht1" });
   root.addObject(ht2);
 
   const n1 = new Network(root);
-  n1.read({
+  ic.read(n1, {
     name: "n1",
     subnets: "10.0/16"
   });
   root.addObject(n1);
 
   const l1 = new Location(root);
-  l1.read({
+  ic.read(l1, {
     name: "l1",
     properties: { p1: "v1", n1: 7 }
   });
   root.addObject(l1);
   const h1 = new Host(l1);
-  h1.read({
+  ic.read(h1, {
     name: "h1",
     extends: "/ht2",
     properties: { p1: "v2" },
@@ -44,28 +45,32 @@ function setup() {
   });
   l1.addObject(h1);
 
-  return { root, ht1, ht2, n1, l1, h1 };
+  return { ic, root, ht1, ht2, n1, l1, h1 };
 }
 
 test("Root basics", async t => {
-  const root = new Root("/somewhere");
+  const ic = new InitializationContext("/somewhere");
+  const root = ic.root;
+
   t.is(root.directory, "/somewhere");
   t.is(root.typeName, "root");
   t.is(root.name, "");
   t.is(root.fullName, "");
   t.is(root.isTemplate, false);
-  t.is(await root.load("/"), root);
-  t.is(await root.load(""), root);
+  t.is(await ic.load("/"), root);
+  t.is(await ic.load(""), root);
 });
 
 test("template from name '*'", t => {
-  const root = new Root("/somewhere");
-  const l1 = new Location(root, { name: "l*" });
+  const ic = new InitializationContext("/somewhere");
+  const root = ic.root;
+  const l1 = new Location(root);
+  ic.read(l1, { name: "l*" });
   t.true(l1.isTemplate);
 });
 
 test("aggregate properties", t => {
-  const { root, l1, h1 } = setup();
+  const { l1, h1 } = setup();
 
   t.is(h1.property("n1"), 7);
   t.is(h1.property("p1"), "v2");
@@ -75,7 +80,7 @@ test("aggregate properties", t => {
 });
 
 test("waking", t => {
-  const { root, n1, l1, h1, ht1, ht2 } = setup();
+  const { root, l1, h1, ht1, ht2 } = setup();
 
   t.deepEqual([...h1.walkDirections(["this", "owner"])], [h1, l1, root]);
   t.deepEqual([...h1.walkDirections(["owner"])], [l1, root]);
@@ -84,7 +89,7 @@ test("waking", t => {
 });
 
 test("expression", t => {
-  const { root, l1, h1 } = setup();
+  const { l1, h1 } = setup();
 
   t.is(l1.expression("name"), "l1");
   t.is(l1.expression("owner.name"), "");
@@ -110,15 +115,16 @@ test("expression", t => {
 });
 
 test("expand", t => {
-  const root = new Root("/somewhere");
+  const ic = new InitializationContext("/somewhere");
+  const root = ic.root;
   const l1 = new Location(root);
-  l1.read({
+  ic.read(l1, {
     name: "l1",
     properties: { p1: "v1", n1: 7, deep: { d2: 8 } }
   });
   root.addObject(l1);
   const h1 = new Host(l1);
-  h1.read({ name: "h1" });
+  ic.read(h1, { name: "h1" });
   l1.addObject(h1);
 
   t.is(l1.expand("${directory}"), "/somewhere/l1");
@@ -146,8 +152,12 @@ test("expand", t => {
 });
 
 test("tags", t => {
-  const root = new Root("/somewhere");
-  const l1 = new Owner(root, { name: "l1", tags: "t1" });
+  const ic = new InitializationContext("/somewhere");
+  const root = ic.root;
+
+  const l1 = new Owner(root);
+
+  ic.read(l1, { name: "l1", tags: "t1" });
 
   l1.tags = "t2";
 
@@ -155,8 +165,11 @@ test("tags", t => {
 });
 
 test("extract", t => {
-  const root = new Root("/somewhere");
-  const l1 = new Owner(root, { name: "l1" });
+  const ic = new InitializationContext("/somewhere");
+  const root = ic.root;
+  const l1 = new Owner(root);
+
+  ic.read(l1, { name: "l1" });
 
   t.deepEqual(extractFrom(l1, Owner.typeDefinition), {
     name: "l1",
@@ -167,10 +180,11 @@ test("extract", t => {
 });
 
 test("directory & name & owner", t => {
-  const root = new Root("/somewhere");
+  const ic = new InitializationContext("/somewhere");
+  const root = ic.root;
 
   const l1 = new Location(root);
-  l1.read({ name: "l1" });
+  ic.read(l1, { name: "l1" });
   root.addObject(l1);
   t.is(l1.name, "l1");
   t.is(l1.fullName, "/l1");
@@ -181,7 +195,7 @@ test("directory & name & owner", t => {
   t.is(root.locationNamed("/l1"), l1);
 
   const h1 = new Host(l1);
-  h1.read({ name: "h1" });
+  ic.read(h1, { name: "h1" });
   l1.addObject(h1);
   t.is(h1.directory, "/somewhere/l1/h1");
   t.is(h1.name, "h1");
@@ -194,7 +208,7 @@ test("directory & name & owner", t => {
   t.is(l1.hostNamed("/l1/h1"), h1);
 
   const h2 = new Host(l1);
-  h2.read({ name: "l2/h2" });
+  ic.read(h2, { name: "l2/h2" });
   l1.addObject(h2);
   t.is(h2.directory, "/somewhere/l1/l2/h2");
   t.is(h2.name, "l2/h2");

@@ -1,21 +1,19 @@
 import test from "ava";
-import { Root, Host, SystemdJournalUploadService } from "pmcf";
+import { InitializationContext, Host, SystemdJournalUploadService } from "pmcf";
 
 test("systemd-journal-upload service type", t => {
-  const root = new Root();
-  const h1 = new Host(root);
-
-  const service = new SystemdJournalUploadService(h1);
+  const ic = new InitializationContext();
+  const service = new SystemdJournalUploadService(new Host(ic.root));
 
   t.is(service.systemdService, "systemd-journal-upload.service");
   t.deepEqual(service.types, new Set(["systemd-journal-upload"]));
 });
 
 test("systemd-journal-upload", async t => {
-  const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
-  await root.loadAll();
+  const ic = new InitializationContext(new URL("fixtures/root1", import.meta.url).pathname);
+  await ic.loadAll();
 
-  const journalUpload = await root.named("/L1/C1/systemd-journal-upload");
+  const journalUpload = await ic.named("/L1/C1/systemd-journal-upload");
 
   t.deepEqual(journalUpload.systemdConfigs("ABC"), {
     serviceName: "systemd-journal-upload.service",

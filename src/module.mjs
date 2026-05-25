@@ -34,3 +34,4 @@ export * from "./services/systemd-journal-remote.mjs";
 export * from "./services/systemd-journal-upload.mjs";
 export * from "./services/systemd-timesyncd.mjs";
 export * from "./services/systemd-resolved.mjs";
+export * from "./initialization-context.mjs";

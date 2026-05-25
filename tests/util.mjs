@@ -58,11 +58,11 @@ async function _assertObject(t, visited, object, expected, path = []) {
             object?.constructor.name
           })`
         );
-
+        break;
       case "services":
         for (const [name, sd] of Object.entries(v)) {
           const service = object.services.find(service=>service.name===name);
-          await _assertObject(t, visited, service, sd, [...path, name]);
+          await _assertObject(t, visited, service, sd, [...path,name]);
         }
         break;
 

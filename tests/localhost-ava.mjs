@@ -1,11 +1,11 @@
 import test from "ava";
-import { Root, LoopbackNetworkInterface } from "pmcf";
+import { InitializationContext, LoopbackNetworkInterface } from "pmcf";
 
 test("localhost", async t => {
-  const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
-  await root.loadAll();
+  const ic = new InitializationContext(new URL("fixtures/root1", import.meta.url).pathname);
+  await ic.loadAll();
 
-  const local = root.named("/LOCAL");
+  const local = ic.named("/LOCAL");
   t.is(local.name, "LOCAL");
   t.is(local.constructor, LoopbackNetworkInterface);
   t.is(local.mtu, 16436);

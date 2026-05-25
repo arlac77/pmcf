@@ -17,29 +17,22 @@ export const ExtraSourceServiceTypeDefinition = {
 };
 
 export class ExtraSourceService extends Service {
-  source = [];
+  static typeDefinition = ExtraSourceServiceTypeDefinition;
 
   static {
     addType(this);
   }
 
-  static get typeDefinition() {
-    return ExtraSourceServiceTypeDefinition;
-  }
+  source = [];
 
   get type() {
     return ExtraSourceServiceTypeDefinition.name;
   }
 
-  *findServices(filter) {
-    yield* this.owner.owner.findServices(filter);
-
-    for (const s of this.source) {
-      yield* s.findServices(filter);
-    }
-  }
-
   get services() {
-    return [this.owner.owner.services, this.source.map(s => s.services)].flat();
+    return [
+      this.owner.owner.services,
+      ...this.source.map(s => s.services)
+    ].flat();
   }
 }

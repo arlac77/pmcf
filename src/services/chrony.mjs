@@ -12,6 +12,7 @@ import { writeLines } from "../utils.mjs";
 
 const ChronyServiceTypeDefinition = {
   name: "chrony",
+  priority: 1,
   extends: ExtraSourceServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
@@ -45,13 +46,10 @@ const ChronyServiceTypeDefinition = {
 };
 
 export class ChronyService extends ExtraSourceService {
+  static typeDefinition = ChronyServiceTypeDefinition;
   static {
     addType(this);
     addServiceType(this.typeDefinition.service, this.typeDefinition.name);
-  }
-
-  static get typeDefinition() {
-    return ChronyServiceTypeDefinition;
   }
 
   get type() {
@@ -66,7 +64,7 @@ export class ChronyService extends ExtraSourceService {
 
     const lines = [
       ...serviceEndpoints(this, {
-        services: 'types[ntp] && priority>=100',
+        services: "services[types[ntp] && priority>=100]",
         endpoints: e =>
           e.type === "ntp" &&
           !isLinkLocal(e.address) &&

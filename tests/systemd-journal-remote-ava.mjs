@@ -1,5 +1,6 @@
 import test from "ava";
 import {
+  InitializationContext,
   Root,
   Network,
   Host,
@@ -9,16 +10,17 @@ import {
 } from "pmcf";
 
 test("systemd-journal-remote service type", t => {
-  const root = new Root();
+  const ic = new InitializationContext();
+  const root = ic.root;
   const n1 = new Network(root);
-  n1.read({
+  ic.read(n1,{
     name: "n1",
     subnets: "10.0/16"
   });
   root.addObject(n1);
 
   const h1 = new Host(root);
-  h1.read({
+  ic.read(h1,{
     name: "h1",
     networkInterfaces: {
       eth0: { network: "/n1", ipAddresses: "10.0.0.1/16" }
@@ -36,10 +38,10 @@ test("systemd-journal-remote service type", t => {
 });
 
 test("systemd-journal-remote", async t => {
-  const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
-  await root.loadAll();
+  const ic = new InitializationContext(new URL("fixtures/root1", import.meta.url).pathname);
+  await ic.loadAll();
 
-  const journalRemoteTemplate = await root.named(
+  const journalRemoteTemplate = await ic.named(
     "/services/systemd-journal-remote/systemd-journal-remote"
   );
 
@@ -52,7 +54,7 @@ test("systemd-journal-remote", async t => {
     "/etc/ssl/certs/chain.cert.pem"
   );
 
-  const journalRemote = await root.named("/L1/C1/systemd-journal-remote");
+  const journalRemote = await ic.named("/L1/C1/systemd-journal-remote");
 
   t.is(journalRemote.isTemplate, false);
   t.is(journalRemote.type, "systemd-journal-remote");

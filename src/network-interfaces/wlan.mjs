@@ -26,9 +26,7 @@ const WLANNetworkInterfaceTypeDefinition = {
 };
 
 export class WLANNetworkInterface extends EthernetNetworkInterface {
-  _ssid;
-  _psk;
-  _secretName;
+  static typeDefinition = WLANNetworkInterfaceTypeDefinition;
 
   static {
     addType(this);
@@ -38,10 +36,9 @@ export class WLANNetworkInterface extends EthernetNetworkInterface {
     return name.match(/^wlan\d+$/);
   }
 
-  static get typeDefinition() {
-    return WLANNetworkInterfaceTypeDefinition;
-  }
-
+  _ssid;
+  _psk;
+  _secretName;
   get kind() {
     return WLANNetworkInterfaceTypeDefinition.name;
   }

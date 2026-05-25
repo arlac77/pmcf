@@ -26,6 +26,7 @@ import { NetworkInterfaceTypeDefinition } from "./network-interfaces/network-int
 
 const HostTypeDefinition = {
   name: "host",
+  priority: 1.9,
   owners: ["owner", "network", "root"],
   extends: Base.typeDefinition,
   key: "name",
@@ -88,6 +89,12 @@ const HostTypeDefinition = {
 };
 
 export class Host extends ServiceOwner {
+  static typeDefinition = HostTypeDefinition;
+
+  static {
+    addType(this);
+  }
+
   _aliases = new Set();
   _networkInterfaces = new Map();
   _provides = new Set();
@@ -102,14 +109,6 @@ export class Host extends ServiceOwner {
   _serial;
   _keymap;
 
-  static {
-    addType(this);
-  }
-
-  static get typeDefinition() {
-    return HostTypeDefinition;
-  }
-
   materializeExtends() {
     super.materializeExtends();
 
@@ -118,7 +117,7 @@ export class Host extends ServiceOwner {
         const present = this._networkInterfaces.get(name);
 
         if (present) {
-          console.log("LINK",present.fullName,ni.fullName);
+          //console.log("LINK", present.fullName, ni.fullName);
           present.extends.push(ni);
         } else {
           this._networkInterfaces.set(name, ni.forOwner(this));
@@ -135,11 +134,6 @@ export class Host extends ServiceOwner {
       return true;
     }
     return false;
-  }
-
-  get id()
-  {
-    return this['machine-id'];
   }
 
   set serial(value) {
@@ -177,8 +171,7 @@ export class Host extends ServiceOwner {
   /**
    * @return {string}
    */
-  get id()
-  {
+  get id() {
     return this["machine-id"];
   }
 
@@ -454,10 +447,6 @@ export class Host extends ServiceOwner {
 
     for (const ni of this.networkInterfaces.values()) {
       await ni.systemdDefinitions(dir, packageData);
-    }
-
-    if (this.keymap) {
-      await writeLines(dir, "etc/vconsole.conf", `KEYMAP=${this.keymap}`);
     }
 
     await generateKnownHosts(this.owner.hosts, join(dir, "root", ".ssh"));

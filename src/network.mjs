@@ -5,6 +5,7 @@ import { networkAttributes } from "./network-support.mjs";
 
 export const NetworkTypeDefinition = {
   name: "network",
+  priority: 2,
   owners: ["location", "owner", "root"],
   extends: Owner.typeDefinition,
   key: "name",
@@ -20,19 +21,17 @@ export const NetworkTypeDefinition = {
 };
 
 export class Network extends Owner {
-  kind;
-  scope;
-  metric;
-  gateway;
-  _bridge;
+  static typeDefinition = NetworkTypeDefinition;
 
   static {
     addType(this);
   }
 
-  static get typeDefinition() {
-    return NetworkTypeDefinition;
-  }
+  kind;
+  scope;
+  metric;
+  gateway;
+  _bridge;
 
   get network() {
     return this;

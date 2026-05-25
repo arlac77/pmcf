@@ -3,6 +3,7 @@ import { ServiceTypeDefinition, Service } from "../service.mjs";
 
 export class TailscaleService extends Service {
   static name = "tailscale";
+  static priority = 1;
   static extends = ServiceTypeDefinition;
   static specializationOf = ServiceTypeDefinition;
   static owners = ServiceTypeDefinition.owners;
@@ -18,7 +19,7 @@ export class TailscaleService extends Service {
     ]
   };
 
-  /*static {
+  static {
     addType(TailscaleService);
-  }*/
+  }
 }

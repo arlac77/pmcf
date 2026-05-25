@@ -3,7 +3,7 @@ import {
   default_attribute_writable,
   string_set_attribute_writable,
   string_attribute_writable,
-  boolean_attribute_writable_false,
+  boolean_attribute_writable,
   email_attribute,
   addType,
   types
@@ -15,6 +15,7 @@ import { networks_attribute } from "./network-support.mjs";
 
 const OwnerTypeDefinition = {
   name: "owner",
+  priority: 2,
   owners: ["location", "owner", "root"],
   extends: Base.typeDefinition,
   key: "name",
@@ -38,23 +39,21 @@ const OwnerTypeDefinition = {
     architectures: string_set_attribute_writable,
     locales: string_set_attribute_writable,
     administratorEmail: { ...email_attribute, writable: true },
-    template: { ...boolean_attribute_writable_false, private: true }
+    template: { ...boolean_attribute_writable, private: true }
   }
 };
 
 const EMPTY = new Map();
 
 export class Owner extends Base {
-  _membersByType = new Map();
-  _bridges = new Set();
+  static typeDefinition = OwnerTypeDefinition;
 
   static {
     addType(this);
   }
 
-  static get typeDefinition() {
-    return OwnerTypeDefinition;
-  }
+  _membersByType = new Map();
+  _bridges = new Set();
 
   /**
    * @return {boolean}
@@ -127,22 +126,13 @@ export class Owner extends Base {
     return super.typeNamed(typeName, name);
   }
 
-  typeObject(typeName) {
-    return this._membersByType.get(typeName);
-  }
-
   typeList(typeName) {
     const typeSlot = this._membersByType.get(typeName);
     return (typeSlot || EMPTY).values();
   }
 
   addTypeObject(typeName, name, object) {
-    let typeSlot = this._membersByType.get(typeName);
-    if (!typeSlot) {
-      typeSlot = new Map();
-      this._membersByType.set(typeName, typeSlot);
-    }
-
+    const typeSlot = this._membersByType.getOrInsertComputed(typeName, () => new Map());
     typeSlot.set(name, object);
   }
 
@@ -162,12 +152,6 @@ export class Owner extends Base {
   get services()
   {
     return [...this.hosts].map(host=>host.services).flat();
-  }
-
-  *findServices(filter) {
-    for (const host of this.hosts) {
-      yield* host.findServices(filter);
-    }
   }
 
   locationNamed(name) {
@@ -252,10 +236,6 @@ export class Owner extends Base {
         return subnet;
       }
     }
-  }
-
-  clusterNamed(name) {
-    return this.typeNamed("cluster", name);
   }
 
   get clusters() {

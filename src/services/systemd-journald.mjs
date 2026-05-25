@@ -8,6 +8,7 @@ import { filterConfigurable, sectionLines } from "../utils.mjs";
 
 const SystemdJournalServiceTypeDefinition = {
   name: "systemd-journald",
+  priority: 1,
   extends: ServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
@@ -112,13 +113,10 @@ const SystemdJournalServiceTypeDefinition = {
 };
 
 export class SystemdJournaldService extends Service {
+  static typeDefinition = SystemdJournalServiceTypeDefinition;
   static {
     addType(this);
     addServiceType(this.typeDefinition.service, this.typeDefinition.name);
-  }
-
-  static get typeDefinition() {
-    return SystemdJournalServiceTypeDefinition;
   }
 
   get type() {

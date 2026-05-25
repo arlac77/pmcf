@@ -1,22 +1,22 @@
 import test from "ava";
 
-import { Root, Host, SystemdTimesyncdService } from "pmcf";
+import { InitializationContext, Host, SystemdTimesyncdService } from "pmcf";
 
 test("systemd-timesyncd service type", t => {
-  const root = new Root();
-  const h1 = new Host(root);
-
-  const service = new SystemdTimesyncdService(h1);
+  const ic = new InitializationContext();
+  const service = new SystemdTimesyncdService(new Host(ic.root));
 
   t.is(service.systemdService, "systemd-timesyncd.service");
   t.deepEqual(service.types, new Set(["systemd-timesyncd"]));
 });
 
 test("systemd-timesyncd basics", async t => {
-  const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
-  await root.loadAll();
+  const ic = new InitializationContext(
+    new URL("fixtures/root1", import.meta.url).pathname
+  );
+  await ic.loadAll();
 
-  const ntp = await root.named("/L1/C1/systemd-timesyncd");
+  const ntp = await ic.named("/L1/C1/systemd-timesyncd");
 
   t.deepEqual(ntp.systemdConfigs("ABC"), {
     serviceName: "systemd-timesyncd.service",

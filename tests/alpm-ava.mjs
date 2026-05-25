@@ -1,12 +1,12 @@
 import test from "ava";
-import { Root } from "pmcf";
+import { InitializationContext } from "pmcf";
 import { ALPMService } from "../src/services/alpm.mjs";
 
 test("alpm basics", async t => {
-  const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
-  await root.loadAll();
+  const ic = new InitializationContext(new URL("fixtures/root1", import.meta.url).pathname);
+  await ic.loadAll();
 
-  const alpm = await root.named("/L1/host1/alpm");
+  const alpm = await ic.root.named("/L1/host1/alpm");
 
   t.true(alpm instanceof ALPMService);
 

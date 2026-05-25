@@ -11,14 +11,12 @@ const WireguardNetworkInterfaceTypeDefinition = {
 };
 
 export class WireguardNetworkInterface extends SkeletonNetworkInterface {
+  static typeDefinition = WireguardNetworkInterfaceTypeDefinition;
+
   static {
     addType(this);
   }
-
-  static get typeDefinition() {
-    return WireguardNetworkInterfaceTypeDefinition;
-  }
-
+  
   get kind() {
     return WireguardNetworkInterfaceTypeDefinition.name;
   }

@@ -20,6 +20,7 @@ import { writeLines } from "../utils.mjs";
 
 const KeaServiceTypeDefinition = {
   name: "kea",
+  priority: 1,
   extends: ServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
@@ -129,13 +130,10 @@ const KeaServiceTypeDefinition = {
 const keaVersion = "3.0.1";
 
 export class KeaService extends Service {
+  static typeDefinition = KeaServiceTypeDefinition;
   static {
     addType(this);
     addServiceType(this.typeDefinition.service, this.typeDefinition.name);
-  }
-
-  static get typeDefinition() {
-    return KeaServiceTypeDefinition;
   }
 
   get type() {
@@ -154,7 +152,7 @@ export class KeaService extends Service {
     const name = host.name;
 
     const dnsServerEndpoints = serviceEndpoints(network, {
-      services: 'types[dns] && priority>=300',
+      services: "services[types[dns] && priority>=300]",
       endpoints: endpoint => endpoint.networkInterface?.kind !== "loopback"
     });
 
@@ -163,11 +161,9 @@ export class KeaService extends Service {
     packageData.sources.push(new FileContentProvider(dir + "/"));
 
     const peers = async family =>
-      (
-        await Array.fromAsync(
-          network.findServices(
-            `types[kea] && priority>=${Math.min(this.priority, 100)}`
-          )
+      Array.from(
+        network.expression(
+          `services[types[kea] && priority>=${Math.min(this.priority, 100)}]`
         )
       )
         .sort(sortDescendingByPriority)

@@ -11,12 +11,10 @@ const TUNdNetworkInterfaceTypeDefinition = {
 };
 
 export class TUNNetworkInterface extends NetworkInterface {
+  static typeDefinition = TUNdNetworkInterfaceTypeDefinition;
+
   static {
     addType(this);
-  }
-
-  static get typeDefinition() {
-    return TUNdNetworkInterfaceTypeDefinition;
   }
 
   get kind() {

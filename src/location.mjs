@@ -5,20 +5,18 @@ import { loadHooks } from "./hooks.mjs";
 
 const LocationTypeDefinition = {
   name: "location",
+  priority: 2,
   owners: [Owner.typeDefinition, "location", "root"],
   extends: Owner.typeDefinition,
   key: "name",
-  attributes: {
-  }
+  attributes: {}
 };
 
 export class Location extends Owner {
+  static typeDefinition = LocationTypeDefinition;
+
   static {
     addType(this);
-  }
-
-  static get typeDefinition() {
-    return LocationTypeDefinition;
   }
 
   get location() {

@@ -1,13 +1,13 @@
 import test from "ava";
 import { join } from "node:path";
-import { Root, UnixEndpoint, ServiceTypes } from "pmcf";
+import { InitializationContext, UnixEndpoint, ServiceTypes } from "pmcf";
 import { OpenLDAPService } from "../src/services/openldap.mjs";
 
 test("OpenLDAPService basics", async t => {
-  const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
-  await root.loadAll();
+  const ic = new InitializationContext(new URL("fixtures/root1", import.meta.url).pathname);
+  await ic.loadAll();
 
-  const openldap = await root.named("/L1/host1/openldap");
+  const openldap = await ic.named("/L1/host1/openldap");
 
   t.true(openldap instanceof OpenLDAPService);
   t.is(openldap.base, "dc=mydomain,dc=com");

@@ -10,6 +10,7 @@ import { filterConfigurable, sectionLines } from "../utils.mjs";
 
 const SystemdJournalRemoteServiceTypeDefinition = {
   name: "systemd-journal-remote",
+  priority: 1,
   extends: ServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
@@ -87,13 +88,10 @@ const SystemdJournalRemoteServiceTypeDefinition = {
  * @property {string} ServerKeyFile
  */
 export class SystemdJournalRemoteService extends Service {
+  static typeDefinition = SystemdJournalRemoteServiceTypeDefinition;
   static {
     addType(this);
     addServiceType(this.typeDefinition.service, this.typeDefinition.name);
-  }
-
-  static get typeDefinition() {
-    return SystemdJournalRemoteServiceTypeDefinition;
   }
 
   get type() {

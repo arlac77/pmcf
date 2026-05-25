@@ -1,12 +1,14 @@
 import test from "ava";
-import { Root } from "pmcf";
+import { InitializationContext } from "pmcf";
 import { InfluxdbService } from "../src/services/influxdb.mjs";
 
 test("influxdb basics", async t => {
-  const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
-  await root.loadAll();
+  const ic = new InitializationContext(
+    new URL("fixtures/root1", import.meta.url).pathname
+  );
+  await ic.loadAll();
 
-  const influxdb = await root.named("/L1/host1/influxdb");
+  const influxdb = await ic.named("/L1/host1/influxdb");
 
   t.true(influxdb instanceof InfluxdbService);
   t.is(influxdb.port, 8086);

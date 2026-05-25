@@ -1,15 +1,16 @@
 import test from "ava";
-import { Root } from "pmcf";
+import { InitializationContext } from "pmcf";
 
 test("load basics", async t => {
-  const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
-  t.is(await root.load("/"), root);
+  const ic = new InitializationContext(new URL("fixtures/root1", import.meta.url).pathname);
+  t.is(await ic.load("/"), ic.root);
 });
 
 test("load all", async t => {
-  const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
+  const ic = new InitializationContext(new URL("fixtures/root1", import.meta.url).pathname);
+  const root = ic.root;
 
-  await root.loadAll();
+  await ic.loadAll();
 
   const location1 = await root.named("/L1");
   t.is(location1.owner, root);

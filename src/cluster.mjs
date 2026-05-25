@@ -14,6 +14,7 @@ import { writeLines } from "./utils.mjs";
 
 const ClusterTypeDefinition = {
   name: "cluster",
+  priority: 1.5,
   owners: [Owner.typeDefinition, "network", "location", "root"],
   extends: Host.typeDefinition,
   key: "name",
@@ -39,18 +40,16 @@ const ClusterTypeDefinition = {
 };
 
 export class Cluster extends Host {
-  _masters = [];
-  _backups = [];
-  routerId = 100;
-  checkInterval = 60;
+  static typeDefinition = ClusterTypeDefinition;
 
   static {
     addType(this);
   }
 
-  static get typeDefinition() {
-    return ClusterTypeDefinition;
-  }
+  _masters = [];
+  _backups = [];
+  routerId = 100;
+  checkInterval = 60;
 
   set masters(value) {
     this._masters.push(value);
@@ -166,7 +165,7 @@ export class Cluster extends Host {
         cfg.push("}", "");
 
         for (const endpoint of serviceEndpoints(cluster, {
-          services: 'type="http"',
+          services: "services[types[http]]",
           endpoints: e =>
             e.networkInterface && e.networkInterface.kind !== "loopback"
         })) {
@@ -177,10 +176,13 @@ export class Cluster extends Host {
           cfg.push(`  protocol ${endpoint.protocol.toUpperCase()}`);
 
           for (const member of this.members) {
-            const memberService =
-              member.findService(`type="${endpoint.type}"`) ||
-              member.host.findService(`type="${endpoint.type}"`); // TODO
+            const memberService = Array.from(
+              member.expression(
+                `aggregatedServices[types[${endpoint.type}]][0]`
+              )
+            );
 
+            console.log(member.fullName, endpoint.type, memberService);
             cfg.push(`  real_server ${member.address} ${memberService.port} {`);
             cfg.push(`    weight ${memberService.weight}`);
 

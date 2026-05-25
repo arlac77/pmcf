@@ -1,18 +1,19 @@
 import test from "ava";
-import { Root, Network } from "pmcf";
+import { InitializationContext, Network } from "pmcf";
 import { assertObject } from "./util.mjs";
 import { root1 } from "./fixtures.mjs";
 
 test("Network basics", async t => {
-  const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
-  await root.loadAll();
-  await assertObject(t, await root.named("/L1/n1"), root1(root, "/L1/n1"));
+  const ic = new InitializationContext(new URL("fixtures/root1", import.meta.url).pathname);
+  await ic.loadAll();
+  await assertObject(t, await ic.root.named("/L1/n1"), root1(ic.root, "/L1/n1"));
 });
 
 test("Network addresses", t => {
-  const owner = new Root("/");
+  const ic = new InitializationContext("/");
+  const owner = ic.root;
   const n1 = new Network(owner);
-  n1.read({
+  ic.read(n1, {
     name: "n1",
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"],
     kind: "ethernet",
@@ -37,7 +38,8 @@ test("Network addresses", t => {
 });
 
 test("Network bridges", t => {
-  const owner = new Root("/");
+  const ic = new InitializationContext("/");
+  const owner = ic.root;
 
   /*
   const n1 = new Network(owner, { name: "n1" });
@@ -47,11 +49,11 @@ test("Network bridges", t => {
   */
 
   const n3 = new Network(owner);
-  n3.read({ name: "n3", bridge: "/n4" });
+  ic.read(n3, { name: "n3", bridge: "/n4" });
   owner.addObject(n3);
 
   const n4 = new Network(owner);
-  n4.read({ name: "n4" });
+  ic.read(n4, { name: "n4" });
   owner.addObject(n4);
 
   owner.execFinalize();

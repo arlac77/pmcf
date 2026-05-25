@@ -14,6 +14,7 @@ import { filterConfigurable, sectionLines } from "../utils.mjs";
 
 const SystemdTimesyncdServiceTypeDefinition = {
   name: "systemd-timesyncd",
+  priority: 1,
   extends: ExtraSourceServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
@@ -33,13 +34,10 @@ const SystemdTimesyncdServiceTypeDefinition = {
 };
 
 export class SystemdTimesyncdService extends ExtraSourceService {
+  static typeDefinition = SystemdTimesyncdServiceTypeDefinition;
   static {
     addType(this);
     addServiceType(this.typeDefinition.service, this.typeDefinition.name);
-  }
-
-  static get typeDefinition() {
-    return SystemdTimesyncdServiceTypeDefinition;
   }
 
   get type() {
@@ -50,7 +48,7 @@ export class SystemdTimesyncdService extends ExtraSourceService {
     const options = (lower, upper) => {
       return {
         // TODO types[ntp]
-        services: `in("ntp",types) && priority >= ${lower} && priority <= ${upper}`,
+        services: `services[in("ntp",types) && priority >= ${lower} && priority <= ${upper}]`,
         endpoints: e =>
           e.networkInterface && e.networkInterface.kind !== "loopback",
         select: endpoint => endpoint.address,
@@ -62,14 +60,11 @@ export class SystemdTimesyncdService extends ExtraSourceService {
     return {
       serviceName: this.systemdService,
       configFileName: `etc/systemd/timesyncd.conf.d/${name}.conf`,
-      content: sectionLines(
-        "Time",
-        {
-          NTP: serviceEndpoints(this, options(300, 399)),
-          FallbackNTP: serviceEndpoints(this, options(100, 199)),
-          ...this.getProperties(filterConfigurable)
-        })
-      
+      content: sectionLines("Time", {
+        NTP: serviceEndpoints(this, options(300, 399)),
+        FallbackNTP: serviceEndpoints(this, options(100, 199)),
+        ...this.getProperties(filterConfigurable)
+      })
     };
   }
 }

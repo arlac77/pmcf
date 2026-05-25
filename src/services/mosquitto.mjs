@@ -4,6 +4,7 @@ import { Service, ServiceTypeDefinition } from "../service.mjs";
 
 const MosquittoServiceTypeDefinition = {
   name: "mosquitto",
+  priority: 1,
   extends: ServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
@@ -33,13 +34,10 @@ const MosquittoServiceTypeDefinition = {
 };
 
 export class MosquittoService extends Service {
+  static typeDefinition = MosquittoServiceTypeDefinition;
   static {
     addType(this);
     addServiceType(this.typeDefinition.service, this.typeDefinition.name);
-  }
-
-  static get typeDefinition() {
-    return MosquittoServiceTypeDefinition;
   }
 
   get type() {

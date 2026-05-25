@@ -1,18 +1,16 @@
 import test from "ava";
-import { Root, Host, Network } from "pmcf";
+import { InitializationContext, Host, Network } from "pmcf";
 
 test("WLAN basics", t => {
-  const owner = new Root("/");
-
-  const n1 = new Network(owner);
-  n1.read({
+  const ic = new InitializationContext("/");
+  const n1 = new Network(ic.root);
+  ic.read(n1,{
     name: "W1000000",
     subnets: ["10.0.0.2/16"]
   });
-  owner.addObject(n1);
 
-  const h2 = new Host(owner);
-  h2.read({
+  const h2 = new Host(ic.root);
+  ic.read(h2,{
     name: "h2",
     networkInterfaces: {
       wlan0: {

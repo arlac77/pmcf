@@ -9,32 +9,34 @@ import {
   DomainNameEndpoint,
   ServiceTypes
 } from "pmcf";
+import { InitializationContext } from "../src/initialization-context.mjs";
 
 function setup() {
+  const ic = new InitializationContext();
   const root = new Root("/somwhere");
 
   const n1 = new Network(root);
-  n1.read({
+  ic.read(n1, {
     name: "n1",
     subnets: "10.0/16"
   });
   root.addObject(n1);
 
   const l1 = new Location(root);
-  l1.read({
+  ic.read(l1, {
     name: "l1"
   });
 
   root.addObject(l1);
 
-  return { root, n1, l1 };
+  return { ic, root, n1, l1 };
 }
 
 test("Service basics", t => {
-  const { root, l1 } = setup();
+  const { ic, root, l1 } = setup();
 
   const h1 = new Host(l1);
-  h1.read({
+  ic.read(h1, {
     name: "h1",
     networkInterfaces: {
       lo: {},
@@ -52,7 +54,7 @@ test("Service basics", t => {
   );
 
   const s1 = new Service(h1);
-  s1.read({
+  ic.read(s1, {
     name: "dns",
     weight: 5,
     priority: 3,
@@ -113,10 +115,17 @@ test("Service basics", t => {
     ["127.0.0.1:53", "10.0.0.1:53"].sort()
   );
 
-  t.is([...h1.expression("services[types[dns]]")][0], s1);
+  t.is(h1.expression("services[types[dns]][0]"), s1);
+  t.is(h1.expression("aggregatedServices[types[dns]][0]"), s1);
+  t.is(
+    h1.networkInterfaces
+      .get("eth0")
+      .expression("aggregatedServices[types[dns]][0]"),
+    s1
+  );
 
   const h2 = new Host(l1);
-  h2.read({
+  ic.read(h2, {
     name: "h2",
     priority: 3,
     networkInterfaces: { eth0: { ipAddresses: "10.0.0.2" } }
@@ -171,10 +180,10 @@ test("Service basics", t => {
     [s1]
   );
 
-  t.is(s1, l1.expression('services[types[dns]][0]'));
+  t.is(s1, l1.expression("services[types[dns]][0]"));
 
   const s3 = new Service(h1);
-  s3.read({
+  ic.read(s3, {
     name: "http3",
     weight: 0,
     priority: 0
@@ -192,10 +201,10 @@ test("Service basics", t => {
 });
 
 test("Service without protocol", t => {
-  const { root } = setup();
+  const { ic, root } = setup();
 
   const h1 = new Host(root);
-  h1.read({
+  ic.read(h1, {
     name: "h1",
     networkInterfaces: { eth0: { network: "/n1", ipAddresses: "10.0.0.1" } }
   });
@@ -204,7 +213,7 @@ test("Service without protocol", t => {
   const na = h1.networkAddresses();
 
   const s1 = new Service(h1);
-  s1.read({
+  ic.read(s1, {
     name: "abc",
     port: 555,
     weight: 5,
@@ -227,10 +236,10 @@ test("Service without protocol", t => {
 });
 
 test("Service load", t => {
-  const { root } = setup();
+  const { ic, root } = setup();
 
   const h1 = new Host(root);
-  h1.read({
+  ic.read(h1, {
     name: "h1",
     networkInterfaces: { eth0: { network: "/n1", ipAddresses: "10.0.0.1" } },
     services: {
@@ -245,10 +254,10 @@ test("Service load", t => {
 });
 
 test("Service owner", t => {
-  const { root } = setup();
+  const { ic, root } = setup();
 
   const h1 = new Host(root);
-  h1.read({
+  ic.read(h1, {
     name: "h1",
     priority: 3,
     weight: 5
@@ -256,7 +265,7 @@ test("Service owner", t => {
   root.addObject(h1);
 
   const h2 = new Host(root);
-  h2.read({
+  ic.read(h2, {
     name: "h2",
     priority: 8,
     weight: 7,
@@ -268,7 +277,7 @@ test("Service owner", t => {
 
   t.is(h2.weight, 7);
   const s1 = new Service(h1);
-  s1.read({
+  ic.read(s1, {
     name: "dns",
     alias: "primary-dns"
   });
@@ -293,10 +302,10 @@ test("Service owner", t => {
 });
 
 test("Service type extension", t => {
-  const { root } = setup();
+  const { ic, root } = setup();
 
   const h1 = new Host(root);
-  h1.read({
+  ic.read(h1, {
     name: "h1",
     networkInterfaces: { eth0: { network: "/n1", ipAddresses: "10.0.0.1" } },
     services: {
@@ -309,10 +318,10 @@ test("Service type extension", t => {
 
   t.is(s0.name, "bind");
   t.deepEqual(s0.types, new Set(["bind", "dns"]));
-  
-  t.is(h1.expression('services[types[bind]][0]'), s0);
-  t.is(h1.expression('services[types[dns]][0]'), s0);
+
+  t.is(h1.expression("services[types[bind]][0]"), s0);
+  t.is(h1.expression("services[types[dns]][0]"), s0);
 
   // TODO
- // t.is(h1.expression('services[types[abc]][0]'), undefined);
+  // t.is(h1.expression('services[types[abc]][0]'), undefined);
 });

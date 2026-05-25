@@ -19,12 +19,10 @@ const _localAddresses = new Map([
 const _localDomains = new Set(["localhost"]);
 
 export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
+  static typeDefinition = LoopbackNetworkInterfaceTypeDefinition;
+
   static {
     addType(this);
-  }
-
-  static get typeDefinition() {
-    return LoopbackNetworkInterfaceTypeDefinition;
   }
 
   static isCommonName(name) {

@@ -1,5 +1,6 @@
 import {
   string_attribute_writable,
+  string_collection_attribute_writable,
   boolean_attribute_writable,
   addType
 } from "pacc";
@@ -8,6 +9,7 @@ import { filterConfigurable, sectionLines } from "../utils.mjs";
 
 const SystemdJournalUploadServiceTypeDefinition = {
   name: "systemd-journal-upload",
+  priority: 1,
   extends: ServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
@@ -17,27 +19,27 @@ const SystemdJournalUploadServiceTypeDefinition = {
     ServerKeyFile: {
       ...string_attribute_writable,
       configurable: true
-      //   default: "/etc/ssl/private/journal-upload.pem"
+      // default: "/etc/ssl/private/journal-upload.pem"
     },
     ServerCertificateFile: {
       ...string_attribute_writable,
       configurable: true
-      //   default: "/etc/ssl/certs/journal-upload.pem"
+      // default: "/etc/ssl/certs/journal-upload.pem"
     },
     TrustedCertificateFile: {
       ...string_attribute_writable,
       configurable: true
-      //  default: "/etc/ssl/ca/trusted.pem"
+      // default: "/etc/ssl/ca/trusted.pem"
     },
     Compression: {
-      ...string_attribute_writable,
+      ...string_collection_attribute_writable,
       configurable: true
-      //   default: "zstd lz4 xz"
+      // default: "zstd lz4 xz"
     },
     ForceCompression: {
       ...boolean_attribute_writable,
       configurable: true
-      //   default: false
+      // default: false
     }
   },
   service: {
@@ -51,13 +53,10 @@ const SystemdJournalUploadServiceTypeDefinition = {
  * @property {string} ServerKeyFile
  */
 export class SystemdJournalUploadService extends Service {
+  static typeDefinition = SystemdJournalUploadServiceTypeDefinition;
   static {
     addType(this);
     addServiceType(this.typeDefinition.service, this.typeDefinition.name);
-  }
-
-  static get typeDefinition() {
-    return SystemdJournalUploadServiceTypeDefinition;
   }
 
   get type() {

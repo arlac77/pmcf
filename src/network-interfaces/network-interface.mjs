@@ -63,12 +63,10 @@ export const NetworkInterfaceTypeDefinition = {
 };
 
 export class NetworkInterface extends SkeletonNetworkInterface {
+  static typeDefinition = NetworkInterfaceTypeDefinition;
+
   static {
     addType(this);
-  }
-
-  static get typeDefinition() {
-    return NetworkInterfaceTypeDefinition;
   }
 
   static isCommonName(name) {

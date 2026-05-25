@@ -1,5 +1,6 @@
 import test from "ava";
 import {
+  InitializationContext,
   Root,
   Network,
   Subnet,
@@ -9,7 +10,8 @@ import {
 import { asArray } from "../src/utils.mjs";
 
 test("Subnet owner", t => {
-  const root = new Root("/");
+  const ic = new InitializationContext();
+  const root = ic.root;
 
   const s1 = new Subnet(root, "10.0.0.77/16");
 
@@ -41,7 +43,8 @@ test("Subnet owner", t => {
 });
 
 test("Subnet ipv6", t => {
-  const root = new Root("/");
+  const ic = new InitializationContext();
+  const root = ic.root;
   const s1 = new Subnet(root, "fe80::1e57:3eff:fe22:9a8f/64");
 
   t.is(s1.name, "fe80::/64");
@@ -57,7 +60,8 @@ test("Subnet ipv6", t => {
 });
 
 test("Subnet match with prefix length", t => {
-  const root = new Root("/");
+  const ic = new InitializationContext();
+  const root = ic.root;
   const s1 = new Subnet(root, "192.168.1/24");
   t.true(s1.matchesAddress("192.168.1.60"));
   t.true(s1.matchesAddress("192.168.1.60/30"));

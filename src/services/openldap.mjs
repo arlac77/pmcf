@@ -10,6 +10,7 @@ import { ServiceTypeDefinition, Service } from "../service.mjs";
 
 const OpenLDAPServiceTypeDefinition = {
   name: "openldap",
+  priority: 1,
   extends: ServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
@@ -26,13 +27,10 @@ const OpenLDAPServiceTypeDefinition = {
 };
 
 export class OpenLDAPService extends Service {
+  static typeDefinition = OpenLDAPServiceTypeDefinition;
   static {
     addType(this);
     addServiceType(this.typeDefinition.service, this.typeDefinition.name);
-  }
-
-  static get typeDefinition() {
-    return OpenLDAPServiceTypeDefinition;
   }
 
   _base;

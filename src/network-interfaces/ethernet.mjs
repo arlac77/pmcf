@@ -20,19 +20,17 @@ export const EthernetNetworkInterfaceTypeDefinition = {
 };
 
 export class EthernetNetworkInterface extends NetworkInterface {
-  arpbridge;
+  static typeDefinition = EthernetNetworkInterfaceTypeDefinition;
 
   static {
     addType(this);
   }
 
-  static get typeDefinition() {
-    return EthernetNetworkInterfaceTypeDefinition;
-  }
-
   static isCommonName(name) {
     return name.match(/^eth\d+$/);
   }
+
+  arpbridge;
 
   get kind() {
     return EthernetNetworkInterfaceTypeDefinition.name;

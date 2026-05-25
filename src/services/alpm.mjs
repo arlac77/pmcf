@@ -20,17 +20,15 @@ const ALPMRepositoryTypeDefinition = {
 };
 
 class ALPMRepository extends Base {
+  static typeDefinition = ALPMRepositoryTypeDefinition;
   static {
     addType(this);
-  }
-
-  static get typeDefinition() {
-    return ALPMRepositoryTypeDefinition;
   }
 }
 
 const ALPMServiceTypeDefinition = {
   name: "alpm",
+  priority: 1,
   extends: ServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
@@ -48,13 +46,10 @@ const ALPMServiceTypeDefinition = {
 };
 
 export class ALPMService extends Service {
+  static typeDefinition = ALPMServiceTypeDefinition;
   static {
     addType(this);
     addServiceType(this.typeDefinition.service, this.typeDefinition.name);
-  }
-
-  static get typeDefinition() {
-    return ALPMServiceTypeDefinition;
   }
 
   repositories = new Map();

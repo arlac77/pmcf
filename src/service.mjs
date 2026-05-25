@@ -41,6 +41,7 @@ export const endpointAttributes = {
 
 export const EndpointTypeDefinition = {
   name: "endpoint",
+  priority: 1.1,
   owners: ["service", "network_interface"],
   specializations: {},
   key: "type",
@@ -49,6 +50,7 @@ export const EndpointTypeDefinition = {
 
 export const ServiceTypeDefinition = {
   name: "service",
+  priority: 1.1,
   owners: [Host.typeDefinition, "cluster", "network_interface"],
   extends: Base.typeDefinition,
   specializations: {},
@@ -74,19 +76,17 @@ export const ServiceTypeDefinition = {
 };
 
 export class Service extends Base {
-  _alias;
-  _weight;
-  _type;
-  _port;
-  _systemdService;
+  static typeDefinition = ServiceTypeDefinition;
 
   static {
     addType(this);
   }
 
-  static get typeDefinition() {
-    return ServiceTypeDefinition;
-  }
+  _alias;
+  _weight;
+  _type;
+  _port;
+  _systemdService;
 
   toString() {
     return `${this.fullName}(${this.type})`;

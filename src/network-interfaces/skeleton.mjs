@@ -4,14 +4,14 @@ import { NetworkAddress, Host, cidrAddresses } from "pmcf";
 import { ServiceOwner } from "../service-owner.mjs";
 
 /**
- * 
+ *
  */
 export class SkeletonNetworkInterface extends ServiceOwner {
-  _network;
-
   static get typeName() {
     return "network_interface";
   }
+
+  _network;
 
   get typeName() {
     return "network_interface";
@@ -21,6 +21,12 @@ export class SkeletonNetworkInterface extends ServiceOwner {
     if (this.owner instanceof Host) {
       return this.owner;
     }
+  }
+
+  get aggregatedServices() {
+    return this.host
+      ? [...this.services, ...this.host.services]
+      : this.services;
   }
 
   get hosts() {

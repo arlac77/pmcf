@@ -1,6 +1,6 @@
 import { parseArgs } from "node:util";
 import { argv, cwd, env } from "node:process";
-import { Root } from "./module.mjs";
+import { InitializationContext } from "./module.mjs";
 
 export async function prepare(options = {}) {
   const { values, positionals } = parseArgs({
@@ -25,9 +25,9 @@ export async function prepare(options = {}) {
     allowPositionals: true
   });
 
-  const root = new Root(values.root);
+  const ic = new InitializationContext(values.root);
 
-  await root.loadAll();
+  await ic.loadAll();
 
-  return { root, options: values, args: positionals };
+  return { ic, root: ic.root, options: values, args: positionals };
 }

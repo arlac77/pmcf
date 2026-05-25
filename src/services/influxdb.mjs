@@ -11,6 +11,7 @@ import { Service, ServiceTypeDefinition } from "../service.mjs";
 
 const InfluxdbServiceTypeDefinition = {
   name: "influxdb",
+  priority: 1,
   extends: ServiceTypeDefinition,
   specializationOf: ServiceTypeDefinition,
   owners: ServiceTypeDefinition.owners,
@@ -43,13 +44,10 @@ const InfluxdbServiceTypeDefinition = {
 };
 
 export class InfluxdbService extends Service {
+  static typeDefinition = InfluxdbServiceTypeDefinition;
   static {
     addType(this);
     addServiceType(this.typeDefinition.service, this.typeDefinition.name);
-  }
-
-  static get typeDefinition() {
-    return InfluxdbServiceTypeDefinition;
   }
 
   get type() {
