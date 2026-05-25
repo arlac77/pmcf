@@ -1,12 +1,14 @@
 import test from "ava";
-import { Root } from "pmcf";
 import { MosquittoService } from "../src/services/mosquitto.mjs";
+import { InitializationContext } from "pmcf";
 
 test("mosquitto basics", async t => {
-  const root = new Root(new URL("fixtures/root1", import.meta.url).pathname);
-  await root.loadAll();
+  const ic = new InitializationContext(
+    new URL("fixtures/root1", import.meta.url).pathname
+  );
+  await ic.loadAll();
 
-  const mosquitto = await root.named("/L1/host1/mosquitto");
+  const mosquitto = await ic.named("/L1/host1/mosquitto");
 
   t.true(mosquitto instanceof MosquittoService);
   t.is(mosquitto.alias, "mqtt");
