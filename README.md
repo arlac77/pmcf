@@ -52,25 +52,26 @@ generates config packages for:
     *   [priority](#priority)
     *   [expression](#expression)
         *   [Parameters](#parameters-5)
-    *   [findService](#findservice)
-        *   [Parameters](#parameters-6)
     *   [templateContent](#templatecontent)
-        *   [Parameters](#parameters-7)
+        *   [Parameters](#parameters-6)
+    *   [isTemplate](#istemplate)
     *   [property](#property)
-        *   [Parameters](#parameters-8)
+        *   [Parameters](#parameters-7)
     *   [expand](#expand)
-        *   [Parameters](#parameters-9)
+        *   [Parameters](#parameters-8)
 *   [PortEndpoint](#portendpoint)
-    *   [Parameters](#parameters-10)
+    *   [Parameters](#parameters-9)
     *   [port](#port)
     *   [socketAddress](#socketaddress)
 *   [HTTPEndpoint](#httpendpoint)
-    *   [Parameters](#parameters-11)
+    *   [Parameters](#parameters-10)
     *   [port](#port-1)
 *   [id](#id)
 *   [SkeletonNetworkInterface](#skeletonnetworkinterface)
     *   [networkAddresses](#networkaddresses)
-        *   [Parameters](#parameters-12)
+        *   [Parameters](#parameters-11)
+*   [InitializationContext](#initializationcontext)
+    *   [Parameters](#parameters-12)
 *   [SystemdJournalRemoteService](#systemdjournalremoteservice)
     *   [Properties](#properties)
     *   [systemdConfigs](#systemdconfigs)
@@ -88,7 +89,7 @@ generates config packages for:
     *   [Parameters](#parameters-16)
 *   [cidrAddresses](#cidraddresses)
     *   [Parameters](#parameters-17)
-*   [isTemplate](#istemplate)
+*   [isTemplate](#istemplate-1)
 *   [named](#named)
     *   [Parameters](#parameters-18)
 *   [serviceEndpoints](#serviceendpoints)
@@ -165,14 +166,6 @@ Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 
 Returns **any**&#x20;
 
-### findService
-
-#### Parameters
-
-*   `filter` **any**&#x20;
-
-Returns **any** service with the highest priority
-
 ### templateContent
 
 #### Parameters
@@ -181,6 +174,10 @@ Returns **any** service with the highest priority
 *   `directoryProperties` **any**&#x20;
 
 Returns **AsyncIterable\<ContentProvider>**&#x20;
+
+### isTemplate
+
+Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
 
 ### property
 
@@ -248,6 +245,14 @@ Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 *   `filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
 
 Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
+
+## InitializationContext
+
+Keeps track of all in flight object creations and loose ends during config initialization.
+
+### Parameters
+
+*   `directory`   (optional, default `"/"`)
 
 ## SystemdJournalRemoteService
 
