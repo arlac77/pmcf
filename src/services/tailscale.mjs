@@ -19,6 +19,8 @@ export class TailscaleService extends Service {
     ]
   };
 
+  static typeDefinition = this;
+
   static {
     addType(TailscaleService);
   }
