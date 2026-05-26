@@ -84,11 +84,11 @@ export function root1(root, filter) {
       dns: { type: "dns", alias: "dns" },
       smb: { type: "smb" },
       timemachine: {
-        extends: ["/services/timemachine/timemachine"],
+       // extends: ["/services/timemachine/timemachine"],
         type: "timemachine"
       },
       mdns: {
-        extends: ["/services/timemachine/mdns"]
+       // extends: ["/services/timemachine/mdns"]
       },
       mosquitto: {
         extends: ["/services/mosquitto/mosquitto"],

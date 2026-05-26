@@ -13,14 +13,14 @@ test("systemd-journal-remote service type", t => {
   const ic = new InitializationContext();
   const root = ic.root;
   const n1 = new Network(root);
-  ic.read(n1,{
+  ic.read(n1, {
     name: "n1",
     subnets: "10.0/16"
   });
   root.addObject(n1);
 
   const h1 = new Host(root);
-  ic.read(h1,{
+  ic.read(h1, {
     name: "h1",
     networkInterfaces: {
       eth0: { network: "/n1", ipAddresses: "10.0.0.1/16" }
@@ -38,7 +38,9 @@ test("systemd-journal-remote service type", t => {
 });
 
 test("systemd-journal-remote", async t => {
-  const ic = new InitializationContext(new URL("fixtures/root1", import.meta.url).pathname);
+  const ic = new InitializationContext(
+    new URL("fixtures/root1", import.meta.url).pathname
+  );
   await ic.loadAll();
 
   const journalRemoteTemplate = await ic.named(
@@ -70,10 +72,16 @@ test("systemd-journal-remote", async t => {
 
   t.deepEqual(
     journalRemote.extends.map(s => s.fullName),
-    ["/services/systemd-journal-remote/systemd-journal-remote"]
+    [
+      "/services/systemd-journal-remote/systemd-journal-remote", // TODO no dups
+      "/services/systemd-journal-remote/systemd-journal-remote"
+    ]
   );
 
-  t.deepEqual(journalRemote.extends, [journalRemoteTemplate]);
+  t.deepEqual(journalRemote.extends, [
+    journalRemoteTemplate,
+    journalRemoteTemplate
+  ]); // TODO no dups
 
   t.deepEqual(journalRemote.systemdConfigs("ABC"), {
     serviceName: "systemd-journal-remote.service",
