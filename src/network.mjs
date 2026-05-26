@@ -82,6 +82,9 @@ export class Network extends Owner {
     this._secretName = value;
   }
 
+  /**
+   * @return {string}
+   */
   get secretName() {
     return this._secretName ?? `${this.name}.password`;
   }
