@@ -1,7 +1,6 @@
 import test from "ava";
 import {
   InitializationContext,
-  Root,
   Network,
   Host,
   SystemdJournalRemoteService,
