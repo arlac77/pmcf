@@ -89,6 +89,7 @@ generates config packages for:
     *   [Parameters](#parameters-16)
 *   [cidrAddresses](#cidraddresses)
     *   [Parameters](#parameters-17)
+*   [secretName](#secretname)
 *   [isTemplate](#istemplate-1)
 *   [named](#named)
     *   [Parameters](#parameters-18)
@@ -328,6 +329,10 @@ Returns **Iterable<[string](https://developer.mozilla.org/docs/Web/JavaScript/Re
 *   `networkAddresses` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[NetworkAddress](#networkaddress)>**&#x20;
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
+
+## secretName
+
+Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
 ## isTemplate
 
