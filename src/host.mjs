@@ -77,7 +77,7 @@ const HostTypeDefinition = {
     },
     architecture: {
       ...string_attribute_writable,
-      values: ["x86", "x86_64", "aarch64", "armv7"]
+      values: ["x86", "x86_64", "aarch64", "armv7", "riscv"]
     },
     replaces: string_set_attribute_writable,
     depends: string_set_attribute_writable,
