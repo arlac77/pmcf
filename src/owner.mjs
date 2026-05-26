@@ -154,10 +154,6 @@ export class Owner extends Base {
     return [...this.hosts].map(host=>host.services).flat();
   }
 
-  locationNamed(name) {
-    return this.typeNamed("location", name);
-  }
-
   get locations() {
     return this.typeList("location");
   }

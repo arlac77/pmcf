@@ -192,7 +192,6 @@ test("directory & name & owner", t => {
   t.is(l1.root, root);
   t.is(l1.owner, root);
   t.is(root.named("/l1"), l1);
-  t.is(root.locationNamed("/l1"), l1);
 
   const h1 = new Host(l1);
   ic.read(h1, { name: "h1" });

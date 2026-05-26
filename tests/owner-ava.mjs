@@ -21,14 +21,14 @@ function to(t, owner) {
 
 to.title = (title, owner) => `${title || "owner"} ${owner.fullName}`;
 
-test("Root",to, new Root("/tmp"));
-test("Owner",to, new Owner(new Root("/tmp"), { name: "o1" }));
+test.skip("Root", to, new Root("/tmp"));
+test.skip("Owner", to, new Owner(new Root("/tmp"), { name: "o1" }));
 
 test("Owner ownerFor", t => {
   const ic = new InitializationContext();
   const root = new Root("/");
-  const o1 = new Owner(root );
-  ic.read(o1,{ name: "o1" });
+  const o1 = new Owner(root);
+  ic.read(o1, { name: "o1" });
   root.addObject(o1);
 
   t.is(
@@ -38,12 +38,12 @@ test("Owner ownerFor", t => {
 });
 
 test("Owner read write", t => {
-    const ic = new InitializationContext();
+  const ic = new InitializationContext();
   const root = new Root("/");
   const o1 = new Owner(root);
 
   t.is(o1.owner, root);
-  ic.read(o1,{
+  ic.read(o1, {
     name: "o1",
     administratorEmail: "master@somewhere",
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"],

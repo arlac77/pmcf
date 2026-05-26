@@ -229,11 +229,11 @@ export class InitializationContext {
 
     if (object.name === undefined && data.name) {
       // TODO
-      //console.log("SET NAME", data.name);
       object.name = data.name;
     }
 
     if (type.extends) {
+      //console.log("READ EXTENDS",data);
       this.read(object, data, type.extends);
       object.materializeExtends();
     }

@@ -23,14 +23,6 @@ export class Location extends Owner {
     return this;
   }
 
-  locationNamed(name) {
-    if (this.isNamed(name)) {
-      return this;
-    }
-
-    return super.locationNamed(name);
-  }
-
   get network() {
     return [...this.typeList("network")][0] || super.network;
   }
