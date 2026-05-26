@@ -56,7 +56,7 @@ test("Network bridges", t => {
   ic.read(n4, { name: "n4" });
   owner.addObject(n4);
 
-  owner.execFinalize();
+  ic.resolveOutstanding();
 
   t.true(n4.bridge.has(n3));
   t.true(n3.bridge.has(n4));
