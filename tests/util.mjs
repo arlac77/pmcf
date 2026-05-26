@@ -64,7 +64,11 @@ async function _assertObject(t, visited, object, expected, path = []) {
           const service = object.services.find(
             service => service.name === name
           );
-          await _assertObject(t, visited, service, sd, [...path, name]);
+          await _assertObject(t, visited, service, sd, [
+            ...path,
+            "services",
+            name
+          ]);
         }
         break;
 
