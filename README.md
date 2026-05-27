@@ -41,77 +41,72 @@ generates config packages for:
 
 ### Table of Contents
 
-- [pmcf](#pmcf)
-  - [Poor mans configuration management](#poor-mans-configuration-management)
-- [API](#api)
-    - [Table of Contents](#table-of-contents)
-  - [Base](#base)
-    - [Parameters](#parameters)
-    - [walkDirections](#walkdirections)
-      - [Parameters](#parameters-1)
-    - [extendedAttribute](#extendedattribute)
-      - [Parameters](#parameters-2)
-    - [propertyIterator](#propertyiterator)
-      - [Parameters](#parameters-3)
-    - [getProperties](#getproperties)
-      - [Parameters](#parameters-4)
-    - [priority](#priority)
-    - [expression](#expression)
-      - [Parameters](#parameters-5)
-    - [templateContent](#templatecontent)
-      - [Parameters](#parameters-6)
-    - [isTemplate](#istemplate)
-    - [property](#property)
-      - [Parameters](#parameters-7)
-    - [expand](#expand)
-      - [Parameters](#parameters-8)
-  - [PortEndpoint](#portendpoint)
-    - [Parameters](#parameters-9)
-    - [port](#port)
-    - [socketAddress](#socketaddress)
-  - [HTTPEndpoint](#httpendpoint)
-    - [Parameters](#parameters-10)
-    - [port](#port-1)
-  - [id](#id)
-  - [SkeletonNetworkInterface](#skeletonnetworkinterface)
-    - [networkAddresses](#networkaddresses)
-      - [Parameters](#parameters-11)
-  - [InitializationContext](#initializationcontext)
-    - [Parameters](#parameters-12)
-  - [SystemdJournalRemoteService](#systemdjournalremoteservice)
-    - [Properties](#properties)
-    - [systemdConfigs](#systemdconfigs)
-      - [Parameters](#parameters-13)
-  - [SystemdJournalUploadService](#systemdjournaluploadservice)
-    - [Properties](#properties-1)
-    - [systemdConfigs](#systemdconfigs-1)
-      - [Parameters](#parameters-14)
-  - [NetworkAddress](#networkaddress)
-    - [Parameters](#parameters-15)
-    - [subnet](#subnet)
-    - [networkInterface](#networkinterface)
-    - [address](#address)
-  - [addresses](#addresses)
-    - [Parameters](#parameters-16)
-  - [cidrAddresses](#cidraddresses)
-    - [Parameters](#parameters-17)
-  - [secretName](#secretname)
-  - [isTemplate](#istemplate-1)
-  - [named](#named)
-    - [Parameters](#parameters-18)
-  - [serviceEndpoints](#serviceendpoints)
-    - [Parameters](#parameters-19)
-  - [domainName](#domainname)
-    - [Parameters](#parameters-20)
-  - [domainFromDominName](#domainfromdominname)
-    - [Parameters](#parameters-21)
-  - [sectionLines](#sectionlines)
-    - [Parameters](#parameters-22)
-  - [asArray](#asarray)
-    - [Parameters](#parameters-23)
-  - [asIterator](#asiterator)
-    - [Parameters](#parameters-24)
-- [install](#install)
+*   [Base](#base)
+    *   [Parameters](#parameters)
+    *   [walkDirections](#walkdirections)
+        *   [Parameters](#parameters-1)
+    *   [extendedAttribute](#extendedattribute)
+        *   [Parameters](#parameters-2)
+    *   [propertyIterator](#propertyiterator)
+        *   [Parameters](#parameters-3)
+    *   [getProperties](#getproperties)
+        *   [Parameters](#parameters-4)
+    *   [priority](#priority)
+    *   [expression](#expression)
+        *   [Parameters](#parameters-5)
+    *   [templateContent](#templatecontent)
+        *   [Parameters](#parameters-6)
+    *   [isTemplate](#istemplate)
+    *   [property](#property)
+        *   [Parameters](#parameters-7)
+    *   [expand](#expand)
+        *   [Parameters](#parameters-8)
+*   [PortEndpoint](#portendpoint)
+    *   [Parameters](#parameters-9)
+    *   [port](#port)
+    *   [socketAddress](#socketaddress)
+*   [HTTPEndpoint](#httpendpoint)
+    *   [Parameters](#parameters-10)
+    *   [port](#port-1)
+*   [id](#id)
+*   [InitializationContext](#initializationcontext)
+    *   [Parameters](#parameters-11)
+*   [SkeletonNetworkInterface](#skeletonnetworkinterface)
+    *   [networkAddresses](#networkaddresses)
+        *   [Parameters](#parameters-12)
+*   [SystemdJournalRemoteService](#systemdjournalremoteservice)
+    *   [Properties](#properties)
+    *   [systemdConfigs](#systemdconfigs)
+        *   [Parameters](#parameters-13)
+*   [SystemdJournalUploadService](#systemdjournaluploadservice)
+    *   [Properties](#properties-1)
+    *   [systemdConfigs](#systemdconfigs-1)
+        *   [Parameters](#parameters-14)
+*   [NetworkAddress](#networkaddress)
+    *   [Parameters](#parameters-15)
+    *   [subnet](#subnet)
+    *   [networkInterface](#networkinterface)
+    *   [address](#address)
+*   [addresses](#addresses)
+    *   [Parameters](#parameters-16)
+*   [cidrAddresses](#cidraddresses)
+    *   [Parameters](#parameters-17)
+*   [secretName](#secretname)
+*   [isTemplate](#istemplate-1)
+*   [named](#named)
+    *   [Parameters](#parameters-18)
+*   [serviceEndpoints](#serviceendpoints)
+    *   [Parameters](#parameters-19)
+*   [domainName](#domainname)
+    *   [Parameters](#parameters-20)
+*   [domainFromDominName](#domainfromdominname)
+    *   [Parameters](#parameters-21)
+*   [sectionLines](#sectionlines)
+    *   [Parameters](#parameters-22)
+*   [asArray](#asarray)
+    *   [Parameters](#parameters-23)
+*   [asIterator](#asiterator)
+    *   [Parameters](#parameters-24)
 
 ## Base
 
@@ -242,6 +237,14 @@ Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 
 Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
+## InitializationContext
+
+Keeps track of all in flight object creations and loose ends during config initialization.
+
+### Parameters
+
+*   `directory`   (optional, default `"/"`)
+
 ## SkeletonNetworkInterface
 
 **Extends ServiceOwner**
@@ -253,14 +256,6 @@ Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 *   `filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
 
 Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
-
-## InitializationContext
-
-Keeps track of all in flight object creations and loose ends during config initialization.
-
-### Parameters
-
-*   `directory`   (optional, default `"/"`)
 
 ## SystemdJournalRemoteService
 
