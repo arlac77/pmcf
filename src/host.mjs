@@ -117,8 +117,8 @@ export class Host extends ServiceOwner {
         const present = this._networkInterfaces.get(name);
 
         if (present) {
-          //console.log("LINK", present.fullName, ni.fullName);
-          present.extends.push(ni);
+          //console.log("LINK", present.fullName, ni.fullName,present.extends);
+          present.extends.add(ni);
         } else {
           this._networkInterfaces.set(name, ni.forOwner(this));
         }
@@ -192,7 +192,9 @@ export class Host extends ServiceOwner {
   }
 
   get derivedPackaging() {
-    return this.extends.reduce((a, c) => a.union(c.packaging), new Set());
+    return this.expand(
+      this.collectFromDirections(["this", "extends"], "_packaging")
+    );
   }
 
   get isTemplate() {
@@ -204,7 +206,11 @@ export class Host extends ServiceOwner {
   }
 
   get model() {
-    return this.extends.find(h => h.isModel);
+    for (const node of this.walkDirections(["this", "extends"])) {
+      if (node.isModel) {
+        return node;
+      }
+    }
   }
 
   set aliases(value) {
@@ -212,7 +218,9 @@ export class Host extends ServiceOwner {
   }
 
   get aliases() {
-    return this.extends.reduce((a, c) => a.union(c.aliases), this._aliases);
+    return this.expand(
+      this.collectFromDirections(["this", "extends"], "_aliases")
+    );
   }
 
   set provides(value) {
@@ -221,7 +229,7 @@ export class Host extends ServiceOwner {
 
   get provides() {
     return this.expand(
-      this.extends.reduce((a, c) => a.union(c.provides), this._provides)
+      this.collectFromDirections(["this", "extends"], "_provides")
     );
   }
 
@@ -231,7 +239,7 @@ export class Host extends ServiceOwner {
 
   get replaces() {
     return this.expand(
-      this.extends.reduce((a, c) => a.union(c.replaces), this._replaces)
+      this.collectFromDirections(["this", "extends"], "_replaces")
     );
   }
 
@@ -241,7 +249,7 @@ export class Host extends ServiceOwner {
 
   get depends() {
     return this.expand(
-      this.extends.reduce((a, c) => a.union(c.depends), this._depends)
+      this.collectFromDirections(["this", "extends"], "_depends")
     );
   }
 

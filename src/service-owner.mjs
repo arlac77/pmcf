@@ -18,7 +18,7 @@ export class ServiceOwner extends Base {
 
         if (present) {
           //console.log("LINK", present.fullName, service.fullName);
-          present.extends.push(service);
+          present.extends.add(service);
         } else {
           this.services.push(service.forOwner(this));
         }

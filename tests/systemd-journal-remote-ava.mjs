@@ -70,17 +70,11 @@ test("systemd-journal-remote", async t => {
   t.is(journalRemote.ServerKeyFile, "/etc/ssl/server.key");
 
   t.deepEqual(
-    journalRemote.extends.map(s => s.fullName),
-    [
-      "/services/systemd-journal-remote/systemd-journal-remote", // TODO no dups
-      "/services/systemd-journal-remote/systemd-journal-remote"
-    ]
+    [...journalRemote.extends].map(s => s.fullName),
+    ["/services/systemd-journal-remote/systemd-journal-remote"]
   );
 
-  t.deepEqual(journalRemote.extends, [
-    journalRemoteTemplate,
-    journalRemoteTemplate
-  ]); // TODO no dups
+  t.deepEqual(journalRemote.extends, new Set([journalRemoteTemplate]));
 
   t.deepEqual(journalRemote.systemdConfigs("ABC"), {
     serviceName: "systemd-journal-remote.service",

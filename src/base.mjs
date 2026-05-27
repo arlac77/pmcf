@@ -64,7 +64,7 @@ export class Base {
   owner;
   description;
   name;
-  extends = [];
+  extends = new Set();
   _tags = new Set();
   _packaging = new Set();
   _directory;
@@ -127,6 +127,15 @@ export class Base {
     return this.owner.addObject(object);
   }
 
+  collectFromDirections(directions = ["this", "extends", "owner"], property) {
+    let collected = new Set();
+    for (const node of this.walkDirections(directions)) {
+      collected = collected.union(node[property]);
+    }
+
+    return collected;
+  }
+
   /**
    * Walk the object graph in some directions and deliver seen nodes.
    * @param {string[]} directions
@@ -166,7 +175,7 @@ export class Base {
   forOwner(owner) {
     if (this.owner !== owner) {
       const newObject = Object.create(this);
-      newObject.extends = [...this.extends];
+      newObject.extends = new Set([...this.extends]);
       newObject.owner = owner;
       return newObject;
     }
@@ -414,7 +423,7 @@ export class Base {
   }
 
   get tags() {
-    return this.extends.reduce((a, c) => a.union(c.tags), this._tags);
+    return this.collectFromDirections(["this", "extends"], "_tags");
   }
 
   set tags(value) {

@@ -74,8 +74,8 @@ async function _assertObject(t, visited, object, expected, path = []) {
 
       case "extends":
         t.deepEqual(
-          object.extends.map(a => a.fullName).sort(),
-          v,
+          [...object.extends].map(a => a.fullName).sort(),
+          [...v],
           `${pathToString(path)}: extends`
         );
         break;
