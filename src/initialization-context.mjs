@@ -233,8 +233,11 @@ export class InitializationContext {
     }
 
     if (type.extends) {
-      //console.log("READ EXTENDS",data);
       this.read(object, data, type.extends);
+    }
+
+    if (data.extends) {
+      //console.log("EXTENDS", object.fullName, data.extends);
       object.materializeExtends();
     }
   }
