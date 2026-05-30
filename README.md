@@ -69,11 +69,11 @@ generates config packages for:
     *   [Parameters](#parameters-10)
     *   [port](#port-1)
 *   [id](#id)
+*   [InitializationContext](#initializationcontext)
+    *   [Parameters](#parameters-11)
 *   [SkeletonNetworkInterface](#skeletonnetworkinterface)
     *   [networkAddresses](#networkaddresses)
-        *   [Parameters](#parameters-11)
-*   [InitializationContext](#initializationcontext)
-    *   [Parameters](#parameters-12)
+        *   [Parameters](#parameters-12)
 *   [SystemdJournalRemoteService](#systemdjournalremoteservice)
     *   [Properties](#properties)
     *   [systemdConfigs](#systemdconfigs)
@@ -237,6 +237,14 @@ Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 
 Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
+## InitializationContext
+
+Keeps track of all in flight object creations and loose ends during config initialization.
+
+### Parameters
+
+*   `directory`   (optional, default `"/"`)
+
 ## SkeletonNetworkInterface
 
 **Extends ServiceOwner**
@@ -248,14 +256,6 @@ Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 *   `filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
 
 Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
-
-## InitializationContext
-
-Keeps track of all in flight object creations and loose ends during config initialization.
-
-### Parameters
-
-*   `directory`   (optional, default `"/"`)
 
 ## SystemdJournalRemoteService
 
