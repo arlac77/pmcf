@@ -459,9 +459,9 @@ export class Host extends ServiceOwner {
 
     await generateKnownHosts(this.owner.hosts, join(dir, "root", ".ssh"));
 
-    console.log([...this.walkDirections(["extends"])].map(e => e.fullName));
+    //console.log([...this.walkDirections(["extends"])].map(e => e.fullName));
 
-    for (const service of this.services) {
+    for (const service of this.allServices) {
       //console.log("SERVICE",service.name);
 
       if (service.systemdConfigs) {

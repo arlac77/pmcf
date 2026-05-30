@@ -3,6 +3,17 @@ import { Base, Service } from "pmcf";
 export class ServiceOwner extends Base {
   services = [];
 
+  get allServices()
+  {
+    return this._allServices();
+  }
+
+  *_allServices() {
+    for (const node of this.walkDirections(["this", "extends"])) {
+      yield* node.services;
+    }
+  }
+
   materializeExtends() {
     super.materializeExtends();
 
@@ -17,9 +28,10 @@ export class ServiceOwner extends Base {
         const present = this.services.find(s => s.name === service.name);
 
         if (present) {
-          //console.log("LINK", present.fullName, service.fullName);
+          //console.log("LINK SERVICE", this.fullName, present.fullName, service.fullName);
           present.extends.add(service);
         } else {
+          //console.log("ADD  SERVICE", this.fullName, service.fullName);
           this.services.push(service.forOwner(this));
         }
       }
