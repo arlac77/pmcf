@@ -43,70 +43,72 @@ generates config packages for:
 
 *   [Base](#base)
     *   [Parameters](#parameters)
-    *   [walkDirections](#walkdirections)
+    *   [unionFromDirections](#unionfromdirections)
         *   [Parameters](#parameters-1)
-    *   [extendedAttribute](#extendedattribute)
+    *   [walkDirections](#walkdirections)
         *   [Parameters](#parameters-2)
-    *   [propertyIterator](#propertyiterator)
+    *   [extendedAttribute](#extendedattribute)
         *   [Parameters](#parameters-3)
-    *   [getProperties](#getproperties)
+    *   [propertyIterator](#propertyiterator)
         *   [Parameters](#parameters-4)
+    *   [getProperties](#getproperties)
+        *   [Parameters](#parameters-5)
     *   [priority](#priority)
     *   [expression](#expression)
-        *   [Parameters](#parameters-5)
-    *   [templateContent](#templatecontent)
         *   [Parameters](#parameters-6)
+    *   [templateContent](#templatecontent)
+        *   [Parameters](#parameters-7)
     *   [isTemplate](#istemplate)
     *   [property](#property)
-        *   [Parameters](#parameters-7)
-    *   [expand](#expand)
         *   [Parameters](#parameters-8)
+    *   [expand](#expand)
+        *   [Parameters](#parameters-9)
 *   [PortEndpoint](#portendpoint)
-    *   [Parameters](#parameters-9)
+    *   [Parameters](#parameters-10)
     *   [port](#port)
     *   [socketAddress](#socketaddress)
 *   [HTTPEndpoint](#httpendpoint)
-    *   [Parameters](#parameters-10)
+    *   [Parameters](#parameters-11)
     *   [port](#port-1)
 *   [id](#id)
-*   [InitializationContext](#initializationcontext)
-    *   [Parameters](#parameters-11)
 *   [SkeletonNetworkInterface](#skeletonnetworkinterface)
     *   [networkAddresses](#networkaddresses)
         *   [Parameters](#parameters-12)
+*   [InitializationContext](#initializationcontext)
+    *   [Parameters](#parameters-13)
 *   [SystemdJournalRemoteService](#systemdjournalremoteservice)
     *   [Properties](#properties)
     *   [systemdConfigs](#systemdconfigs)
-        *   [Parameters](#parameters-13)
+        *   [Parameters](#parameters-14)
 *   [SystemdJournalUploadService](#systemdjournaluploadservice)
     *   [Properties](#properties-1)
     *   [systemdConfigs](#systemdconfigs-1)
-        *   [Parameters](#parameters-14)
+        *   [Parameters](#parameters-15)
 *   [NetworkAddress](#networkaddress)
-    *   [Parameters](#parameters-15)
+    *   [Parameters](#parameters-16)
     *   [subnet](#subnet)
     *   [networkInterface](#networkinterface)
     *   [address](#address)
 *   [addresses](#addresses)
-    *   [Parameters](#parameters-16)
-*   [cidrAddresses](#cidraddresses)
     *   [Parameters](#parameters-17)
+*   [cidrAddresses](#cidraddresses)
+    *   [Parameters](#parameters-18)
 *   [secretName](#secretname)
 *   [isTemplate](#istemplate-1)
 *   [named](#named)
-    *   [Parameters](#parameters-18)
-*   [serviceEndpoints](#serviceendpoints)
     *   [Parameters](#parameters-19)
-*   [domainName](#domainname)
+*   [serviceEndpoints](#serviceendpoints)
     *   [Parameters](#parameters-20)
-*   [domainFromDominName](#domainfromdominname)
+*   [domainName](#domainname)
     *   [Parameters](#parameters-21)
-*   [sectionLines](#sectionlines)
+*   [domainFromDominName](#domainfromdominname)
     *   [Parameters](#parameters-22)
-*   [asArray](#asarray)
+*   [sectionLines](#sectionlines)
     *   [Parameters](#parameters-23)
-*   [asIterator](#asiterator)
+*   [asArray](#asarray)
     *   [Parameters](#parameters-24)
+*   [asIterator](#asiterator)
+    *   [Parameters](#parameters-25)
 
 ## Base
 
@@ -117,6 +119,17 @@ properties: use defined values to support attribute value definitions
 
 *   `owner` **[Base](#base)**&#x20;
 *   `data` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?**&#x20;
+
+### unionFromDirections
+
+Deliver union set of all property values.
+
+#### Parameters
+
+*   `directions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**  (optional, default `["this","extends","owner"]`)
+*   `property` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+
+Returns **[Set](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set)\<any>**&#x20;
 
 ### walkDirections
 
@@ -237,14 +250,6 @@ Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 
 Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
-## InitializationContext
-
-Keeps track of all in flight object creations and loose ends during config initialization.
-
-### Parameters
-
-*   `directory`   (optional, default `"/"`)
-
 ## SkeletonNetworkInterface
 
 **Extends ServiceOwner**
@@ -256,6 +261,14 @@ Keeps track of all in flight object creations and loose ends during config initi
 *   `filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
 
 Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
+
+## InitializationContext
+
+Keeps track of all in flight object creations and loose ends during config initialization.
+
+### Parameters
+
+*   `directory`   (optional, default `"/"`)
 
 ## SystemdJournalRemoteService
 
