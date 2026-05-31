@@ -127,7 +127,13 @@ export class Base {
     return this.owner.addObject(object);
   }
 
-  collectFromDirections(directions = ["this", "extends", "owner"], property) {
+  /**
+   * Deliver union set of all property values.
+   * @param {string[]} directions 
+   * @param {string} property 
+   * @returns {Set<any>}
+   */
+  unionFromDirections(directions = ["this", "extends", "owner"], property) {
     let collected = new Set();
     for (const node of this.walkDirections(directions)) {
       collected = collected.union(node[property]);
@@ -423,7 +429,7 @@ export class Base {
   }
 
   get tags() {
-    return this.collectFromDirections(["this", "extends"], "_tags");
+    return this.unionFromDirections(["this", "extends"], "_tags");
   }
 
   set tags(value) {

@@ -193,7 +193,7 @@ export class Host extends ServiceOwner {
 
   get derivedPackaging() {
     return this.expand(
-      this.collectFromDirections(["this", "extends"], "_packaging")
+      this.unionFromDirections(["this", "extends"], "_packaging")
     );
   }
 
@@ -219,7 +219,7 @@ export class Host extends ServiceOwner {
 
   get aliases() {
     return this.expand(
-      this.collectFromDirections(["this", "extends"], "_aliases")
+      this.unionFromDirections(["this", "extends"], "_aliases")
     );
   }
 
@@ -229,7 +229,7 @@ export class Host extends ServiceOwner {
 
   get provides() {
     return this.expand(
-      this.collectFromDirections(["this", "extends"], "_provides")
+      this.unionFromDirections(["this", "extends"], "_provides")
     );
   }
 
@@ -239,7 +239,7 @@ export class Host extends ServiceOwner {
 
   get replaces() {
     return this.expand(
-      this.collectFromDirections(["this", "extends"], "_replaces")
+      this.unionFromDirections(["this", "extends"], "_replaces")
     );
   }
 
@@ -249,7 +249,7 @@ export class Host extends ServiceOwner {
 
   get depends() {
     return this.expand(
-      this.collectFromDirections(["this", "extends"], "_depends")
+      this.unionFromDirections(["this", "extends"], "_depends")
     );
   }
 
