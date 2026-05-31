@@ -129,11 +129,11 @@ export class Base {
 
   /**
    * Deliver union set of all property values.
-   * @param {string[]} directions 
-   * @param {string} property 
+   * @param {string[]} directions
+   * @param {string} property
    * @returns {Set<any>}
    */
-  unionFromDirections(directions = ["this", "extends", "owner"], property) {
+  unionFromDirections(directions, property) {
     let collected = new Set();
     for (const node of this.walkDirections(directions)) {
       collected = collected.union(node[property]);
