@@ -73,6 +73,7 @@ const SystemdResolvedServiceTypeDefinition = {
     }*/
   },
   service: {
+    extends: ["dns","mdns","llmnr"],
     systemdService: "systemd-resolved.service"
   }
 };
