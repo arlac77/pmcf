@@ -191,6 +191,19 @@ export class InitializationContext {
       Object.assign(object._properties, data.properties);
     }
 
+    this._read(object, data, type);
+
+    if (data.extends) {
+      //console.log("EXTENDS", type.name, object.fullName, data.extends);
+      object.materializeExtends();
+    }
+  }
+
+  _read(object, data, type = object.constructor.typeDefinition) {
+    if (type.extends) {
+      this._read(object, data, type.extends);
+    }
+
     for (const [path, attribute] of attributeIterator(type.attributes)) {
       if (attribute.writable) {
         const name = path.join(".");
@@ -224,20 +237,6 @@ export class InitializationContext {
           }
         }
         this.instantiateAndAssign(object, name, attribute, value);
-      }
-    }
-
-    if (object.name === undefined && data.name) {
-      // TODO
-      object.name = data.name;
-    }
-
-    if (type.extends) {
-      this.read(object, data, type.extends);
-
-      if (data.extends) {
-        //console.log("EXTENDS", type.name, object.fullName, data.extends);
-        object.materializeExtends();
       }
     }
   }
