@@ -94,6 +94,6 @@ export class WLANNetworkInterface extends EthernetNetworkInterface {
       ]
     );
 
-    packageData.properties.depends.push("iwd", "impala");
+    packageData.properties.optional.push("iwd", "impala");
   }
 }

@@ -100,6 +100,7 @@ export class Host extends ServiceOwner {
   _provides = new Set();
   _replaces = new Set();
   _depends = new Set();
+  _optional = new Set();
   _os;
   _distribution;
   _deployment;
@@ -116,7 +117,7 @@ export class Host extends ServiceOwner {
       for (const [name, service] of host.services) {
         const present = this._services.get(name);
         if (present) {
-         /* console.log(
+          /* console.log(
             "LINK",
             present.fullName,
             service.fullName,
@@ -265,6 +266,16 @@ export class Host extends ServiceOwner {
   get depends() {
     return this.expand(
       this.unionFromDirections(["this", "extends"], "_depends")
+    );
+  }
+
+  set optional(value) {
+    this._optional = union(value, this._optional);
+  }
+
+  get optional() {
+    return this.expand(
+      this.unionFromDirections(["this", "extends"], "_optional")
     );
   }
 
@@ -461,6 +472,7 @@ export class Host extends ServiceOwner {
       provides: [...this.provides],
       replaces: [...this.replaces],
       depends: [...this.depends],
+      optional: [...this.optional],
       backup: "root/.ssh/known_hosts"
     });
 
