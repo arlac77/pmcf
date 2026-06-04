@@ -39,6 +39,7 @@ export class WLANNetworkInterface extends EthernetNetworkInterface {
   _ssid;
   _psk;
   _secretName;
+
   get kind() {
     return WLANNetworkInterfaceTypeDefinition.name;
   }
@@ -93,6 +94,6 @@ export class WLANNetworkInterface extends EthernetNetworkInterface {
       ]
     );
 
-    packageData.properties.requires.push("iwd", "impala");
+    packageData.properties.depends.push("iwd", "impala");
   }
 }

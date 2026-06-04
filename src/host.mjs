@@ -460,6 +460,7 @@ export class Host extends ServiceOwner {
       ],
       provides: [...this.provides],
       replaces: [...this.replaces],
+      depends: [...this.depends],
       backup: "root/.ssh/known_hosts"
     });
 
