@@ -113,6 +113,21 @@ export class Host extends ServiceOwner {
     super.materializeExtends();
 
     for (const host of this.walkDirections(["extends"])) {
+      for (const [name, service] of host.services) {
+        const present = this._services.get(name);
+        if (present) {
+         /* console.log(
+            "LINK",
+            present.fullName,
+            service.fullName,
+            present.extends
+          );*/
+          present.extends.add(service);
+        } else {
+          this._services.set(name, service.forOwner(this));
+        }
+      }
+
       for (const [name, ni] of host.networkInterfaces) {
         const present = this._networkInterfaces.get(name);
 

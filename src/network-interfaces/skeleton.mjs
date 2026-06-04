@@ -1,4 +1,5 @@
 import { join } from "node:path";
+import { AggregatedMap } from "aggregated-map";
 import { writeLines, sectionLines } from "../utils.mjs";
 import { NetworkAddress, Host, cidrAddresses } from "pmcf";
 import { ServiceOwner } from "../service-owner.mjs";
@@ -23,10 +24,9 @@ export class SkeletonNetworkInterface extends ServiceOwner {
     }
   }
 
-  get aggregatedServices() {
-    return this.host
-      ? [...this.services, ...this.host.services]
-      : this.services;
+  get services()
+  {
+    return new AggregatedMap([super.services, this.owner.services]);
   }
 
   get hosts() {

@@ -91,7 +91,7 @@ export function root1(root, filter) {
        // extends: ["/services/timemachine/mdns"]
       },
       mosquitto: {
-        extends: ["/services/mosquitto/mosquitto"],
+       // extends: ["/services/mosquitto/mosquitto"],
         type: "mosquitto",
         alias: "mqtt",
         port: 1883,
@@ -100,7 +100,7 @@ export function root1(root, filter) {
         acl_file: "/etc/mosquitto/acl"
       },
       openldap: {
-        extends: ["/services/openldap/openldap"],
+      //  extends: ["/services/openldap/openldap"],
         type: "openldap",
         alias: "ldap",
         uri: "ldap://",

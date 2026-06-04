@@ -194,7 +194,7 @@ export class InitializationContext {
     this._read(object, data, type);
 
     if (data.extends) {
-      //console.log("EXTENDS", type.name, object.fullName, data.extends);
+      console.log("EXTENDS", type.name, object.fullName); // data.extends);
       object.materializeExtends();
     }
   }
@@ -237,6 +237,10 @@ export class InitializationContext {
           }
         }
         this.instantiateAndAssign(object, name, attribute, value);
+
+        /*if (name === "alias" && value) {
+          console.log("READ ALIAS", object.fullName, object.alias, value);
+        }*/
       }
     }
   }
@@ -264,10 +268,6 @@ export class InitializationContext {
 
     const object = this.typeFactory(type, owner, data);
     this.root.addTypeObject(type.clazz.typeName, name, object);
-
-    /*if(object.name === undefined || object.name.length === 0) {
-      throw "NO name";
-    }*/
 
     return object;
   }

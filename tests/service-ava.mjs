@@ -29,11 +29,18 @@ function setup() {
 
   root.addObject(l1);
 
-  return { ic, root, n1, l1 };
+  const dns = new Service(root);
+  ic.read(dns, {
+    name: "dns",
+    weight: 5,
+    priority: 3
+  });
+
+  return { ic, root, n1, l1, dns };
 }
 
 test("Service basics", t => {
-  const { ic, root, l1 } = setup();
+  const { ic, l1 } = setup();
 
   const h1 = new Host(l1);
   ic.read(h1, {
@@ -55,12 +62,14 @@ test("Service basics", t => {
 
   const s1 = new Service(h1);
   ic.read(s1, {
+    extends: ["/dns"],
     name: "dns",
     weight: 5,
     priority: 3,
     alias: "primary-dns"
   });
-  h1.services.push(s1);
+
+  h1.services = s1;
 
   t.deepEqual(
     s1.endpoints(e => e.family === "IPv4"),
@@ -116,11 +125,8 @@ test("Service basics", t => {
   );
 
   t.is(h1.expression("services[types[dns]][0]"), s1);
-  t.is(h1.expression("aggregatedServices[types[dns]][0]"), s1);
   t.is(
-    h1.networkInterfaces
-      .get("eth0")
-      .expression("aggregatedServices[types[dns]][0]"),
+    h1.networkInterfaces.get("eth0").expression("services[types[dns]][0]"),
     s1
   );
 
@@ -131,7 +137,7 @@ test("Service basics", t => {
     networkInterfaces: { eth0: { ipAddresses: "10.0.0.2" } }
   });
   const s2 = s1.forOwner(h2);
-  h2.services.push(s2);
+  h2.services.set(s2.name, s2);
   t.is(s2.name, "dns");
   t.is(s2.type, "dns");
   t.deepEqual(s2.types, new Set(["dns"]));
@@ -156,8 +162,11 @@ test("Service basics", t => {
 
   t.is([...h2.expression("services[types[dns]]")][0], s2);
 
-  t.deepEqual(Array.from(l1.expression("services[types[dns]]")), [s1]);
+  t.deepEqual(Array.from(l1.services.values()), [s1]);
+
+  t.deepEqual(Array.from(l1.expression("services[]")), [s1]);
   t.deepEqual(Array.from(l1.expression('services[name="dns"]')), [s1]);
+  t.deepEqual(Array.from(l1.expression("services[types[dns]]")), [s1]);
   t.deepEqual(Array.from(l1.expression('services[types[dns] && name="dns"]')), [
     s1
   ]);
@@ -248,9 +257,9 @@ test("Service load", t => {
   });
   root.addObject(h1);
 
-  t.is(h1.services[0].name, "dns");
+  t.is(h1.services.get("dns").name, "dns");
 
-  t.is(h1.typeNamed("service", "dns"), h1.services[0]);
+  t.is(h1.typeNamed("service", "dns"), h1.services.get("dns"));
 });
 
 test("Service owner", t => {
@@ -314,7 +323,7 @@ test("Service type extension", t => {
   });
   root.addObject(h1);
 
-  const s0 = h1.services[0];
+  const s0 = h1.services.get("bind");
 
   t.is(s0.name, "bind");
   t.deepEqual(s0.types, new Set(["bind", "dns"]));

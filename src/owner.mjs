@@ -151,7 +151,7 @@ export class Owner extends Base {
 
   get services()
   {
-    return [...this.hosts].map(host=>host.services).flat();
+    return [...this.hosts].map(host=>Array.from(host.services.values())).flat();
   }
 
   get locations() {

@@ -24,6 +24,7 @@ import {
   description_attribute_writable,
   boolean_attribute_writable
 } from "pacc";
+import { AggregatedMap } from "aggregated-map";
 import { union } from "./utils.mjs";
 
 /**
@@ -36,15 +37,15 @@ export class Base {
   static key = "name";
   static priority = 0;
   static attributes = {
-    owner: { ...default_attribute, type: "base" },
-    type: string_attribute,
     name: name_attribute_writable,
     description: description_attribute_writable,
     priority: number_attribute_writable,
     directory: string_attribute_writable,
     packaging: string_attribute_writable,
     disabled: boolean_attribute_writable,
-    tags: string_set_attribute_writable
+    tags: string_set_attribute_writable,
+    owner: { ...default_attribute, type: "base" },
+    type: string_attribute
   };
 
   static typeDefinition = this;
@@ -128,6 +129,18 @@ export class Base {
   }
 
   /**
+   * Deliver AggregatedMap of all property Maps.
+   * @param {string[]} directions
+   * @param {string} property
+   * @returns {Map<any,any>}
+   */
+  mapFromDirections(directions, property) {
+    return new AggregatedMap(
+      [...this.walkDirections(directions)].map(node => node[property])
+    );
+  }
+
+  /**
    * Deliver union set of all property values.
    * @param {string[]} directions
    * @param {string} property
@@ -141,6 +154,11 @@ export class Base {
 
     return collected;
   }
+
+  /*get this()
+  {
+    return [this];
+  }*/
 
   /**
    * Walk the object graph in some directions and deliver seen nodes.
@@ -168,10 +186,12 @@ export class Base {
         if (value) {
           if (value[Symbol.iterator]) {
             for (const node of value) {
-              yield* node._walkDirections(directions, true, seen);
+              yield node;
+              yield* node._walkDirections(directions, false, seen);
             }
           } else {
-            yield* value._walkDirections(directions, true, seen);
+            yield value;
+            yield* value._walkDirections(directions, false, seen);
           }
         }
       }
@@ -327,11 +347,6 @@ export class Base {
 
   get services() {
     return this.owner?.services || [];
-  }
-
-  // TODO get rid of
-  get aggregatedServices() {
-    return this.services;
   }
 
   set directory(directory) {

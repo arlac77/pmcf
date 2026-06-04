@@ -1,20 +1,26 @@
 import { Base, Service } from "pmcf";
 
 export class ServiceOwner extends Base {
-  services = [];
+  _services = new Map();
 
-  get allServices()
+  set services(service) {
+    this._services.set(service.name, service);
+  }
+
+  get services() {
+    return this.mapFromDirections(["this", "extends"], "_services");
+  }
+
+  addObject(object)
   {
-    return this._allServices();
-  }
-
-  *_allServices() {
-    for (const node of this.walkDirections(["this", "extends"])) {
-      yield* node.services;
+    if(object instanceof Service) {
+      this._services.set(object.name, object);
     }
+
+    super.addObject(object);
   }
 
-  materializeExtends() {
+  _materializeExtends() {
     super.materializeExtends();
 
     for (const serviceOwner of this.walkDirections(["extends"])) {
@@ -24,27 +30,25 @@ export class ServiceOwner extends Base {
         serviceOwner.fullName
       );*/
 
-      for (const service of serviceOwner.services) {
-        const present = this.services.find(s => s.name === service.name);
+      for (const service of serviceOwner.services.values()) {
+        const present = this.services.get(service.name);
 
         if (present) {
           //console.log("LINK SERVICE", this.fullName, present.fullName, service.fullName);
           present.extends.add(service);
         } else {
           //console.log("ADD  SERVICE", this.fullName, service.fullName);
-          this.services.push(service.forOwner(this));
+
+          const s = service.forOwner(this);
+          this._services.set(s.name, s);
         }
       }
-
-      /*for (const service of this.services) {
-        service.materializeExtends();
-      }*/
     }
   }
 
   _traverse(...args) {
     if (super._traverse(...args)) {
-      for (const service of this.services) {
+      for (const service of this._services.values()) {
         service._traverse(...args);
       }
 
@@ -55,7 +59,7 @@ export class ServiceOwner extends Base {
 
   typeNamed(typeName, name) {
     if (typeName === "service") {
-      const service = this.services.find(s => s.name === name);
+      const service = this.services.get(name);
       if (service) {
         return service;
       }
@@ -73,6 +77,6 @@ export class ServiceOwner extends Base {
    * @returns {Service|undefined}
    */
   named(name) {
-    return this.services.find(s => s.name === name);
+    return this.services.get(name);
   }
 }

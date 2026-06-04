@@ -178,7 +178,7 @@ export class Cluster extends Host {
           for (const member of this.members) {
             const memberService = Array.from(
               member.expression(
-                `aggregatedServices[types[${endpoint.type}]][0]`
+                `services[types[${endpoint.type}]][0]`
               )
             );
 
