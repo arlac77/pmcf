@@ -489,13 +489,13 @@ export class Host extends ServiceOwner {
 
     //console.log([...this.walkDirections(["extends"])].map(e => e.fullName));
 
-    for (const service of this.services) {
-      //console.log("SERVICE",service.name);
-
+    for (const [name, service] of this.services) {
       if (service.systemdConfigs) {
         for (const { serviceName, configFileName, content } of asArray(
           service.expand(service.systemdConfigs(this.name))
         )) {
+          console.log("SERVICE", service.fullName, configFileName);
+
           await writeLines(dir, configFileName, content);
 
           addHook(
