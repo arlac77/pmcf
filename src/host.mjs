@@ -476,7 +476,7 @@ export class Host extends ServiceOwner {
 
     //console.log([...this.walkDirections(["extends"])].map(e => e.fullName));
 
-    for (const service of this.allServices) {
+    for (const service of this.services) {
       //console.log("SERVICE",service.name);
 
       if (service.systemdConfigs) {
