@@ -194,7 +194,7 @@ export class InitializationContext {
     this._read(object, data, type);
 
     if (data.extends) {
-      console.log("EXTENDS", type.name, object.fullName); // data.extends);
+      //console.log("EXTENDS", type.name, object.fullName); // data.extends);
       object.materializeExtends();
     }
   }
