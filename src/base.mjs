@@ -155,31 +155,24 @@ export class Base {
     return collected;
   }
 
-  /*get this()
-  {
-    return [this];
-  }*/
-
   /**
    * Walk the object graph in some directions and deliver seen nodes.
    * @param {string[]} directions
    * @return {Iterable<Base>}
    */
   *walkDirections(directions = ["this", "extends", "owner"]) {
-    yield* this._walkDirections(
-      directions,
-      directions.indexOf("this") >= 0,
-      new Set()
-    );
+    if (directions.indexOf("this") >= 0) {
+      yield this;
+      directions = directions.filter(d => d != "this");
+    }
+
+    yield* this._walkDirections(directions, new Set());
   }
 
-  *_walkDirections(directions, withThis, seen) {
+  *_walkDirections(directions, seen) {
     if (!seen.has(this)) {
       seen.add(this);
 
-      if (withThis) {
-        yield this;
-      }
       for (const direction of directions) {
         const value = this[direction];
 
@@ -187,11 +180,11 @@ export class Base {
           if (value[Symbol.iterator]) {
             for (const node of value) {
               yield node;
-              yield* node._walkDirections(directions, false, seen);
+              yield* node._walkDirections(directions, seen);
             }
           } else {
             yield value;
-            yield* value._walkDirections(directions, false, seen);
+            yield* value._walkDirections(directions, seen);
           }
         }
       }
