@@ -55,14 +55,14 @@ generates config packages for:
         *   [Parameters](#parameters-5)
     *   [getProperties](#getproperties)
         *   [Parameters](#parameters-6)
+    *   [property](#property)
+        *   [Parameters](#parameters-7)
     *   [priority](#priority)
     *   [expression](#expression)
-        *   [Parameters](#parameters-7)
-    *   [templateContent](#templatecontent)
         *   [Parameters](#parameters-8)
-    *   [isTemplate](#istemplate)
-    *   [property](#property)
+    *   [templateContent](#templatecontent)
         *   [Parameters](#parameters-9)
+    *   [isTemplate](#istemplate)
     *   [expand](#expand)
         *   [Parameters](#parameters-10)
 *   [PortEndpoint](#portendpoint)
@@ -182,6 +182,14 @@ Retrive attribute values from an object.
 
 Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** values
 
+### property
+
+#### Parameters
+
+*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+
+Returns **any**&#x20;
+
 ### priority
 
 Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
@@ -207,14 +215,6 @@ Returns **AsyncIterable\<ContentProvider>**&#x20;
 ### isTemplate
 
 Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
-
-### property
-
-#### Parameters
-
-*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
-
-Returns **any**&#x20;
 
 ### expand
 
