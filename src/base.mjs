@@ -278,10 +278,6 @@ export class Base {
     for (const node of this.walkDirections(["this", "extends", "owner"])) {
       const value = node._properties?.[name];
 
-      if (name !== "priority") {
-        console.log("property", name, value);
-      }
-
       if (value !== undefined) {
         return this.expand(value);
       }

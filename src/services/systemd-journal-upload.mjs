@@ -69,6 +69,7 @@ export class SystemdJournalUploadService extends Service {
    * @returns {Object}
    */
   systemdConfigs(name) {
+    console.log("PROPS",this.expand(this.getProperties(filterConfigurable)));
     return {
       serviceName: this.systemdService,
       configFileName: `etc/systemd/journal-upload.conf.d/${name}.conf`,
