@@ -265,6 +265,29 @@ export class Base {
     return Object.fromEntries(this.propertyIterator(filter));
   }
 
+  get properties() {
+    return this._properties;
+  }
+
+  /**
+   *
+   * @param {string} name
+   * @returns {any}
+   */
+  property(name) {
+    for (const node of this.walkDirections(["this", "extends", "owner"])) {
+      const value = node._properties?.[name];
+
+      if (name !== "priority") {
+        console.log("property", name, value);
+      }
+
+      if (value !== undefined) {
+        return this.expand(value);
+      }
+    }
+  }
+
   get root() {
     return this.owner.root;
   }
@@ -457,24 +480,6 @@ export class Base {
     }
 
     return globals[name];
-  }
-
-  get properties() {
-    return this._properties;
-  }
-
-  /**
-   *
-   * @param {string} name
-   * @returns {any}
-   */
-  property(name) {
-    for (const node of this.walkDirections(["this", "extends", "owner"])) {
-      const value = node._properties?.[name];
-      if (value !== undefined) {
-        return this.expand(value);
-      }
-    }
   }
 
   /**
