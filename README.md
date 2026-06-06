@@ -49,20 +49,20 @@ generates config packages for:
         *   [Parameters](#parameters-2)
     *   [walkDirections](#walkdirections)
         *   [Parameters](#parameters-3)
-    *   [extendedAttribute](#extendedattribute)
+    *   [attribute](#attribute)
         *   [Parameters](#parameters-4)
-    *   [propertyIterator](#propertyiterator)
+    *   [attributeIterator](#attributeiterator)
         *   [Parameters](#parameters-5)
-    *   [getProperties](#getproperties)
+    *   [getAttributes](#getattributes)
         *   [Parameters](#parameters-6)
+    *   [property](#property)
+        *   [Parameters](#parameters-7)
     *   [priority](#priority)
     *   [expression](#expression)
-        *   [Parameters](#parameters-7)
-    *   [templateContent](#templatecontent)
         *   [Parameters](#parameters-8)
-    *   [isTemplate](#istemplate)
-    *   [property](#property)
+    *   [templateContent](#templatecontent)
         *   [Parameters](#parameters-9)
+    *   [isTemplate](#istemplate)
     *   [expand](#expand)
         *   [Parameters](#parameters-10)
 *   [PortEndpoint](#portendpoint)
@@ -114,7 +114,7 @@ generates config packages for:
 
 ## Base
 
-attributes: essential values
+attributes: as declared in the types
 properties: use defined values to support attribute value definitions
 
 ### Parameters
@@ -154,7 +154,7 @@ Walk the object graph in some directions and deliver seen nodes.
 
 Returns **Iterable<[Base](#base)>**&#x20;
 
-### extendedAttribute
+### attribute
 
 #### Parameters
 
@@ -162,7 +162,7 @@ Returns **Iterable<[Base](#base)>**&#x20;
 
 Returns **any**&#x20;
 
-### propertyIterator
+### attributeIterator
 
 Retrive attribute values from an object.
 
@@ -172,7 +172,7 @@ Retrive attribute values from an object.
 
 Returns **Iterable<\[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any]>** values
 
-### getProperties
+### getAttributes
 
 Retrive attribute values from an object.
 
@@ -181,6 +181,14 @@ Retrive attribute values from an object.
 *   `filter` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?**  (optional, default `filterPublic`)
 
 Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** values
+
+### property
+
+#### Parameters
+
+*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+
+Returns **any**&#x20;
 
 ### priority
 
@@ -207,14 +215,6 @@ Returns **AsyncIterable\<ContentProvider>**&#x20;
 ### isTemplate
 
 Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
-
-### property
-
-#### Parameters
-
-*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
-
-Returns **any**&#x20;
 
 ### expand
 
