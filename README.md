@@ -49,11 +49,11 @@ generates config packages for:
         *   [Parameters](#parameters-2)
     *   [walkDirections](#walkdirections)
         *   [Parameters](#parameters-3)
-    *   [extendedAttribute](#extendedattribute)
+    *   [attribute](#attribute)
         *   [Parameters](#parameters-4)
-    *   [propertyIterator](#propertyiterator)
+    *   [attributeIterator](#attributeiterator)
         *   [Parameters](#parameters-5)
-    *   [getProperties](#getproperties)
+    *   [getAttributes](#getattributes)
         *   [Parameters](#parameters-6)
     *   [property](#property)
         *   [Parameters](#parameters-7)
@@ -114,7 +114,7 @@ generates config packages for:
 
 ## Base
 
-attributes: essential values
+attributes: as declared in the types
 properties: use defined values to support attribute value definitions
 
 ### Parameters
@@ -154,7 +154,7 @@ Walk the object graph in some directions and deliver seen nodes.
 
 Returns **Iterable<[Base](#base)>**&#x20;
 
-### extendedAttribute
+### attribute
 
 #### Parameters
 
@@ -162,7 +162,7 @@ Returns **Iterable<[Base](#base)>**&#x20;
 
 Returns **any**&#x20;
 
-### propertyIterator
+### attributeIterator
 
 Retrive attribute values from an object.
 
@@ -172,7 +172,7 @@ Retrive attribute values from an object.
 
 Returns **Iterable<\[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any]>** values
 
-### getProperties
+### getAttributes
 
 Retrive attribute values from an object.
 
