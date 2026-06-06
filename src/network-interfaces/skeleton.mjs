@@ -59,7 +59,7 @@ export class SkeletonNetworkInterface extends ServiceOwner {
   }
 
   get network() {
-    return this.extendedAttribute("_network") ?? this.host?.network;
+    return this.attribute("_network") ?? this.host?.network;
   }
 
   set network(network) {

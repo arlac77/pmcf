@@ -62,7 +62,7 @@ export class InfluxdbService extends Service {
     await writeLines(
       join(dir, "etc", "influxdb"),
       "config.yml",
-      setionLinesFromPropertyIterator(this.propertyIterator(filterConfigurable))
+      setionLinesFromPropertyIterator(this.attributeIterator(filterConfigurable))
     );
 
     yield packageData;

@@ -107,12 +107,12 @@ export class SystemdResolvedService extends ExtraSourceService {
     return {
       serviceName: this.systemdService,
       configFileName: `etc/systemd/resolved.conf.d/${name}.conf`,
-      //content: [...setionLinesFromPropertyIterator(this.propertyIterator( filterConfigurable)), "A=1"]
+      //content: [...setionLinesFromPropertyIterator(this.attributeIterator( filterConfigurable)), "A=1"]
       content: sectionLines("Resolve", {
         DNS: serviceEndpoints(this, options(300, 399, 4)),
         FallbackDNS: serviceEndpoints(this, options(100, 199, 4)),
         MulticastDNS: yesno(this.network.multicastDNS),
-        ...this.getProperties(filterConfigurable)
+        ...this.getAttributes(filterConfigurable)
       })
     };
   }

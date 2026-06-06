@@ -63,7 +63,7 @@ export class SystemdTimesyncdService extends ExtraSourceService {
       content: sectionLines("Time", {
         NTP: serviceEndpoints(this, options(300, 399)),
         FallbackNTP: serviceEndpoints(this, options(100, 199)),
-        ...this.getProperties(filterConfigurable)
+        ...this.getAttributes(filterConfigurable)
       })
     };
   }

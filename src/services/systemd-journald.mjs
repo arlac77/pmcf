@@ -127,7 +127,7 @@ export class SystemdJournaldService extends Service {
     return {
       serviceName: this.systemdService,
       configFileName: `etc/systemd/journal.conf.d/${name}.conf`,
-      content: sectionLines("Journal", this.getProperties(filterConfigurable))
+      content: sectionLines("Journal", this.getAttributes(filterConfigurable))
     };
   }
 }

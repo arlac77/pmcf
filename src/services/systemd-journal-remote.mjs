@@ -107,7 +107,7 @@ export class SystemdJournalRemoteService extends Service {
     return {
       serviceName: this.systemdService,
       configFileName: `etc/systemd/journal-remote.conf.d/${name}.conf`,
-      content: sectionLines("Remote", this.getProperties(filterConfigurable))
+      content: sectionLines("Remote", this.getAttributes(filterConfigurable))
     };
   }
 }

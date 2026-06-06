@@ -213,7 +213,7 @@ export class Service extends Base {
   }
 
   get alias() {
-    return this.extendedAttribute("_alias");
+    return this.attribute("_alias");
   }
 
   set port(value) {
@@ -221,7 +221,7 @@ export class Service extends Base {
   }
 
   get port() {
-    return this.extendedAttribute("_port") ?? serviceTypeEndpoints(ServiceTypes[this.type])[0]?.port;
+    return this.attribute("_port") ?? serviceTypeEndpoints(ServiceTypes[this.type])[0]?.port;
   }
 
   set weight(value) {
@@ -229,7 +229,7 @@ export class Service extends Base {
   }
 
   get weight() {
-    return this.extendedAttribute("_weight") ?? this.owner.weight ?? 1;
+    return this.attribute("_weight") ?? this.owner.weight ?? 1;
   }
 
   set type(value) {
@@ -237,7 +237,7 @@ export class Service extends Base {
   }
 
   get type() {
-    return this.extendedAttribute("_type") ?? this.name;
+    return this.attribute("_type") ?? this.name;
   }
 
   get types() {
@@ -246,7 +246,7 @@ export class Service extends Base {
 
   get systemdService() {
     return (
-      this.extendedAttribute("_systemdService") ??
+      this.attribute("_systemdService") ??
       ServiceTypes[this.type]?.systemdService
     );
   }

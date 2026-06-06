@@ -105,10 +105,10 @@ export function root1(root, filter) {
         alias: "ldap",
         uri: "ldap://",
         properties: {
-          datadir: "/var/lib/openldap",
-          rundir: "/run/openldap",
-          rootpw: "{SHA}XXXX",
-          rootdn: "cn=Manager,${base_dn}"
+  //        datadir: "/var/lib/openldap",
+  //        rundir: "/run/openldap",
+  //        rootpw: "{SHA}XXXX",
+  //        rootdn: "cn=Manager,${base_dn}"
         }
       },
       chrony: { extends: [], type: "chrony", alias: "ntp", port: 323 }

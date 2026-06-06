@@ -124,7 +124,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   }
 
   get hostName() {
-    return this.extendedAttribute("_hostName") ?? this.host.hostName;
+    return this.attribute("_hostName") ?? this.host.hostName;
   }
 
   set hostName(value) {
@@ -145,7 +145,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
 
   get scope() {
     return (
-      this.extendedAttribute("_scope") ??
+      this.attribute("_scope") ??
       this.network?.scope ??
       networkAttributes.scope.default
     );
@@ -156,7 +156,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   }
 
   get hwaddr() {
-    return this.extendedAttribute("_hwaddr");
+    return this.attribute("_hwaddr");
   }
 
   set metric(value) {
@@ -165,7 +165,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
 
   get metric() {
     return (
-      this.extendedAttribute("_metric") ??
+      this.attribute("_metric") ??
       this.network?.metric ??
       networkAttributes.metric.default
     );
@@ -176,7 +176,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   }
 
   get mtu() {
-    return this.extendedAttribute("_mtu");
+    return this.attribute("_mtu");
   }
 
   set class(value) {
@@ -184,7 +184,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   }
 
   get class() {
-    return this.extendedAttribute("_class") ?? this.network?.class;
+    return this.attribute("_class") ?? this.network?.class;
   }
 
   set kind(value) {
@@ -192,7 +192,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   }
 
   get kind() {
-    return this.extendedAttribute("_kind") ?? this.network?.kind;
+    return this.attribute("_kind") ?? this.network?.kind;
   }
 
   async systemdDefinitions(dir, packageData) {

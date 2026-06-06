@@ -29,7 +29,7 @@ import { union } from "./utils.mjs";
 
 /**
  *
- * attributes: essential values
+ * attributes: as declared in the types
  * properties: use defined values to support attribute value definitions
  */
 export class Base {
@@ -65,12 +65,12 @@ export class Base {
   owner;
   description;
   name;
+  properties = {};
   extends = new Set();
   _tags = new Set();
   _packaging = new Set();
   _directory;
   _finalize;
-  _properties = {};
 
   /**
    *
@@ -222,7 +222,7 @@ export class Base {
    * @param {string} name
    * @returns {any}
    */
-  extendedAttribute(name) {
+  attribute(name) {
     for (const node of this.walkDirections(["this", "extends"])) {
       const value = getAttribute(node, name);
       if (value !== undefined) {
@@ -236,7 +236,7 @@ export class Base {
    * @param {Function} [filter]
    * @return {Iterable<[string,any]>} values
    */
-  *propertyIterator(filter) {
+  *attributeIterator(filter) {
     for (
       let typeDefinition = this.constructor.typeDefinition;
       typeDefinition;
@@ -247,7 +247,7 @@ export class Base {
         filter
       )) {
         const name = path.join(".");
-        const value = this.extendedAttribute(name);
+        const value = this.attribute(name);
 
         if (value !== undefined) {
           yield [def.externalName ?? name, toExternal(value, def), path, def];
@@ -261,12 +261,16 @@ export class Base {
    * @param {Function} [filter]
    * @return {Object} values
    */
-  getProperties(filter = filterPublic) {
-    return Object.fromEntries(this.propertyIterator(filter));
+  getAttributes(filter = filterPublic) {
+    return Object.fromEntries(this.attributeIterator(filter));
   }
 
-  get properties() {
-    return this._properties;
+  valueFor(name, at) {
+    if (at !== undefined) {
+      return this.attribute(name) ?? this.property(name);
+    }
+
+    return globals[name];
   }
 
   /**
@@ -275,8 +279,8 @@ export class Base {
    * @returns {any}
    */
   property(name) {
-    for (const node of this.walkDirections(["this", "extends", "owner"])) {
-      const value = node._properties?.[name];
+    for (const node of this.walkDirections()) {
+      const value = node.properties?.[name];
 
       if (value !== undefined) {
         return this.expand(value);
@@ -468,14 +472,6 @@ export class Base {
    */
   get isTemplate() {
     return this.name?.indexOf("*") >= 0 || this.owner?.isTemplate || false;
-  }
-
-  valueFor(name, at) {
-    if (at !== undefined) {
-      return this.extendedAttribute(name) ?? this.property(name);
-    }
-
-    return globals[name];
   }
 
   /**

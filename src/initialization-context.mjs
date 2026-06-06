@@ -188,7 +188,7 @@ export class InitializationContext {
 
   read(object, data, type = object.constructor.typeDefinition) {
     if (data?.properties) {
-      Object.assign(object._properties, data.properties);
+      Object.assign(object.properties, data.properties);
     }
 
     this._read(object, data, type);
@@ -309,7 +309,7 @@ export class InitializationContext {
             const data = JSON.parse(
               await readFile(join(this.directory, name), "utf8")
             );
-            this.root._properties = data.properties;
+            this.root.properties = data.properties;
           } else {
             await this.load("/" + name, { type });
           }
