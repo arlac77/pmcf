@@ -280,7 +280,7 @@ export class Base {
    */
   property(name) {
     for (const node of this.walkDirections()) {
-      const value = node.properties?.[name];
+      const value = node.properties[name];
 
       if (value !== undefined) {
         return this.expand(value);
