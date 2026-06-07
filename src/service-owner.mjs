@@ -8,42 +8,56 @@ export class ServiceOwner extends Base {
   }
 
   get services() {
-    return this.mapFromDirections(["this", "extends"], "_services");
+    return this._services;
+    //return this.mapFromDirections(["this", "extends"], "_services");
   }
 
-  addObject(object)
-  {
-    if(object instanceof Service) {
+  addObject(object) {
+    if (object instanceof Service) {
       this._services.set(object.name, object);
     }
 
     super.addObject(object);
   }
 
-  _materializeExtends() {
+  materializeExtends() {
     super.materializeExtends();
 
-    for (const serviceOwner of this.walkDirections(["extends"])) {
-      /*console.log(
-        "ServiceOwner materializeExtends",
-        this.fullName,
-        serviceOwner.fullName
-      );*/
+    for (const [name, service] of this.mapFromDirections(
+      ["extends"],
+      "_services"
+    )) {
+      const present = this._services.get(service.name);
 
-      for (const service of serviceOwner.services.values()) {
-        const present = this.services.get(service.name);
-
-        if (present) {
-          //console.log("LINK SERVICE", this.fullName, present.fullName, service.fullName);
-          present.extends.add(service);
-        } else {
-          //console.log("ADD  SERVICE", this.fullName, service.fullName);
-
-          const s = service.forOwner(this);
-          this._services.set(s.name, s);
-        }
+      if (present) {
+        //console.log("LINK SERVICE", this.fullName, present.fullName, service.fullName);
+        present.extends.add(service);
+      } else {
+        //console.log("ADD  SERVICE", this.fullName, service.fullName);
+        this.services = service.forOwner(this);
       }
     }
+
+    /*
+    if (this.fullName === "/SW/mini1") {
+      const myServiceNames = new Set([...this.services.keys()]);
+      const extendingSericeNames = new Set([
+        ...this.mapFromDirections(["extends"], "_services").keys()
+      ]);
+
+      console.log("XXX",this.fullName, [...this.extends].map(n=>n.fullName), myServiceNames, extendingSericeNames);
+
+      if (!extendingSericeNames.isSubsetOf(myServiceNames)) {
+        // const diff = myServiceNames.difference(extendingSericeNames);
+        console.log(
+          "DIFF",
+          this.fullName,
+          myServiceNames,
+          extendingSericeNames
+        );
+      }
+    }
+    */
   }
 
   _traverse(...args) {

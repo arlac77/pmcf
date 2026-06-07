@@ -29,10 +29,13 @@ export class InitializationContext {
 
         if (o) {
           this.assign(object, name, attribute, o);
+
+        //  console.log("RESOLVE", object.fullName,name,o.fullName);
+        //  continue;
         }
       }
 
-      /*
+     /* 
       this.error(
         `No such object "${value}" (${attribute.type.name}) for attribute ${name}`,
         object.root.named(value)?.toString()
@@ -194,7 +197,6 @@ export class InitializationContext {
     this._read(object, data, type);
 
     if (data.extends) {
-      //console.log("EXTENDS", type.name, object.fullName); // data.extends);
       object.materializeExtends();
     }
   }
@@ -221,7 +223,6 @@ export class InitializationContext {
               } else {
                 for (const [objectName, objectData] of Object.entries(value)) {
                   if (typeof objectData === "object") {
-                    //console.log("KEY", objectName, type.name, type.key);
                     objectData[attribute.type.key] = objectName;
                   }
                   this.instantiateAndAssign(
@@ -237,10 +238,6 @@ export class InitializationContext {
           }
         }
         this.instantiateAndAssign(object, name, attribute, value);
-
-        /*if (name === "alias" && value) {
-          console.log("READ ALIAS", object.fullName, object.alias, value);
-        }*/
       }
     }
   }
@@ -253,7 +250,6 @@ export class InitializationContext {
       )
     );
 
-    //console.log("LOAD", name);
     let owner;
     if (name[0] === "/") {
       const parentName = name.replace(/\/[^\/]+$/, "");
