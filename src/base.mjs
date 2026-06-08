@@ -194,7 +194,6 @@ export class Base {
   forOwner(owner) {
     if (this.owner !== owner) {
       const newObject = Object.create(this);
-      newObject.extends = new Set([...this.extends]);
       newObject.owner = owner;
       return newObject;
     }

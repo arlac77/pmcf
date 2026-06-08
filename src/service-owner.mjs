@@ -30,10 +30,8 @@ export class ServiceOwner extends Base {
       const present = this._services.get(service.name);
 
       if (present) {
-        //console.log("LINK SERVICE", this.fullName, present.fullName, service.fullName);
         present.extends.add(service);
       } else {
-        //console.log("ADD  SERVICE", this.fullName, service.fullName);
         this.services = service.forOwner(this);
       }
     }

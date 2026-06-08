@@ -18,28 +18,24 @@ export class InitializationContext {
   }
 
   resolveOutstanding() {
-    for (let { object, attribute, name, value } of this.outstandingResolves) {
+    nextOutstanding: for (let { object, attribute, name, value } of this
+      .outstandingResolves) {
       value = object.expand(value);
 
       for (const type of attribute.type.members || [attribute.type]) {
-        const o =
-          object.typeNamed(type.name, value) ||
-          object.owner.typeNamed(type.name, value) ||
-          object.root.typeNamed(type.name, value); // TODO
-
-        if (o) {
-          this.assign(object, name, attribute, o);
-
-        //  console.log("RESOLVE", object.fullName,name,o.fullName);
-        //  continue;
+        for (const node of object.walkDirections(["this", "owner"])) {
+          const resolved = node.typeNamed(type.name, value);
+          if (resolved) {
+            this.assign(object, name, attribute, resolved);
+            continue nextOutstanding;
+          }
         }
       }
 
-     /* 
       this.error(
-        `No such object "${value}" (${attribute.type.name}) for attribute ${name}`,
+        `Unable to resolve "${value}" (${attribute.type.name}) for attribute ${name}`,
         object.root.named(value)?.toString()
-      );*/
+      );
     }
   }
 
@@ -85,6 +81,9 @@ export class InitializationContext {
                 if (value instanceof Set) {
                   object[name] = current.union(value);
                 } else {
+                  /*if(name === 'extends') {
+                    console.log("EXT",object.fullName,value.fullName)
+                  }*/
                   object[name].add(value);
                 }
               } else if (current instanceof Map) {
