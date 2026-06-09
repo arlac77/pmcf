@@ -82,21 +82,20 @@ test("Owner read write", t => {
           type: "owner"
         },
 
-        subnets: {
-          undefined: {}
-
-          /*
-          "10.0/16": {
+        subnets: [
+          {
+            address: "10.0/16",
             directory: "/o1/10.0/16",
+            family: "IPv4",
             name: "10.0/16",
             owner: {
               name: "o1",
               type: "owner"
             },
-            family: "IPv4",
             prefixLength: 16
           },
-          "fe80::/64": {
+          {
+            address: "fe80::/64",
             directory: "/o1/fe80::/64",
             family: "IPv6",
             name: "fe80::/64",
@@ -106,14 +105,12 @@ test("Owner read write", t => {
             },
             prefixLength: 64
           }
-            */
-        }
+        ]
       }
     ],
-    subnets: {
-      undefined: {}
-      /*
-      "10.0/16": {
+    subnets: [
+      {
+        address: "10.0/16",
         directory: "/o1/10.0/16",
         family: "IPv4",
         name: "10.0/16",
@@ -123,7 +120,8 @@ test("Owner read write", t => {
         },
         prefixLength: 16
       },
-      "fe80::/64": {
+      {
+        address: "fe80::/64",
         directory: "/o1/fe80::/64",
         family: "IPv6",
         name: "fe80::/64",
@@ -133,7 +131,6 @@ test("Owner read write", t => {
         },
         prefixLength: 64
       }
-        */
-    }
+    ]
   });
 });

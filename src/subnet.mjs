@@ -108,12 +108,10 @@ export const SUBNET_LOCALHOST_IPV6 = new Subnet(_owner, "::1/128");
 export const SUBNET_LINK_LOCAL_IPV6 = new Subnet(_owner, "fe80::/64");
 
 export function subnets(sources) {
-  const all = new Set();
+  let all = new Set();
 
   for (const source of sources) {
-    for (const subnet of source.subnets()) {
-      all.add(subnet);
-    }
+    all = all.union(source.subnets);
   }
 
   return all;

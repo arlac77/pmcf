@@ -24,8 +24,7 @@ export class SkeletonNetworkInterface extends ServiceOwner {
     }
   }
 
-  get services()
-  {
+  get services() {
     return new AggregatedMap([super.services, this.owner.services]);
   }
 
@@ -66,8 +65,8 @@ export class SkeletonNetworkInterface extends ServiceOwner {
     this._network = network;
   }
 
-  *subnets() {
-    yield* this.ipAddresses.values();
+  get subnets() {
+    return new Set(this.ipAddresses.values());
   }
 
   get ipAddresses() {

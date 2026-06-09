@@ -57,7 +57,7 @@ export function addresses(sources, options) {
             return s;
           }
           if (options?.aggregate && s instanceof Owner && s.subnets) {
-            return [...s.subnets()];
+            return [...s.subnets];
           }
 
           return s.networkAddresses

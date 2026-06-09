@@ -228,7 +228,7 @@ test("Host addresses", t => {
   t.is(lo.name, "lo");
   t.is(lo.typeName, "network_interface");
   t.deepEqual(
-    new Set(lo.subnets()),
+    new Set(lo.subnets),
     new Set([SUBNET_LOCALHOST_IPV4, SUBNET_LOCALHOST_IPV6])
   );
 
@@ -237,7 +237,7 @@ test("Host addresses", t => {
 
   t.deepEqual(
     h1.subnets,
-    new Set([SUBNET_LOCALHOST_IPV4, SUBNET_LOCALHOST_IPV6, ...eth0.subnets()])
+    new Set([SUBNET_LOCALHOST_IPV4, SUBNET_LOCALHOST_IPV6, ...eth0.subnets])
   );
 
   t.is(h1.named("eth0"), eth0);

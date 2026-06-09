@@ -433,15 +433,13 @@ export class Host extends ServiceOwner {
   }
 
   get subnets() {
-    const sn = new Map();
+    let all = new Set();
 
     for (const networkInterface of this.networkInterfaces.values()) {
-      for (const s of networkInterface.subnets()) {
-        sn.set(s.address, s);
-      }
+      all = all.union(networkInterface.subnets);
     }
 
-    return new Set(sn.values());
+    return all;
   }
 
   async publicKey(type = "ed25519") {

@@ -561,6 +561,10 @@ export function extractFrom(
       return object;
   }
 
+  if (object instanceof Set) {
+    object = [...object];
+  }
+
   if (typeof object[Symbol.iterator] === "function") {
     object = [...object].map(o => (o instanceof Base ? extractFrom(o) : o));
 

@@ -13,7 +13,7 @@ test("NetworkAddress filter", t => {
   });
   owner.addObject(n1);
 
-  const [s1, s2] = [...n1.subnets()];
+  const [s1, s2] = [...n1.subnets];
 
   const h2 = new Host(owner);
   ic.read(h2,{

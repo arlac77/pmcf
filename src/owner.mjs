@@ -54,6 +54,7 @@ export class Owner extends Base {
 
   _membersByType = new Map();
   _bridges = new Set();
+  _subnets = new Set();
 
   /**
    * @return {boolean}
@@ -132,26 +133,34 @@ export class Owner extends Base {
   }
 
   addTypeObject(typeName, name, object) {
-    const typeSlot = this._membersByType.getOrInsertComputed(typeName, () => new Map());
+    const typeSlot = this._membersByType.getOrInsertComputed(
+      typeName,
+      () => new Map()
+    );
     typeSlot.set(name, object);
   }
 
   addObject(object) {
-    if (object.owner && object.owner !== this) {
-      this.addTypeObject(
-        object.typeName,
-        object.owner.name + "/" + object.name,
-        object
-      );
+    if (object instanceof Subnet) {
+      this._subnets.add(object);
+    } else {
+      if (object.owner && object.owner !== this) {
+        this.addTypeObject(
+          object.typeName,
+          object.owner.name + "/" + object.name,
+          object
+        );
 
-      return;
+        return;
+      }
+      this.addTypeObject(object.typeName, object.name, object);
     }
-    this.addTypeObject(object.typeName, object.name, object);
   }
 
-  get services()
-  {
-    return [...this.hosts].map(host=>Array.from(host.services.values())).flat();
+  get services() {
+    return [...this.hosts]
+      .map(host => Array.from(host.services.values()))
+      .flat();
   }
 
   get locations() {
@@ -192,14 +201,11 @@ export class Owner extends Base {
   }
 
   subnetNamed(name) {
-    return this.typeNamed("subnet", name);
+    return [...this.subnets].find(s => s.name == name);
   }
 
-  *subnets() {
-    if (this.owner) {
-      yield* this.owner.subnets();
-    }
-    yield* this.typeList("subnet");
+  get subnets() {
+    return this.unionFromDirections(["this", "owner"], "_subnets");
   }
 
   addSubnet(address) {
@@ -215,19 +221,18 @@ export class Owner extends Base {
       subnet =
         familyIP(address) === "IPv4" ? SUBNET_GLOBAL_IPV4 : SUBNET_GLOBAL_IPV6;
 
-      /*
       this.error(
         `Address without subnet ${address}`,
-        [...this.subnets()].map(s => s.address)
+        [...this.subnets].map(s => s.address)
       );
-      */
     }
 
+    this._subnets.add(subnet);
     return subnet;
   }
 
   subnetForAddress(address) {
-    for (const subnet of this.subnets()) {
+    for (const subnet of this.subnets) {
       if (subnet.matchesAddress(address)) {
         return subnet;
       }
@@ -301,7 +306,7 @@ export class Owner extends Base {
           }
         }
         // enshure only one subnet address in the bridge
-        for (const subnet of network.subnets()) {
+        for (const subnet of network.subnets) {
           const present = subnets.get(subnet.address);
           if (present) {
             subnet.owner.addObject(present);
