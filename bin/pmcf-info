@@ -4,11 +4,28 @@ import { prepare } from "../src/cli.mjs";
 const { root, args, options } = await prepare({});
 
 for (const expression of args) {
-  let result = root.expression(expression);
+  const result = root.named(expression);
 
-  if (result instanceof Iterator) {
-    result = Array.from(result);
+  show(result);
+}
+
+function show(value) {
+  if (value instanceof Iterator) {
+    for (const v of value) {
+      show(v);
+    }
+  } else {
+    console.log(`${value.fullName}:`);
+    ex(value);
   }
+}
 
-  console.log(result);
+function ex(node, indent = 1) {
+  if (indent > 5) {
+    return;
+  }
+  for (const e of node.extends) {
+    console.log(" ".repeat(indent * 2) + e.fullName);
+    ex(e, indent + 1);
+  }
 }
