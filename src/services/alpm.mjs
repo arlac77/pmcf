@@ -18,7 +18,6 @@ class ALPMRepository extends Base {
     architectures: string_set_attribute_writable
   };
 
-  static typeDefinition = this;
   static {
     addType(this);
   }
@@ -42,7 +41,6 @@ export class ALPMService extends Service {
     extends: ["https", "http"]
   };
 
-  static typeDefinition = this;
   static {
     addType(this);
     addServiceType(this.service, this.name);

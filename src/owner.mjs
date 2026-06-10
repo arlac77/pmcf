@@ -44,7 +44,6 @@ export class Owner extends Base {
     template: { ...boolean_attribute_writable, private: true }
   };
 
-  static typeDefinition = this;
 
   static {
     addType(this);

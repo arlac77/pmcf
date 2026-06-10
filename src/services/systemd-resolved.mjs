@@ -75,7 +75,6 @@ export class SystemdResolvedService extends ExtraSourceService {
     systemdService: "systemd-resolved.service"
   };
 
-  static typeDefinition = this;
   static {
     addType(this);
     addServiceType(this.service, this.name);

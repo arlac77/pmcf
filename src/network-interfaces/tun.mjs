@@ -8,14 +8,12 @@ export class TUNNetworkInterface extends NetworkInterface {
   static owners = NetworkInterface.owners;
   static key = "name";
 
-  static typeDefinition = this;
-
   static {
     addType(this);
   }
 
   get kind() {
-    return "tun";
+    return this.constructor.name;
   }
 
   async systemdDefinitions(dir, packageData) {}

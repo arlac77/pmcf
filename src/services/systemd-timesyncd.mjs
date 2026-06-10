@@ -31,7 +31,6 @@ export class SystemdTimesyncdService extends ExtraSourceService {
     systemdService: "systemd-timesyncd.service"
   };
 
-  static typeDefinition = this;
   static {
     addType(this);
     addServiceType(this.service, this.name);

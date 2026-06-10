@@ -20,7 +20,6 @@ export class MyType extends Base {
     setStrings: string_set_attribute_writable
   };
 
-  static typeDefinition = this;
   static {
     addType(this);
   }

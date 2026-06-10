@@ -74,7 +74,6 @@ export class Service extends Base {
     systemdService: string_attribute_writable
   };
 
-  static typeDefinition = this;
 
   static {
     addType(this);

@@ -110,7 +110,6 @@ export class SystemdJournaldService extends Service {
   static service = {
     systemdService: "systemd-journald.service"
   };
-  static typeDefinition = this;
   static {
     addType(this);
     addServiceType(this.service, this.name);

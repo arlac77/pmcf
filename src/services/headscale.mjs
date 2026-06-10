@@ -37,7 +37,6 @@ export class HeadscaleService extends Service {
       }
     ]
   };
-  static typeDefinition = this;
   static {
     addType(this);
     addServiceType(this.service, this.name);

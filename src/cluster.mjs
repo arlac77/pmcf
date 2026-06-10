@@ -38,7 +38,6 @@ export class Cluster extends Host {
     checkInterval: { ...duration_attribute_writable, default: 60 }
   };
 
-  static typeDefinition = this;
 
   static {
     addType(this);

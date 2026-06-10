@@ -17,8 +17,6 @@ export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
   static owners = NetworkInterface.owners;
   static key = "name";
 
-  static typeDefinition = this;
-
   static {
     addType(this);
   }
@@ -28,7 +26,7 @@ export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
   }
 
   get kind() {
-    return "loopback";
+    return this.constructor.name;
   }
 
   set scope(v) {}

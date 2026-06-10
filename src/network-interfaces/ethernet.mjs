@@ -15,8 +15,6 @@ export class EthernetNetworkInterface extends NetworkInterface {
     }
   };
 
-  static typeDefinition = this;
-
   static {
     addType(this);
   }

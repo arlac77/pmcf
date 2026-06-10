@@ -28,7 +28,6 @@ export class Subnet extends Base {
     family: string_attribute
   };
 
-  static typeDefinition = this;
 
   static {
     addType(this);

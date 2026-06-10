@@ -21,8 +21,6 @@ export class WLANNetworkInterface extends EthernetNetworkInterface {
     secretName: string_attribute_writable
   };
 
-  static typeDefinition = this;
-
   static {
     addType(this);
   }
@@ -36,7 +34,7 @@ export class WLANNetworkInterface extends EthernetNetworkInterface {
   _secretName;
 
   get kind() {
-    return "wlan";
+    return this.constructor.name;
   }
 
   set secretName(value) {

@@ -11,7 +11,6 @@ export class Location extends Owner {
   static key = "name";
   static attributes = {};
 
-  static typeDefinition = this;
 
   static {
     addType(this);

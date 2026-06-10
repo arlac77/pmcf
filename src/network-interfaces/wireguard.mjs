@@ -9,14 +9,13 @@ export class WireguardNetworkInterface extends SkeletonNetworkInterface {
   static owners = NetworkInterface.owners;
   static key = "name";
 
-  static typeDefinition = this;
 
   static {
     addType(this);
   }
 
   get kind() {
-    return "wireguard";
+    return this.constructor.name;
   }
 
   get ipAddresses() {

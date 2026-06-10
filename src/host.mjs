@@ -87,7 +87,6 @@ export class Host extends ServiceOwner {
     isModel: boolean_attribute_false
   };
 
-  static typeDefinition = this;
 
   static {
     addType(this);

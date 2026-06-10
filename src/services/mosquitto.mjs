@@ -31,7 +31,6 @@ export class MosquittoService extends Service {
   static service = {
     extends: ["mqtt"]
   };
-  static typeDefinition = this;
   static {
     addType(this);
     addServiceType(this.service, this.name);

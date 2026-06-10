@@ -19,7 +19,6 @@ export class Network extends Owner {
     gateway: { ...default_attribute_writable, type: "host" }
   };
 
-  static typeDefinition = this;
 
   static {
     addType(this);

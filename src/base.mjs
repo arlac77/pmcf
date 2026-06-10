@@ -48,8 +48,6 @@ export class Base {
     type: string_attribute
   };
 
-  static typeDefinition = this;
-
   static {
     addType(this);
   }

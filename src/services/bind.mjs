@@ -77,7 +77,6 @@ class bind_group extends Base {
     minimum: { ...duration_attribute_writable, default: 60000 }
   };
 
-  static typeDefinition = this;
   static {
     addType(this);
   }
@@ -454,7 +453,6 @@ export class BindService extends ExtraSourceService {
     }
   };
 
-  static typeDefinition = this;
 
   static {
     addType(this);

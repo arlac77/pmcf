@@ -50,7 +50,6 @@ export class SystemdJournalUploadService extends Service {
   static service = {
     systemdService: "systemd-journal-upload.service"
   };
-  static typeDefinition = this;
   static {
     addType(this);
     addServiceType(this.service, this.name);

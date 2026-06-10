@@ -61,8 +61,6 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     destination: string_attribute_writable
   };
 
-  static typeDefinition = this;
-
   static {
     addType(this);
   }

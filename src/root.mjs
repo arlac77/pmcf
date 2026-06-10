@@ -4,7 +4,6 @@ import { Location } from "./location.mjs";
 export class Root extends Location {
   static name = "root";
   static priority = 3;
-  static typeDefinition = this;
   
   static {
     addType(this);
