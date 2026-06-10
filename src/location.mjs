@@ -3,17 +3,15 @@ import { addType } from "pacc";
 import { Owner } from "pmcf";
 import { loadHooks } from "./hooks.mjs";
 
-const LocationTypeDefinition = {
-  name: "location",
-  priority: 2,
-  owners: [Owner.typeDefinition, "location", "root"],
-  extends: Owner.typeDefinition,
-  key: "name",
-  attributes: {}
-};
-
 export class Location extends Owner {
-  static typeDefinition = LocationTypeDefinition;
+  static name = "location";
+  static priority = 2;
+  static owners = [Owner.typeDefinition, "location", "root"];
+  static extends = Owner.typeDefinition;
+  static key = "name";
+  static attributes = {};
+
+  static typeDefinition = this;
 
   static {
     addType(this);
