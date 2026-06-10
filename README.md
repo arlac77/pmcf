@@ -75,6 +75,9 @@ generates config packages for:
 *   [id](#id)
 *   [InitializationContext](#initializationcontext)
     *   [Parameters](#parameters-13)
+*   [SkeletonNetworkInterface](#skeletonnetworkinterface)
+    *   [networkAddresses](#networkaddresses)
+        *   [Parameters](#parameters-14)
 *   [SystemdJournalRemoteService](#systemdjournalremoteservice)
     *   [Properties](#properties)
     *   [systemdConfigs](#systemdconfigs)
@@ -270,6 +273,18 @@ Keeps track of all in flight object creations and loose ends during config initi
 ### Parameters
 
 *   `directory`   (optional, default `"/"`)
+
+## SkeletonNetworkInterface
+
+**Extends ServiceOwner**
+
+### networkAddresses
+
+#### Parameters
+
+*   `filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
+
+Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
 
 ## SystemdJournalRemoteService
 
