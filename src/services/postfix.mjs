@@ -2,29 +2,27 @@ import { addType } from "pacc";
 import { addServiceType } from "pmcf";
 import { ServiceTypeDefinition, Service } from "../service.mjs";
 
-const PostfixServiceTypeDefinition = {
-  name: "postfix",
-  priority: 1,
-  extends: ServiceTypeDefinition,
-  specializationOf: ServiceTypeDefinition,
-  owners: ServiceTypeDefinition.owners,
-  key: "name",
-  attributes: {},
-  service: {
+export class PostfixService extends Service {
+  static name = "postfix";
+  static priority = 1;
+  static extends = ServiceTypeDefinition;
+  static specializationOf = ServiceTypeDefinition;
+  static owners = ServiceTypeDefinition.owners;
+  static key = "name";
+  static attributes = {};
+  static service = {
     systemdService: "postfix.service",
     extends: ["smtp", "lmtp", "submission"],
     services: {}
-  }
-};
+  };
 
-export class PostfixService extends Service {
-  static typeDefinition = PostfixServiceTypeDefinition;
+  static typeDefinition = this;
   static {
     addType(this);
-    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
+    addServiceType(this.service, this.name);
   }
 
   get type() {
-    return PostfixServiceTypeDefinition.name;
+    return "postfix";
   }
 }
