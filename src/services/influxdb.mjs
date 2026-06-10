@@ -9,21 +9,21 @@ import {
 } from "../utils.mjs";
 import { Service, ServiceTypeDefinition } from "../service.mjs";
 
-const InfluxdbServiceTypeDefinition = {
-  name: "influxdb",
-  priority: 1,
-  extends: ServiceTypeDefinition,
-  specializationOf: ServiceTypeDefinition,
-  owners: ServiceTypeDefinition.owners,
-  key: "name",
-  attributes: {
+export class InfluxdbService extends Service {
+  static name = "influxdb";
+  static priority = 1;
+  static extends = ServiceTypeDefinition;
+  static specializationOf = ServiceTypeDefinition;
+  static owners = ServiceTypeDefinition.owners;
+  static key = "name";
+  static attributes = {
     metricsDisabled: {
       externalName: "metrics-disabled",
       ...boolean_attribute_writable_true,
       configurable: true
     }
-  },
-  service: {
+  };
+  static service = {
     endpoints: [
       {
         family: "IPv4",
@@ -40,18 +40,16 @@ const InfluxdbServiceTypeDefinition = {
         pathname: "/"
       }
     ]
-  }
-};
+  };
 
-export class InfluxdbService extends Service {
-  static typeDefinition = InfluxdbServiceTypeDefinition;
+  static typeDefinition = this;
   static {
     addType(this);
-    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
+    addServiceType(this.service, this.name);
   }
 
   get type() {
-    return InfluxdbServiceTypeDefinition.name;
+    return this.constructor.name;
   }
 
   async *preparePackages(dir) {
@@ -62,7 +60,9 @@ export class InfluxdbService extends Service {
     await writeLines(
       join(dir, "etc", "influxdb"),
       "config.yml",
-      setionLinesFromPropertyIterator(this.attributeIterator(filterConfigurable))
+      setionLinesFromPropertyIterator(
+        this.attributeIterator(filterConfigurable)
+      )
     );
 
     yield packageData;

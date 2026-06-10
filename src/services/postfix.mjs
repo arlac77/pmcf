@@ -23,6 +23,6 @@ export class PostfixService extends Service {
   }
 
   get type() {
-    return "postfix";
+    return this.constructor.name;
   }
 }

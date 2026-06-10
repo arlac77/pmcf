@@ -52,7 +52,7 @@ export const ServiceTypeDefinition = {
   name: "service",
   priority: 1.1,
   owners: [Host.typeDefinition, "cluster", "network_interface"],
-  extends: Base.typeDefinition,
+  extends: Base,
   specializations: {},
   factoryFor(owner, value) {
     const type = value.type ?? value.name;

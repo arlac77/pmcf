@@ -8,14 +8,18 @@ import {
 import { Service, ServiceTypeDefinition, addServiceType } from "pmcf";
 import { filterConfigurable, sectionLines } from "../utils.mjs";
 
-const SystemdJournalRemoteServiceTypeDefinition = {
-  name: "systemd-journal-remote",
-  priority: 1,
-  extends: ServiceTypeDefinition,
-  specializationOf: ServiceTypeDefinition,
-  owners: ServiceTypeDefinition.owners,
-  key: "name",
-  attributes: {
+/**
+ * @property {string} ServerCertificateFile
+ * @property {string} ServerKeyFile
+ */
+export class SystemdJournalRemoteService extends Service {
+  static name = "systemd-journal-remote";
+  static priority = 1;
+  static extends = ServiceTypeDefinition;
+  static specializationOf = ServiceTypeDefinition;
+  static owners = ServiceTypeDefinition.owners;
+  static key = "name";
+  static attributes = {
     Seal: {
       ...boolean_attribute_writable,
       configurable: true
@@ -61,8 +65,8 @@ const SystemdJournalRemoteServiceTypeDefinition = {
       configurable: true
       //   default: "zstd lz4 xz"
     }
-  },
-  service: {
+  };
+  static service = {
     systemdService: "systemd-journal-remote.service",
     endpoints: [
       {
@@ -80,22 +84,16 @@ const SystemdJournalRemoteServiceTypeDefinition = {
         pathname: "/"
       }
     ]
-  }
-};
+  };
 
-/**
- * @property {string} ServerCertificateFile
- * @property {string} ServerKeyFile
- */
-export class SystemdJournalRemoteService extends Service {
-  static typeDefinition = SystemdJournalRemoteServiceTypeDefinition;
+  static typeDefinition = this;
   static {
     addType(this);
-    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
+    addServiceType(this.service, this.name);
   }
 
   get type() {
-    return SystemdJournalRemoteServiceTypeDefinition.name;
+    return this.constructor.name;
   }
 
   /**

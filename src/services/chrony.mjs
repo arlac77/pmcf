@@ -10,14 +10,14 @@ import {
 } from "../extra-source-service.mjs";
 import { writeLines } from "../utils.mjs";
 
-const ChronyServiceTypeDefinition = {
-  name: "chrony",
-  priority: 1,
-  extends: ExtraSourceServiceTypeDefinition,
-  specializationOf: ServiceTypeDefinition,
-  owners: ServiceTypeDefinition.owners,
-  key: "name",
-  service: {
+export class ChronyService extends ExtraSourceService {
+  static name = "chrony";
+  static priority = 1;
+  static extends = ExtraSourceServiceTypeDefinition;
+  static specializationOf = ServiceTypeDefinition;
+  static owners = ServiceTypeDefinition.owners;
+  static key = "name";
+  static service = {
     systemdService: "chronyd.service",
     extends: ["ntp"],
     services: {
@@ -42,18 +42,16 @@ const ChronyServiceTypeDefinition = {
         ]
       }
     }
-  }
-};
+  };
 
-export class ChronyService extends ExtraSourceService {
-  static typeDefinition = ChronyServiceTypeDefinition;
+  static typeDefinition = this;
   static {
     addType(this);
-    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
+    addServiceType(this.service, this.name);
   }
 
   get type() {
-    return ChronyServiceTypeDefinition.name;
+    return this.constructor.name;
   }
 
   async *preparePackages(dir) {

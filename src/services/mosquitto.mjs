@@ -2,14 +2,14 @@ import { port_attribute, string_attribute_writable, addType } from "pacc";
 import { addServiceType } from "pmcf";
 import { Service, ServiceTypeDefinition } from "../service.mjs";
 
-const MosquittoServiceTypeDefinition = {
-  name: "mosquitto",
-  priority: 1,
-  extends: ServiceTypeDefinition,
-  specializationOf: ServiceTypeDefinition,
-  owners: ServiceTypeDefinition.owners,
-  key: "name",
-  attributes: {
+export class MosquittoService extends Service {
+  static name = "mosquitto";
+  static priority = 1;
+  static extends = ServiceTypeDefinition;
+  static specializationOf = ServiceTypeDefinition;
+  static owners = ServiceTypeDefinition.owners;
+  static key = "name";
+  static attributes = {
     listener: {
       ...port_attribute,
       writable: true,
@@ -27,21 +27,18 @@ const MosquittoServiceTypeDefinition = {
       ...string_attribute_writable,
       configurable: true
     }
-  },
-  service: {
+  };
+  static service = {
     extends: ["mqtt"]
-  }
-};
-
-export class MosquittoService extends Service {
-  static typeDefinition = MosquittoServiceTypeDefinition;
+  };
+  static typeDefinition = this;
   static {
     addType(this);
-    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
+    addServiceType(this.service, this.name);
   }
 
   get type() {
-    return MosquittoServiceTypeDefinition.name;
+    return this.constructor.name;
   }
 
   get listener() {

@@ -21,14 +21,14 @@ import {
   setionLinesFromPropertyIterator
 } from "../utils.mjs";
 
-const SystemdResolvedServiceTypeDefinition = {
-  name: "systemd-resolved",
-  priority: 1,
-  extends: ExtraSourceServiceTypeDefinition,
-  specializationOf: ServiceTypeDefinition,
-  owners: ServiceTypeDefinition.owners,
-  key: "name",
-  attributes: {
+export class SystemdResolvedService extends ExtraSourceService {
+  static name = "systemd-resolved";
+  static priority = 1;
+  static extends = ExtraSourceServiceTypeDefinition;
+  static specializationOf = ServiceTypeDefinition;
+  static owners = ServiceTypeDefinition.owners;
+  static key = "name";
+  static attributes = {
     /* Resolve: {
       ...object_attribute,
       attributes: {*/
@@ -71,22 +71,20 @@ const SystemdResolvedServiceTypeDefinition = {
     LLMNR: { ...yesno_attribute_writable, configurable: true }
     /* }
     }*/
-  },
-  service: {
-    extends: ["dns","mdns","llmnr"],
+  };
+  static service = {
+    extends: ["dns", "mdns", "llmnr"],
     systemdService: "systemd-resolved.service"
-  }
-};
+  };
 
-export class SystemdResolvedService extends ExtraSourceService {
-  static typeDefinition = SystemdResolvedServiceTypeDefinition;
+  static typeDefinition = this;
   static {
     addType(this);
-    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
+    addServiceType(this.service, this.name);
   }
 
   get type() {
-    return SystemdResolvedServiceTypeDefinition.name;
+    return this.constructor.name;
   }
 
   systemdConfigs(name) {

@@ -33,11 +33,10 @@ import { addHook } from "../hooks.mjs";
 
 const bindNetworkAddressTypes = networkAddressType + "|bind_group";
 
-const BindGroupTypeDefinition = {
-  name: "bind_group",
-  priority: 1,
-  key: "name",
-  attributes: {
+class bind_group extends Base {
+  static priority = 1;
+  static key = "name";
+  static attributes = {
     name: name_attribute_writable,
     access: {
       type: bindNetworkAddressTypes,
@@ -77,11 +76,9 @@ const BindGroupTypeDefinition = {
     retry: { ...duration_attribute_writable, default: 72000 },
     expire: { ...duration_attribute_writable, default: 600000 },
     minimum: { ...duration_attribute_writable, default: 60000 }
-  }
-};
+  };
 
-class BindGroup extends Base {
-  static typeDefinition = BindGroupTypeDefinition;
+  static typeDefinition = this;
   static {
     addType(this);
   }
@@ -94,8 +91,7 @@ class BindGroup extends Base {
   notify = true;
   hasCatalog = true;
   hasSVRRecords = true;
-  hasLinkLocalAdresses =
-    BindGroupTypeDefinition.attributes.hasLinkLocalAdresses.default;
+  hasLinkLocalAdresses = bind_group.attributes.hasLinkLocalAdresses.default;
 
   recordTTL = "1W";
 
@@ -392,16 +388,26 @@ class BindGroup extends Base {
   }
 }
 
-const BindServiceTypeDefinition = {
-  name: "bind",
-  extends: ExtraSourceServiceTypeDefinition,
-  specializationOf: ServiceTypeDefinition,
-  owners: ServiceTypeDefinition.owners,
-  key: "name",
-  attributes: {
+function addressesStatement(prefix, objects, generateEmpty = false) {
+  const body = asArray(objects).map(name => `  ${name};`);
+
+  if (body.length || generateEmpty) {
+    return [`${prefix} {`, body, "};"];
+  }
+
+  return [];
+}
+
+export class BindService extends ExtraSourceService {
+  static name = "bind";
+  static extends = ExtraSourceServiceTypeDefinition;
+  static specializationOf = ServiceTypeDefinition;
+  static owners = ServiceTypeDefinition.owners;
+  static key = "name";
+  static attributes = {
     groups: {
       ...default_attribute_writable,
-      type: BindGroupTypeDefinition,
+      type: bind_group,
       collection: true,
       writable: true
     },
@@ -410,8 +416,8 @@ const BindServiceTypeDefinition = {
       type: networkAddressType,
       collection: true
     }
-  },
-  service: {
+  };
+  static service = {
     systemdService: "bind.service",
     extends: ["dns"],
     services: {
@@ -447,31 +453,19 @@ const BindServiceTypeDefinition = {
         ]
       }
     }
-  }
-};
+  };
 
-function addressesStatement(prefix, objects, generateEmpty = false) {
-  const body = asArray(objects).map(name => `  ${name};`);
-
-  if (body.length || generateEmpty) {
-    return [`${prefix} {`, body, "};"];
-  }
-
-  return [];
-}
-
-export class BindService extends ExtraSourceService {
-  static typeDefinition = BindServiceTypeDefinition;
+  static typeDefinition = this;
 
   static {
     addType(this);
-    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
+    addServiceType(this.service, this.name);
   }
 
   groups = {};
 
   get type() {
-    return BindServiceTypeDefinition.name;
+    return this.constructor.name;
   }
 
   materializeExtends() {
@@ -522,7 +516,7 @@ export class BindService extends ExtraSourceService {
   }
 
   typeNamed(type, name) {
-    if (type === BindGroupTypeDefinition.name) {
+    if (type === bind_group.name) {
       return this.groups[name];
     }
 

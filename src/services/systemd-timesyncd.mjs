@@ -12,14 +12,14 @@ import {
 } from "pmcf";
 import { filterConfigurable, sectionLines } from "../utils.mjs";
 
-const SystemdTimesyncdServiceTypeDefinition = {
-  name: "systemd-timesyncd",
-  priority: 1,
-  extends: ExtraSourceServiceTypeDefinition,
-  specializationOf: ServiceTypeDefinition,
-  owners: ServiceTypeDefinition.owners,
+export class SystemdTimesyncdService extends ExtraSourceService {
+  static name = "systemd-timesyncd";
+  static priority = 1;
+  static extends = ExtraSourceServiceTypeDefinition;
+  static specializationOf = ServiceTypeDefinition;
+  static owners = ServiceTypeDefinition.owners;
 
-  attributes: {
+  static attributes = {
     NTP: { ...string_attribute_writable, configurable: true },
     FallbackNTP: { ...string_attribute_writable, configurable: true },
     RootDistanceMaxSec: { ...duration_attribute_writable, configurable: true },
@@ -27,21 +27,19 @@ const SystemdTimesyncdServiceTypeDefinition = {
     PollIntervalMaxSec: { ...duration_attribute_writable, configurable: true },
     ConnectionRetrySec: { ...duration_attribute_writable, configurable: true },
     SaveIntervalSec: { ...duration_attribute_writable, configurable: true }
-  },
-  service: {
+  };
+  static service = {
     systemdService: "systemd-timesyncd.service"
-  }
-};
+  };
 
-export class SystemdTimesyncdService extends ExtraSourceService {
-  static typeDefinition = SystemdTimesyncdServiceTypeDefinition;
+  static typeDefinition = this;
   static {
     addType(this);
-    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
+    addServiceType(this.service, this.name);
   }
 
   get type() {
-    return SystemdTimesyncdServiceTypeDefinition.name;
+    return this.constructor.name;
   }
 
   systemdConfigs(name) {

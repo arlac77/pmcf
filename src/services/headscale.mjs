@@ -2,14 +2,14 @@ import { addType } from "pacc";
 import { addServiceType } from "pmcf";
 import { ServiceTypeDefinition, Service } from "../service.mjs";
 
-const HeadscaleServiceTypeDefinition = {
-  name: "headscale",
-  priority: 1,
-  extends: ServiceTypeDefinition,
-  specializationOf: ServiceTypeDefinition,
-  owners: ServiceTypeDefinition.owners,
-  key: "name",
-  service: {
+export class HeadscaleService extends Service {
+  static name = "headscale";
+  static priority = 1;
+  static extends = ServiceTypeDefinition;
+  static specializationOf = ServiceTypeDefinition;
+  static owners = ServiceTypeDefinition.owners;
+  static key = "name";
+  static service = {
     endpoints: [
       {
         family: "unix",
@@ -36,13 +36,10 @@ const HeadscaleServiceTypeDefinition = {
         tls: false
       }
     ]
-  }
-};
-
-export class HeadscaleService extends Service {
-  static typeDefinition = HeadscaleServiceTypeDefinition;
+  };
+  static typeDefinition = this;
   static {
     addType(this);
-    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
+    addServiceType(this.service, this.name);
   }
 }

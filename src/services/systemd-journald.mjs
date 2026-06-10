@@ -6,14 +6,14 @@ import {
 import { Service, ServiceTypeDefinition, addServiceType } from "pmcf";
 import { filterConfigurable, sectionLines } from "../utils.mjs";
 
-const SystemdJournalServiceTypeDefinition = {
-  name: "systemd-journald",
-  priority: 1,
-  extends: ServiceTypeDefinition,
-  specializationOf: ServiceTypeDefinition,
-  owners: ServiceTypeDefinition.owners,
-  key: "name",
-  attributes: {
+export class SystemdJournaldService extends Service {
+  static name = "systemd-journald";
+  static priority = 1;
+  static extends = ServiceTypeDefinition;
+  static specializationOf = ServiceTypeDefinition;
+  static owners = ServiceTypeDefinition.owners;
+  static key = "name";
+  static attributes = {
     Storage: {
       ...string_attribute_writable,
       configurable: true
@@ -106,21 +106,18 @@ const SystemdJournalServiceTypeDefinition = {
       ...string_attribute_writable,
       configurable: true
     }
-  },
-  service: {
+  };
+  static service = {
     systemdService: "systemd-journald.service"
-  }
-};
-
-export class SystemdJournaldService extends Service {
-  static typeDefinition = SystemdJournalServiceTypeDefinition;
+  };
+  static typeDefinition = this;
   static {
     addType(this);
-    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
+    addServiceType(this.service, this.name);
   }
 
   get type() {
-    return SystemdJournalServiceTypeDefinition.name;
+    return this.constructor.name;
   }
 
   systemdConfigs(name) {

@@ -7,14 +7,19 @@ import {
 import { Service, ServiceTypeDefinition, addServiceType } from "pmcf";
 import { filterConfigurable, sectionLines } from "../utils.mjs";
 
-const SystemdJournalUploadServiceTypeDefinition = {
-  name: "systemd-journal-upload",
-  priority: 1,
-  extends: ServiceTypeDefinition,
-  specializationOf: ServiceTypeDefinition,
-  owners: ServiceTypeDefinition.owners,
-  key: "name",
-  attributes: {
+/**
+ * @property {string} URL
+ * @property {string} ServerCertificateFile
+ * @property {string} ServerKeyFile
+ */
+export class SystemdJournalUploadService extends Service {
+  static name = "systemd-journal-upload";
+  static priority = 1;
+  static extends = ServiceTypeDefinition;
+  static specializationOf = ServiceTypeDefinition;
+  static owners = ServiceTypeDefinition.owners;
+  static key = "name";
+  static attributes = {
     URL: { ...string_attribute_writable, configurable: true },
     ServerKeyFile: {
       ...string_attribute_writable,
@@ -41,26 +46,18 @@ const SystemdJournalUploadServiceTypeDefinition = {
       configurable: true
       // default: false
     }
-  },
-  service: {
+  };
+  static service = {
     systemdService: "systemd-journal-upload.service"
-  }
-};
-
-/**
- * @property {string} URL
- * @property {string} ServerCertificateFile
- * @property {string} ServerKeyFile
- */
-export class SystemdJournalUploadService extends Service {
-  static typeDefinition = SystemdJournalUploadServiceTypeDefinition;
+  };
+  static typeDefinition = this;
   static {
     addType(this);
-    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
+    addServiceType(this.service, this.name);
   }
 
   get type() {
-    return SystemdJournalUploadServiceTypeDefinition.name;
+    return this.constructor.name;
   }
 
   /**
@@ -69,9 +66,9 @@ export class SystemdJournalUploadService extends Service {
    * @returns {Object}
    */
   systemdConfigs(name) {
-    console.log(this.fullName,this.owner.fullName);
-    console.log(this.property('domainName'),this.name);
-    console.log(this.property('certs_private_dir'));
+    console.log(this.fullName, this.owner.fullName);
+    console.log(this.property("domainName"), this.name);
+    console.log(this.property("certs_private_dir"));
     console.log("PROPS", this.expand(this.getAttributes(filterConfigurable)));
     return {
       serviceName: this.systemdService,

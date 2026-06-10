@@ -55,7 +55,7 @@ export class Base {
   }
 
   static get typeName() {
-    return this.typeDefinition.name;
+    return this.typeDefinition?.name || this.name;
   }
 
   static get typeFileName() {

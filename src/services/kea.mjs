@@ -18,14 +18,16 @@ import {
 } from "pmcf";
 import { writeLines } from "../utils.mjs";
 
-const KeaServiceTypeDefinition = {
-  name: "kea",
-  priority: 1,
-  extends: ServiceTypeDefinition,
-  specializationOf: ServiceTypeDefinition,
-  owners: ServiceTypeDefinition.owners,
-  key: "name",
-  attributes: {
+const keaVersion = "3.0.1";
+
+export class KeaService extends Service {
+  static name = "kea";
+  static priority = 1;
+  static extends = ServiceTypeDefinition;
+  static specializationOf = ServiceTypeDefinition;
+  static owners = ServiceTypeDefinition.owners;
+  static key = "name";
+  static attributes = {
     "ddns-send-updates": {
       ...boolean_attribute_writable_true,
       configurable: true
@@ -51,8 +53,8 @@ const KeaServiceTypeDefinition = {
       configurable: true
       //values: ["check-exists-with-dhcid","no-check-with-dhcid"]
     }
-  },
-  service: {
+  };
+  static service = {
     extends: ["dhcp"],
     services: {
       "kea-ddns": {
@@ -124,20 +126,16 @@ const KeaServiceTypeDefinition = {
         ]
       }
     }
-  }
-};
+  };
 
-const keaVersion = "3.0.1";
-
-export class KeaService extends Service {
-  static typeDefinition = KeaServiceTypeDefinition;
+  static typeDefinition = this;
   static {
     addType(this);
-    addServiceType(this.typeDefinition.service, this.typeDefinition.name);
+    addServiceType(this.service, this.name);
   }
 
   get type() {
-    return KeaServiceTypeDefinition.name;
+    return this.constructor.name;
   }
 
   async *preparePackages(dir) {
