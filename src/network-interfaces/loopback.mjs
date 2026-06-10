@@ -3,14 +3,6 @@ import { SUBNET_LOCALHOST_IPV4, SUBNET_LOCALHOST_IPV6 } from "pmcf";
 import { SkeletonNetworkInterface } from "./skeleton.mjs";
 import { NetworkInterfaceTypeDefinition } from "./network-interface.mjs";
 
-const LoopbackNetworkInterfaceTypeDefinition = {
-  name: "loopback",
-  extends: NetworkInterfaceTypeDefinition,
-  specializationOf: NetworkInterfaceTypeDefinition,
-  owners: NetworkInterfaceTypeDefinition.owners,
-  key: "name"
-};
-
 const _localAddresses = new Map([
   ["127.0.0.1", SUBNET_LOCALHOST_IPV4],
   ["::1", SUBNET_LOCALHOST_IPV6]
@@ -19,7 +11,13 @@ const _localAddresses = new Map([
 const _localDomains = new Set(["localhost"]);
 
 export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
-  static typeDefinition = LoopbackNetworkInterfaceTypeDefinition;
+  static name = "loopback";
+  static extends = NetworkInterfaceTypeDefinition;
+  static specializationOf = NetworkInterfaceTypeDefinition;
+  static owners = NetworkInterfaceTypeDefinition.owners;
+  static key = "name";
+
+  static typeDefinition = this;
 
   static {
     addType(this);
@@ -30,7 +28,7 @@ export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
   }
 
   get kind() {
-    return LoopbackNetworkInterfaceTypeDefinition.name;
+    return "loopback";
   }
 
   set scope(v) {}

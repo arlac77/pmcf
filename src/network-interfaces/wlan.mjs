@@ -12,21 +12,19 @@ import {
   EthernetNetworkInterfaceTypeDefinition
 } from "./ethernet.mjs";
 
-const WLANNetworkInterfaceTypeDefinition = {
-  name: "wlan",
-  extends: EthernetNetworkInterfaceTypeDefinition,
-  specializationOf: NetworkInterfaceTypeDefinition,
-  owners: EthernetNetworkInterfaceTypeDefinition.owners,
-  key: "name",
-  attributes: {
+export class WLANNetworkInterface extends EthernetNetworkInterface {
+  static name = "wlan";
+  static extends = EthernetNetworkInterfaceTypeDefinition;
+  static specializationOf = NetworkInterfaceTypeDefinition;
+  static owners = EthernetNetworkInterfaceTypeDefinition.owners;
+  static key = "name";
+  static attributes = {
     ssid: string_attribute_writable,
     psk: secret_attribute_writable,
     secretName: string_attribute_writable
-  }
-};
+  };
 
-export class WLANNetworkInterface extends EthernetNetworkInterface {
-  static typeDefinition = WLANNetworkInterfaceTypeDefinition;
+  static typeDefinition = this;
 
   static {
     addType(this);
@@ -41,7 +39,7 @@ export class WLANNetworkInterface extends EthernetNetworkInterface {
   _secretName;
 
   get kind() {
-    return WLANNetworkInterfaceTypeDefinition.name;
+    return "wlan";
   }
 
   set secretName(value) {

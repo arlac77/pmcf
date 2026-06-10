@@ -2,23 +2,21 @@ import { addType } from "pacc";
 import { NetworkInterface } from "./network-interface.mjs";
 import { NetworkInterfaceTypeDefinition } from "./network-interface.mjs";
 
-const TUNdNetworkInterfaceTypeDefinition = {
-  name: "tun",
-  extends: NetworkInterfaceTypeDefinition,
-  specializationOf: NetworkInterfaceTypeDefinition,
-  owners: NetworkInterfaceTypeDefinition.owners,
-  key: "name"
-};
-
 export class TUNNetworkInterface extends NetworkInterface {
-  static typeDefinition = TUNdNetworkInterfaceTypeDefinition;
+  static name = "tun";
+  static extends = NetworkInterfaceTypeDefinition;
+  static specializationOf = NetworkInterfaceTypeDefinition;
+  static owners = NetworkInterfaceTypeDefinition.owners;
+  static key = "name";
+
+  static typeDefinition = this;
 
   static {
     addType(this);
   }
 
   get kind() {
-    return TUNdNetworkInterfaceTypeDefinition.name;
+    return "tun";
   }
 
   async systemdDefinitions(dir, packageData) {}
