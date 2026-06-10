@@ -1,12 +1,12 @@
 import { addType } from "pacc";
-import { ServiceTypeDefinition, Service } from "../service.mjs";
+import { Service } from "../service.mjs";
 
 export class TailscaleService extends Service {
   static name = "tailscale";
   static priority = 1;
-  static extends = ServiceTypeDefinition;
-  static specializationOf = ServiceTypeDefinition;
-  static owners = ServiceTypeDefinition.owners;
+  static extends = Service;
+  static specializationOf = Service;
+  static owners = Service.owners;
   static key = "name";
   static service = {
     endpoints: [

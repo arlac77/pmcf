@@ -1,13 +1,13 @@
 import { string_attribute_writable, addType } from "pacc";
 import { addServiceType } from "pmcf";
-import { ServiceTypeDefinition, Service } from "../service.mjs";
+import { Service } from "../service.mjs";
 
 export class OpenLDAPService extends Service {
   static name = "openldap";
   static priority = 1;
-  static extends = ServiceTypeDefinition;
-  static specializationOf = ServiceTypeDefinition;
-  static owners = ServiceTypeDefinition.owners;
+  static extends = Service;
+  static specializationOf = Service;
+  static owners = Service.owners;
   static key = "name";
   static attributes = {
     base: string_attribute_writable,

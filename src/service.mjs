@@ -48,15 +48,15 @@ export const EndpointTypeDefinition = {
   attributes: endpointAttributes
 };
 
-export const ServiceTypeDefinition = {
-  name: "service",
-  priority: 1.1,
-  owners: [Host.typeDefinition, "cluster", "network_interface"],
-  extends: Base,
-  specializations: {},
-  factoryFor(owner, value) {
+export class Service extends Base {
+  static name = "service";
+  static priority = 1.1;
+  static owners = [Host, "cluster", "network_interface"];
+  static extends = Base;
+  static specializations = {};
+  static factoryFor(owner, value) {
     const type = value.type ?? value.name;
-    const t = ServiceTypeDefinition.specializations[type];
+    const t = this.specializations[type];
 
     if (t) {
       delete value.type;
@@ -64,19 +64,17 @@ export const ServiceTypeDefinition = {
     }
 
     return Service;
-  },
-  key: "name",
-  attributes: {
+  }
+  static key = "name";
+  static attributes = {
     ...networkAddressAttributes,
     ...endpointAttributes,
     alias: string_attribute_writable,
     weight: { ...number_attribute_writable /*default: 1*/ },
     systemdService: string_attribute_writable
-  }
-};
+  };
 
-export class Service extends Base {
-  static typeDefinition = ServiceTypeDefinition;
+  static typeDefinition = this;
 
   static {
     addType(this);
@@ -221,7 +219,10 @@ export class Service extends Base {
   }
 
   get port() {
-    return this.attribute("_port") ?? serviceTypeEndpoints(ServiceTypes[this.type])[0]?.port;
+    return (
+      this.attribute("_port") ??
+      serviceTypeEndpoints(ServiceTypes[this.type])[0]?.port
+    );
   }
 
   set weight(value) {

@@ -5,7 +5,7 @@ import {
   boolean_attribute_writable,
   integer_attribute_writable
 } from "pacc";
-import { Service, ServiceTypeDefinition, addServiceType } from "pmcf";
+import { Service, addServiceType } from "pmcf";
 import { filterConfigurable, sectionLines } from "../utils.mjs";
 
 /**
@@ -15,9 +15,9 @@ import { filterConfigurable, sectionLines } from "../utils.mjs";
 export class SystemdJournalRemoteService extends Service {
   static name = "systemd-journal-remote";
   static priority = 1;
-  static extends = ServiceTypeDefinition;
-  static specializationOf = ServiceTypeDefinition;
-  static owners = ServiceTypeDefinition.owners;
+  static extends = Service;
+  static specializationOf = Service;
+  static owners = Service.owners;
   static key = "name";
   static attributes = {
     Seal: {

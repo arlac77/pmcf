@@ -1,23 +1,22 @@
 import { default_attribute_writable, addType } from "pacc";
-import { Service, ServiceTypeDefinition } from "./service.mjs";
+import { Service } from "./service.mjs";
 import { networkAddressType } from "pmcf";
 
-export const ExtraSourceServiceTypeDefinition = {
-  name: "extra-source-service",
-  extends: ServiceTypeDefinition,
-  specializationOf: ServiceTypeDefinition,
-  owners: ServiceTypeDefinition.owners,
-  attributes: {
+
+export class ExtraSourceService extends Service {
+  static name = "extra-source-service";
+  static extends = Service;
+  static specializationOf = Service;
+  static owners = Service.owners;
+  static attributes = {
     source: {
       ...default_attribute_writable,
       type: networkAddressType,
       collection: true
     }
-  }
-};
+  };
 
-export class ExtraSourceService extends Service {
-  static typeDefinition = ExtraSourceServiceTypeDefinition;
+  static typeDefinition = this;
 
   static {
     addType(this);
@@ -26,7 +25,7 @@ export class ExtraSourceService extends Service {
   source = [];
 
   get type() {
-    return ExtraSourceServiceTypeDefinition.name;
+    return this.constructor.name;
   }
 
   get services() {

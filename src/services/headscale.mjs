@@ -1,13 +1,13 @@
 import { addType } from "pacc";
 import { addServiceType } from "pmcf";
-import { ServiceTypeDefinition, Service } from "../service.mjs";
+import { Service } from "../service.mjs";
 
 export class HeadscaleService extends Service {
   static name = "headscale";
   static priority = 1;
-  static extends = ServiceTypeDefinition;
-  static specializationOf = ServiceTypeDefinition;
-  static owners = ServiceTypeDefinition.owners;
+  static extends = Service;
+  static specializationOf = Service;
+  static owners = Service.owners;
   static key = "name";
   static service = {
     endpoints: [

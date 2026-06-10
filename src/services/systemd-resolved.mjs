@@ -1,6 +1,5 @@
 import {
   addType,
-  object_attribute,
   string_collection_attribute_writable,
   duration_attribute_writable,
   string_attribute_writable,
@@ -9,10 +8,9 @@ import {
 } from "pacc";
 import {
   ExtraSourceService,
-  ExtraSourceServiceTypeDefinition,
-  ServiceTypeDefinition,
   serviceEndpoints,
-  addServiceType
+  addServiceType,
+  Service
 } from "pmcf";
 import {
   filterConfigurable,
@@ -24,9 +22,9 @@ import {
 export class SystemdResolvedService extends ExtraSourceService {
   static name = "systemd-resolved";
   static priority = 1;
-  static extends = ExtraSourceServiceTypeDefinition;
-  static specializationOf = ServiceTypeDefinition;
-  static owners = ServiceTypeDefinition.owners;
+  static extends = ExtraSourceService;
+  static specializationOf = Service;
+  static owners = Service.owners;
   static key = "name";
   static attributes = {
     /* Resolve: {

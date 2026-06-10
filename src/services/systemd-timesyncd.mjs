@@ -5,8 +5,7 @@ import {
 } from "pacc";
 import {
   ExtraSourceService,
-  ExtraSourceServiceTypeDefinition,
-  ServiceTypeDefinition,
+  Service,
   serviceEndpoints,
   addServiceType
 } from "pmcf";
@@ -15,9 +14,9 @@ import { filterConfigurable, sectionLines } from "../utils.mjs";
 export class SystemdTimesyncdService extends ExtraSourceService {
   static name = "systemd-timesyncd";
   static priority = 1;
-  static extends = ExtraSourceServiceTypeDefinition;
-  static specializationOf = ServiceTypeDefinition;
-  static owners = ServiceTypeDefinition.owners;
+  static extends = ExtraSourceService;
+  static specializationOf = Service;
+  static owners = Service.owners;
 
   static attributes = {
     NTP: { ...string_attribute_writable, configurable: true },

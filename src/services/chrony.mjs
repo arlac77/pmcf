@@ -2,20 +2,16 @@ import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { isLinkLocal } from "ip-utilties";
 import { addType } from "pacc";
-import { addServiceType } from "pmcf";
-import { ServiceTypeDefinition, serviceEndpoints } from "../service.mjs";
-import {
-  ExtraSourceService,
-  ExtraSourceServiceTypeDefinition
-} from "../extra-source-service.mjs";
+import { addServiceType, ExtraSourceService } from "pmcf";
+import { Service, serviceEndpoints } from "../service.mjs";
 import { writeLines } from "../utils.mjs";
 
 export class ChronyService extends ExtraSourceService {
   static name = "chrony";
   static priority = 1;
-  static extends = ExtraSourceServiceTypeDefinition;
-  static specializationOf = ServiceTypeDefinition;
-  static owners = ServiceTypeDefinition.owners;
+  static extends = ExtraSourceService;
+  static specializationOf = Service;
+  static owners = Service.owners;
   static key = "name";
   static service = {
     systemdService: "chronyd.service",

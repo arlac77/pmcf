@@ -15,8 +15,8 @@ import { writeLines } from "./utils.mjs";
 export class Cluster extends Host {
   static name = "cluster";
   static priority = 1.5;
-  static owners = [Owner.typeDefinition, "network", "location", "root"];
-  static extends = Host.typeDefinition;
+  static owners = [Owner, "network", "location", "root"];
+  static extends = Host;
   static key = "name";
   static attributes = {
     routerId: { ...number_attribute_writable, default: 100 },

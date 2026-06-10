@@ -7,14 +7,14 @@ import {
   setionLinesFromPropertyIterator,
   filterConfigurable
 } from "../utils.mjs";
-import { Service, ServiceTypeDefinition } from "../service.mjs";
+import { Service } from "../service.mjs";
 
 export class InfluxdbService extends Service {
   static name = "influxdb";
   static priority = 1;
-  static extends = ServiceTypeDefinition;
-  static specializationOf = ServiceTypeDefinition;
-  static owners = ServiceTypeDefinition.owners;
+  static extends = Service;
+  static specializationOf = Service;
+  static owners = Service.owners;
   static key = "name";
   static attributes = {
     metricsDisabled: {

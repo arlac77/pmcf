@@ -6,11 +6,11 @@ import {
   string_set_attribute_writable
 } from "pacc";
 import { addServiceType, Base } from "pmcf";
-import { ServiceTypeDefinition, Service } from "../service.mjs";
+import { Service } from "../service.mjs";
 
 class ALPMRepository extends Base {
   static name = "alpm_repository";
-  static extends = Base.typeDefinition;
+  static extends = Base;
   static key = "name";
   static attributes = {
     name: name_attribute_writable,
@@ -27,9 +27,9 @@ class ALPMRepository extends Base {
 export class ALPMService extends Service {
   static name = "alpm";
   static priority = 1;
-  static extends = ServiceTypeDefinition;
-  static specializationOf = ServiceTypeDefinition;
-  static owners = ServiceTypeDefinition.owners;
+  static extends = Service;
+  static specializationOf = Service;
+  static owners = Service.owners;
   static attributes = {
     repositories: {
       ...default_attribute_writable,

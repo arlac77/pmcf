@@ -27,8 +27,7 @@ import {
   dnsRecordTypeForAddressFamily,
   sortZoneRecords
 } from "../dns-utils.mjs";
-import { ServiceTypeDefinition } from "../service.mjs";
-import { ExtraSourceServiceTypeDefinition } from "../extra-source-service.mjs";
+import { Service } from "../service.mjs";
 import { addHook } from "../hooks.mjs";
 
 const bindNetworkAddressTypes = networkAddressType + "|bind_group";
@@ -400,9 +399,9 @@ function addressesStatement(prefix, objects, generateEmpty = false) {
 
 export class BindService extends ExtraSourceService {
   static name = "bind";
-  static extends = ExtraSourceServiceTypeDefinition;
-  static specializationOf = ServiceTypeDefinition;
-  static owners = ServiceTypeDefinition.owners;
+  static extends = ExtraSourceService;
+  static specializationOf = Service;
+  static owners = Service.owners;
   static key = "name";
   static attributes = {
     groups: {

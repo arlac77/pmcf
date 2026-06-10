@@ -19,7 +19,7 @@ export class Owner extends Base {
   static name = "owner";
   static priority = 2;
   static owners = ["location", "owner", "root"];
-  static extends = Base.typeDefinition;
+  static extends = Base;
   static key = "name";
   static attributes = {
     networks: networks_attribute,
@@ -31,7 +31,7 @@ export class Owner extends Base {
     },
     subnets: {
       ...default_attribute_writable,
-      type: Subnet.typeDefinition,
+      type: Subnet,
       collection: true
     },
     country: string_attribute_writable,

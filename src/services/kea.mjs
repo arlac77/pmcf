@@ -11,7 +11,6 @@ import {
   addServiceType,
   Service,
   sortDescendingByPriority,
-  ServiceTypeDefinition,
   serviceEndpoints,
   SUBNET_LOCALHOST_IPV4,
   SUBNET_LOCALHOST_IPV6
@@ -23,9 +22,9 @@ const keaVersion = "3.0.1";
 export class KeaService extends Service {
   static name = "kea";
   static priority = 1;
-  static extends = ServiceTypeDefinition;
-  static specializationOf = ServiceTypeDefinition;
-  static owners = ServiceTypeDefinition.owners;
+  static extends = Service;
+  static specializationOf = Service;
+  static owners = Service.owners;
   static key = "name";
   static attributes = {
     "ddns-send-updates": {
@@ -266,7 +265,7 @@ export class KeaService extends Service {
       };
 
       for (const [key] of Object.entries(
-        KeaServiceTypeDefinition.attributes
+        KeaService.attributes
       ).filter(
         ([key, attribute]) => attribute.configurable && this[key] !== undefined
       )) {

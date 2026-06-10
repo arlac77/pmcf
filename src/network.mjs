@@ -7,7 +7,7 @@ export class Network extends Owner {
   static name = "network";
   static priority = 2;
   static owners = ["location", "owner", "root"];
-  static extends = Owner.typeDefinition;
+  static extends = Owner;
   static key = "name";
   static attributes = {
     ...networkAttributes,

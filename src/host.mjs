@@ -10,7 +10,8 @@ import {
   boolean_attribute_false,
   addType
 } from "pacc";
-import { ServiceOwner, Base, addresses } from "pmcf";
+import {  Base, NetworkInterface, addresses } from "pmcf";
+import { ServiceOwner } from "./service-owner.mjs";
 import { networkAddressAttributes } from "./network-support.mjs";
 import { addHook } from "./hooks.mjs";
 import {
@@ -22,13 +23,12 @@ import {
 } from "./utils.mjs";
 import { loadHooks } from "./hooks.mjs";
 import { generateKnownHosts } from "./host-utils.mjs";
-import { NetworkInterfaceTypeDefinition } from "./network-interfaces/network-interface.mjs";
 
 export class Host extends ServiceOwner {
   static name = "host";
   static priority = 1.9;
   static owners = ["owner", "network", "root"];
-  static extends = Base.typeDefinition;
+  static extends = Base;
   static key = "name";
   static attributes = {
     ...networkAddressAttributes,
@@ -368,7 +368,7 @@ export class Host extends ServiceOwner {
   }
 
   typeNamed(typeName, name) {
-    if (typeName === NetworkInterfaceTypeDefinition.name) {
+    if (typeName === NetworkInterface.name) {
       const ni = this._networkInterfaces.get(name);
       if (ni) {
         return ni;

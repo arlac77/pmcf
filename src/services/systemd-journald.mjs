@@ -3,15 +3,15 @@ import {
   string_attribute_writable,
   duration_attribute_writable
 } from "pacc";
-import { Service, ServiceTypeDefinition, addServiceType } from "pmcf";
+import { Service, addServiceType } from "pmcf";
 import { filterConfigurable, sectionLines } from "../utils.mjs";
 
 export class SystemdJournaldService extends Service {
   static name = "systemd-journald";
   static priority = 1;
-  static extends = ServiceTypeDefinition;
-  static specializationOf = ServiceTypeDefinition;
-  static owners = ServiceTypeDefinition.owners;
+  static extends = Service;
+  static specializationOf = Service;
+  static owners = Service.owners;
   static key = "name";
   static attributes = {
     Storage: {

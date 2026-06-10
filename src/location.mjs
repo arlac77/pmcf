@@ -6,8 +6,8 @@ import { loadHooks } from "./hooks.mjs";
 export class Location extends Owner {
   static name = "location";
   static priority = 2;
-  static owners = [Owner.typeDefinition, "location", "root"];
-  static extends = Owner.typeDefinition;
+  static owners = [Owner, "location", "root"];
+  static extends = Owner;
   static key = "name";
   static attributes = {};
 

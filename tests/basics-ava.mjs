@@ -172,7 +172,7 @@ test("extract", t => {
 
   ic.read(l1, { name: "l1" });
 
-  t.deepEqual(extractFrom(l1, Owner.typeDefinition), {
+  t.deepEqual(extractFrom(l1, Owner), {
     name: "l1",
     owner: { type: "root" },
     administratorEmail: "admin@undefined",
