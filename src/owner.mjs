@@ -37,7 +37,7 @@ const OwnerTypeDefinition = {
     domains: string_set_attribute_writable,
     timezone: string_attribute_writable,
     architectures: string_set_attribute_writable,
-    locales: string_set_attribute_writable,
+    locales: { ...string_set_attribute_writable, description: "unix locale" },
     administratorEmail: { ...email_attribute, writable: true },
     template: { ...boolean_attribute_writable, private: true }
   }
@@ -350,10 +350,7 @@ export class Owner extends Base {
   }
 
   get locales() {
-    if (this.owner) {
-      return this.owner.locales.union(this._locales);
-    }
-    return this._locales;
+    return this.unionFromDirections(["this", "owner"], "_locales");
   }
 
   _timezone;
