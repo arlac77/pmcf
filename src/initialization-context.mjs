@@ -188,7 +188,7 @@ export class InitializationContext {
     return object;
   }
 
-  read(object, data, type = object.constructor.typeDefinition) {
+  read(object, data, type = object.constructor) {
     if (data?.properties) {
       Object.assign(object.properties, data.properties);
     }
@@ -200,7 +200,7 @@ export class InitializationContext {
     }
   }
 
-  _read(object, data, type = object.constructor.typeDefinition) {
+  _read(object, data, type) {
     if (type.extends) {
       this._read(object, data, type.extends);
     }

@@ -55,7 +55,7 @@ export class Base {
   }
 
   static get typeName() {
-    return this.typeDefinition?.name || this.name;
+    return this.name;
   }
 
   static get typeFileName() {
@@ -213,7 +213,7 @@ export class Base {
 
   get typeName() {
     // @ts-ignore
-    return this.constructor.typeDefinition.name;
+    return this.constructor.name;
   }
 
   /**
@@ -236,15 +236,8 @@ export class Base {
    * @return {Iterable<[string,any]>} values
    */
   *attributeIterator(filter) {
-    for (
-      let typeDefinition = this.constructor.typeDefinition;
-      typeDefinition;
-      typeDefinition = typeDefinition.extends
-    ) {
-      for (const [path, def] of attributeIterator(
-        typeDefinition.attributes,
-        filter
-      )) {
+    for (let type = this.constructor; type; type = type.extends) {
+      for (const [path, def] of attributeIterator(type.attributes, filter)) {
         const name = path.join(".");
         const value = this.attribute(name);
 
@@ -545,14 +538,11 @@ export class Base {
   }
 
   toJSON() {
-    return extractFrom(this, this.constructor.typeDefinition);
+    return extractFrom(this, this.constructor);
   }
 }
 
-export function extractFrom(
-  object,
-  typeDefinition = object?.constructor?.typeDefinition
-) {
+export function extractFrom(object, type = object?.constructor) {
   switch (typeof object) {
     case "undefined":
     case "string":
@@ -572,12 +562,12 @@ export function extractFrom(
       return undefined;
     }
 
-    if (typeDefinition?.key) {
+    if (type?.key) {
       return Object.fromEntries(
         object.map(o => {
           o = extractFrom(o);
-          const name = o[typeDefinition.key];
-          delete o[typeDefinition.key];
+          const name = o[type.key];
+          delete o[type.key];
           return [name, o];
         })
       );
@@ -588,9 +578,9 @@ export function extractFrom(
 
   const json = {};
 
-  for (; typeDefinition; typeDefinition = typeDefinition.extends) {
+  for (; type; type = type.extends) {
     for (const [path, def] of attributeIterator(
-      typeDefinition.attributes,
+      type.attributes,
       filterPublic
     )) {
       const name = path.join(".");
