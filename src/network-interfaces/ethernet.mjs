@@ -4,23 +4,21 @@ import {
   NetworkInterfaceTypeDefinition
 } from "./network-interface.mjs";
 
-export const EthernetNetworkInterfaceTypeDefinition = {
-  name: "ethernet",
-  extends: NetworkInterfaceTypeDefinition,
-  specializationOf: NetworkInterfaceTypeDefinition,
-  owners: NetworkInterfaceTypeDefinition.owners,
-  key: "name",
-  attributes: {
+export class EthernetNetworkInterface extends NetworkInterface {
+  static   name= "ethernet";
+  static extends= NetworkInterfaceTypeDefinition;
+  static specializationOf= NetworkInterfaceTypeDefinition;
+  static owners= NetworkInterfaceTypeDefinition.owners;
+  static key= "name";
+  static attributes= {
     arpbridge: {
       ...default_attribute_writable,
       type: "network_interface",
       collection: true
     }
-  }
-};
+  };
 
-export class EthernetNetworkInterface extends NetworkInterface {
-  static typeDefinition = EthernetNetworkInterfaceTypeDefinition;
+  static typeDefinition = this;
 
   static {
     addType(this);
@@ -33,6 +31,6 @@ export class EthernetNetworkInterface extends NetworkInterface {
   arpbridge;
 
   get kind() {
-    return EthernetNetworkInterfaceTypeDefinition.name;
+    return this.constructor.name;
   }
 }

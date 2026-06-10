@@ -226,8 +226,8 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     const routeSectionExtra = this.destination
       ? { Destination: this.destination }
       : this.gateway
-      ? { Gateway: this.gatewayAddress }
-      : {};
+        ? { Gateway: this.gatewayAddress }
+        : {};
 
     const networkSectionExtra = this.arpbridge
       ? {

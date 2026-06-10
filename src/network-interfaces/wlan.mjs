@@ -8,15 +8,14 @@ import {
 import { writeLines, sectionLines } from "../utils.mjs";
 import { NetworkInterfaceTypeDefinition } from "./network-interface.mjs";
 import {
-  EthernetNetworkInterface,
-  EthernetNetworkInterfaceTypeDefinition
+  EthernetNetworkInterface
 } from "./ethernet.mjs";
 
 export class WLANNetworkInterface extends EthernetNetworkInterface {
   static name = "wlan";
-  static extends = EthernetNetworkInterfaceTypeDefinition;
+  static extends = EthernetNetworkInterface;
   static specializationOf = NetworkInterfaceTypeDefinition;
-  static owners = EthernetNetworkInterfaceTypeDefinition.owners;
+  static owners = EthernetNetworkInterface.owners;
   static key = "name";
   static attributes = {
     ssid: string_attribute_writable,
