@@ -3,13 +3,13 @@ import { Owner } from "./owner.mjs";
 import { Subnet } from "./subnet.mjs";
 import { networkAttributes } from "./network-support.mjs";
 
-export const NetworkTypeDefinition = {
-  name: "network",
-  priority: 2,
-  owners: ["location", "owner", "root"],
-  extends: Owner.typeDefinition,
-  key: "name",
-  attributes: {
+export class Network extends Owner {
+  static name = "network";
+  static priority = 2;
+  static owners = ["location", "owner", "root"];
+  static extends = Owner.typeDefinition;
+  static key = "name";
+  static attributes = {
     ...networkAttributes,
     bridge: {
       ...default_attribute_writable,
@@ -17,11 +17,9 @@ export const NetworkTypeDefinition = {
       collection: true
     },
     gateway: { ...default_attribute_writable, type: "host" }
-  }
-};
+  };
 
-export class Network extends Owner {
-  static typeDefinition = NetworkTypeDefinition;
+  static typeDefinition = this;
 
   static {
     addType(this);

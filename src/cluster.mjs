@@ -12,13 +12,13 @@ import { Host } from "./host.mjs";
 import { serviceEndpoints } from "pmcf";
 import { writeLines } from "./utils.mjs";
 
-const ClusterTypeDefinition = {
-  name: "cluster",
-  priority: 1.5,
-  owners: [Owner.typeDefinition, "network", "location", "root"],
-  extends: Host.typeDefinition,
-  key: "name",
-  attributes: {
+export class Cluster extends Host {
+  static name = "cluster";
+  static priority = 1.5;
+  static owners = [Owner.typeDefinition, "network", "location", "root"];
+  static extends = Host.typeDefinition;
+  static key = "name";
+  static attributes = {
     routerId: { ...number_attribute_writable, default: 100 },
     masters: {
       ...default_attribute_writable,
@@ -36,11 +36,9 @@ const ClusterTypeDefinition = {
       collection: true
     },
     checkInterval: { ...duration_attribute_writable, default: 60 }
-  }
-};
+  };
 
-export class Cluster extends Host {
-  static typeDefinition = ClusterTypeDefinition;
+  static typeDefinition = this;
 
   static {
     addType(this);
@@ -177,9 +175,7 @@ export class Cluster extends Host {
 
           for (const member of this.members) {
             const memberService = Array.from(
-              member.expression(
-                `services[types[${endpoint.type}]][0]`
-              )
+              member.expression(`services[types[${endpoint.type}]][0]`)
             );
 
             console.log(member.fullName, endpoint.type, memberService);

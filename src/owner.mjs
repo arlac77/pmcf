@@ -13,13 +13,15 @@ import { Base } from "./base.mjs";
 import { Subnet, SUBNET_GLOBAL_IPV4, SUBNET_GLOBAL_IPV6 } from "./subnet.mjs";
 import { networks_attribute } from "./network-support.mjs";
 
-const OwnerTypeDefinition = {
-  name: "owner",
-  priority: 2,
-  owners: ["location", "owner", "root"],
-  extends: Base.typeDefinition,
-  key: "name",
-  attributes: {
+const EMPTY = new Map();
+
+export class Owner extends Base {
+  static name = "owner";
+  static priority = 2;
+  static owners = ["location", "owner", "root"];
+  static extends = Base.typeDefinition;
+  static key = "name";
+  static attributes = {
     networks: networks_attribute,
     hosts: { ...default_attribute_writable, type: "host", collection: true },
     clusters: {
@@ -40,13 +42,9 @@ const OwnerTypeDefinition = {
     locales: { ...string_set_attribute_writable, description: "unix locale" },
     administratorEmail: { ...email_attribute, writable: true },
     template: { ...boolean_attribute_writable, private: true }
-  }
-};
+  };
 
-const EMPTY = new Map();
-
-export class Owner extends Base {
-  static typeDefinition = OwnerTypeDefinition;
+  static typeDefinition = this;
 
   static {
     addType(this);

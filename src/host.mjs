@@ -24,13 +24,13 @@ import { loadHooks } from "./hooks.mjs";
 import { generateKnownHosts } from "./host-utils.mjs";
 import { NetworkInterfaceTypeDefinition } from "./network-interfaces/network-interface.mjs";
 
-const HostTypeDefinition = {
-  name: "host",
-  priority: 1.9,
-  owners: ["owner", "network", "root"],
-  extends: Base.typeDefinition,
-  key: "name",
-  attributes: {
+export class Host extends ServiceOwner {
+  static name = "host";
+  static priority = 1.9;
+  static owners = ["owner", "network", "root"];
+  static extends = Base.typeDefinition;
+  static key = "name";
+  static attributes = {
     ...networkAddressAttributes,
     networkInterfaces: {
       ...default_attribute_writable,
@@ -85,11 +85,9 @@ const HostTypeDefinition = {
     extends: { ...default_attribute_writable, type: "host", collection: true },
     model: string_attribute,
     isModel: boolean_attribute_false
-  }
-};
+  };
 
-export class Host extends ServiceOwner {
-  static typeDefinition = HostTypeDefinition;
+  static typeDefinition = this;
 
   static {
     addType(this);
