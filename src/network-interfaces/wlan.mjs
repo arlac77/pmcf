@@ -6,15 +6,13 @@ import {
   addType
 } from "pacc";
 import { writeLines, sectionLines } from "../utils.mjs";
-import { NetworkInterfaceTypeDefinition } from "./network-interface.mjs";
-import {
-  EthernetNetworkInterface
-} from "./ethernet.mjs";
+import { NetworkInterface } from "./network-interface.mjs";
+import { EthernetNetworkInterface } from "./ethernet.mjs";
 
 export class WLANNetworkInterface extends EthernetNetworkInterface {
   static name = "wlan";
   static extends = EthernetNetworkInterface;
-  static specializationOf = NetworkInterfaceTypeDefinition;
+  static specializationOf = NetworkInterface;
   static owners = EthernetNetworkInterface.owners;
   static key = "name";
   static attributes = {

@@ -16,17 +16,17 @@ import { SkeletonNetworkInterface } from "./skeleton.mjs";
 import { Network } from "../network.mjs";
 import { yesno } from "../utils.mjs";
 
-export const NetworkInterfaceTypeDefinition = {
-  name: "network_interface",
-  owners: ["host"],
-  extends: Base.typeDefinition,
-  specializations: {},
-  factoryFor(owner, value) {
-    let t = NetworkInterfaceTypeDefinition.specializations[value.kind];
+export class NetworkInterface extends SkeletonNetworkInterface {
+  static name = "network_interface";
+  static owners = ["host"];
+  static extends = Base;
+  static specializations = {};
+  static factoryFor(owner, value) {
+    let t = this.specializations[value.kind];
 
     //console.log("factoryFor", owner, value);
     if (!t) {
-      for (t of Object.values(NetworkInterfaceTypeDefinition.specializations)) {
+      for (t of Object.values(this.specializations)) {
         if (t.clazz.isCommonName && t.clazz.isCommonName(value.name)) {
           break;
         }
@@ -39,10 +39,10 @@ export const NetworkInterfaceTypeDefinition = {
       return t.clazz;
     }
 
-    return NetworkInterface;
-  },
-  key: "name",
-  attributes: {
+    return this;
+  }
+  static key = "name";
+  static attributes = {
     ...networkAttributes,
     ...networkAddressAttributes,
 
@@ -56,14 +56,12 @@ export const NetworkInterfaceTypeDefinition = {
     hwaddr: string_attribute_writable,
     network: {
       ...default_attribute_writable,
-      type: Network.typeDefinition
+      type: Network
     },
     destination: string_attribute_writable
-  }
-};
+  };
 
-export class NetworkInterface extends SkeletonNetworkInterface {
-  static typeDefinition = NetworkInterfaceTypeDefinition;
+  static typeDefinition = this;
 
   static {
     addType(this);
