@@ -201,7 +201,7 @@ export class Owner extends Base {
   }
 
   subnetNamed(name) {
-    return [...this.subnets].find(s => s.name == name);
+    return this.subnets.values().find(s => s.name == name);
   }
 
   get subnets() {
@@ -232,11 +232,7 @@ export class Owner extends Base {
   }
 
   subnetForAddress(address) {
-    for (const subnet of this.subnets) {
-      if (subnet.matchesAddress(address)) {
-        return subnet;
-      }
-    }
+    return this.subnets.values().find(subnet => subnet.matchesAddress(address));
   }
 
   get clusters() {
