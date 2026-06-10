@@ -15,22 +15,20 @@ import {
 import { networks_attribute } from "./network-support.mjs";
 import { Base } from "./base.mjs";
 
-const SubnetTypeDefinition = {
-  name: "subnet",
-  priority: 1,
-  owners: ["location", "owner", "network", "root"],
-  constructWithIdentifierOnly: true,
-  key: "address",
-  attributes: {
+export class Subnet extends Base {
+  static name = "subnet";
+  static priority = 1;
+  static owners = ["location", "owner", "network", "root"];
+  static constructWithIdentifierOnly = true;
+  static key = "address";
+  static attributes = {
     address: name_attribute,
     networks: networks_attribute,
     prefixLength: number_attribute,
     family: string_attribute
-  }
-};
+  };
 
-export class Subnet extends Base {
-  static typeDefinition = SubnetTypeDefinition;
+  static typeDefinition = this;
 
   static {
     addType(this);
