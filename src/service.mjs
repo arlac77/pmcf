@@ -3,6 +3,7 @@ import {
   string_set_attribute,
   number_attribute_writable,
   boolean_attribute_false,
+  default_attribute_writable,
   addType
 } from "pacc";
 import {
@@ -69,11 +70,11 @@ export class Service extends Base {
   static attributes = {
     ...networkAddressAttributes,
     ...endpointAttributes,
+    extends: { ...default_attribute_writable, type: Service, collection: true },
     alias: string_attribute_writable,
     weight: { ...number_attribute_writable /*default: 1*/ },
     systemdService: string_attribute_writable
   };
-
 
   static {
     addType(this);
