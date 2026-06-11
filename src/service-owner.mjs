@@ -9,7 +9,6 @@ export class ServiceOwner extends Base {
 
   get services() {
     return this._services;
-    //return this.mapFromDirections(["this", "extends"], "_services");
   }
 
   addObject(object) {

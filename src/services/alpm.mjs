@@ -8,8 +8,7 @@ import {
 import { addServiceType, Base } from "pmcf";
 import { Service } from "../service.mjs";
 
-class ALPMRepository extends Base {
-  static name = "alpm_repository";
+class alpm_repository extends Base {
   static extends = Base;
   static key = "name";
   static attributes = {
@@ -32,7 +31,7 @@ export class ALPMService extends Service {
   static attributes = {
     repositories: {
       ...default_attribute_writable,
-      type: "alpm_repository",
+      type: alpm_repository,
       collection: true
     }
   };

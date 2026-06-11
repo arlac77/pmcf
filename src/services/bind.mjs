@@ -53,7 +53,7 @@ class bind_group extends Base {
       collection: true,
       writable: true
     },
-    sharedWith: { ...default_attribute_writable, type: "bind_group" },
+    sharedWith: { ...default_attribute_writable, type: bind_group },
     allowedUpdates: {
       type: bindNetworkAddressTypes,
       collection: true,
