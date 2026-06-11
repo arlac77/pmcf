@@ -244,7 +244,7 @@ export class InitializationContext {
   async loadType(name, type) {
     const data = JSON.parse(
       await readFile(
-        join(this.directory, name, type.typeFileName),
+        join(this.directory, name, type.fileName),
         "utf8"
       )
     );
@@ -262,7 +262,7 @@ export class InitializationContext {
     //console.log("LOAD", [name, owner.fullName, data.name]);
 
     const object = this.typeFactory(type, owner, data);
-    this.root.addTypeObject(type.typeName, name, object);
+    this.root.addTypeObject(type.name, name, object);
 
     return object;
   }
@@ -279,7 +279,7 @@ export class InitializationContext {
       return this.loadType(name, options.type);
     } else {
       for (const type of Object.values(types).filter(
-        type => type?.typeFileName
+        type => type?.fileName
       )) {
         try {
           return await this.loadType(name, type);
@@ -295,8 +295,8 @@ export class InitializationContext {
     for (const type of Object.values(types).sort(
       (a, b) => b.priority - a.priority
     )) {
-      if (type.typeFileName) {
-        for await (const name of glob("**/" + type.typeFileName, {
+      if (type.fileName) {
+        for await (const name of glob("**/" + type.fileName, {
           cwd: this.directory
         })) {
           if (type === this.root.constructor) {

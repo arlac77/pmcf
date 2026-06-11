@@ -52,12 +52,8 @@ export class Base {
     addType(this);
   }
 
-  static get typeName() {
-    return this.name;
-  }
-
-  static get typeFileName() {
-    return this.typeName + ".json";
+  static get fileName() {
+    return this.name + ".json";
   }
 
   owner;
@@ -210,7 +206,6 @@ export class Base {
   }
 
   get typeName() {
-    // @ts-ignore
     return this.constructor.name;
   }
 
