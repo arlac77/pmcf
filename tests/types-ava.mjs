@@ -16,16 +16,16 @@ import {
 
 test("types", t => {
   resolveTypeLinks();
-  t.is(types.base.clazz, Base);
-  t.is(types.root.clazz, Root);
-  t.is(types.location.clazz, Location);
+  t.is(types.base, Base);
+  t.is(types.root, Root);
+  t.is(types.location, Location);
   t.deepEqual(types.location.owners, [types.owner, types.location, types.root]);
 
-  t.is(types.network.clazz, Network);
-  t.is(types.subnet.clazz, Subnet);
+  t.is(types.network, Network);
+  t.is(types.subnet, Subnet);
   t.is(types.subnet.key, "address");
 
-  t.is(types.service.clazz, Service);
+  t.is(types.service, Service);
 
   /*
   t.deepEqual(types.service.owners, [
@@ -34,14 +34,14 @@ test("types", t => {
     types.network_interface
   ]);
   */
-  t.is(types.host.clazz, Host);
+  t.is(types.host, Host);
   t.deepEqual(types.host.owners, [types.owner, types.network, types.root]);
 
-  t.is(types.bind.clazz, BindService);
-  t.is(types.chrony.clazz, ChronyService);
+  t.is(types.bind, BindService);
+  t.is(types.chrony, ChronyService);
 
-  t.is(types.cluster.clazz, Cluster);
-  t.is(types.owner.clazz, Owner);
+  t.is(types.cluster, Cluster);
+  t.is(types.owner, Owner);
 
   t.deepEqual(types.owner.attributes.hosts.type, types.host);
   t.deepEqual(types.owner.attributes.networks.type, types.network);

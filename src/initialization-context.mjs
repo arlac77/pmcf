@@ -146,7 +146,7 @@ export class InitializationContext {
             this.assign(object, name, attribute, o);
           } else {
             if (attribute.type.constructWithIdentifierOnly) {
-              o = new attribute.type.clazz(
+              o = new attribute.type(
                 object.ownerFor(attribute, value),
                 value
               );
@@ -161,7 +161,7 @@ export class InitializationContext {
         break;
 
       case "object":
-        if (attribute.type.clazz && value instanceof attribute.type.clazz) {
+        if (attribute.type && value instanceof attribute.type) {
           this.assign(object, name, attribute, value);
         } else {
           this.assign(
@@ -180,7 +180,7 @@ export class InitializationContext {
   }
 
   typeFactory(type, owner, data) {
-    const factory = type.factoryFor?.(owner, data) || type.clazz;
+    const factory = type.factoryFor?.(owner, data) || type;
     const object = new factory(owner);
 
     this.read(object, data);
@@ -244,7 +244,7 @@ export class InitializationContext {
   async loadType(name, type) {
     const data = JSON.parse(
       await readFile(
-        join(this.directory, name, type.clazz.typeFileName),
+        join(this.directory, name, type.typeFileName),
         "utf8"
       )
     );
@@ -262,7 +262,7 @@ export class InitializationContext {
     //console.log("LOAD", [name, owner.fullName, data.name]);
 
     const object = this.typeFactory(type, owner, data);
-    this.root.addTypeObject(type.clazz.typeName, name, object);
+    this.root.addTypeObject(type.typeName, name, object);
 
     return object;
   }
@@ -279,7 +279,7 @@ export class InitializationContext {
       return this.loadType(name, options.type);
     } else {
       for (const type of Object.values(types).filter(
-        type => type?.clazz?.typeFileName
+        type => type?.typeFileName
       )) {
         try {
           return await this.loadType(name, type);
@@ -295,9 +295,8 @@ export class InitializationContext {
     for (const type of Object.values(types).sort(
       (a, b) => b.priority - a.priority
     )) {
-      //console.log("LIST","**/" + type.clazz.typeFileName);
-      if (type.clazz?.typeFileName) {
-        for await (const name of glob("**/" + type.clazz.typeFileName, {
+      if (type.typeFileName) {
+        for await (const name of glob("**/" + type.typeFileName, {
           cwd: this.directory
         })) {
           if (type === this.root.constructor) {

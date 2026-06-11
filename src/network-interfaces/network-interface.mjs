@@ -22,21 +22,21 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   static extends = Base;
   static specializations = {};
   static factoryFor(owner, value) {
-    let t = this.specializations[value.kind];
+    let st = this.specializations[value.kind];
 
     //console.log("factoryFor", owner, value);
-    if (!t) {
-      for (t of Object.values(this.specializations)) {
-        if (t.clazz.isCommonName && t.clazz.isCommonName(value.name)) {
+    if (!st) {
+      for (st of Object.values(this.specializations)) {
+        if (st.isCommonName && st.isCommonName(value.name)) {
           break;
         }
       }
     }
 
-    if (t) {
+    if (st) {
       delete value.type;
       delete value.kind;
-      return t.clazz;
+      return st;
     }
 
     return this;

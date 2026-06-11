@@ -56,11 +56,11 @@ export class Service extends Base {
   static specializations = {};
   static factoryFor(owner, value) {
     const type = value.type ?? value.name;
-    const t = this.specializations[type];
+    const st = this.specializations[type];
 
-    if (t) {
+    if (st) {
       delete value.type;
-      return t.clazz;
+      return st;
     }
 
     return Service;
