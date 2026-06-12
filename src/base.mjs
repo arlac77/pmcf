@@ -236,6 +236,17 @@ export class Base {
       : name;
   }
 
+  *find(pattern) {
+    for (const node of this.walkDirections(["children"])) {
+      for (const p of pattern) {
+        if (node.fullName.match(p)) {
+          yield node;
+          break;
+        }
+      }
+    }
+  }
+
   get typeName() {
     return this.constructor.name;
   }
@@ -516,7 +527,9 @@ export class Base {
   }
 
   execFinalize() {
-    this.traverse(object => object._execFinalize());
+    for (const node of this.walkDirections(["children"])) {
+      node._execFinalize();
+    }
   }
 
   _execFinalize() {
@@ -530,28 +543,6 @@ export class Base {
         i++;
       }
     }
-  }
-
-  traverse(visitor, ...args) {
-    const visited = new Set();
-    this._traverse(visited, visitor, ...args);
-    return visited;
-  }
-
-  _traverse(visited, visitor, ...args) {
-    if (visited.has(this)) {
-      return false;
-    }
-
-    visited.add(this);
-
-    visitor(this, ...args);
-
-    for (const child of this.children) {
-      child._traverse(visited, visitor, ...args);
-    }
-
-    return true;
   }
 
   error(...args) {

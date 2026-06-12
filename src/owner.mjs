@@ -65,17 +65,6 @@ export class Owner extends Base {
     return this.template ?? super.isTemplate;
   }
 
-  *find(pattern) {
-    for (const node of this.traverse(() => {})) {
-      for (const p of pattern) {
-        if (node.fullName.match(p)) {
-          yield node;
-          break;
-        }
-      }
-    }
-  }
-
   named(name) {
     if (name[0] === "/") {
       name = name.substring(this.fullName.length + 1);
