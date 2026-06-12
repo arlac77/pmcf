@@ -6,20 +6,19 @@ import { networkAttributes } from "./network-support.mjs";
 export class Network extends Owner {
   static name = "network";
   static priority = 2;
-  static owners = ["location", "owner", "root"];
+  static owners = ["location", Owner, "root"];
   static extends = Owner;
   static key = "name";
   static attributes = {
     ...networkAttributes,
     bridge: {
       ...default_attribute_writable,
-      type: "network",
+      type: Network,
       collection: true,
       owner: false
     },
     gateway: { ...default_attribute_writable, type: "host", owner: false }
   };
-
 
   static {
     addType(this);
