@@ -1,5 +1,6 @@
 import { join } from "node:path";
 import { stat } from "node:fs/promises";
+import { AggregatedMap } from "aggregated-map";
 import { allOutputs } from "npm-pkgbuild";
 import {
   createExpressionTransformer,
@@ -14,7 +15,7 @@ import {
   expand,
   toExternal,
   filterPublic,
-  attributeIterator,
+  extendingAttributeIterator,
   default_attribute,
   name_attribute_writable,
   string_attribute,
@@ -24,7 +25,6 @@ import {
   description_attribute_writable,
   boolean_attribute_writable
 } from "pacc";
-import { AggregatedMap } from "aggregated-map";
 import { union } from "./utils.mjs";
 
 /**
@@ -229,14 +229,12 @@ export class Base {
    * @return {Iterable<[string,any]>} values
    */
   *attributeIterator(filter) {
-    for (let type = this.constructor; type; type = type.extends) {
-      for (const [path, def] of attributeIterator(type.attributes, filter)) {
-        const name = path.join(".");
-        const value = this.attribute(name);
+    for (const [path, def] of extendingAttributeIterator(this.constructor, filter)) {
+      const name = path.join(".");
+      const value = this.attribute(name);
 
-        if (value !== undefined) {
-          yield [def.externalName ?? name, toExternal(value, def), path, def];
-        }
+      if (value !== undefined) {
+        yield [def.externalName ?? name, toExternal(value, def), path, def];
       }
     }
   }
@@ -571,61 +569,56 @@ export function extractFrom(object, type = object?.constructor) {
 
   const json = {};
 
-  for (; type; type = type.extends) {
-    for (const [path, def] of attributeIterator(
-      type.attributes,
-      filterPublic
-    )) {
-      const name = path.join(".");
-      let value = object[name];
+  for (const [path, def] of extendingAttributeIterator(type, filterPublic)) {
+    const name = path.join(".");
+    let value = object[name];
 
-      switch (typeof value) {
-        case "function":
-          {
-            value = object[name]();
+    switch (typeof value) {
+      case "function":
+        {
+          value = object[name]();
 
-            if (typeof value?.next === "function") {
-              value = [...value];
-            }
+          if (typeof value?.next === "function") {
+            value = [...value];
+          }
 
-            value = extractFrom(value, def.type);
+          value = extractFrom(value, def.type);
+          if (value !== undefined) {
+            json[name] = value;
+          }
+        }
+        break;
+      case "object":
+        if (value instanceof Base) {
+          json[name] = { type: value.typeName };
+          if (value.name) {
+            json[name].name = value.name;
+          }
+        } else {
+          if (typeof value[Symbol.iterator] === "function") {
+            value = extractFrom(value);
+
             if (value !== undefined) {
               json[name] = value;
             }
-          }
-          break;
-        case "object":
-          if (value instanceof Base) {
-            json[name] = { type: value.typeName };
-            if (value.name) {
-              json[name].name = value.name;
-            }
           } else {
-            if (typeof value[Symbol.iterator] === "function") {
-              value = extractFrom(value);
-
-              if (value !== undefined) {
-                json[name] = value;
-              }
-            } else {
-              const resultObject = Object.fromEntries(
-                Object.entries(value).map(([k, v]) => [
-                  k,
-                  v // extractFrom(v, def.type)
-                ])
-              );
-              if (Object.keys(resultObject).length > 0) {
-                json[name] = resultObject;
-              }
+            const resultObject = Object.fromEntries(
+              Object.entries(value).map(([k, v]) => [
+                k,
+                v // extractFrom(v, def.type)
+              ])
+            );
+            if (Object.keys(resultObject).length > 0) {
+              json[name] = resultObject;
             }
           }
-          break;
-        case "undefined":
-          break;
+        }
+        break;
+      case "undefined":
+        break;
 
-        default:
-          json[name] = value;
-      }
+      default:
+        json[name] = value;
     }
   }
 
