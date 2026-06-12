@@ -23,11 +23,12 @@ export class Owner extends Base {
   static key = "name";
   static attributes = {
     networks: networks_attribute,
-    hosts: { ...default_attribute_writable, type: "host", collection: true },
+    hosts: { ...default_attribute_writable, type: "host", collection: true, owner: true },
     clusters: {
       ...default_attribute_writable,
       type: "cluster",
-      collection: true
+      collection: true,
+      owner: true
     },
     subnets: {
       ...default_attribute_writable,

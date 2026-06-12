@@ -10,7 +10,7 @@ import {
   boolean_attribute_false,
   addType
 } from "pacc";
-import {  Base, NetworkInterface, addresses } from "pmcf";
+import {  NetworkInterface, addresses } from "pmcf";
 import { ServiceOwner } from "./service-owner.mjs";
 import { networkAddressAttributes } from "./network-support.mjs";
 import { addHook } from "./hooks.mjs";
@@ -28,18 +28,13 @@ export class Host extends ServiceOwner {
   static name = "host";
   static priority = 1.9;
   static owners = ["owner", "network", "root"];
-  static extends = Base;
+  static extends = ServiceOwner;
   static key = "name";
   static attributes = {
     ...networkAddressAttributes,
     networkInterfaces: {
       ...default_attribute_writable,
       type: "network_interface",
-      collection: true
-    },
-    services: {
-      ...default_attribute_writable,
-      type: "service",
       collection: true
     },
     aliases: string_set_attribute_writable,
@@ -87,7 +82,6 @@ export class Host extends ServiceOwner {
     isModel: boolean_attribute_false
   };
 
-
   static {
     addType(this);
   }
@@ -111,16 +105,14 @@ export class Host extends ServiceOwner {
     super.materializeExtends();
 
     for (const host of this.walkDirections(["extends"])) {
-
-
       for (const [name, ni] of host.networkInterfaces) {
-        const present = this._networkInterfaces.get(name);
+        const present = this._networkInterfaces.get(ni.name);
 
         if (present) {
           //console.log("LINK", present.fullName, ni.fullName,present.extends);
           present.extends.add(ni);
         } else {
-          this._networkInterfaces.set(name, ni.forOwner(this));
+          this._networkInterfaces.set(ni.name, ni.forOwner(this));
         }
       }
     }

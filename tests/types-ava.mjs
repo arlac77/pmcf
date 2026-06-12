@@ -49,7 +49,7 @@ test("types", t => {
   t.deepEqual(types.owner.extends, types.base);
   t.deepEqual(types.owner.key, "name");
   t.deepEqual(types.service.extends, types.base);
-  t.deepEqual(types.host.extends, types.base);
+  t.deepEqual(types.host.extends, types["service-owner"]);
 
   //console.log("CLUSTER EXT", types.cluster.extends.name, types.host.name);
   //t.is(types.cluster.extends, types.host);

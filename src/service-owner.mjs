@@ -1,6 +1,27 @@
+import {
+  default_attribute_writable,
+  addType
+} from "pacc";
 import { Base, Service } from "pmcf";
 
 export class ServiceOwner extends Base {
+  static name = "service-owner";
+  static priority = 1.9;
+  static owners = ["owner", "network", "root"];
+  static extends = Base;
+  static key = "name";
+  static attributes = {
+    services: {
+      ...default_attribute_writable,
+      type: "service",
+      collection: true
+    }
+  };
+
+  static {
+    addType(this);
+  }
+
   _services = new Map();
 
   set services(service) {
