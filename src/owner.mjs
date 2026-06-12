@@ -23,7 +23,12 @@ export class Owner extends Base {
   static key = "name";
   static attributes = {
     networks: networks_attribute,
-    hosts: { ...default_attribute_writable, type: "host", collection: true, owner: true },
+    hosts: {
+      ...default_attribute_writable,
+      type: "host",
+      collection: true,
+      owner: true
+    },
     clusters: {
       ...default_attribute_writable,
       type: "cluster",
@@ -45,7 +50,6 @@ export class Owner extends Base {
     template: { ...boolean_attribute_writable, private: true }
   };
 
-
   static {
     addType(this);
   }
@@ -59,20 +63,6 @@ export class Owner extends Base {
    */
   get isTemplate() {
     return this.template ?? super.isTemplate;
-  }
-
-  _traverse(...args) {
-    if (super._traverse(...args)) {
-      for (const typeSlot of this._membersByType.values()) {
-        for (const object of typeSlot.values()) {
-          object._traverse(...args);
-        }
-      }
-
-      return true;
-    }
-
-    return false;
   }
 
   *find(pattern) {
@@ -195,6 +185,7 @@ export class Owner extends Base {
   }
 
   get networks() {
+    //return this._membersByType.get("network") || new Map();
     return this.typeList("network");
   }
 
@@ -234,6 +225,7 @@ export class Owner extends Base {
   }
 
   get clusters() {
+    //return this._membersByType.get("cluster") || new Map();
     return this.typeList("cluster");
   }
 

@@ -28,7 +28,6 @@ export class Subnet extends Base {
     family: string_attribute
   };
 
-
   static {
     addType(this);
   }
@@ -83,17 +82,6 @@ export class Subnet extends Base {
 
   get longAddress() {
     return `${this.longPrefix}/${this.prefixLength}`;
-  }
-
-  _traverse(...args) {
-    if (super._traverse(...args)) {
-      for (const network of this.networks) {
-        network._traverse(...args);
-      }
-      return true;
-    }
-
-    return false;
   }
 }
 

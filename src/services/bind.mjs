@@ -407,6 +407,7 @@ export class BindService extends ExtraSourceService {
       ...default_attribute_writable,
       type: bind_group,
       collection: true,
+      owner: true,
       writable: true
     },
     primaries: {
@@ -499,17 +500,6 @@ export class BindService extends ExtraSourceService {
         //console.log("EXTENDS", this.fullName, service.fullName, eg.fullName, eg.owner.fullName);
       }
     }
-  }
-
-  _traverse(...args) {
-    if (super._traverse(...args)) {
-      for (const group of Object.values(this.groups)) {
-        group._traverse(...args);
-      }
-      return true;
-    }
-
-    return false;
   }
 
   typeNamed(type, name) {

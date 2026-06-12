@@ -156,10 +156,24 @@ export class Base {
       this.constructor,
       (name, attribute) => attribute.owner && !attribute.type.primitive
     )) {
-      if (attribute.collection) {
-        all.push(...this[path].values());
-      } else {
-        all.push(this[path]);
+      const value = this[path];
+      if (value) {
+        if (attribute.collection) {
+          if (typeof value.values !== "function") {
+            if (value instanceof Iterator) {
+              all.push(...value);
+            } else {
+              if (typeof value === "object") {
+                //console.log("NO F", this.fullName, path, value);
+                all.push(...Object.values(value));
+              }
+            }
+          } else {
+            all.push(...value.values());
+          }
+        } else {
+          all.push(value);
+        }
       }
     }
 
@@ -532,6 +546,10 @@ export class Base {
     visited.add(this);
 
     visitor(this, ...args);
+
+    for (const child of this.children) {
+      child._traverse(visited, visitor, ...args);
+    }
 
     return true;
   }

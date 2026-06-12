@@ -54,17 +54,6 @@ export class ServiceOwner extends Base {
     }
   }
 
-  _traverse(...args) {
-    if (super._traverse(...args)) {
-      for (const service of this._services.values()) {
-        service._traverse(...args);
-      }
-
-      return true;
-    }
-    return false;
-  }
-
   typeNamed(typeName, name) {
     if (typeName === "service") {
       const service = this.services.get(name);

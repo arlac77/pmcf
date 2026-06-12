@@ -117,16 +117,6 @@ export class Host extends ServiceOwner {
     }
   }
 
-  _traverse(...args) {
-    if (super._traverse(...args)) {
-      for (const ni of this.networkInterfaces.values()) {
-        ni._traverse(...args);
-      }
-      return true;
-    }
-    return false;
-  }
-
   set serial(value) {
     this._serial = value;
   }
