@@ -1,9 +1,9 @@
 import {
   string_attribute_writable,
-  string_set_attribute,
   number_attribute_writable,
-  boolean_attribute_false,
+  string_set_attribute,
   default_attribute_writable,
+  boolean_attribute_false,
   addType
 } from "pacc";
 import {
@@ -38,15 +38,6 @@ export const endpointAttributes = {
   type: string_attribute_writable,
   types: string_set_attribute,
   tls: boolean_attribute_false
-};
-
-export const EndpointTypeDefinition = {
-  name: "endpoint",
-  priority: 1.1,
-  owners: ["service", "network_interface"],
-  specializations: {},
-  key: "type",
-  attributes: endpointAttributes
 };
 
 export class Service extends Base {

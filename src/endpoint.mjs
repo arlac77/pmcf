@@ -1,4 +1,18 @@
+import { addType } from "pacc";
+import { endpointAttributes, Service } from "./service.mjs";
+
 class BaseEndpoint {
+  static name = "endpoint";
+  static priority = 1.1;
+  static owners = [Service, "network_interface"];
+  static specializations = {};
+  static key = "type";
+  attributes = endpointAttributes;
+
+  static {
+    addType(this);
+  }
+
   _type;
 
   constructor(service, data) {
@@ -13,8 +27,7 @@ class BaseEndpoint {
     return this._type?.name ?? this.service.type;
   }
 
-  get priority()
-  {
+  get priority() {
     return this.service.priority;
   }
 
@@ -115,12 +128,11 @@ export class DomainNameEndpoint extends PortEndpoint {
  * Endpoint based on http
  */
 export class HTTPEndpoint extends BaseEndpoint {
-
   /**
-   * 
-   * @param {Service} service 
-   * @param {*} address 
-   * @param {object} data 
+   *
+   * @param {Service} service
+   * @param {*} address
+   * @param {object} data
    * @param {number} data.port
    * @param {string} data.pathname
    */
@@ -197,9 +209,8 @@ export class UnixEndpoint extends BaseEndpoint {
     return this.path;
   }
 
-  get url()
-  {
-    if(this.scheme) {
+  get url() {
+    if (this.scheme) {
       return `${this.scheme}://${this.path}`;
     }
   }
