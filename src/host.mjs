@@ -109,10 +109,9 @@ export class Host extends ServiceOwner {
         const present = this._networkInterfaces.get(ni.name);
 
         if (present) {
-          //console.log("LINK", present.fullName, ni.fullName,present.extends);
           present.extends.add(ni);
         } else {
-          this._networkInterfaces.set(ni.name, ni.forOwner(this));
+          this.networkInterfaces = ni.forOwner(this);
         }
       }
     }

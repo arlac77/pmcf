@@ -1,7 +1,4 @@
-import {
-  default_attribute_writable,
-  addType
-} from "pacc";
+import { default_attribute_writable, addType } from "pacc";
 import { Base, Service } from "pmcf";
 
 export class ServiceOwner extends Base {
@@ -35,9 +32,9 @@ export class ServiceOwner extends Base {
   addObject(object) {
     if (object instanceof Service) {
       this._services.set(object.name, object);
+    } else {
+      super.addObject(object);
     }
-
-    super.addObject(object);
   }
 
   materializeExtends() {
@@ -55,27 +52,6 @@ export class ServiceOwner extends Base {
         this.services = service.forOwner(this);
       }
     }
-
-    /*
-    if (this.fullName === "/SW/mini1") {
-      const myServiceNames = new Set([...this.services.keys()]);
-      const extendingSericeNames = new Set([
-        ...this.mapFromDirections(["extends"], "_services").keys()
-      ]);
-
-      console.log("XXX",this.fullName, [...this.extends].map(n=>n.fullName), myServiceNames, extendingSericeNames);
-
-      if (!extendingSericeNames.isSubsetOf(myServiceNames)) {
-        // const diff = myServiceNames.difference(extendingSericeNames);
-        console.log(
-          "DIFF",
-          this.fullName,
-          myServiceNames,
-          extendingSericeNames
-        );
-      }
-    }
-    */
   }
 
   _traverse(...args) {
