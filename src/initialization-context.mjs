@@ -259,9 +259,10 @@ export class InitializationContext {
       data.name = name;
     }
 
-    //console.log("LOAD", [name, owner.fullName, data.name]);
-
     const object = this.typeFactory(type, owner, data);
+
+    //console.log("LOAD", [name, type.name, owner.fullName, data.name, object.fullName]);
+
     this.root.addTypeObject(type.name, name, object);
 
     return object;
