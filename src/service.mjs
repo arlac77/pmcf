@@ -33,7 +33,7 @@ export const endpointAttributes = {
   port: number_attribute_writable,
   protocol: {
     ...string_attribute_writable,
-    values: ["tcp", "udp"]
+    values: ["tcp", "udp", "quic"]
   },
   type: string_attribute_writable,
   types: string_set_attribute,
@@ -61,7 +61,12 @@ export class Service extends Base {
   static attributes = {
     ...networkAddressAttributes,
     ...endpointAttributes,
-    extends: { ...default_attribute_writable, type: Service, collection: true, owner: false },
+    extends: {
+      ...default_attribute_writable,
+      type: Service,
+      collection: true,
+      owner: false
+    },
     alias: string_attribute_writable,
     weight: { ...number_attribute_writable /*default: 1*/ },
     systemdService: string_attribute_writable
