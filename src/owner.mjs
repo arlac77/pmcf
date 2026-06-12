@@ -18,7 +18,7 @@ const EMPTY = new Map();
 export class Owner extends Base {
   static name = "owner";
   static priority = 2;
-  static owners = ["location", "owner", "root"];
+  static owners = ["location", Owner, "root"];
   static extends = Base;
   static key = "name";
   static attributes = {

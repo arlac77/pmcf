@@ -38,7 +38,6 @@ export class Cluster extends Host {
     checkInterval: { ...duration_attribute_writable, default: 60 }
   };
 
-
   static {
     addType(this);
   }
@@ -59,7 +58,6 @@ export class Cluster extends Host {
 
   set backups(value) {
     this._backups.push(value);
-
     value.cluster = this;
   }
 
