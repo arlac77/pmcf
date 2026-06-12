@@ -61,7 +61,7 @@ export class Service extends Base {
   static attributes = {
     ...networkAddressAttributes,
     ...endpointAttributes,
-    extends: { ...default_attribute_writable, type: Service, collection: true },
+    extends: { ...default_attribute_writable, type: Service, collection: true, owner: false },
     alias: string_attribute_writable,
     weight: { ...number_attribute_writable /*default: 1*/ },
     systemdService: string_attribute_writable

@@ -14,9 +14,10 @@ export class Network extends Owner {
     bridge: {
       ...default_attribute_writable,
       type: "network",
-      collection: true
+      collection: true,
+      owner: false
     },
-    gateway: { ...default_attribute_writable, type: "host" }
+    gateway: { ...default_attribute_writable, type: "host", owner: false }
   };
 
 

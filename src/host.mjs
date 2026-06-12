@@ -82,7 +82,7 @@ export class Host extends ServiceOwner {
     replaces: string_set_attribute_writable,
     depends: string_set_attribute_writable,
     provides: string_set_attribute_writable,
-    extends: { ...default_attribute_writable, type: "host", collection: true },
+    extends: { ...default_attribute_writable, type: "host", collection: true, owner: false },
     model: string_attribute,
     isModel: boolean_attribute_false
   };
