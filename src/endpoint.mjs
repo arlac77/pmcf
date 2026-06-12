@@ -5,7 +5,6 @@ class BaseEndpoint {
   static name = "endpoint";
   static priority = 1.1;
   static owners = [Service, "network_interface"];
-  static specializations = {};
   static key = "type";
   attributes = endpointAttributes;
 
