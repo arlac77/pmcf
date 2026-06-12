@@ -44,7 +44,7 @@ export class Base {
     packaging: string_attribute_writable,
     disabled: boolean_attribute_writable,
     tags: string_set_attribute_writable,
-    owner: { ...default_attribute, type: "base" },
+    owner: { ...default_attribute, type: "base", owner: false },
     type: string_attribute
   };
 
@@ -149,6 +149,23 @@ export class Base {
     return collected;
   }
 
+  get children() {
+    const all = [];
+
+    for (const [path, attribute] of extendingAttributeIterator(
+      this.constructor,
+      (name, attribute) => attribute.owner && !attribute.type.primitive
+    )) {
+      if (attribute.collection) {
+        all.push(...this[path].values());
+      } else {
+        all.push(this[path]);
+      }
+    }
+
+    return all;
+  }
+
   /**
    * Walk the object graph in some directions and deliver seen nodes.
    * @param {string[]} directions
@@ -229,7 +246,10 @@ export class Base {
    * @return {Iterable<[string,any]>} values
    */
   *attributeIterator(filter) {
-    for (const [path, def] of extendingAttributeIterator(this.constructor, filter)) {
+    for (const [path, def] of extendingAttributeIterator(
+      this.constructor,
+      filter
+    )) {
       const name = path.join(".");
       const value = this.attribute(name);
 

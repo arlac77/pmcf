@@ -49,7 +49,7 @@ test("Host all", async t => {
   );
 });
 
-test("Host extends", t => {
+test.only("Host extends", t => {
   const ic = new InitializationContext();
   const owner = ic.root;
 
@@ -86,6 +86,8 @@ test("Host extends", t => {
   e1.execFinalize();
 
   t.deepEqual([...e1.networkInterfaces.keys()].sort(), ["eth0", "lo"]);
+
+  t.deepEqual(e1.children, [e1._networkInterfaces.get("eth0"),e1._networkInterfaces.get("lo")]);
 
   const e2 = new Host(owner);
   ic.read(e2, {
