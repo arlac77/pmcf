@@ -49,7 +49,7 @@ test("Host all", async t => {
   );
 });
 
-test.only("Host extends", t => {
+test("Host extends", t => {
   const ic = new InitializationContext();
   const owner = ic.root;
 
@@ -87,7 +87,10 @@ test.only("Host extends", t => {
 
   t.deepEqual([...e1.networkInterfaces.keys()].sort(), ["eth0", "lo"]);
 
-  t.deepEqual(e1.children, [e1._networkInterfaces.get("eth0"),e1._networkInterfaces.get("lo")]);
+  t.deepEqual(e1.children, [
+    e1._networkInterfaces.get("eth0"),
+    e1._networkInterfaces.get("lo")
+  ]);
 
   const e2 = new Host(owner);
   ic.read(e2, {
@@ -99,6 +102,11 @@ test.only("Host extends", t => {
     replaces: "rpkge2"
   });
 
+  t.deepEqual(e2.children, [
+    e2._networkInterfaces.get("eth0"),
+    e2._networkInterfaces.get("lo")
+  ]);
+
   const h1 = new Host(owner);
   ic.read(h1, {
     name: "h1",
@@ -109,6 +117,11 @@ test.only("Host extends", t => {
     depends: "dpkgh1",
     replaces: "rpkgh1"
   });
+
+  t.deepEqual(h1.children, [
+    h1._networkInterfaces.get("eth0"),
+    h1._networkInterfaces.get("lo")
+  ]);
 
   t.deepEqual([...h1.aliases].sort(), ["h1a", "e1a", "e2a"].sort());
   t.is(h1.os, "linux");
