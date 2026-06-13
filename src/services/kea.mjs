@@ -22,7 +22,6 @@ const keaVersion = "3.0.1";
 export class KeaService extends Service {
   static name = "kea";
   static priority = 1;
-  static extends = Service;
   static specializationOf = Service;
   static owners = Service.owners;
   static key = "name";

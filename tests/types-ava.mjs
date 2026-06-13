@@ -21,7 +21,7 @@ test("types", t => {
   t.is(types.base, Base);
   t.is(types.base.extends, undefined);
   t.is(types.root, Root);
-  t.is(types.root.extends, Owner);
+  t.is(types.root.extends, Location);
   t.is(types.location, Location);
   t.is(types.location.extends, Owner);
   t.deepEqual(types.location.owners, [types.owner, types.location, types.root]);
@@ -69,5 +69,5 @@ test("types", t => {
   //console.log("CLUSTER EXT", types.cluster.extends.name, types.host.name);
   //t.is(types.cluster.extends, types.host);
 
-  t.is(types.loopback.extends, types.network_interface);
+  t.is(types.loopback.extends, types.SkeletonNetworkInterface);
 });

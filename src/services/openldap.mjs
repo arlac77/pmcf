@@ -5,7 +5,6 @@ import { Service } from "../service.mjs";
 export class OpenLDAPService extends Service {
   static name = "openldap";
   static priority = 1;
-  static extends = Service;
   static specializationOf = Service;
   static owners = Service.owners;
   static key = "name";
@@ -51,6 +50,8 @@ export class OpenLDAPService extends Service {
     const group = "ldap";
 
     const packageData = this.packageData;
+
+    console.log([...this.walkDirections(["this", "extends"]) ].map(n=>n.fullName));
 
     packageData.sources = await Array.fromAsync(
       this.templateContent(

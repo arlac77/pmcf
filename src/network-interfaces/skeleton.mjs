@@ -1,5 +1,6 @@
 import { join } from "node:path";
 import { AggregatedMap } from "aggregated-map";
+import { addType } from "pacc";
 import { writeLines, sectionLines } from "../utils.mjs";
 import { NetworkAddress, Host, cidrAddresses } from "pmcf";
 import { ServiceOwner } from "../service-owner.mjs";
@@ -8,8 +9,13 @@ import { ServiceOwner } from "../service-owner.mjs";
  *
  */
 export class SkeletonNetworkInterface extends ServiceOwner {
+  
   static get typeName() {
     return "network_interface";
+  }
+
+  static {
+    addType(this);
   }
 
   _network;

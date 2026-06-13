@@ -11,7 +11,6 @@ import { EthernetNetworkInterface } from "./ethernet.mjs";
 
 export class WLANNetworkInterface extends EthernetNetworkInterface {
   static name = "wlan";
-  static extends = EthernetNetworkInterface;
   static specializationOf = NetworkInterface;
   static owners = EthernetNetworkInterface.owners;
   static key = "name";

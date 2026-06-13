@@ -398,7 +398,6 @@ function addressesStatement(prefix, objects, generateEmpty = false) {
 
 export class BindService extends ExtraSourceService {
   static name = "bind";
-  static extends = ExtraSourceService;
   static specializationOf = Service;
   static owners = Service.owners;
   static key = "name";

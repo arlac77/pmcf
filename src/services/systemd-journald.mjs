@@ -9,7 +9,6 @@ import { filterConfigurable, sectionLines } from "../utils.mjs";
 export class SystemdJournaldService extends Service {
   static name = "systemd-journald";
   static priority = 1;
-  static extends = Service;
   static specializationOf = Service;
   static owners = Service.owners;
   static key = "name";

@@ -9,7 +9,6 @@ import { writeLines } from "../utils.mjs";
 export class ChronyService extends ExtraSourceService {
   static name = "chrony";
   static priority = 1;
-  static extends = ExtraSourceService;
   static specializationOf = Service;
   static owners = Service.owners;
   static key = "name";

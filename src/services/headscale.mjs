@@ -5,7 +5,6 @@ import { Service } from "../service.mjs";
 export class HeadscaleService extends Service {
   static name = "headscale";
   static priority = 1;
-  static extends = Service;
   static specializationOf = Service;
   static owners = Service.owners;
   static key = "name";

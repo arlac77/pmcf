@@ -24,7 +24,6 @@ class alpm_repository extends Base {
 export class ALPMService extends Service {
   static name = "alpm";
   static priority = 1;
-  static extends = Service;
   static specializationOf = Service;
   static owners = Service.owners;
   static attributes = {

@@ -7,7 +7,6 @@ export class Location extends Owner {
   static name = "location";
   static priority = 2;
   static owners = [Owner, Location, "root"];
-  static extends = Owner;
   static key = "name";
   static attributes = {};
 

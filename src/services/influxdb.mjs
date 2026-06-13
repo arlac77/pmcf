@@ -12,7 +12,6 @@ import { Service } from "../service.mjs";
 export class InfluxdbService extends Service {
   static name = "influxdb";
   static priority = 1;
-  static extends = Service;
   static specializationOf = Service;
   static owners = Service.owners;
   static key = "name";

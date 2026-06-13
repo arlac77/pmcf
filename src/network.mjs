@@ -7,7 +7,6 @@ export class Network extends Owner {
   static name = "network";
   static priority = 2;
   static owners = ["location", Owner, "root"];
-  static extends = Owner;
   static key = "name";
   static attributes = {
     ...networkAttributes,
