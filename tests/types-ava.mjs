@@ -8,6 +8,7 @@ import {
   Location,
   Network,
   Service,
+  ExtraSourceService,
   Subnet,
   Owner,
   BindService,
@@ -17,15 +18,21 @@ import {
 test("types", t => {
   resolveTypeLinks();
   t.is(types.base, Base);
+  t.is(types.base.extends, undefined);
   t.is(types.root, Root);
+  t.is(types.root.extends, Owner);
   t.is(types.location, Location);
+  t.is(types.location.extends, Owner);
   t.deepEqual(types.location.owners, [types.owner, types.location, types.root]);
 
   t.is(types.network, Network);
+  t.is(types.network.extends, Owner);
   t.is(types.subnet, Subnet);
+  t.is(types.subnet.extends, Base);
   t.is(types.subnet.key, "address");
 
   t.is(types.service, Service);
+  t.is(types.service.extends, Base);
 
   /*
   t.deepEqual(types.service.owners, [
@@ -38,9 +45,11 @@ test("types", t => {
   t.deepEqual(types.host.owners, [types.owner, types.network, types.root]);
 
   t.is(types.bind, BindService);
+  t.is(types.bind.extends, ExtraSourceService);
   t.is(types.chrony, ChronyService);
 
   t.is(types.cluster, Cluster);
+  t.is(types.cluster.extends, Host);
   t.is(types.owner, Owner);
 
   t.deepEqual(types.owner.attributes.hosts.type, types.host);
