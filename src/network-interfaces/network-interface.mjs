@@ -6,7 +6,7 @@ import {
   hostname_attribute,
   addType
 } from "pacc";
-import { Base, cidrAddresses } from "pmcf";
+import { Host, cidrAddresses } from "pmcf";
 import {
   networkAttributes,
   networkAddressAttributes
@@ -18,8 +18,7 @@ import { yesno } from "../utils.mjs";
 
 export class NetworkInterface extends SkeletonNetworkInterface {
   static name = "network_interface";
-  static owners = ["host"];
-  static extends = Base;
+  static owners = [Host];
   static specializations = {};
   static factoryFor(owner, value) {
     let st = this.specializations[value.kind];

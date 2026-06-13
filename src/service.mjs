@@ -44,7 +44,6 @@ export class Service extends Base {
   static name = "service";
   static priority = 1.1;
   static owners = [Host, "cluster", "network_interface"];
-  static extends = Base;
   static specializations = {};
   static factoryFor(owner, value) {
     const type = value.type ?? value.name;

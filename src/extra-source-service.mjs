@@ -2,7 +2,6 @@ import { default_attribute_writable, addType } from "pacc";
 import { Service } from "./service.mjs";
 import { networkAddressType } from "pmcf";
 
-
 export class ExtraSourceService extends Service {
   static name = "extra-source-service";
   static extends = Service;
@@ -15,7 +14,6 @@ export class ExtraSourceService extends Service {
       collection: true
     }
   };
-
 
   static {
     addType(this);

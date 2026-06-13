@@ -10,7 +10,6 @@ import { InitializationContext } from "../src/initialization-context.mjs";
 
 export class MyType extends Base {
   static name = "mytype";
-  static extends = Base;
   static key = "name";
   static attributes = {
     aString: { ...string_attribute, writable: true },
