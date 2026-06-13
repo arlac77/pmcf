@@ -56,7 +56,6 @@ export class Service extends Base {
 
     return Service;
   }
-  static key = "name";
   static attributes = {
     ...networkAddressAttributes,
     ...endpointAttributes,

@@ -40,7 +40,6 @@ export class NetworkInterface extends SkeletonNetworkInterface {
 
     return this;
   }
-  static key = "name";
   static attributes = {
     ...networkAttributes,
     ...networkAddressAttributes,
@@ -55,7 +54,8 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     hwaddr: string_attribute_writable,
     network: {
       ...default_attribute_writable,
-      type: Network
+      type: Network,
+      owner: false
     },
     destination: string_attribute_writable
   };
