@@ -24,14 +24,12 @@ export class Owner extends Base {
     hosts: {
       ...default_attribute_writable,
       type: "host",
-      collection: true,
-      owner: true
+      collection: true
     },
     clusters: {
       ...default_attribute_writable,
       type: "cluster",
-      collection: true,
-      owner: true
+      collection: true
     },
     subnets: {
       ...default_attribute_writable,

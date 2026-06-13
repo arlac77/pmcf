@@ -403,7 +403,6 @@ export class BindService extends ExtraSourceService {
       ...default_attribute_writable,
       type: bind_group,
       collection: true,
-      owner: true,
       writable: true
     },
     primaries: {
@@ -449,7 +448,6 @@ export class BindService extends ExtraSourceService {
       }
     }
   };
-
 
   static {
     addType(this);
