@@ -1,5 +1,5 @@
 import test from "ava";
-import { InitializationContext, Root } from "pmcf";
+import { InitializationContext, root as Root } from "pmcf";
 import { assertObject } from "./util.mjs";
 import { root1 } from "./fixtures.mjs";
 

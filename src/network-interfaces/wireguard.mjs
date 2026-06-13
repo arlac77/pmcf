@@ -2,8 +2,7 @@ import { addType } from "pacc";
 import { SkeletonNetworkInterface } from "./skeleton.mjs";
 import { NetworkInterface } from "./network-interface.mjs";
 
-export class WireguardNetworkInterface extends SkeletonNetworkInterface {
-  static name = "wireguard";
+export class wireguard extends SkeletonNetworkInterface {
   static specializationOf = NetworkInterface;
 
   static {

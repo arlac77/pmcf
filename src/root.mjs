@@ -1,8 +1,7 @@
 import { addType } from "pacc";
 import { Location } from "./location.mjs";
 
-export class Root extends Location {
-  static name = "root";
+export class root extends Location {
   static priority = 3;
   
   static {

@@ -7,10 +7,9 @@ import {
 } from "pacc";
 import { writeLines, sectionLines } from "../utils.mjs";
 import { NetworkInterface } from "./network-interface.mjs";
-import { EthernetNetworkInterface } from "./ethernet.mjs";
+import { ethernet } from "./ethernet.mjs";
 
-export class WLANNetworkInterface extends EthernetNetworkInterface {
-  static name = "wlan";
+export class wlan extends ethernet {
   static specializationOf = NetworkInterface;
   static attributes = {
     ssid: string_attribute_writable,

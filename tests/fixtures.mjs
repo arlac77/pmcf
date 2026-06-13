@@ -5,13 +5,13 @@ import {
   Subnet,
   Host,
   Cluster,
-  Root,
+  root as Root,
   mosquitto
 } from "pmcf";
 
 /**
  *
- * @param {Root} root
+ * @param {root} root
  * @param {string|string[]} filter
  * @returns {Object}
  */

@@ -1,5 +1,5 @@
 import test from "ava";
-import { Root, Owner, Location, Network, Host, Cluster } from "pmcf";
+import { root, Owner, Location, Network, Host, Cluster } from "pmcf";
 import { InitializationContext } from "../src/initialization-context.mjs";
 
 function to(t, owner) {
@@ -21,15 +21,15 @@ function to(t, owner) {
 
 to.title = (title, owner) => `${title || "owner"} ${owner.fullName}`;
 
-test.skip("Root", to, new Root("/tmp"));
-test.skip("Owner", to, new Owner(new Root("/tmp"), { name: "o1" }));
+test.skip("Root", to, new root("/tmp"));
+test.skip("Owner", to, new Owner(new root("/tmp"), { name: "o1" }));
 
 test("Owner ownerFor", t => {
   const ic = new InitializationContext();
-  const root = new Root("/");
-  const o1 = new Owner(root);
+  const rootInst = new root("/");
+  const o1 = new Owner(rootInst);
   ic.read(o1, { name: "o1" });
-  root.addObject(o1);
+  rootInst.addObject(o1);
 
   t.is(
     o1.ownerFor(Owner.attributes.networks, { name: "n1" }),
@@ -39,10 +39,10 @@ test("Owner ownerFor", t => {
 
 test("Owner read write", t => {
   const ic = new InitializationContext();
-  const root = new Root("/");
-  const o1 = new Owner(root);
+  const rootInst = new root("/");
+  const o1 = new Owner(rootInst);
 
-  t.is(o1.owner, root);
+  t.is(o1.owner, rootInst);
   ic.read(o1, {
     name: "o1",
     administratorEmail: "master@somewhere",
@@ -51,7 +51,7 @@ test("Owner read write", t => {
     template: true
   });
 
-  root.addObject(o1);
+  rootInst.addObject(o1);
 
   t.is(o1.isTemplate, true);
   t.is(o1.name, "o1");

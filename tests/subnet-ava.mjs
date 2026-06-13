@@ -1,7 +1,7 @@
 import test from "ava";
 import {
   InitializationContext,
-  Root,
+  root,
   Network,
   Subnet,
   SUBNET_LOCALHOST_IPV4,
@@ -11,32 +11,29 @@ import { asArray } from "../src/utils.mjs";
 
 test("Subnet owner", t => {
   const ic = new InitializationContext();
-  const root = ic.root;
+  const s1 = new Subnet(ic.root, "10.0.0.77/16");
 
-  const s1 = new Subnet(root, "10.0.0.77/16");
+  t.is(ic.root.subnetNamed("10.0/16"), s1);
 
-  t.is(root.subnetNamed("10.0/16"), s1);
-
-  const n1 = new Network(root, "n1");
-  const n2 = new Network(root, "n2");
+  const n1 = new Network(ic.root, "n1");
+  const n2 = new Network(ic.root, "n2");
 
   t.is(n1.subnetNamed("10.0/16"), s1);
 
   const s2 = new Subnet(n1, "192.168.1/24");
 
-  t.is(root.subnetNamed("192.168.1/24"), undefined);
+  t.is(ic.root.subnetNamed("192.168.1/24"), undefined);
   t.is(n1.subnetNamed("192.168.1/24"), s2);
   t.is(n2.subnetNamed("192.168.1/24"), undefined);
 
-  t.deepEqual([...root.subnets].map(s => s.name), ["10.0/16"]);
+  t.deepEqual([...ic.root.subnets].map(s => s.name), ["10.0/16"]);
   t.deepEqual([...n2.subnets].map(s => s.name), ["10.0/16"]);
   t.deepEqual([...n1.subnets].map(s => s.name).sort(), ["10.0/16", "192.168.1/24"].sort());
 });
 
 test("Subnet ipv6", t => {
   const ic = new InitializationContext();
-  const root = ic.root;
-  const s1 = new Subnet(root, "fe80::1e57:3eff:fe22:9a8f/64");
+  const s1 = new Subnet(ic.root, "fe80::1e57:3eff:fe22:9a8f/64");
 
   t.is(s1.name, "fe80::/64");
   t.is(s1.prefixLength, 64);
@@ -52,15 +49,14 @@ test("Subnet ipv6", t => {
 
 test("Subnet match with prefix length", t => {
   const ic = new InitializationContext();
-  const root = ic.root;
-  const s1 = new Subnet(root, "192.168.1/24");
+  const s1 = new Subnet(ic.root, "192.168.1/24");
   t.true(s1.matchesAddress("192.168.1.60"));
   t.true(s1.matchesAddress("192.168.1.60/30"));
 });
 
 function st(t, address, expected) {
   const subnet =
-    address instanceof Subnet ? address : new Subnet(new Root("/"), address);
+    address instanceof Subnet ? address : new Subnet(new root("/"), address);
 
   for (const property of [
     "address",

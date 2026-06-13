@@ -10,8 +10,7 @@ const _localAddresses = new Map([
 
 const _localDomains = new Set(["localhost"]);
 
-export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
-  static name = "loopback";
+export class loopback extends SkeletonNetworkInterface {
   static specializationOf = NetworkInterface;
 
   static {

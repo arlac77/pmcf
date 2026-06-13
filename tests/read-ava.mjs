@@ -5,7 +5,7 @@ import {
   string_set_attribute_writable,
   addType
 } from "pacc";
-import { Root, Base } from "pmcf";
+import { root, Base } from "pmcf";
 import { InitializationContext } from "../src/initialization-context.mjs";
 
 export class MyType extends Base {
@@ -28,9 +28,8 @@ export class MyType extends Base {
 
 test("read basics", t => {
   const ic = new InitializationContext();
-
-  const root = new Root("/");
-  const m1 = new MyType(root);
+  const rootInst = new root("/");
+  const m1 = new MyType(rootInst);
 
   const data = {
     aString: "s1",

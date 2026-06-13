@@ -3,7 +3,7 @@ import { types, resolveTypeLinks } from "pacc";
 import {
   Base,
   Cluster,
-  Root,
+  root,
   Host,
   Location,
   Network,
@@ -27,7 +27,7 @@ test("types", t => {
   t.is(types.owner.priority, 2);
   t.is(types.owner.key, "name");
 
-  t.is(types.root, Root);
+  t.is(types.root, root);
   t.is(types.root.extends, Location);
   t.is(types.root.priority, 3);
   t.is(types.location, Location);

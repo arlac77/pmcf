@@ -1,5 +1,5 @@
 import test from "ava";
-import { Root, Host, Network, NetworkAddress } from "pmcf";
+import { root as Root, Host, Network, NetworkAddress } from "pmcf";
 import { InitializationContext } from "../src/initialization-context.mjs";
 
 test("NetworkAddress filter", t => {

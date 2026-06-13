@@ -1,8 +1,7 @@
 import { addType } from "pacc";
 import { NetworkInterface } from "./network-interface.mjs";
 
-export class TUNNetworkInterface extends NetworkInterface {
-  static name = "tun";
+export class tun extends NetworkInterface {
   static specializationOf = NetworkInterface;
 
   static {

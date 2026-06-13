@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { toInternal, attributeIterator, types, resolveTypeLinks } from "pacc";
 import { asArray } from "./utils.mjs";
 import { Base } from "./base.mjs";
-import { Root } from "./root.mjs";
+import { root } from "./root.mjs";
 
 /**
  * Keeps track of all in flight object creations and loose ends during config initialization.
@@ -14,7 +14,7 @@ export class InitializationContext {
   constructor(directory = "/") {
     resolveTypeLinks();
     this.directory = directory;
-    this.root = new Root(directory);
+    this.root = new root(directory);
   }
 
   resolveOutstanding() {

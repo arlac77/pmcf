@@ -19,8 +19,7 @@ import { writeLines } from "../utils.mjs";
 
 const keaVersion = "3.0.1";
 
-export class KeaService extends Service {
-  static name = "kea";
+export class kea extends Service {
   static specializationOf = Service;
   static attributes = {
     "ddns-send-updates": {

@@ -1,6 +1,6 @@
 import test from "ava";
 import {
-  Root,
+  root,
   Location,
   Network,
   Host,
@@ -13,30 +13,30 @@ import { InitializationContext } from "../src/initialization-context.mjs";
 
 function setup() {
   const ic = new InitializationContext();
-  const root = new Root("/somwhere");
+  const rootInst = new root("/somwhere");
 
-  const n1 = new Network(root);
+  const n1 = new Network(rootInst);
   ic.read(n1, {
     name: "n1",
     subnets: "10.0/16"
   });
-  root.addObject(n1);
+  rootInst.addObject(n1);
 
-  const l1 = new Location(root);
+  const l1 = new Location(rootInst);
   ic.read(l1, {
     name: "l1"
   });
 
-  root.addObject(l1);
+  rootInst.addObject(l1);
 
-  const dns = new Service(root);
+  const dns = new Service(rootInst);
   ic.read(dns, {
     name: "dns",
     weight: 5,
     priority: 3
   });
 
-  return { ic, root, n1, l1, dns };
+  return { ic, root:rootInst, n1, l1, dns };
 }
 
 test("Service basics", t => {

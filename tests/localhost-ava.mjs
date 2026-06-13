@@ -1,5 +1,5 @@
 import test from "ava";
-import { InitializationContext, LoopbackNetworkInterface } from "pmcf";
+import { InitializationContext, loopback } from "pmcf";
 
 test("localhost", async t => {
   const ic = new InitializationContext(new URL("fixtures/root1", import.meta.url).pathname);
@@ -7,7 +7,7 @@ test("localhost", async t => {
 
   const local = ic.named("/LOCAL");
   t.is(local.name, "LOCAL");
-  t.is(local.constructor, LoopbackNetworkInterface);
+  t.is(local.constructor, loopback);
   t.is(local.mtu, 16436);
   t.deepEqual(local.localDomains, new Set(["localhost"]));
   t.is(local.host, undefined);

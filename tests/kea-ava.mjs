@@ -2,7 +2,7 @@ import test from "ava";
 import {
   InitializationContext,
   Host,
-  KeaService,
+  kea,
   Endpoint,
   HTTPEndpoint,
   sortByFamilyAndAddress
@@ -40,8 +40,8 @@ test("kea basics", t => {
 
   // console.log(h1.networkInterfaces, [...la].map(l=>l.toString()));
 
-  const kea = new KeaService(h1);
-  ic.read(kea, {
+  const keaInst = new kea(h1);
+  ic.read(keaInst, {
     name: "kea",
     subsystems: {
       "kea-control-agent": {
@@ -52,16 +52,16 @@ test("kea basics", t => {
       }
     }
   });
-  h1.services = kea;
+  h1.services = keaInst;
 
-  t.is(kea.endpoint("dhcp").toString(), "dhcp:IPv4/10.0.0.1[547]");
-  t.is(kea.endpoint("kea-ddns").toString(), "kea-ddns:IPv4/127.0.0.1[53001]");
+  t.is(keaInst.endpoint("dhcp").toString(), "dhcp:IPv4/10.0.0.1[547]");
+  t.is(keaInst.endpoint("kea-ddns").toString(), "kea-ddns:IPv4/127.0.0.1[53001]");
   t.is(
-    kea.endpoint("kea-control-dhcp4").toString(),
+    keaInst.endpoint("kea-control-dhcp4").toString(),
     "kea-control-dhcp4:unix:/run/kea/ctrl-4"
   );
   t.is(
-    kea.endpoint("kea-control-dhcp6").toString(),
+    keaInst.endpoint("kea-control-dhcp6").toString(),
     "kea-control-dhcp6:unix:/run/kea/ctrl-6"
   );
 
