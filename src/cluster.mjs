@@ -16,7 +16,6 @@ export class Cluster extends Host {
   static name = "cluster";
   static priority = 1.5;
   static owners = [Owner, "network", "location", "root"];
-  static key = "name";
   static attributes = {
     routerId: { ...number_attribute_writable, default: 100 },
     masters: {

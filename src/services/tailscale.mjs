@@ -3,10 +3,7 @@ import { Service } from "../service.mjs";
 
 export class TailscaleService extends Service {
   static name = "tailscale";
-  static priority = 1;
   static specializationOf = Service;
-  static owners = Service.owners;
-  static key = "name";
   static service = {
     endpoints: [
       {

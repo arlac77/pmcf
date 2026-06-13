@@ -21,10 +21,7 @@ import {
 
 export class SystemdResolvedService extends ExtraSourceService {
   static name = "systemd-resolved";
-  static priority = 1;
   static specializationOf = Service;
-  static owners = Service.owners;
-  static key = "name";
   static attributes = {
     /* Resolve: {
       ...object_attribute,

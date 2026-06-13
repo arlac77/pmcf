@@ -34,7 +34,6 @@ const bindNetworkAddressTypes = networkAddressType + "|bind_group";
 
 class bind_group extends Base {
   static priority = 1;
-  static key = "name";
   static attributes = {
     name: name_attribute_writable,
     access: {
@@ -399,8 +398,6 @@ function addressesStatement(prefix, objects, generateEmpty = false) {
 export class BindService extends ExtraSourceService {
   static name = "bind";
   static specializationOf = Service;
-  static owners = Service.owners;
-  static key = "name";
   static attributes = {
     groups: {
       ...default_attribute_writable,

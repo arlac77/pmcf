@@ -5,9 +5,6 @@ import { NetworkInterface } from "./network-interface.mjs";
 export class WireguardNetworkInterface extends SkeletonNetworkInterface {
   static name = "wireguard";
   static specializationOf = NetworkInterface;
-  static owners = NetworkInterface.owners;
-  static key = "name";
-
 
   static {
     addType(this);

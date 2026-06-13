@@ -5,7 +5,6 @@ import { networkAddressType } from "pmcf";
 export class ExtraSourceService extends Service {
   static name = "extra-source-service";
   static specializationOf = Service;
-  static owners = Service.owners;
   static attributes = {
     source: {
       ...default_attribute_writable,

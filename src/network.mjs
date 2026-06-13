@@ -5,9 +5,7 @@ import { networkAttributes } from "./network-support.mjs";
 
 export class Network extends Owner {
   static name = "network";
-  static priority = 2;
   static owners = ["location", Owner, "root"];
-  static key = "name";
   static attributes = {
     ...networkAttributes,
     bridge: {

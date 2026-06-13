@@ -5,9 +5,7 @@ import { loadHooks } from "./hooks.mjs";
 
 export class Location extends Owner {
   static name = "location";
-  static priority = 2;
   static owners = [Owner, Location, "root"];
-  static key = "name";
   static attributes = {};
 
   static {

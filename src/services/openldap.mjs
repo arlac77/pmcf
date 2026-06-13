@@ -4,10 +4,7 @@ import { Service } from "../service.mjs";
 
 export class OpenLDAPService extends Service {
   static name = "openldap";
-  static priority = 1;
   static specializationOf = Service;
-  static owners = Service.owners;
-  static key = "name";
   static attributes = {
     base: string_attribute_writable,
     uri: string_attribute_writable

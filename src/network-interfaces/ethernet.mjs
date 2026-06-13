@@ -4,8 +4,6 @@ import { NetworkInterface } from "./network-interface.mjs";
 export class EthernetNetworkInterface extends NetworkInterface {
   static name = "ethernet";
   static specializationOf = NetworkInterface;
-  static owners = NetworkInterface.owners;
-  static key = "name";
   static attributes = {
     arpbridge: {
       ...default_attribute_writable,

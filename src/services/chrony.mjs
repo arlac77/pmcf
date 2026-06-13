@@ -8,10 +8,7 @@ import { writeLines } from "../utils.mjs";
 
 export class ChronyService extends ExtraSourceService {
   static name = "chrony";
-  static priority = 1;
   static specializationOf = Service;
-  static owners = Service.owners;
-  static key = "name";
   static service = {
     systemdService: "chronyd.service",
     extends: ["ntp"],

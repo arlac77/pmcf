@@ -21,10 +21,7 @@ const keaVersion = "3.0.1";
 
 export class KeaService extends Service {
   static name = "kea";
-  static priority = 1;
   static specializationOf = Service;
-  static owners = Service.owners;
-  static key = "name";
   static attributes = {
     "ddns-send-updates": {
       ...boolean_attribute_writable_true,

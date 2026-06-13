@@ -13,8 +13,6 @@ const _localDomains = new Set(["localhost"]);
 export class LoopbackNetworkInterface extends SkeletonNetworkInterface {
   static name = "loopback";
   static specializationOf = NetworkInterface;
-  static owners = NetworkInterface.owners;
-  static key = "name";
 
   static {
     addType(this);

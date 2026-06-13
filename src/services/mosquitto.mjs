@@ -4,10 +4,7 @@ import { Service } from "../service.mjs";
 
 export class MosquittoService extends Service {
   static name = "mosquitto";
-  static priority = 1;
   static specializationOf = Service;
-  static owners = Service.owners;
-  static key = "name";
   static attributes = {
     listener: {
       ...port_attribute,

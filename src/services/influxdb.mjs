@@ -11,10 +11,7 @@ import { Service } from "../service.mjs";
 
 export class InfluxdbService extends Service {
   static name = "influxdb";
-  static priority = 1;
   static specializationOf = Service;
-  static owners = Service.owners;
-  static key = "name";
   static attributes = {
     metricsDisabled: {
       externalName: "metrics-disabled",

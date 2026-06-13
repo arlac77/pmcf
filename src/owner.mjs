@@ -18,8 +18,7 @@ const EMPTY = new Map();
 export class Owner extends Base {
   static name = "owner";
   static priority = 2;
-  static owners = ["location", Owner, "root"];
-  static key = "name";
+  static owners = [Owner, "location", "root"];
   static attributes = {
     networks: networks_attribute,
     hosts: {

@@ -28,7 +28,6 @@ export class Host extends ServiceOwner {
   static name = "host";
   static priority = 1.9;
   static owners = ["owner", "network", "root"];
-  static key = "name";
   static attributes = {
     ...networkAddressAttributes,
     networkInterfaces: {

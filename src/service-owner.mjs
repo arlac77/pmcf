@@ -5,7 +5,6 @@ export class ServiceOwner extends Base {
   static name = "service-owner";
   static priority = 1.9;
   static owners = ["owner", "network", "root"];
-  static key = "name";
   static attributes = {
     services: {
       ...default_attribute_writable,
