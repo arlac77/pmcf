@@ -1,5 +1,5 @@
 import test from "ava";
-import { MosquittoService } from "../src/services/mosquitto.mjs";
+import { mosquitto } from "../src/services/mosquitto.mjs";
 import { InitializationContext } from "pmcf";
 
 test("mosquitto basics", async t => {
@@ -8,21 +8,21 @@ test("mosquitto basics", async t => {
   );
   await ic.loadAll();
 
-  const mosquitto = await ic.named("/L1/host1/mosquitto");
+  const mosquittoInst = await ic.named("/L1/host1/mosquitto");
 
-  t.true(mosquitto instanceof MosquittoService);
-  t.is(mosquitto.alias, "mqtt");
-  t.is(mosquitto.listener, 1883);
+  t.true(mosquittoInst instanceof mosquitto);
+  t.is(mosquittoInst.alias, "mqtt");
+  t.is(mosquittoInst.listener, 1883);
 
   t.is(
-    mosquitto.attribute("persistence_location"),
+    mosquittoInst.attribute("persistence_location"),
     "/var/lib/mosquitto"
   );
 
   t.is(
-    mosquitto.attribute("persistence_location"),
+    mosquittoInst.attribute("persistence_location"),
     "/var/lib/mosquitto"
   );
-  t.is(mosquitto.attribute("password_file"), "/etc/mosquitto/passwd");
-  t.is(mosquitto.attribute("acl_file"), "/etc/mosquitto/acl");
+  t.is(mosquittoInst.attribute("password_file"), "/etc/mosquitto/passwd");
+  t.is(mosquittoInst.attribute("acl_file"), "/etc/mosquitto/acl");
 });

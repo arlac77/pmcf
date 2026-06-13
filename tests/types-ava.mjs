@@ -11,9 +11,9 @@ import {
   ExtraSourceService,
   Subnet,
   Owner,
-  BindService,
-  ChronyService,
-  ALPMService
+  bind,
+  chrony,
+  alpm
 } from "pmcf";
 
 test("types", t => {
@@ -66,15 +66,15 @@ test("types", t => {
   t.is(types.host, Host);
   t.deepEqual(types.host.owners, [types.owner, types.network, types.root]);
 
-  t.is(types.bind, BindService);
+  t.is(types.bind, bind);
   t.is(types.bind.extends, ExtraSourceService);
   t.is(types.bind.priority, 1.1);
 
-  t.is(types.chrony, ChronyService);
+  t.is(types.chrony, chrony);
   t.is(types.chrony.extends, ExtraSourceService);
   t.is(types.chrony.priority, 1.1);
 
-  t.is(types.alpm, ALPMService);
+  t.is(types.alpm, alpm);
   t.is(types.alpm.extends, Service);
   t.is(types.alpm.priority, 1.1);
 

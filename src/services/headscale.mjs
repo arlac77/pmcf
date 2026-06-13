@@ -2,8 +2,7 @@ import { addType } from "pacc";
 import { addServiceType } from "pmcf";
 import { Service } from "../service.mjs";
 
-export class HeadscaleService extends Service {
-  static name = "headscale";
+export class headscale extends Service {
   static specializationOf = Service;
   static service = {
     endpoints: [

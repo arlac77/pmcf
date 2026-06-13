@@ -20,8 +20,7 @@ class alpm_repository extends Base {
   }
 }
 
-export class ALPMService extends Service {
-  static name = "alpm";
+export class alpm extends Service {
   static specializationOf = Service;
   static attributes = {
     repositories: {
@@ -43,7 +42,7 @@ export class ALPMService extends Service {
   repositories = new Map();
 
   typeNamed(type, name) {
-    if (type === ALPMService.name) {
+    if (type === alpm.name) {
       return this.repositories.get(name);
     }
 

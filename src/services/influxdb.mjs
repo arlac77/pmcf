@@ -9,8 +9,7 @@ import {
 } from "../utils.mjs";
 import { Service } from "../service.mjs";
 
-export class InfluxdbService extends Service {
-  static name = "influxdb";
+export class influxdb extends Service {
   static specializationOf = Service;
   static attributes = {
     metricsDisabled: {

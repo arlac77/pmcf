@@ -1,35 +1,35 @@
 import test from "ava";
 import { join } from "node:path";
 import { InitializationContext, UnixEndpoint, ServiceTypes } from "pmcf";
-import { OpenLDAPService } from "../src/services/openldap.mjs";
+import { openldap } from "../src/services/openldap.mjs";
 
 test("OpenLDAPService basics", async t => {
   const ic = new InitializationContext(new URL("fixtures/root1", import.meta.url).pathname);
   await ic.loadAll();
 
-  const openldap = await ic.named("/L1/host1/openldap");
+  const openldapInst = await ic.named("/L1/host1/openldap");
 
-  t.true(openldap instanceof OpenLDAPService);
-  t.is(openldap.base, "dc=mydomain,dc=com");
-  t.is(openldap.uri, "ldap://");
+  t.true(openldapInst instanceof openldap);
+  t.is(openldapInst.base, "dc=mydomain,dc=com");
+  t.is(openldapInst.uri, "ldap://");
 
   t.deepEqual(
-    openldap.endpoint("ldapi"),
-    new UnixEndpoint(openldap, "/run/ldapi", {
+    openldapInst.endpoint("ldapi"),
+    new UnixEndpoint(openldapInst, "/run/ldapi", {
       type: ServiceTypes.ldapi,
       scheme: "ldapi"
     })
   );
 
   t.deepEqual(
-    openldap.endpoint("ldapi").url.toString(),
+    openldapInst.endpoint("ldapi").url.toString(),
     new URL("ldapi:///run/ldapi").toString()
   );
 
   //const r = new URL("fixtures/root1", import.meta.url).pathname;
 
   const packageDef = (
-    await Array.fromAsync(openldap.preparePackages("/tmp"))
+    await Array.fromAsync(openldapInst.preparePackages("/tmp"))
   )[0];
 
   const sources = await Array.fromAsync(packageDef.sources);

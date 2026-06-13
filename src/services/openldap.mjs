@@ -2,8 +2,7 @@ import { string_attribute_writable, addType } from "pacc";
 import { addServiceType } from "pmcf";
 import { Service } from "../service.mjs";
 
-export class OpenLDAPService extends Service {
-  static name = "openldap";
+export class openldap extends Service {
   static specializationOf = Service;
   static attributes = {
     base: string_attribute_writable,

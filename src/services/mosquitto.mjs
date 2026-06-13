@@ -2,8 +2,7 @@ import { port_attribute, string_attribute_writable, addType } from "pacc";
 import { addServiceType } from "pmcf";
 import { Service } from "../service.mjs";
 
-export class MosquittoService extends Service {
-  static name = "mosquitto";
+export class mosquitto extends Service {
   static specializationOf = Service;
   static attributes = {
     listener: {

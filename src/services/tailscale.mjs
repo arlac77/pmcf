@@ -1,8 +1,7 @@
 import { addType } from "pacc";
 import { Service } from "../service.mjs";
 
-export class TailscaleService extends Service {
-  static name = "tailscale";
+export class tailscale extends Service {
   static specializationOf = Service;
   static service = {
     endpoints: [

@@ -6,7 +6,7 @@ import {
   Host,
   Cluster,
   Root,
-  MosquittoService
+  mosquitto
 } from "pmcf";
 
 /**
@@ -16,10 +16,10 @@ import {
  * @returns {Object}
  */
 export function root1(root, filter) {
-  const mosquitto = {
+  const mosquittoDef = {
     name: "mosquitto",
     fullName: "services/mosquitto/mosquitto",
-    instanceof: MosquittoService,
+    instanceof: mosquitto,
     isTemplate: true
   };
 
@@ -167,7 +167,7 @@ export function root1(root, filter) {
     "/L1/host1": host1,
     "/L2": L2,
     "/services": services,
-    "/services/mosquitto/mosquitto": mosquitto,
+    "/services/mosquitto/mosquitto": mosquittoDef,
     "/model": model,
     "/model/m1": {
       name: "m1",

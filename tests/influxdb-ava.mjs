@@ -1,6 +1,6 @@
 import test from "ava";
 import { InitializationContext } from "pmcf";
-import { InfluxdbService } from "../src/services/influxdb.mjs";
+import { influxdb } from "../src/services/influxdb.mjs";
 
 test("influxdb basics", async t => {
   const ic = new InitializationContext(
@@ -8,11 +8,11 @@ test("influxdb basics", async t => {
   );
   await ic.loadAll();
 
-  const influxdb = await ic.named("/L1/host1/influxdb");
+  const inst = await ic.named("/L1/host1/influxdb");
 
-  t.true(influxdb instanceof InfluxdbService);
-  t.is(influxdb.port, 8086);
-  t.is(influxdb.url.toString(), "http://192.168.1.1:8086/");
+  t.true(inst instanceof influxdb);
+  t.is(inst.port, 8086);
+  t.is(inst.url.toString(), "http://192.168.1.1:8086/");
 
-  t.is(influxdb.metricsDisabled, true);
+  t.is(inst.metricsDisabled, true);
 });

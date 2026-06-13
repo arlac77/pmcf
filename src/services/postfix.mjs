@@ -2,8 +2,7 @@ import { addType } from "pacc";
 import { addServiceType } from "pmcf";
 import { Service } from "../service.mjs";
 
-export class PostfixService extends Service {
-  static name = "postfix";
+export class postfix extends Service {
   static specializationOf = Service;
   static attributes = {};
   static service = {

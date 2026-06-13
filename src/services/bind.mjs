@@ -395,8 +395,7 @@ function addressesStatement(prefix, objects, generateEmpty = false) {
   return [];
 }
 
-export class BindService extends ExtraSourceService {
-  static name = "bind";
+export class bind extends ExtraSourceService {
   static specializationOf = Service;
   static attributes = {
     groups: {
