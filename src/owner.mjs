@@ -12,6 +12,7 @@ import { asIterator, union } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { Subnet, SUBNET_GLOBAL_IPV4, SUBNET_GLOBAL_IPV6 } from "./subnet.mjs";
 import { networks_attribute } from "./network-support.mjs";
+import { Host } from "./host.mjs";
 
 const EMPTY = new Map();
 
@@ -23,7 +24,7 @@ export class Owner extends Base {
     networks: networks_attribute,
     hosts: {
       ...default_attribute_writable,
-      type: "host",
+      type: Host,
       collection: true
     },
     clusters: {
@@ -40,7 +41,10 @@ export class Owner extends Base {
     domain: string_attribute_writable,
     domains: string_set_attribute_writable,
     timezone: string_attribute_writable,
-    architectures: string_set_attribute_writable,
+    architectures: {
+      ...string_set_attribute_writable,
+      description: "all supported architectures"
+    },
     locales: { ...string_set_attribute_writable, description: "unix locale" },
     administratorEmail: { ...email_attribute, writable: true },
     template: { ...boolean_attribute_writable, private: true }
