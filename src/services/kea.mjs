@@ -127,10 +127,6 @@ export class kea extends Service {
     addServiceType(this.service, this.name);
   }
 
-  get type() {
-    return this.constructor.name;
-  }
-
   async *preparePackages(dir) {
     const ctrlAgentEndpoint = this.endpoint("kea-ha-4");
 

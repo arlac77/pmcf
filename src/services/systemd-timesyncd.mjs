@@ -33,10 +33,6 @@ export class SystemdTimesyncdService extends ExtraSourceService {
     addServiceType(this.service, this.name);
   }
 
-  get type() {
-    return this.constructor.name;
-  }
-
   systemdConfigs(name) {
     const options = (lower, upper) => {
       return {

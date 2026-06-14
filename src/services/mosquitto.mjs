@@ -26,13 +26,10 @@ export class mosquitto extends Service {
   static service = {
     extends: ["mqtt"]
   };
+
   static {
     addType(this);
     addServiceType(this.service, this.name);
-  }
-
-  get type() {
-    return this.constructor.name;
   }
 
   get listener() {

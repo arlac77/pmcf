@@ -40,10 +40,6 @@ export class chrony extends ExtraSourceService {
     addServiceType(this.service, this.name);
   }
 
-  get type() {
-    return this.constructor.name;
-  }
-
   async *preparePackages(dir) {
     const packageData = this.packageData;
     packageData.sources.push(new FileContentProvider(dir + "/"));

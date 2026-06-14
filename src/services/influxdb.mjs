@@ -42,10 +42,6 @@ export class influxdb extends Service {
     addServiceType(this.service, this.name);
   }
 
-  get type() {
-    return this.constructor.name;
-  }
-
   async *preparePackages(dir) {
     const packageData = this.packageData;
 

@@ -21,10 +21,6 @@ export class openldap extends Service {
 
   _base;
 
-  get type() {
-    return this.constructor.name;
-  }
-
   get base() {
     return this.attribute("_base");
   }

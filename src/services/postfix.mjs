@@ -16,7 +16,4 @@ export class postfix extends Service {
     addServiceType(this.service, this.name);
   }
 
-  get type() {
-    return this.constructor.name;
-  }
 }

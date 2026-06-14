@@ -455,10 +455,6 @@ export class bind extends ExtraSourceService {
 
   groups = {};
 
-  get type() {
-    return this.constructor.name;
-  }
-
   materializeExtends() {
     super.materializeExtends();
 
