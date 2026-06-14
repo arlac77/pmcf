@@ -1,14 +1,5 @@
-import {
-  addType,
-  string_attribute_writable,
-  duration_attribute_writable
-} from "pacc";
-import {
-  ExtraSourceService,
-  Service,
-  serviceEndpoints,
-  addServiceType
-} from "pmcf";
+import { string_attribute_writable, duration_attribute_writable } from "pacc";
+import { ExtraSourceService, Service, serviceEndpoints, addType } from "pmcf";
 import { filterConfigurable, sectionLines } from "../utils.mjs";
 
 export class SystemdTimesyncdService extends ExtraSourceService {
@@ -30,7 +21,6 @@ export class SystemdTimesyncdService extends ExtraSourceService {
 
   static {
     addType(this);
-    addServiceType(this.service, this.name);
   }
 
   systemdConfigs(name) {

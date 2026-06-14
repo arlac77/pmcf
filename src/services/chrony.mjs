@@ -1,9 +1,7 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { isLinkLocal } from "ip-utilties";
-import { addType } from "pacc";
-import { addServiceType, ExtraSourceService } from "pmcf";
-import { Service, serviceEndpoints } from "../service.mjs";
+import { Service, serviceEndpoints, addType, ExtraSourceService } from "pmcf";
 import { writeLines } from "../utils.mjs";
 
 export class chrony extends ExtraSourceService {
@@ -37,7 +35,6 @@ export class chrony extends ExtraSourceService {
 
   static {
     addType(this);
-    addServiceType(this.service, this.name);
   }
 
   async *preparePackages(dir) {

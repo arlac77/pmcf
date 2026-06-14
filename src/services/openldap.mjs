@@ -1,6 +1,5 @@
-import { string_attribute_writable, addType } from "pacc";
-import { addServiceType } from "pmcf";
-import { Service } from "../service.mjs";
+import { string_attribute_writable } from "pacc";
+import { Service, addType } from "pmcf";
 
 export class openldap extends Service {
   static specializationOf = Service;
@@ -16,7 +15,6 @@ export class openldap extends Service {
 
   static {
     addType(this);
-    addServiceType(this.service, this.name);
   }
 
   _base;
@@ -43,7 +41,9 @@ export class openldap extends Service {
 
     const packageData = this.packageData;
 
-    console.log([...this.walkDirections(["this", "extends"]) ].map(n=>n.fullName));
+    console.log(
+      [...this.walkDirections(["this", "extends"])].map(n => n.fullName)
+    );
 
     packageData.sources = await Array.fromAsync(
       this.templateContent(

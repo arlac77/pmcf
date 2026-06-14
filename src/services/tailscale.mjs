@@ -1,5 +1,4 @@
-import { addType } from "pacc";
-import { Service } from "../service.mjs";
+import { Service, addType } from "pmcf";
 
 export class tailscale extends Service {
   static specializationOf = Service;

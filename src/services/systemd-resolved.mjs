@@ -1,17 +1,11 @@
 import {
-  addType,
   string_collection_attribute_writable,
   duration_attribute_writable,
   string_attribute_writable,
   boolean_attribute_writable,
   yesno_attribute_writable
 } from "pacc";
-import {
-  ExtraSourceService,
-  serviceEndpoints,
-  addServiceType,
-  Service
-} from "pmcf";
+import { ExtraSourceService, serviceEndpoints, addType, Service } from "pmcf";
 import {
   filterConfigurable,
   yesno,
@@ -73,7 +67,6 @@ export class SystemdResolvedService extends ExtraSourceService {
 
   static {
     addType(this);
-    addServiceType(this.service, this.name);
   }
 
   systemdConfigs(name) {

@@ -1,9 +1,5 @@
-import {
-  addType,
-  string_attribute_writable,
-  duration_attribute_writable
-} from "pacc";
-import { Service, addServiceType } from "pmcf";
+import { string_attribute_writable, duration_attribute_writable } from "pacc";
+import { Service, addType } from "pmcf";
 import { filterConfigurable, sectionLines } from "../utils.mjs";
 
 export class SystemdJournaldService extends Service {
@@ -108,7 +104,6 @@ export class SystemdJournaldService extends Service {
   };
   static {
     addType(this);
-    addServiceType(this.service, this.name);
   }
 
   get type() {

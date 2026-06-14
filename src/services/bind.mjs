@@ -3,7 +3,6 @@ import { createHmac } from "node:crypto";
 import { FileContentProvider } from "npm-pkgbuild";
 import { isLinkLocal, reverseArpa } from "ip-utilties";
 import {
-  addType,
   default_attribute_writable,
   duration_attribute_writable,
   string_set_attribute_writable,
@@ -13,12 +12,13 @@ import {
   name_attribute_writable
 } from "pacc";
 import {
+  Service,
   Base,
   ExtraSourceService,
   serviceEndpoints,
   addresses,
   networkAddressType,
-  addServiceType
+  addType
 } from "pmcf";
 import { yesno, writeLines, asArray } from "../utils.mjs";
 import {
@@ -27,7 +27,6 @@ import {
   dnsRecordTypeForAddressFamily,
   sortZoneRecords
 } from "../dns-utils.mjs";
-import { Service } from "../service.mjs";
 import { addHook } from "../hooks.mjs";
 
 const bindNetworkAddressTypes = networkAddressType + "|bind_group";
@@ -450,7 +449,6 @@ export class bind extends ExtraSourceService {
 
   static {
     addType(this);
-    addServiceType(this.service, this.name);
   }
 
   groups = {};

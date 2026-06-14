@@ -1,10 +1,9 @@
 import {
   string_attribute_writable,
   string_collection_attribute_writable,
-  boolean_attribute_writable,
-  addType
+  boolean_attribute_writable
 } from "pacc";
-import { Service, addServiceType } from "pmcf";
+import { Service, addType } from "pmcf";
 import { filterConfigurable, sectionLines } from "../utils.mjs";
 
 /**
@@ -48,7 +47,6 @@ export class SystemdJournalUploadService extends Service {
   };
   static {
     addType(this);
-    addServiceType(this.service, this.name);
   }
 
   get type() {

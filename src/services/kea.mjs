@@ -4,11 +4,10 @@ import { reverseArpa, isLinkLocal } from "ip-utilties";
 import {
   string_attribute_writable,
   number_attribute_writable,
-  boolean_attribute_writable_true,
-  addType
+  boolean_attribute_writable_true
 } from "pacc";
 import {
-  addServiceType,
+  addType,
   Service,
   sortDescendingByPriority,
   serviceEndpoints,
@@ -124,7 +123,6 @@ export class kea extends Service {
 
   static {
     addType(this);
-    addServiceType(this.service, this.name);
   }
 
   async *preparePackages(dir) {
@@ -254,9 +252,7 @@ export class kea extends Service {
         ]
       };
 
-      for (const [key] of Object.entries(
-        KeaService.attributes
-      ).filter(
+      for (const [key] of Object.entries(KeaService.attributes).filter(
         ([key, attribute]) => attribute.configurable && this[key] !== undefined
       )) {
         cfg[key] = this[key];

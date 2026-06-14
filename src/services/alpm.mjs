@@ -1,12 +1,10 @@
 import {
-  addType,
   default_attribute_writable,
   name_attribute_writable,
   string_attribute_writable,
   string_set_attribute_writable
 } from "pacc";
-import { addServiceType, Base } from "pmcf";
-import { Service } from "../service.mjs";
+import { addType, Service, Base } from "pmcf";
 
 class alpm_repository extends Base {
   static attributes = {
@@ -36,7 +34,6 @@ export class alpm extends Service {
 
   static {
     addType(this);
-    addServiceType(this.service, this.name);
   }
 
   repositories = new Map();

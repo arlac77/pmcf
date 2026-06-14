@@ -1,6 +1,4 @@
-import { addType } from "pacc";
-import { addServiceType } from "pmcf";
-import { Service } from "../service.mjs";
+import { Service, addType } from "pmcf";
 
 export class headscale extends Service {
   static specializationOf = Service;
@@ -34,6 +32,5 @@ export class headscale extends Service {
   };
   static {
     addType(this);
-    addServiceType(this.service, this.name);
   }
 }

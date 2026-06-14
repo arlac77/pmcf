@@ -1,13 +1,12 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
-import { boolean_attribute_writable_true, addType } from "pacc";
-import { addServiceType } from "pmcf";
+import { boolean_attribute_writable_true } from "pacc";
+import { Service, addType } from "pmcf";
 import {
   writeLines,
   setionLinesFromPropertyIterator,
   filterConfigurable
 } from "../utils.mjs";
-import { Service } from "../service.mjs";
 
 export class influxdb extends Service {
   static specializationOf = Service;
@@ -39,7 +38,6 @@ export class influxdb extends Service {
 
   static {
     addType(this);
-    addServiceType(this.service, this.name);
   }
 
   async *preparePackages(dir) {
