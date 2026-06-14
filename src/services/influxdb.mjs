@@ -1,4 +1,5 @@
 import { join } from "node:path";
+import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import { FileContentProvider } from "npm-pkgbuild";
 import { boolean_attribute_writable_true } from "pacc";
 import { Service, addType } from "pmcf";
@@ -20,14 +21,14 @@ export class influxdb extends Service {
   static service = {
     endpoints: [
       {
-        family: "IPv4",
+        family: FAMILY_IPV4,
         port: 8086,
         protocol: "tcp",
         tls: false,
         pathname: "/"
       },
       {
-        family: "IPv6",
+        family: FAMILY_IPV6,
         port: 8086,
         protocol: "tcp",
         tls: false,

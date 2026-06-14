@@ -1,3 +1,4 @@
+import { FAMILY_IPV6 } from "ip-utilties";
 import { addType } from "pacc";
 import { endpointAttributes, Service } from "./service.mjs";
 
@@ -146,7 +147,7 @@ export class HTTPEndpoint extends BaseEndpoint {
       this.family = address.family;
       this.url = new URL(
         (data.tls ? "https://" : "http://") +
-          (address.family === "IPv6"
+          (address.family === FAMILY_IPV6
             ? "[" + address.address + "]"
             : address.address) +
           ":" +

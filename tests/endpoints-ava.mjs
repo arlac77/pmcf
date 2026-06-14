@@ -1,4 +1,5 @@
 import test from "ava";
+import { FAMILY_IPV4 } from "ip-utilties";
 import {
   InitializationContext,
   Host,
@@ -74,13 +75,13 @@ test("Endpoint from Service basics", t => {
   );
 
   const e1 = s1.endpoints(
-    e => e.family == "IPv4" && e.networkInterface.kind !== "loopback"
+    e => e.family == FAMILY_IPV4 && e.networkInterface.kind !== "loopback"
   )[0];
   t.is(e1.hostName, "h1");
   t.is(e1.type, "dns");
   t.is(e1.protocol, "udp");
   t.is(e1.port, 53);
-  t.is(e1.family, "IPv4");
+  t.is(e1.family, FAMILY_IPV4);
   t.is(e1.priority, 3);
   t.is(e1.toString(), "dns:IPv4/10.0.0.1[53]");
 });
@@ -96,7 +97,7 @@ test("HTTPEndpoint basics", t => {
   });
 
   t.is(ep.type, "http-control");
-  t.is(ep.family, "IPv4");
+  t.is(ep.family, FAMILY_IPV4);
   t.is(ep.port, 80);
   t.is(ep.pathname, "/p1");
   t.is(ep.tls, false);

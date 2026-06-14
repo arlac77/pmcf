@@ -1,4 +1,5 @@
 import test from "ava";
+import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import {
   InitializationContext,
   root,
@@ -37,7 +38,7 @@ test("Subnet ipv6", t => {
 
   t.is(s1.name, "fe80::/64");
   t.is(s1.prefixLength, 64);
-  t.is(s1.family, "IPv6");
+  t.is(s1.family, FAMILY_IPV6);
 
   t.true(s1.matchesAddress("fe80::1e57:3eff:fe22:9a8f"));
   t.true(s1.matchesAddress("fe80:0000:0000:0000:1e57:3eff:fe22:9a8e"));
@@ -95,7 +96,7 @@ test(st, SUBNET_LOCALHOST_IPV4, {
   address: "127/8",
   longAddress: "127.0.0.0/8",
   prefixLength: 8,
-  family: "IPv4",
+  family: FAMILY_IPV4,
   isLinkLocal: false,
   matches: ["127.0.01"],
   notMatches: ["10.2.0.77"]
@@ -106,7 +107,7 @@ test(st, SUBNET_LOCALHOST_IPV6, {
   address: "::1/128",
   longAddress: "::1/128",
   prefixLength: 128,
-  family: "IPv6",
+  family: FAMILY_IPV6,
   isLinkLocal: false
   //matches: ["127.0.01"],
   //notMatches: ["10.2.0.77"]
@@ -117,7 +118,7 @@ test(st, "10.0.0.77/16", {
   address: "10.0/16",
   longAddress: "10.0.0.0/16",
   prefixLength: 16,
-  family: "IPv4",
+  family: FAMILY_IPV4,
   isLinkLocal: false,
   matches: ["10.0.0.77"],
   notMatches: ["10.2.0.77"],
@@ -128,7 +129,7 @@ test(st, "192.168.1/24", {
   address: "192.168.1/24",
   longAddress: "192.168.1.0/24",
   prefixLength: 24,
-  family: "IPv4",
+  family: FAMILY_IPV4,
   isLinkLocal: false,
   matches: ["192.168.1.77"],
   notMatches: ["192.168.2.77"],
@@ -139,7 +140,7 @@ test(st, "192.168.1.61/30", {
   address: "192.168.1.60/30",
   longAddress: "192.168.1.60/30",
   prefixLength: 30,
-  family: "IPv4",
+  family: FAMILY_IPV4,
   isLinkLocal: false,
   // matches: ["192.168.1.62/30"],
   notMatches: ["192.168.2.77"],

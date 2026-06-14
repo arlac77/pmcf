@@ -1,3 +1,4 @@
+import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import {
   string_attribute_writable,
   string_collection_attribute_writable,
@@ -65,14 +66,14 @@ export class SystemdJournalRemoteService extends Service {
     systemdService: "systemd-journal-remote.service",
     endpoints: [
       {
-        family: "IPv4",
+        family: FAMILY_IPV4,
         port: 19532,
         protocol: "tcp",
         tls: false,
         pathname: "/"
       },
       {
-        family: "IPv6",
+        family: FAMILY_IPV6,
         port: 19532,
         protocol: "tcp",
         tls: false,

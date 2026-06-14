@@ -1,4 +1,5 @@
 import test from "ava";
+import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import { root, Owner, Location, Network, Host, Cluster } from "pmcf";
 import { InitializationContext } from "../src/initialization-context.mjs";
 
@@ -86,7 +87,7 @@ test("Owner read write", t => {
           {
             address: "10.0/16",
             directory: "/o1/10.0/16",
-            family: "IPv4",
+            family: FAMILY_IPV4,
             name: "10.0/16",
             owner: {
               name: "o1",
@@ -97,7 +98,7 @@ test("Owner read write", t => {
           {
             address: "fe80::/64",
             directory: "/o1/fe80::/64",
-            family: "IPv6",
+            family: FAMILY_IPV6,
             name: "fe80::/64",
             owner: {
               name: "o1",
@@ -112,7 +113,7 @@ test("Owner read write", t => {
       {
         address: "10.0/16",
         directory: "/o1/10.0/16",
-        family: "IPv4",
+        family: FAMILY_IPV4,
         name: "10.0/16",
         owner: {
           name: "o1",
@@ -123,7 +124,7 @@ test("Owner read write", t => {
       {
         address: "fe80::/64",
         directory: "/o1/fe80::/64",
-        family: "IPv6",
+        family: FAMILY_IPV6,
         name: "fe80::/64",
         owner: {
           name: "o1",

@@ -1,4 +1,5 @@
 import test from "ava";
+import { FAMILY_IPV4 } from "ip-utilties";
 import { root as Root, Host, Network, NetworkAddress } from "pmcf";
 import { InitializationContext } from "../src/initialization-context.mjs";
 
@@ -32,5 +33,5 @@ test("NetworkAddress filter", t => {
 
   t.deepEqual([...h2.networkAddresses()], [a1, a2]);
 
-  t.deepEqual([...h2.networkAddresses(n => n.family === "IPv4")], [a1]);
+  t.deepEqual([...h2.networkAddresses(n => n.family === FAMILY_IPV4)], [a1]);
 });

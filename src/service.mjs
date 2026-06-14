@@ -1,3 +1,4 @@
+import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import {
   string_attribute_writable,
   number_attribute_writable,
@@ -136,8 +137,8 @@ export class Service extends Base {
 
         case undefined:
         case "dns":
-        case "IPv4":
-        case "IPv6":
+        case FAMILY_IPV4:
+        case FAMILY_IPV6:
           const options =
             this._port === undefined ? { ...e } : { ...e, port: this._port };
           delete options.kind;

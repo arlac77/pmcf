@@ -1,4 +1,5 @@
 import { join } from "node:path";
+import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import { FileContentProvider } from "npm-pkgbuild";
 import { isLinkLocal } from "ip-utilties";
 import { Service, serviceEndpoints, addType, ExtraSourceService } from "pmcf";
@@ -13,13 +14,13 @@ export class chrony extends ExtraSourceService {
       "chrony-cmd": {
         endpoints: [
           {
-            family: "IPv4",
+            family: FAMILY_IPV4,
             port: 323,
             protocol: "tcp",
             tls: false
           },
           {
-            family: "IPv6",
+            family: FAMILY_IPV6,
             port: 323,
             protocol: "tcp",
             tls: false
@@ -62,7 +63,7 @@ export class chrony extends ExtraSourceService {
           if (endpoint.isPool) {
             options.push("maxsources 2");
           }
-          if (endpoint.priority > 300 && endpoint.family === "IPv4") {
+          if (endpoint.priority > 300 && endpoint.family === FAMILY_IPV4) {
             options.push("prefer");
           }
           return options.join(" ");

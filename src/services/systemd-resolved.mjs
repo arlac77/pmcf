@@ -1,3 +1,4 @@
+import { FAMILY_IPV4 } from "ip-utilties";
 import {
   string_collection_attribute_writable,
   duration_attribute_writable,
@@ -74,7 +75,7 @@ export class SystemdResolvedService extends ExtraSourceService {
       return {
         services: `services[types[dns] && priority>=${lower} && priority<=${upper}]`,
         endpoints: e =>
-          e.family == "IPv4" &&
+          e.family == FAMILY_IPV4 &&
           e.networkInterface &&
           e.networkInterface.kind !== "loopback",
         //e.family !== "dns",

@@ -1,7 +1,7 @@
 import { join, dirname } from "node:path";
 import { createHmac } from "node:crypto";
 import { FileContentProvider } from "npm-pkgbuild";
-import { isLinkLocal, reverseArpa } from "ip-utilties";
+import { isLinkLocal, reverseArpa, FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import {
   default_attribute_writable,
   duration_attribute_writable,
@@ -416,7 +416,7 @@ export class bind extends ExtraSourceService {
       "bind-statistics": {
         endpoints: [
           {
-            family: "IPv4",
+            family: FAMILY_IPV4,
             port: 19521,
             protocol: "tcp",
             pathname: "/",
@@ -424,7 +424,7 @@ export class bind extends ExtraSourceService {
             kind: "loopback"
           },
           {
-            family: "IPv6",
+            family: FAMILY_IPV6,
             port: 19521,
             protocol: "tcp",
             pathname: "/",
@@ -436,7 +436,7 @@ export class bind extends ExtraSourceService {
       "bind-rdnc": {
         endpoints: [
           {
-            family: "IPv4",
+            family: FAMILY_IPV4,
             port: 953,
             protocol: "tcp",
             tls: false,

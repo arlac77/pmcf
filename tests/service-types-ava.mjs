@@ -1,4 +1,5 @@
 import test from "ava";
+import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import { ServiceTypes, serviceTypeEndpoints } from "pmcf";
 
 test("ServiceTypes registered", t => {
@@ -12,14 +13,14 @@ test("serviceTypeEndpoints dns", t => {
   t.deepEqual(serviceTypeEndpoints(ServiceTypes.dns), [
     {
       type: ServiceTypes.dns,
-      family: "IPv4",
+      family: FAMILY_IPV4,
       port: 53,
       protocol: "udp",
       tls: false
     },
     {
       type: ServiceTypes.dns,
-      family: "IPv6",
+      family: FAMILY_IPV6,
       port: 53,
       protocol: "udp",
       tls: false
@@ -31,7 +32,7 @@ test("serviceTypeEndpoints bind", t => {
   t.deepEqual(serviceTypeEndpoints(ServiceTypes.bind), [
     {
       type: ServiceTypes["bind-statistics"],
-      family: "IPv4",
+      family: FAMILY_IPV4,
       port: 19521,
       protocol: "tcp",
       pathname: "/",
@@ -40,7 +41,7 @@ test("serviceTypeEndpoints bind", t => {
     },
     {
       type: ServiceTypes["bind-statistics"],
-      family: "IPv6",
+      family: FAMILY_IPV6,
       port: 19521,
       protocol: "tcp",
       pathname: "/",
@@ -49,7 +50,7 @@ test("serviceTypeEndpoints bind", t => {
     },
     {
       type: ServiceTypes["bind-rdnc"],
-      family: "IPv4",
+      family: FAMILY_IPV4,
       port: 953,
       protocol: "tcp",
       tls: false,
@@ -57,14 +58,14 @@ test("serviceTypeEndpoints bind", t => {
     },
     {
       type: ServiceTypes.dns,
-      family: "IPv4",
+      family: FAMILY_IPV4,
       port: 53,
       protocol: "udp",
       tls: false
     },
     {
       type: ServiceTypes.dns,
-      family: "IPv6",
+      family: FAMILY_IPV6,
       port: 53,
       protocol: "udp",
       tls: false

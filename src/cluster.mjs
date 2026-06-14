@@ -1,5 +1,6 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
+import { FAMILY_IPV4 } from "ip-utilties";
 import {
   default_attribute_writable,
   default_attribute,
@@ -123,7 +124,7 @@ export class Cluster extends Host {
         )) {
           cfg.push(
             `  ${
-              na.family === "IPv4"
+              na.family === FAMILY_IPV4
                 ? "virtual_ipaddress"
                 : "virtual_ipaddress_excluded"
             } {`

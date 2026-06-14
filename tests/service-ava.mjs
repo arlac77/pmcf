@@ -1,4 +1,5 @@
 import test from "ava";
+import { FAMILY_IPV4 } from "ip-utilties";
 import {
   root,
   Location,
@@ -54,7 +55,7 @@ test("Service basics", t => {
   l1.addObject(h1);
 
   const lna = h1.networkAddresses(
-    na => na.networkInterface.kind === "loopback" && na.family === "IPv4"
+    na => na.networkInterface.kind === "loopback" && na.family === FAMILY_IPV4
   );
   const ena = h1.networkAddresses(
     na => na.networkInterface.kind !== "loopback"
@@ -72,7 +73,7 @@ test("Service basics", t => {
   h1.services = s1;
 
   t.deepEqual(
-    s1.endpoints(e => e.family === "IPv4"),
+    s1.endpoints(e => e.family === FAMILY_IPV4),
     [
       ...lna.map(
         a =>
@@ -97,7 +98,7 @@ test("Service basics", t => {
 
   t.is(
     s1.endpoints(
-      e => e.family === "IPv4" && e.networkInterface.kind !== "loopback"
+      e => e.family === FAMILY_IPV4 && e.networkInterface.kind !== "loopback"
     )[0].port,
     53
   );
@@ -120,7 +121,7 @@ test("Service basics", t => {
   );
 
   t.deepEqual(
-    [...s1.endpoints(e => e.family == "IPv4")].map(e => e.socketAddress).sort(),
+    [...s1.endpoints(e => e.family == FAMILY_IPV4)].map(e => e.socketAddress).sort(),
     ["127.0.0.1:53", "10.0.0.1:53"].sort()
   );
 

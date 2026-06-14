@@ -1,3 +1,4 @@
+import { FAMILY_IPV4 } from "ip-utilties";
 import { Service, addType } from "pmcf";
 
 export class tailscale extends Service {
@@ -5,7 +6,7 @@ export class tailscale extends Service {
   static service = {
     endpoints: [
       {
-        family: "IPv4",
+        family: FAMILY_IPV4,
         port: 41641,
         protocol: "tcp",
         tls: false

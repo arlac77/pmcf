@@ -1,3 +1,4 @@
+import { FAMILY_IPV4 } from "ip-utilties";
 import { Service, addType } from "pmcf";
 
 export class headscale extends Service {
@@ -9,21 +10,21 @@ export class headscale extends Service {
         path: "/run/headscale/headscale.sock"
       },
       {
-        family: "IPv4",
+        family: FAMILY_IPV4,
         port: 8080,
         protocol: "tcp",
         tls: false
       },
       {
         description: "grpc",
-        family: "IPv4",
+        family: FAMILY_IPV4,
         port: 50443,
         protocol: "tcp",
         tls: false
       },
       {
         description: "metrics debug",
-        family: "IPv4",
+        family: FAMILY_IPV4,
         port: 9090,
         protocol: "tcp",
         tls: false

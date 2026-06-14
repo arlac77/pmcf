@@ -1,4 +1,4 @@
-import { normalizeCIDR, familyIP } from "ip-utilties";
+import { normalizeCIDR, familyIP, FAMILY_IPV4 } from "ip-utilties";
 import {
   default_attribute_writable,
   string_set_attribute_writable,
@@ -197,7 +197,7 @@ export class Owner extends Base {
 
     if (!subnet) {
       subnet =
-        familyIP(address) === "IPv4" ? SUBNET_GLOBAL_IPV4 : SUBNET_GLOBAL_IPV6;
+        familyIP(address) === FAMILY_IPV4 ? SUBNET_GLOBAL_IPV4 : SUBNET_GLOBAL_IPV6;
 
       this.error(
         `Address without subnet ${address}`,

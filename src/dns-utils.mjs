@@ -50,9 +50,9 @@ export function dnsFullName(name) {
 
 export function dnsRecordTypeForAddressFamily(family) {
   switch (family) {
-    case "IPv4":
+    case FAMILY_IPV4:
       return "A";
-    case "IPv6":
+    case FAMILY_IPV6:
       return "AAAA";
   }
 }

@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
-import { reverseArpa, isLinkLocal } from "ip-utilties";
+import { reverseArpa, isLinkLocal, FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import {
   string_attribute_writable,
   number_attribute_writable,
@@ -53,7 +53,7 @@ export class kea extends Service {
       "kea-ddns": {
         endpoints: [
           {
-            family: "IPv4",
+            family: FAMILY_IPV4,
             kind: "loopback",
             port: 53001,
             protocol: "tcp",
@@ -64,7 +64,7 @@ export class kea extends Service {
       /*"kea-control-agent": {
         endpoints: [
           {
-            family: "IPv4",
+            family: FAMILY_IPV4,
             port: 53002,
             pathname: "/",
             protocol: "tcp",
@@ -75,7 +75,7 @@ export class kea extends Service {
       "kea-ha-4": {
         endpoints: [
           {
-            family: "IPv4",
+            family: FAMILY_IPV4,
             port: 53003,
             pathname: "/",
             protocol: "tcp",
@@ -86,7 +86,7 @@ export class kea extends Service {
       "kea-ha-6": {
         endpoints: [
           {
-            family: "IPv6",
+            family: FAMILY_IPV6,
             port: 53004,
             pathname: "/",
             protocol: "tcp",
@@ -287,7 +287,7 @@ export class kea extends Service {
           name,
           "dns-servers": dnsServerEndpoints
             .filter(
-              endpoint => endpoint.family === "IPv4" && endpoint.type === "dns"
+              endpoint => endpoint.family === FAMILY_IPV4 && endpoint.type === "dns"
             )
             .map(endpoint => {
               return { "ip-address": endpoint.address };
@@ -395,7 +395,7 @@ export class kea extends Service {
         subnet4: subnets
           .filter(
             s =>
-              s.family === "IPv4" &&
+              s.family === FAMILY_IPV4 &&
               // TODO keep out tailscale
               s.cidr !== "100.64.0.2/32" &&
               s.cidr !== "100.64.0.3/32"
@@ -422,7 +422,7 @@ export class kea extends Service {
         subnet6: subnets
           .filter(
             s =>
-              s.family === "IPv6" &&
+              s.family === FAMILY_IPV6 &&
               !isLinkLocal(s.address) &&
               // TODO keep out tailscale
               s.cidr !== "fd7a:115c:a1e0::/64"

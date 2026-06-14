@@ -1,4 +1,5 @@
 import test from "ava";
+import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import {
   InitializationContext,
   Host,
@@ -35,7 +36,7 @@ test("kea basics", t => {
   h1.execFinalize();
 
   /*const la = h1.networkAddresses(
-    na => na.networkInterface.kind === "loopback" && na.family === "IPv4"
+    na => na.networkInterface.kind === "loopback" && na.family === FAMILY_IPV4
   );*/
 
   // console.log(h1.networkInterfaces, [...la].map(l=>l.toString()));
@@ -66,10 +67,10 @@ test("kea basics", t => {
   );
 
   /*
-  const a1 = [...h1.networkAddresses(na => na.family === "IPv4")][0];
+  const a1 = [...h1.networkAddresses(na => na.family === FAMILY_IPV4)][0];
 
   const result = kea
-    .endpoints(e => e.family === "IPv4")
+    .endpoints(e => e.family === FAMILY_IPV4)
     .sort(sortByFamilyAndAddress);
 
   let expected = [

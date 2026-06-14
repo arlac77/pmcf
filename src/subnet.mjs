@@ -70,7 +70,7 @@ export class Subnet extends Base {
     /* TODO where to take values from ? */
 
     return [
-      this.family === "IPv6"
+      this.family === FAMILY_IPV6
         ? this.cidr
         : rangeIP(this.prefix, this.prefixLength, 51, 6).map(a => decodeIP(a))
     ];
