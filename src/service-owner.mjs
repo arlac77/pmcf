@@ -64,14 +64,5 @@ export class ServiceOwner extends Base {
       throw new Error("invalidType", { cause: typeName });
     }
     return super.typeNamed(typeName, name);
-  }
-
-  /**
-   *
-   * @param {string} name
-   * @returns {Service|undefined}
-   */
-  named(name) {
-    return this.services.get(name);
-  }
+  }  
 }

@@ -102,7 +102,21 @@ export class Base {
 
   materializeExtends() {}
 
-  named(name) {}
+  named(name) {
+    for (const [path, attribute] of extendingAttributeIterator(
+      this.constructor,
+      (name, attribute) => /*attribute.owner &&*/ !attribute.type.primitive
+    )) {
+      const value = this[path];
+      if (typeof value?.get === "function") {
+        const object = value.get(name);
+        // console.log("NAMED", name, object.fullName);
+        if (object) {
+          return object;
+        }
+      }
+    }
+  }
 
   typeNamed(typeName, name) {
     if (this.owner) {

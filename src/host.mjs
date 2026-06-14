@@ -341,15 +341,6 @@ export class Host extends ServiceOwner {
     return super.typeNamed(typeName, name);
   }
 
-  named(name) {
-    const ni = this._networkInterfaces.get(name);
-    if (ni) {
-      return ni;
-    }
-
-    return super.named(name);
-  }
-
   get network() {
     for (const ni of this.networkInterfaces.values()) {
       if (ni._kind !== "loopback" && ni._network) {
