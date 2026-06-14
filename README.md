@@ -97,20 +97,18 @@ generates config packages for:
     *   [Parameters](#parameters-19)
 *   [secretName](#secretname)
 *   [isTemplate](#istemplate-1)
-*   [named](#named)
-    *   [Parameters](#parameters-20)
 *   [serviceEndpoints](#serviceendpoints)
-    *   [Parameters](#parameters-21)
+    *   [Parameters](#parameters-20)
 *   [domainName](#domainname)
-    *   [Parameters](#parameters-22)
+    *   [Parameters](#parameters-21)
 *   [domainFromDominName](#domainfromdominname)
-    *   [Parameters](#parameters-23)
+    *   [Parameters](#parameters-22)
 *   [sectionLines](#sectionlines)
-    *   [Parameters](#parameters-24)
+    *   [Parameters](#parameters-23)
 *   [asArray](#asarray)
-    *   [Parameters](#parameters-25)
+    *   [Parameters](#parameters-24)
 *   [asIterator](#asiterator)
-    *   [Parameters](#parameters-26)
+    *   [Parameters](#parameters-25)
 
 ## Base
 
@@ -365,14 +363,6 @@ Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 ## isTemplate
 
 Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
-
-## named
-
-### Parameters
-
-*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
-
-Returns **(Service | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ## serviceEndpoints
 
