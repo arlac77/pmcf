@@ -105,7 +105,7 @@ export class Base {
   named(name) {
     for (const [path, attribute] of extendingAttributeIterator(
       this.constructor,
-      (name, attribute) => /*attribute.owner &&*/ !attribute.type.primitive
+      (name, attribute) => !attribute.type.primitive
     )) {
       const value = this[path];
       if (typeof value?.get === "function") {

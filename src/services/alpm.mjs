@@ -37,12 +37,4 @@ export class alpm extends Service {
   }
 
   repositories = new Map();
-
-  typeNamed(type, name) {
-    if (type === alpm.name) {
-      return this.repositories.get(name);
-    }
-
-    return super.typeNamed(type, name);
-  }
 }
