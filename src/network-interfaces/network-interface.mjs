@@ -43,12 +43,6 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   static attributes = {
     ...networkAttributes,
     ...networkAddressAttributes,
-
-    services: {
-      ...default_attribute_writable,
-      collection: true,
-      type: "service"
-    },
     hostName: { ...hostname_attribute, writable: true },
     ipAddresses: string_attribute_writable,
     hwaddr: string_attribute_writable,
