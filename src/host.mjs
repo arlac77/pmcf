@@ -27,7 +27,6 @@ import { generateKnownHosts } from "./host-utils.mjs";
 export class Host extends ServiceOwner {
   static name = "host";
   static priority = 1.9;
-  static owners = ["owner", "network", "root"];
   static attributes = {
     ...networkAddressAttributes,
     networkInterfaces: {
@@ -75,7 +74,7 @@ export class Host extends ServiceOwner {
     replaces: string_set_attribute_writable,
     depends: string_set_attribute_writable,
     provides: string_set_attribute_writable,
-    extends: { ...default_attribute_writable, type: "host", collection: true, owner: false },
+    extends: { ...default_attribute_writable, type: Host, collection: true, owner: false },
     model: string_attribute,
     isModel: boolean_attribute_false
   };
