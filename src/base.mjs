@@ -244,12 +244,6 @@ export class Base {
     return name[0] === "/" ? this.fullName === name : this.name === name;
   }
 
-  relativeName(name) {
-    return name?.[0] === "/"
-      ? name.substring(this.owner.fullName.length + 1)
-      : name;
-  }
-
   *find(pattern) {
     for (const node of this.walkDirections(["children"])) {
       for (const p of pattern) {
