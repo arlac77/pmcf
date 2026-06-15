@@ -7,7 +7,7 @@ import {
   email_attribute
 } from "pacc";
 import { addType } from "pacc";
-import { asIterator, union } from "./utils.mjs";
+import { asIterator, asArray, union } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { Subnet, SUBNET_GLOBAL_IPV4, SUBNET_GLOBAL_IPV6 } from "./subnet.mjs";
 import { networks_attribute } from "./network-support.mjs";
@@ -380,7 +380,7 @@ export class Owner extends Base {
   }
 
   get localDomains() {
-    return this.domain ? new Set([this.domain]) : new Set();
+    return new Set(asArray(this.domain));
   }
 
   get domainNames() {
