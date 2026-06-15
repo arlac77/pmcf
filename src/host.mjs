@@ -370,8 +370,8 @@ export class Host extends ServiceOwner {
   set networkInterfaces(networkInterface) {
     this._networkInterfaces.set(networkInterface.name, networkInterface);
 
-    if (!this.isTemplate) {
-      networkInterface.network?.addObject(this);
+    if (!this.isTemplate && networkInterface.network) {
+      networkInterface.network.hosts = this;
     }
   }
 
