@@ -4,8 +4,7 @@ import {
   number_attribute_writable,
   string_set_attribute,
   default_attribute_writable,
-  boolean_attribute_false,
-  addType
+  boolean_attribute_false
 } from "pacc";
 import {
   Base,
@@ -13,7 +12,8 @@ import {
   Endpoint,
   DomainNameEndpoint,
   HTTPEndpoint,
-  UnixEndpoint
+  UnixEndpoint,
+  addType
 } from "pmcf";
 import { asArray } from "./utils.mjs";
 import { networkAddressAttributes } from "./network-support.mjs";

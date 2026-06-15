@@ -1,5 +1,5 @@
 import { FAMILY_IPV6 } from "ip-utilties";
-import { addType } from "pacc";
+import { addType } from "pmcf";
 import { endpointAttributes, Service } from "./service.mjs";
 
 class BaseEndpoint {

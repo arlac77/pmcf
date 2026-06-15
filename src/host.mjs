@@ -7,10 +7,9 @@ import {
   string_attribute_writable,
   string_set_attribute_writable,
   number_attribute_writable,
-  boolean_attribute_false,
-  addType
+  boolean_attribute_false
 } from "pacc";
-import {  NetworkInterface, addresses } from "pmcf";
+import { NetworkInterface, addresses, addType } from "pmcf";
 import { ServiceOwner } from "./service-owner.mjs";
 import { networkAddressAttributes } from "./network-support.mjs";
 import { addHook } from "./hooks.mjs";
@@ -74,7 +73,12 @@ export class Host extends ServiceOwner {
     replaces: string_set_attribute_writable,
     depends: string_set_attribute_writable,
     provides: string_set_attribute_writable,
-    extends: { ...default_attribute_writable, type: Host, collection: true, owner: false },
+    extends: {
+      ...default_attribute_writable,
+      type: Host,
+      collection: true,
+      owner: false
+    },
     model: string_attribute,
     isModel: boolean_attribute_false
   };

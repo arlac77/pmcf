@@ -1,4 +1,5 @@
-import { default_attribute_writable, addType } from "pacc";
+import { default_attribute_writable } from "pacc";
+import { addType } from "pmcf";
 import { Owner } from "./owner.mjs";
 import { Subnet } from "./subnet.mjs";
 import { networkAttributes } from "./network-support.mjs";

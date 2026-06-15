@@ -6,14 +6,10 @@ import {
   familyIP,
   matchPrefixIP
 } from "ip-utilties";
-import {
-  string_attribute,
-  name_attribute,
-  number_attribute,
-  addType
-} from "pacc";
+import { string_attribute, name_attribute, number_attribute } from "pacc";
 import { networks_attribute } from "./network-support.mjs";
 import { Base } from "./base.mjs";
+import { addType } from "pmcf";
 
 export class Subnet extends Base {
   static name = "subnet";

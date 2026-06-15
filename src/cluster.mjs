@@ -5,12 +5,11 @@ import {
   default_attribute_writable,
   default_attribute,
   number_attribute_writable,
-  duration_attribute_writable,
-  addType
+  duration_attribute_writable
 } from "pacc";
 import { Owner } from "./owner.mjs";
 import { Host } from "./host.mjs";
-import { serviceEndpoints } from "pmcf";
+import { addType, serviceEndpoints } from "pmcf";
 import { writeLines } from "./utils.mjs";
 
 export class Cluster extends Host {

@@ -4,10 +4,9 @@ import {
   string_set_attribute_writable,
   string_attribute_writable,
   boolean_attribute_writable,
-  email_attribute,
-  addType,
-  types
+  email_attribute
 } from "pacc";
+import { addType } from "pacc";
 import { asIterator, union } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { Subnet, SUBNET_GLOBAL_IPV4, SUBNET_GLOBAL_IPV6 } from "./subnet.mjs";
@@ -160,7 +159,7 @@ export class Owner extends Base {
   get hosts() {
     let hosts = this.directHosts();
 
-    for (const type of types.host.owners) {
+    for (const type of Host.owners) {
       for (const object of this.typeList(type)) {
         hosts = hosts.union(object.hosts);
       }

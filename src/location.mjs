@@ -1,6 +1,5 @@
 import { FileContentProvider } from "npm-pkgbuild";
-import { addType } from "pacc";
-import { Owner } from "pmcf";
+import { Owner, addType } from "pmcf";
 import { loadHooks } from "./hooks.mjs";
 
 export class Location extends Owner {

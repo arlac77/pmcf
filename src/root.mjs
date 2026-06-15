@@ -1,4 +1,4 @@
-import { addType } from "pacc";
+import { addType } from "pmcf";
 import { Location } from "./location.mjs";
 
 export class root extends Location {

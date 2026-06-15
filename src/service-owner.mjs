@@ -1,5 +1,5 @@
-import { default_attribute_writable, addType } from "pacc";
-import { Base, Service } from "pmcf";
+import { default_attribute_writable } from "pacc";
+import { Base, Service, addType } from "pmcf";
 
 export class ServiceOwner extends Base {
   static name = "service-owner";
@@ -64,5 +64,5 @@ export class ServiceOwner extends Base {
       throw new Error("invalidType", { cause: typeName });
     }
     return super.typeNamed(typeName, name);
-  }  
+  }
 }
