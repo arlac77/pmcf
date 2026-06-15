@@ -33,7 +33,6 @@ test("kea basics", t => {
     }
   });
   owner.addObject(h1);
-  h1.execFinalize();
 
   /*const la = h1.networkAddresses(
     na => na.networkInterface.kind === "loopback" && na.family === FAMILY_IPV4

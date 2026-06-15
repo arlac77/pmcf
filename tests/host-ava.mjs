@@ -83,10 +83,7 @@ test("Host extends", t => {
     }
   });
 
-  e1.execFinalize();
-
   t.deepEqual([...e1.networkInterfaces.keys()].sort(), ["eth0", "lo"]);
-
 
   t.deepEqual(e1.children, [
     e1._networkInterfaces.get("eth0"),
@@ -387,7 +384,6 @@ test("clone NetworkInterface", t => {
       }
     }
   });
-  h2.execFinalize();
 
   const ni = h2.typeNamed("network_interface", "eth0");
 

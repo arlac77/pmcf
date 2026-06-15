@@ -196,7 +196,9 @@ export class Owner extends Base {
 
     if (!subnet) {
       subnet =
-        familyIP(address) === FAMILY_IPV4 ? SUBNET_GLOBAL_IPV4 : SUBNET_GLOBAL_IPV6;
+        familyIP(address) === FAMILY_IPV4
+          ? SUBNET_GLOBAL_IPV4
+          : SUBNET_GLOBAL_IPV6;
 
       this.error(
         `Address without subnet ${address}`,
@@ -253,8 +255,9 @@ export class Owner extends Base {
             other.bridge = bridge;
           }
         } else {
-          bridge.add(nameOrNetwork);
-          this.finalize(() => this._resolveBridges());
+          this.error("Unknown destination", nameOrNetwork);
+          //  bridge.add(nameOrNetwork);
+          //  this.finalize(() => this._resolveBridges());
         }
       }
 
@@ -262,6 +265,7 @@ export class Owner extends Base {
     }
   }
 
+  /*
   _resolveBridges() {
     for (const bridge of this._bridges) {
       const subnets = new Map();
@@ -295,6 +299,7 @@ export class Owner extends Base {
       }
     }
   }
+*/
 
   get derivedPackaging() {
     let all = new Set();

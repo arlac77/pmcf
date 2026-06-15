@@ -9,7 +9,6 @@ import {
 import { FileContentProvider } from "npm-pkgbuild";
 import {
   getAttribute,
-  addType,
   parse,
   globals,
   expand,
@@ -26,6 +25,7 @@ import {
   boolean_attribute_writable
 } from "pacc";
 import { union } from "./utils.mjs";
+import { addType } from "pmcf";
 
 /**
  *
@@ -64,7 +64,6 @@ export class Base {
   _tags = new Set();
   _packaging = new Set();
   _directory;
-  _finalize;
 
   /**
    *
@@ -525,32 +524,6 @@ export class Base {
       root: this,
       valueFor: (name, at) => this.valueFor(name, at)
     });
-  }
-
-  finalize(action) {
-    if (!this._finalize) {
-      this._finalize = [];
-    }
-    this._finalize.push(action);
-  }
-
-  execFinalize() {
-    for (const node of this.walkDirections(["children"])) {
-      node._execFinalize();
-    }
-  }
-
-  _execFinalize() {
-    if (this._finalize) {
-      let i = 0;
-      for (const action of this._finalize) {
-        if (action) {
-          this._finalize[i] = undefined;
-          action();
-        }
-        i++;
-      }
-    }
   }
 
   error(...args) {
