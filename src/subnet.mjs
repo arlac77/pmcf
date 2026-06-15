@@ -4,7 +4,8 @@ import {
   rangeIP,
   decodeIP,
   familyIP,
-  matchPrefixIP
+  matchPrefixIP,
+  FAMILY_IPV6
 } from "ip-utilties";
 import { string_attribute, name_attribute, number_attribute } from "pacc";
 import { networks_attribute } from "./network-support.mjs";
