@@ -156,6 +156,10 @@ export class Owner extends Base {
     return hosts;
   }
 
+  set hosts(value) {
+    this.typeNamed("host").set(value.name, value);
+  }
+
   get hosts() {
     let hosts = this.directHosts();
 
