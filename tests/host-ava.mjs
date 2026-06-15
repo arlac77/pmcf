@@ -87,6 +87,7 @@ test("Host extends", t => {
 
   t.deepEqual([...e1.networkInterfaces.keys()].sort(), ["eth0", "lo"]);
 
+
   t.deepEqual(e1.children, [
     e1._networkInterfaces.get("eth0"),
     e1._networkInterfaces.get("lo")
@@ -106,6 +107,7 @@ test("Host extends", t => {
     e2._networkInterfaces.get("eth0"),
     e2._networkInterfaces.get("lo")
   ]);
+  t.deepEqual(e2.named("lo"), e2.networkInterfaces.get("lo"));
 
   const h1 = new Host(owner);
   ic.read(h1, {
@@ -122,6 +124,7 @@ test("Host extends", t => {
     h1._networkInterfaces.get("eth0"),
     h1._networkInterfaces.get("lo")
   ]);
+  t.deepEqual(h1.named("lo"), h1.networkInterfaces.get("lo"));
 
   t.deepEqual([...h1.aliases].sort(), ["h1a", "e1a", "e2a"].sort());
   t.is(h1.os, "linux");
@@ -135,8 +138,6 @@ test("Host extends", t => {
   t.deepEqual([...h1.provides].sort(), ["pkge1", "pkge2", "pkgh1"].sort());
   t.deepEqual([...h1.depends].sort(), ["dpkge1", "dpkge2", "dpkgh1"].sort());
   t.deepEqual([...h1.replaces].sort(), ["rpkge1", "rpkge2", "rpkgh1"].sort());
-
-  h1.finalize();
 
   t.is(e1.networkInterfaces.get("eth0").kind, "ethernet");
 });

@@ -37,7 +37,7 @@ function setup() {
     priority: 3
   });
 
-  return { ic, root:rootInst, n1, l1, dns };
+  return { ic, root: rootInst, n1, l1, dns };
 }
 
 test("Service basics", t => {
@@ -121,7 +121,9 @@ test("Service basics", t => {
   );
 
   t.deepEqual(
-    [...s1.endpoints(e => e.family == FAMILY_IPV4)].map(e => e.socketAddress).sort(),
+    [...s1.endpoints(e => e.family == FAMILY_IPV4)]
+      .map(e => e.socketAddress)
+      .sort(),
     ["127.0.0.1:53", "10.0.0.1:53"].sort()
   );
 
@@ -259,6 +261,7 @@ test("Service load", t => {
   root.addObject(h1);
 
   t.is(h1.services.get("dns").name, "dns");
+  t.is(h1.named("dns"), h1.services.get("dns"));
 
   t.is(h1.typeNamed("service", "dns"), h1.services.get("dns"));
 });
