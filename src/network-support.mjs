@@ -3,7 +3,7 @@ import {
   string_collection_attribute_writable,
   string_attribute_writable,
   integer_attribute_writable,
-  hostname_attribute,
+  hostname_attribute as hostname_attribute_base,
   boolean_attribute_writable
 } from "pacc";
 
@@ -11,37 +11,52 @@ export const networkAddressType = "network|host|network_interface";
 
 export const networks_attribute = {
   ...default_attribute_writable,
+  name: "networks",
   type: "network",
   collection: true
+};
+
+export const psk_attribute = { ...string_attribute_writable, name: "psk" };
+export const ssid_attribute = { ...string_attribute_writable, name: "ssid" };
+export const hostname_attribute = {
+  ...hostname_attribute_base,
+  name: "hostName",
+  writable: true
 };
 
 export const networkAttributes = {
   scope: {
     ...string_attribute_writable,
+    name: "scope",
     values: ["global", "site", "link", "host"]
     //  default: "global"
   },
   class: {
     ...string_attribute_writable,
+    name: "class",
     values: ["10GBASE-T", "1000BASE-T", "100BASE-T", "10BASE-T"]
   },
   kind: {
     ...string_attribute_writable,
+    name: "kind",
     values: ["loopback", "ethernet", "wlan", "wireguard", "fiber", "dsl"]
   },
-  ssid: string_attribute_writable,
-  psk: string_attribute_writable,
-  secretName: string_attribute_writable,
-  metric: { ...integer_attribute_writable /*default: 1004*/ },
-  mtu: { ...integer_attribute_writable, default: 1500 },
-  gateway: { ...default_attribute_writable, type: "host" },
-  multicastDNS: boolean_attribute_writable
+  ssid: ssid_attribute,
+  psk: psk_attribute,
+  secretName: { ...string_attribute_writable, name: "secretName" },
+  metric: { ...integer_attribute_writable, name: "metric" /*default: 1004*/ },
+  mtu: { ...integer_attribute_writable, name: "mtu", default: 1500 },
+  gateway: { ...default_attribute_writable, name: "gateway", type: "host" },
+  multicastDNS: { ...boolean_attribute_writable, name: "multicastDNS" }
 };
 
 export const networkAddressAttributes = {
-  hostName: { ...hostname_attribute, writable: true },
-  cidrAddresses: string_collection_attribute_writable,
-  cidrAddress: string_attribute_writable,
-  addresses: string_collection_attribute_writable,
-  address: string_attribute_writable
+  hostName: hostname_attribute,
+  cidrAddresses: {
+    ...string_collection_attribute_writable,
+    name: "cidrAddresses"
+  },
+  cidrAddress: { ...string_attribute_writable, name: "cidrAddress" },
+  addresses: { ...string_collection_attribute_writable, name: "addresses" },
+  address: { ...string_attribute_writable, name: "address" }
 };
