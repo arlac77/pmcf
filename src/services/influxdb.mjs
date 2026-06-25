@@ -13,8 +13,9 @@ export class influxdb extends Service {
   static specializationOf = Service;
   static attributes = {
     metricsDisabled: {
-      externalName: "metrics-disabled",
       ...boolean_attribute_writable_true,
+      name: "metricsDisabled",
+      externalName: "metrics-disabled",
       configurable: true
     }
   };

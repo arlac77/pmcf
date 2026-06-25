@@ -1,21 +1,20 @@
 import { default_attribute_writable } from "pacc";
 import { addType } from "pmcf";
 import { Owner } from "./owner.mjs";
-import { Subnet } from "./subnet.mjs";
-import { networkAttributes } from "./network-support.mjs";
+import { networkAttributes } from "./common-attributes.mjs";
 
 export class Network extends Owner {
   static name = "network";
-  static owners = ["location", Owner, "root"];
+  static owners = [Owner, "root"];
   static attributes = {
     ...networkAttributes,
     bridge: {
       ...default_attribute_writable,
+      name: "bridge",
       type: Network,
       collection: true,
       owner: false
-    },
-    gateway: { ...default_attribute_writable, type: "host", owner: false }
+    }
   };
 
   static {
@@ -33,7 +32,7 @@ export class Network extends Owner {
   }
 
   get address() {
-    for (const subnet of this.subnets) {
+    for (const subnet of this.subnets.values()) {
       return subnet.address;
     }
   }
@@ -45,18 +44,11 @@ export class Network extends Owner {
     return super.networkNamed(name);
   }
 
-  addObject(object) {
-    super.addObject(object);
-    if (object instanceof Subnet) {
-      object.networks.add(this);
-    }
-  }
-
   get hosts() {
     if (this.bridge) {
       let hosts = new Set();
       for (const network of this.bridge) {
-        hosts = hosts.union(network.directHosts());
+        hosts = hosts.union(network.hosts());
       }
       return hosts;
     }
@@ -69,7 +61,7 @@ export class Network extends Owner {
   }
 
   set bridge(network) {
-    this._bridge = this.owner.addBridge(this, network);
+    this._bridge = this.addBridge(this, network);
     network.bridge = this.bridge; // TODO should happen in addBridge
   }
 

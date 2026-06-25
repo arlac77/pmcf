@@ -78,9 +78,9 @@ export class chrony extends ExtraSourceService {
       "ntsdumpdir /var/lib/chrony",
       "dumpdir /var/lib/chrony",
       "pidfile /run/chrony/chronyd.pid",
-      [...this.subnets].map(s => `allow ${s.address}`),
+      [...this.values()].map(s => `allow ${s.address}`),
       "cmdratelimit interval -4 burst 16",
-      [...this.subnets].map(s => `cmdallow ${s.address}`)
+      [...this.subnets.values()].map(s => `cmdallow ${s.address}`)
     ];
 
     await writeLines(join(dir, "etc"), "chrony.conf", lines);

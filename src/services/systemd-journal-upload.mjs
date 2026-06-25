@@ -15,29 +15,34 @@ export class SystemdJournalUploadService extends Service {
   static name = "systemd-journal-upload";
   static specializationOf = Service;
   static attributes = {
-    URL: { ...string_attribute_writable, configurable: true },
+    URL: { ...string_attribute_writable, name: "URL", configurable: true },
     ServerKeyFile: {
       ...string_attribute_writable,
+      name: "ServerKeyFile",
       configurable: true
       // default: "/etc/ssl/private/journal-upload.pem"
     },
     ServerCertificateFile: {
       ...string_attribute_writable,
+      name: "ServerCertificateFile",
       configurable: true
       // default: "/etc/ssl/certs/journal-upload.pem"
     },
     TrustedCertificateFile: {
       ...string_attribute_writable,
+      name: "TrustedCertificateFile",
       configurable: true
       // default: "/etc/ssl/ca/trusted.pem"
     },
     Compression: {
       ...string_collection_attribute_writable,
+      name: "Compression",
       configurable: true
       // default: "zstd lz4 xz"
     },
     ForceCompression: {
       ...boolean_attribute_writable,
+      name: "ForceCompression",
       configurable: true
       // default: false
     }

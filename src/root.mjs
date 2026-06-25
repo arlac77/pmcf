@@ -1,21 +1,27 @@
-import { addType } from "pmcf";
-import { Location } from "./location.mjs";
+import { Owner, addType } from "pmcf";
 
-export class root extends Location {
+export class root extends Owner {
   static priority = 3;
-  
   static {
     addType(this);
   }
 
   constructor(directory) {
-    super(undefined, "");
+    super();
     this.directory = directory;
-    this.addObject(this);
+    this.name = "";
   }
 
   get fullName() {
     return "";
+  }
+
+  named(name) {
+    if (name === "" || name === "/") {
+      return this;
+    }
+
+    return super.named(name);
   }
 
   get root() {

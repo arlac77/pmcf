@@ -18,46 +18,56 @@ export class SystemdJournalRemoteService extends Service {
   static attributes = {
     Seal: {
       ...boolean_attribute_writable,
+      name: "Seal",
       configurable: true
     },
     SplitMode: {
       ...string_attribute_writable,
+      name: "SplitMode",
       values: [false, "host"],
       configurable: true
     },
     ServerKeyFile: {
       ...string_attribute_writable,
+      name: "ServerKeyFile",
       configurable: true
       //   default: "/etc/ssl/private/journal-upload.pem"
     },
     ServerCertificateFile: {
       ...string_attribute_writable,
+      name: "ServerCertificateFile",
       configurable: true
       //   default: "/etc/ssl/certs/journal-upload.pem"
     },
     TrustedCertificateFile: {
       ...string_attribute_writable,
+      name: "TrustedCertificateFile",
       configurable: true
       //  default: "/etc/ssl/ca/trusted.pem"
     },
     MaxUse: {
       ...string_attribute_writable,
+      name: "MaxUse",
       configurable: true
     },
     KeepFree: {
       ...string_attribute_writable,
+      name: "KeepFree",
       configurable: true
     },
     MaxFileSize: {
       ...string_attribute_writable,
+      name: "MaxFileSize",
       configurable: true
     },
     MaxFiles: {
       ...integer_attribute_writable,
+      name: "MaxFiles",
       configurable: true
     },
     Compression: {
       ...string_collection_attribute_writable,
+      name: "Compression",
       configurable: true
       //   default: "zstd lz4 xz"
     }

@@ -5,7 +5,6 @@ import {
   Cluster,
   root,
   Host,
-  Location,
   Network,
   Service,
   ExtraSourceService,
@@ -26,15 +25,11 @@ test("types", t => {
   t.is(types.owner.extends, Base);
   t.is(types.owner.priority, 2);
   t.is(types.owner.key, "name");
+  t.deepEqual(types.owner.owners, [types.owner, types.root]);
 
   t.is(types.root, root);
-  t.is(types.root.extends, Location);
+  t.is(types.root.extends, Owner);
   t.is(types.root.priority, 3);
-  t.is(types.location, Location);
-  t.is(types.location.extends, Owner);
-  t.is(types.location.priority, 2);
-  t.is(types.location.key, "name");
-  t.deepEqual(types.location.owners, [types.owner, types.location, types.root]);
 
   t.is(types.network, Network);
   t.is(types.network.extends, Owner);

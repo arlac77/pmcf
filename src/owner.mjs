@@ -1,4 +1,5 @@
 import { normalizeCIDR, familyIP, FAMILY_IPV4 } from "ip-utilties";
+import { FileContentProvider } from "npm-pkgbuild";
 import {
   default_attribute_writable,
   string_set_attribute_writable,
@@ -6,56 +7,76 @@ import {
   boolean_attribute_writable,
   email_attribute
 } from "pacc";
-import { addType } from "pacc";
 import { asIterator, asArray, union } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { Subnet, SUBNET_GLOBAL_IPV4, SUBNET_GLOBAL_IPV6 } from "./subnet.mjs";
-import { networks_attribute } from "./network-support.mjs";
+import { networks_attribute } from "./common-attributes.mjs";
 import { Host } from "./host.mjs";
-
-const EMPTY = new Map();
+import { addType, assign } from "pmcf";
+import { loadHooks } from "./hooks.mjs";
 
 export class Owner extends Base {
   static name = "owner";
   static priority = 2;
-  static owners = [Owner, "location", "root"];
+  static owners = [Owner, "root"];
   static attributes = {
     networks: networks_attribute,
+    owners: {
+      ...default_attribute_writable,
+      name: "owners",
+      type: Owner,
+      collection: true
+    },
     hosts: {
       ...default_attribute_writable,
+      name: "hosts",
       type: Host,
       collection: true
     },
     clusters: {
       ...default_attribute_writable,
+      name: "clusters",
       type: "cluster",
       collection: true
     },
     subnets: {
       ...default_attribute_writable,
+      name: "subnets",
       type: Subnet,
       collection: true
     },
-    country: string_attribute_writable,
-    domain: string_attribute_writable,
-    domains: string_set_attribute_writable,
-    timezone: string_attribute_writable,
+    country: { ...string_attribute_writable, name: "country" },
+    domain: { ...string_attribute_writable, name: "domain" },
+    domains: { ...string_set_attribute_writable, name: "domains" },
+    timezone: { ...string_attribute_writable, name: "timezone" },
     architectures: {
       ...string_set_attribute_writable,
+      name: "architectures",
       description: "all supported architectures"
     },
-    locales: { ...string_set_attribute_writable, description: "unix locale" },
-    administratorEmail: { ...email_attribute, writable: true },
-    template: { ...boolean_attribute_writable, private: true }
+    locales: {
+      ...string_set_attribute_writable,
+      name: "locales",
+      description: "unix locale"
+    },
+    administratorEmail: {
+      ...email_attribute,
+      name: "administratorEmail",
+      writable: true
+    },
+    template: { ...boolean_attribute_writable, name: "template", private: true }
   };
 
   static {
     addType(this);
   }
 
-  _membersByType = new Map();
+  owners = new Map();
+  networks = new Map();
+  clusters = new Map();
+  hosts = new Map();
   _bridges = new Set();
-  _subnets = new Set();
+  _subnets = new Map();
 
   /**
    * @return {boolean}
@@ -64,136 +85,46 @@ export class Owner extends Base {
     return this.template ?? super.isTemplate;
   }
 
-  named(name) {
-    if (name[0] === "/") {
-      name = name.substring(this.fullName.length + 1);
-    }
-
-    for (const slot of this._membersByType.values()) {
-      const object = slot.get(name);
-      if (object) {
-        return object;
-      }
-    }
-
-    // TODO cascade
-    const parts = name.split(/\//);
-
-    if (parts.length >= 2) {
-      const last = parts.pop();
-
-      const next = this.named(parts.join("/"));
-      if (next) {
-        return next.named(last);
-      }
-    }
-  }
-
-  typeNamed(typeName, name) {
-    const typeSlot = this._membersByType.get(typeName);
-    if (typeSlot) {
-      const object = typeSlot.get(
-        name[0] === "/" ? name.substring(this.fullName.length + 1) : name
-      );
-      if (object) {
-        return object;
-      }
-    }
-
-    return super.typeNamed(typeName, name);
-  }
-
-  typeList(typeName) {
-    const typeSlot = this._membersByType.get(typeName);
-    return (typeSlot || EMPTY).values();
-  }
-
-  addTypeObject(typeName, name, object) {
-    const typeSlot = this._membersByType.getOrInsertComputed(
-      typeName,
-      () => new Map()
-    );
-    typeSlot.set(name, object);
-  }
-
-  addObject(object) {
-    if (object instanceof Subnet) {
-      this._subnets.add(object);
-    } else {
-      if (object.owner && object.owner !== this) {
-        this.addTypeObject(
-          object.typeName,
-          object.owner.name + "/" + object.name,
-          object
-        );
-
-        return;
-      }
-      this.addTypeObject(object.typeName, object.name, object);
-    }
-  }
-
   get services() {
-    return [...this.hosts]
+    return [...this.hosts.values()]
       .map(host => Array.from(host.services.values()))
       .flat();
   }
 
-  get locations() {
-    return this.typeList("location");
-  }
-
   hostNamed(name) {
-    return this.typeNamed("host", name) || this.typeNamed("cluster", name);
+    return this.hosts.get(name) || this.clusters.get(name);
   }
 
-  directHosts() {
-    let hosts = new Set();
-    for (const type of ["host", "cluster"]) {
-      hosts = hosts.union(new Set(Array.from(this.typeList(type))));
-    }
-
-    return hosts;
-  }
-
-  set hosts(value) {
-    this.typeNamed("host").set(value.name, value);
-  }
-
-  get hosts() {
-    let hosts = this.directHosts();
-
-    for (const type of Host.owners) {
-      for (const object of this.typeList(type)) {
-        hosts = hosts.union(object.hosts);
-      }
-    }
-
-    return hosts;
+  get network() {
+    return [...this.networks.values()][0] || super.network;
   }
 
   networkNamed(name) {
-    return this.typeNamed("network", name);
-  }
-
-  get networks() {
-    //return this._membersByType.get("network") || new Map();
-    return this.typeList("network");
-  }
-
-  subnetNamed(name) {
-    return this.subnets.values().find(s => s.name == name);
+    return this.networks.get(name);
   }
 
   get subnets() {
-    return this.unionFromDirections(["this", "owner"], "_subnets");
+    return this._subnets;
+  }
+
+  set subnets(value) {
+    this.addSubnet(value);
   }
 
   addSubnet(address) {
+    if(address instanceof Subnet) {
+      this._subnets.set(address.name, address);
+      return address;
+    }
+
     const { cidr, prefixLength } = normalizeCIDR(address);
 
     if (cidr && prefixLength !== 0) {
-      return this.subnetNamed(cidr) || new Subnet(this, cidr);
+      const subnet = this._subnets.get(cidr);
+      if (subnet) {
+        return subnet;
+      }
+      return assign(Owner.attributes.subnets, this, new Subnet(cidr));
     }
 
     let subnet = this.subnetForAddress(address);
@@ -205,22 +136,21 @@ export class Owner extends Base {
           : SUBNET_GLOBAL_IPV6;
 
       this.error(
-        `Address without subnet ${address}`,
-        [...this.subnets].map(s => s.address)
+        `Address without subnet ${address} available (${[...this.subnets.keys()]})`
       );
     }
 
-    this._subnets.add(subnet);
+    this._subnets.set(subnet.name, subnet);
     return subnet;
   }
 
+  /**
+   * 
+   * @param {string} address 
+   * @returns {Subnet?}
+   */
   subnetForAddress(address) {
     return this.subnets.values().find(subnet => subnet.matchesAddress(address));
-  }
-
-  get clusters() {
-    //return this._membersByType.get("cluster") || new Map();
-    return this.typeList("cluster");
   }
 
   get bridges() {
@@ -291,7 +221,6 @@ export class Owner extends Base {
         for (const subnet of network.subnets) {
           const present = subnets.get(subnet.address);
           if (present) {
-            subnet.owner.addObject(present);
 
             for (const n of subnet.networks) {
               present.networks.add(n);
@@ -307,7 +236,7 @@ export class Owner extends Base {
 
   get derivedPackaging() {
     let all = new Set();
-    for (const host of this.hosts) {
+    for (const host of this.hosts.values()) {
       all = all.union(host.packaging);
     }
 
@@ -315,7 +244,7 @@ export class Owner extends Base {
   }
 
   *networkAddresses(filter) {
-    for (const host of this.hosts) {
+    for (const host of this.hosts.hosts()) {
       yield* host.networkAddresses(filter);
     }
   }
@@ -381,7 +310,7 @@ export class Owner extends Base {
   get domains() {
     let domains = new Set();
 
-    for (const object of this.hosts) {
+    for (const object of this.hosts.values()) {
       domains = domains.union(object.domains);
     }
 
@@ -395,7 +324,7 @@ export class Owner extends Base {
   get domainNames() {
     let names = new Set();
 
-    for (const host of this.hosts) {
+    for (const host of this.hosts.values()) {
       names = names.union(new Set(host.domainNames));
     }
 
@@ -415,10 +344,37 @@ export class Owner extends Base {
 
     const architectures = new Set();
 
-    for (const host of this.hosts) {
+    for (const host of this.hosts.values()) {
       architectures.add(host.architecture);
     }
 
     return architectures;
+  }
+
+  async *preparePackages(dir) {
+    const packageData = {
+      sources: [
+        new FileContentProvider(dir + "/"),
+        new FileContentProvider(
+          { dir: this.directory, pattern: "location.json" },
+          { destination: "/etc/location/location.json" }
+        )
+      ],
+      outputs: this.outputs,
+      properties: {
+        name: `${this.typeName}-${this.name}`,
+        description: `${this.typeName} definitions for ${this.fullName}`,
+        access: "private",
+        dependencies: { jq: ">=1.6" },
+        provides: ["location"]
+      }
+    };
+
+    await loadHooks(
+      packageData,
+      new URL("location.install", import.meta.url).pathname
+    );
+
+    yield packageData;
   }
 }

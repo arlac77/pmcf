@@ -2,13 +2,15 @@ import test from "ava";
 import { FAMILY_IPV4 } from "ip-utilties";
 import {
   root,
-  Location,
+  Owner,
   Network,
   Host,
   Service,
   Endpoint,
   DomainNameEndpoint,
-  ServiceTypes
+  ServiceTypes,
+  ServiceOwner,
+  assign
 } from "pmcf";
 import { InitializationContext } from "../src/initialization-context.mjs";
 
@@ -16,26 +18,27 @@ function setup() {
   const ic = new InitializationContext();
   const rootInst = new root("/somwhere");
 
-  const n1 = new Network(rootInst);
+  const n1 = new Network();
   ic.read(n1, {
     name: "n1",
     subnets: "10.0/16"
   });
-  rootInst.addObject(n1);
+  assign(Owner.attributes.networks,rootInst,n1);
 
-  const l1 = new Location(rootInst);
+  const l1 = new Owner();
   ic.read(l1, {
     name: "l1"
   });
+  assign(Owner.attributes.owners,rootInst,l1);
 
-  rootInst.addObject(l1);
-
-  const dns = new Service(rootInst);
+  const dns = new Service();
   ic.read(dns, {
     name: "dns",
     weight: 5,
     priority: 3
   });
+
+  //assign(Owner.attributes.owners,rootInst,l1);
 
   return { ic, root: rootInst, n1, l1, dns };
 }
@@ -43,7 +46,7 @@ function setup() {
 test("Service basics", t => {
   const { ic, l1 } = setup();
 
-  const h1 = new Host(l1);
+  const h1 = new Host();
   ic.read(h1, {
     name: "h1",
     networkInterfaces: {
@@ -52,8 +55,8 @@ test("Service basics", t => {
     },
     priority: 19
   });
-  l1.addObject(h1);
 
+  assign(Owner.attributes.hosts, l1, h1);
   const lna = h1.networkAddresses(
     na => na.networkInterface.kind === "loopback" && na.family === FAMILY_IPV4
   );
@@ -61,7 +64,7 @@ test("Service basics", t => {
     na => na.networkInterface.kind !== "loopback"
   );
 
-  const s1 = new Service(h1);
+  const s1 = new Service();
   ic.read(s1, {
     extends: ["/dns"],
     name: "dns",
@@ -70,7 +73,9 @@ test("Service basics", t => {
     alias: "primary-dns"
   });
 
-  h1.services = s1;
+  assign(ServiceOwner.attributes.services, h1, s1);
+
+  //h1.services = s1;
 
   t.deepEqual(
     s1.endpoints(e => e.family === FAMILY_IPV4),
@@ -133,12 +138,14 @@ test("Service basics", t => {
     s1
   );
 
-  const h2 = new Host(l1);
+  const h2 = new Host();
   ic.read(h2, {
     name: "h2",
     priority: 3,
     networkInterfaces: { eth0: { ipAddresses: "10.0.0.2" } }
   });
+  assign(Owner.attributes.hosts, l1, h2);
+
   const s2 = s1.forOwner(h2);
   h2.services.set(s2.name, s2);
   t.is(s2.name, "dns");
@@ -194,12 +201,15 @@ test("Service basics", t => {
 
   t.is(s1, l1.expression("services[types[dns]][0]"));
 
-  const s3 = new Service(h1);
+  const s3 = new Service();
   ic.read(s3, {
     name: "http3",
     weight: 0,
     priority: 0
   });
+
+    assign(ServiceOwner.attributes.services,h1,s3);
+
   t.is(s3.priority, 0);
   t.is(s3.priority, 0);
 
@@ -220,7 +230,6 @@ test("Service without protocol", t => {
     name: "h1",
     networkInterfaces: { eth0: { network: "/n1", ipAddresses: "10.0.0.1" } }
   });
-  root.addObject(h1);
 
   const na = h1.networkAddresses();
 
@@ -250,7 +259,7 @@ test("Service without protocol", t => {
 test("Service load", t => {
   const { ic, root } = setup();
 
-  const h1 = new Host(root);
+  const h1 = new Host();
   ic.read(h1, {
     name: "h1",
     networkInterfaces: { eth0: { network: "/n1", ipAddresses: "10.0.0.1" } },
@@ -258,26 +267,23 @@ test("Service load", t => {
       dns: {}
     }
   });
-  root.addObject(h1);
 
   t.is(h1.services.get("dns").name, "dns");
   t.is(h1.named("dns"), h1.services.get("dns"));
-
-  t.is(h1.typeNamed("service", "dns"), h1.services.get("dns"));
 });
 
 test("Service owner", t => {
   const { ic, root } = setup();
 
-  const h1 = new Host(root);
+  const h1 = new Host();
   ic.read(h1, {
     name: "h1",
     priority: 3,
     weight: 5
   });
-  root.addObject(h1);
+  assign(Owner.attributes.hosts, root, h1);
 
-  const h2 = new Host(root);
+  const h2 = new Host();
   ic.read(h2, {
     name: "h2",
     priority: 8,
@@ -286,10 +292,10 @@ test("Service owner", t => {
       eth0: { network: "/n1", ipAddresses: "10.0.0.1" }
     }
   });
-  root.addObject(h2);
+  assign(Owner.attributes.hosts, root, h2);
 
   t.is(h2.weight, 7);
-  const s1 = new Service(h1);
+  const s1 = new Service();
   ic.read(s1, {
     name: "dns",
     alias: "primary-dns"
@@ -317,7 +323,7 @@ test("Service owner", t => {
 test("Service type extension", t => {
   const { ic, root } = setup();
 
-  const h1 = new Host(root);
+  const h1 = new Host();
   ic.read(h1, {
     name: "h1",
     networkInterfaces: { eth0: { network: "/n1", ipAddresses: "10.0.0.1" } },
@@ -325,7 +331,7 @@ test("Service type extension", t => {
       bind: {}
     }
   });
-  root.addObject(h1);
+  assign(Owner.attributes.hosts, root, h1);
 
   const s0 = h1.services.get("bind");
 

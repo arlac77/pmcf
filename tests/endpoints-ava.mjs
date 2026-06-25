@@ -3,30 +3,34 @@ import { FAMILY_IPV4 } from "ip-utilties";
 import {
   InitializationContext,
   Host,
+  Owner,
   Network,
   Service,
+  ServiceOwner,
   ServiceTypes,
   addServiceType,
   Endpoint,
   HTTPEndpoint,
   DomainNameEndpoint,
   UnixEndpoint,
-  sortByFamilyAndAddress
+  sortByFamilyAndAddress,
+  assign
 } from "pmcf";
 
 function prepare() {
   const ic = new InitializationContext();
-  const root = ic.root
+  const root = ic.root;
 
-  const n1 = new Network(root);
+  const n1 = new Network();
   ic.read(n1, {
     name: "n1",
     subnets: "10.0/16"
   });
-  root.addObject(n1);
+  assign(Owner.attributes.networks, root, n1);
 
   addServiceType({}, "http-control");
-  const h1 = new Host(root);
+
+  const h1 = new Host();
   ic.read(h1, {
     name: "h1",
     networkInterfaces: {
@@ -35,9 +39,9 @@ function prepare() {
     },
     priority: 19
   });
-  root.addObject(h1);
+  assign(Owner.attributes.hosts, ic.root, h1);
 
-  const s1 = new Service(h1);
+  const s1 = new Service();
   ic.read(s1, {
     name: "dns",
     weight: 5,
@@ -45,7 +49,9 @@ function prepare() {
     alias: "primary-dns"
   });
 
-  h1.services = s1;
+  assign(ServiceOwner.attributes.services, h1, s1);
+
+  //h1.services = s1;
 
   return { ic, root, h1, s1 };
 }
@@ -137,22 +143,23 @@ test("DomainNameEndpoint", t => {
   const ic = new InitializationContext();
   const root = ic.root;
 
-  const h1 = new Host(root);
+  const h1 = new Host();
   ic.read(h1, {
     name: "h1"
     /* networkInterfaces: {
       eth0: { ipAddresses: "10.0.0.1/16" }
     }*/
   });
-  root.addObject(h1);
 
-  const s1 = new Service(h1);
+  assign(Owner.attributes.hosts, root, h1);
 
+  const s1 = new Service();
   ic.read(s1, {
     name: "ntp"
   });
+  assign(ServiceOwner.attributes.services, h1, s1);
 
-  h1.services = s1;
+  //1.services = s1;
 
   const options = {
     port: 123,
@@ -168,17 +175,21 @@ test("UnixEndpoint", t => {
   const ic = new InitializationContext();
   const root = ic.root;
 
-  const h1 = new Host(root);
+  const h1 = new Host();
   ic.read(h1, {
     name: "h1"
   });
-  root.addObject(h1);
+  assign(Owner.attributes.hosts, root, h1);
 
-  const s1 = new Service(h1, {
+  const s1 = new Service();
+
+  ic.read(s1, {
     name: "ntp"
   });
 
-  h1.services = s1;
+  assign(ServiceOwner.attributes.services, h1, s1);
+
+  //h1.services = s1;
 
   const options = {
     type: ServiceTypes.ntp,

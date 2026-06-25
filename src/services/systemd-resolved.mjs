@@ -21,43 +21,72 @@ export class SystemdResolvedService extends ExtraSourceService {
     /* Resolve: {
       ...object_attribute,
       attributes: {*/
-    DNS: { ...string_attribute_writable, configurable: true },
-    FallbackDNS: { ...string_attribute_writable, configurable: true },
-
+    DNS: { ...string_attribute_writable, name: "DNS", configurable: true },
+    FallbackDNS: {
+      ...string_attribute_writable,
+      name: "FallbackDNS",
+      configurable: true
+    },
     domains: {
+      name: "domains",
       externalName: "Domains",
       ...string_collection_attribute_writable,
       configurable: true
     },
 
-    MulticastDNS: { ...yesno_attribute_writable, configurable: true },
-    Cache: { ...boolean_attribute_writable, configurable: true },
+    MulticastDNS: {
+      ...yesno_attribute_writable,
+      name: "MulticastDNS",
+      configurable: true
+    },
+    Cache: { ...boolean_attribute_writable, name: "Cache", configurable: true },
     CacheFromLocalhost: {
       ...boolean_attribute_writable,
+      name: "CacheFromLocalhost",
       configurable: true
     },
-    DNSStubListener: { ...boolean_attribute_writable, configurable: true },
+    DNSStubListener: {
+      ...boolean_attribute_writable,
+      name: "DNSStubListener",
+      configurable: true
+    },
     DNSStubListenerExtra: {
       ...string_attribute_writable,
+      name: "DNSStubListenerExtra",
       configurable: true
     },
-    ReadEtcHosts: { ...boolean_attribute_writable, configurable: true },
+    ReadEtcHosts: {
+      ...boolean_attribute_writable,
+      name: "ReadEtcHosts",
+      configurable: true
+    },
     ResolveUnicastSingleLabel: {
       ...boolean_attribute_writable,
+      name: "ResolveUnicastSingleLabel",
       configurable: true
     },
     StaleRetentionSec: {
       ...duration_attribute_writable,
+      name: "StaleRetentionSec",
       configurable: true
     },
-    RefuseRecordTypes: { ...string_attribute_writable, configurable: true },
+    RefuseRecordTypes: {
+      ...string_attribute_writable,
+      name: "RefuseRecordTypes",
+      configurable: true
+    },
     DNSSEC: {
       ...yesno_attribute_writable,
+      name: "DNSSEC",
       default: false,
       configurable: true
     },
-    DNSOverTLS: { ...yesno_attribute_writable, configurable: true },
-    LLMNR: { ...yesno_attribute_writable, configurable: true }
+    DNSOverTLS: {
+      ...yesno_attribute_writable,
+      name: "DNSOverTLS",
+      configurable: true
+    },
+    LLMNR: { ...yesno_attribute_writable, name: "LLMNR", configurable: true }
     /* }
     }*/
   };

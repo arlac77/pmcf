@@ -7,7 +7,6 @@ import {
   number_attribute_writable,
   duration_attribute_writable
 } from "pacc";
-import { Owner } from "./owner.mjs";
 import { Host } from "./host.mjs";
 import { addType, serviceEndpoints } from "pmcf";
 import { writeLines } from "./utils.mjs";
@@ -15,25 +14,31 @@ import { writeLines } from "./utils.mjs";
 export class Cluster extends Host {
   static name = "cluster";
   static priority = 1.5;
-  static owners = [Owner, "network", "location", "root"];
   static attributes = {
-    routerId: { ...number_attribute_writable, default: 100 },
+    routerId: { ...number_attribute_writable, name: "routerId", default: 100 },
     masters: {
       ...default_attribute_writable,
+      name: "masters",
       type: "network_interface",
       collection: true
     },
     backups: {
       ...default_attribute_writable,
+      name: "backups",
       type: "network_interface",
       collection: true
     },
     members: {
       ...default_attribute,
+      name: "members",
       type: "network_interface",
       collection: true
     },
-    checkInterval: { ...duration_attribute_writable, default: 60 }
+    checkInterval: {
+      ...duration_attribute_writable,
+      name: "checkInterval",
+      default: 60
+    }
   };
 
   static {
@@ -74,7 +79,7 @@ export class Cluster extends Host {
     )) {
       const host = ni.host;
       const packageStagingDir = join(stagingDir, host.name);
-      const location = `${this.location.name}-${host.name}`;
+      const location = `${this.owner.name}-${host.name}`;
 
       const packageData = host.packageData;
       packageData.sources.push(
