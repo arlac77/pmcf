@@ -6,19 +6,23 @@ export class mosquitto extends Service {
   static attributes = {
     listener: {
       ...port_attribute,
+      name: "listener",
       writable: true,
       configurable: true
     },
     persistence_location: {
       ...string_attribute_writable,
+      name: "persistence_location",
       configurable: true
     },
     password_file: {
       ...string_attribute_writable,
+      name: "password_file",
       configurable: true
     },
     acl_file: {
       ...string_attribute_writable,
+      name: "acl_file",
       configurable: true
     }
   };

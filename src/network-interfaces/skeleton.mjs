@@ -9,7 +9,6 @@ import { ServiceOwner } from "../service-owner.mjs";
  *
  */
 export class SkeletonNetworkInterface extends ServiceOwner {
-  
   static get typeName() {
     return "network_interface";
   }
@@ -31,7 +30,9 @@ export class SkeletonNetworkInterface extends ServiceOwner {
   }
 
   get services() {
-    return new AggregatedMap([super.services, this.owner.services]);
+    return this.owner
+      ? new AggregatedMap([super.services, this.owner.services])
+      : super.services;
   }
 
   get hosts() {

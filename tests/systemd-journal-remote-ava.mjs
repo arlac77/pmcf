@@ -16,7 +16,6 @@ test("systemd-journal-remote service type", t => {
     name: "n1",
     subnets: "10.0/16"
   });
-  root.addObject(n1);
 
   const h1 = new Host(root);
   ic.read(h1, {

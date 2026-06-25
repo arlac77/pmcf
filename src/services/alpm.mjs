@@ -9,13 +9,15 @@ import { addType, Service, Base } from "pmcf";
 class alpm_repository extends Base {
   static attributes = {
     name: name_attribute_writable,
-    base: string_attribute_writable,
-    architectures: string_set_attribute_writable
+    base: { ...string_attribute_writable, name: "base" },
+    architectures: { ...string_set_attribute_writable, name: "architectures" }
   };
 
   static {
     addType(this);
   }
+
+  architectures = new Set();
 }
 
 export class alpm extends Service {
@@ -23,6 +25,7 @@ export class alpm extends Service {
   static attributes = {
     repositories: {
       ...default_attribute_writable,
+      name: "repositories",
       type: alpm_repository,
       collection: true
     }

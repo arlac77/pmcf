@@ -1,6 +1,11 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
-import { reverseArpa, isLinkLocal, FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
+import {
+  reverseArpa,
+  isLinkLocal,
+  FAMILY_IPV4,
+  FAMILY_IPV6
+} from "ip-utilties";
 import {
   string_attribute_writable,
   number_attribute_writable,
@@ -23,26 +28,31 @@ export class kea extends Service {
   static attributes = {
     "ddns-send-updates": {
       ...boolean_attribute_writable_true,
+      name: "ddns-send-updates",
       configurable: true
     },
     "renew-timer": {
       ...number_attribute_writable,
+      name: "renew-timer",
       configurable: true,
       default: 900
     },
     "rebind-timer": {
       ...number_attribute_writable,
+      name: "rebind-timer",
       configurable: true,
       default: 1800
     },
     "valid-lifetime": {
       ...number_attribute_writable,
+      name: "valid-lifetime",
       mandatory: true,
       configurable: true,
       default: 86400
     },
     "ddns-conflict-resolution-mode": {
       ...string_attribute_writable,
+      name: "ddns-conflict-resolution-mode",
       configurable: true
       //values: ["check-exists-with-dhcid","no-check-with-dhcid"]
     }
@@ -287,7 +297,8 @@ export class kea extends Service {
           name,
           "dns-servers": dnsServerEndpoints
             .filter(
-              endpoint => endpoint.family === FAMILY_IPV4 && endpoint.type === "dns"
+              endpoint =>
+                endpoint.family === FAMILY_IPV4 && endpoint.type === "dns"
             )
             .map(endpoint => {
               return { "ip-address": endpoint.address };
@@ -298,7 +309,7 @@ export class kea extends Service {
     const ddnsEndpoint = this.endpoint("kea-ddns");
 
     const subnetPrefixes = new Set(
-      [...this.subnets]
+      [...this.subnets.values()]
         .filter(s => s != SUBNET_LOCALHOST_IPV4 && s != SUBNET_LOCALHOST_IPV6)
         .map(s => s.prefix)
     );
@@ -379,7 +390,7 @@ export class kea extends Service {
         endpoint => `${endpoint.networkInterface.name}/${endpoint.address}`
       );
 
-    const subnets = [...this.subnets].filter(
+    const subnets = [...this.subnets.values()].filter(
       s => s !== SUBNET_LOCALHOST_IPV4 && s !== SUBNET_LOCALHOST_IPV6
     );
 

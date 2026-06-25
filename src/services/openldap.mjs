@@ -4,8 +4,8 @@ import { Service, addType } from "pmcf";
 export class openldap extends Service {
   static specializationOf = Service;
   static attributes = {
-    base: string_attribute_writable,
-    uri: string_attribute_writable
+    base: { ...string_attribute_writable, name: "base" },
+    uri: { ...string_attribute_writable, name: "uri" }
   };
   static service = {
     systemdService: "slapd.service",

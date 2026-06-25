@@ -4,7 +4,10 @@ import {
   number_attribute_writable,
   string_set_attribute,
   default_attribute_writable,
-  boolean_attribute_false
+  boolean_attribute_false,
+  port_attribute_writable,
+  type_attribute_writable,
+  priority_attribute
 } from "pacc";
 import {
   Base,
@@ -16,7 +19,7 @@ import {
   addType
 } from "pmcf";
 import { asArray } from "./utils.mjs";
-import { networkAddressAttributes } from "./network-support.mjs";
+import { networkAddressAttributes } from "./common-attributes.mjs";
 import {
   serviceTypeEndpoints,
   serviceTypes,
@@ -31,14 +34,15 @@ import {
 } from "./dns-utils.mjs";
 
 export const endpointAttributes = {
-  port: number_attribute_writable,
+  port: port_attribute_writable,
   protocol: {
     ...string_attribute_writable,
+    name: "protocol",
     values: ["tcp", "udp", "quic"]
   },
-  type: string_attribute_writable,
-  types: string_set_attribute,
-  tls: boolean_attribute_false
+  type: type_attribute_writable,
+  types: { ...string_set_attribute, name: "types" },
+  tls: { ...boolean_attribute_false, name: "tls" }
 };
 
 export class Service extends Base {
@@ -62,13 +66,15 @@ export class Service extends Base {
     ...endpointAttributes,
     extends: {
       ...default_attribute_writable,
+      name: "extends",
       type: Service,
       collection: true,
       owner: false
     },
-    alias: string_attribute_writable,
-    weight: { ...number_attribute_writable /*default: 1*/ },
-    systemdService: string_attribute_writable
+    alias: { ...string_attribute_writable, name: "alias" },
+    priority: priority_attribute,
+    weight: { ...number_attribute_writable, name: "weight" /*default: 1*/ },
+    systemdService: { ...string_attribute_writable, name: "systemdService" }
   };
 
   static {
@@ -249,7 +255,7 @@ export class Service extends Base {
 
   get packageData() {
     const packageData = super.packageData;
-    const location = `${this.location.name}-${this.host.name}`;
+    const location = `${this.owner.name}-${this.host.name}`;
     packageData.properties.name = `${this.type}-${location}`;
     packageData.properties.description = `${this.type} service definitions for ${this.fullName}`;
     packageData.properties.groups.push("service-config", location);

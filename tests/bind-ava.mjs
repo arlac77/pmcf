@@ -1,5 +1,5 @@
 import test from "ava";
-import { InitializationContext, addresses } from "pmcf";
+import { InitializationContext } from "pmcf";
 import { bind } from "../src/services/bind.mjs";
 
 test("BIND basics endpoints", async t => {
@@ -54,13 +54,16 @@ test("BIND groups", async t => {
   t.is(bindInst.fullName, "/L1/C1/bind");
   t.true(bindInst instanceof bind);
 
-  //t.deepEqual(Object.keys(bind.groups), ["internal", "protected", "trusted"]);
-  t.is(bindInst.groups.internal.name, "internal");
-  t.is(bindInst.groups.protected.name, "protected");
-  t.is(bindInst.groups.protected.sharedWith, bindInst.groups.internal);
-  t.is(bindInst.groups.protected.owner, bindInst);
+  const internalGroup = bindInst.groups.get('internal');
+  const protectedGroup = bindInst.groups.get('protected');
 
-  t.is(bindInst.groups.internal.entries[0].name, "n1");
+  //t.deepEqual(Object.keys(bind.groups), ["internal", "protected", "trusted"]);
+  t.is(internalGroup.name, "internal");
+  t.is(protectedGroup.name, "protected");
+  t.is(protectedGroup.sharedWith, internalGroup);
+  t.is(protectedGroup.owner, bindInst);
+
+  t.is(internalGroup.entries[0].name, "n1");
 
   //t.deepEqual(bind.groups.internal.allowedUpdates, [bind.groups.trusted]);
 
@@ -77,7 +80,7 @@ test("BIND groups", async t => {
   const n = Math.ceil((Date.now() - 300) / 1000);
 
   t.deepEqual(
-    bindInst.groups.internal.defaultRecords.map(r => r.toString()),
+    internalGroup.defaultRecords.map(r => r.toString()),
     [
       `@ 1W IN SOA   c1.mydomain.com. admin.mydomain.com. (${n} 36000 72000 600000 60000)`,
       "@ 1W IN NS    c1.mydomain.com."

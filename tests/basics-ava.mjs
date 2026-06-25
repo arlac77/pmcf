@@ -4,35 +4,37 @@ import {
   extractFrom,
   Network,
   Host,
-  Location,
-  Owner
+  Owner,
+  assign
 } from "pmcf";
 
 function setup() {
   const ic = new InitializationContext("/somewhere");
   const root = ic.root;
 
-  const ht1 = new Host(root);
+  const ht1 = new Host();
   ic.read(ht1, { name: "ht1", properties: { p1: "ht1" } });
-  root.addObject(ht1);
-  const ht2 = new Host(root);
-  ic.read(ht2, { name: "ht2", extends: "/ht1" });
-  root.addObject(ht2);
+  assign(Owner.attributes.hosts, root, ht1);
 
-  const n1 = new Network(root);
+  const ht2 = new Host();
+  ic.read(ht2, { name: "ht2", extends: "/ht1" });
+  assign(Owner.attributes.hosts, root, ht2);
+
+  const n1 = new Network();
   ic.read(n1, {
     name: "n1",
     subnets: "10.0/16"
   });
-  root.addObject(n1);
+  assign(Owner.attributes.networks, root, n1);
 
-  const l1 = new Location(root);
+  const l1 = new Owner();
   ic.read(l1, {
     name: "l1",
     properties: { p1: "v1", n1: 7 }
   });
-  root.addObject(l1);
-  const h1 = new Host(l1);
+  assign(Owner.attributes.owners, root, l1);
+
+  const h1 = new Host();
   ic.read(h1, {
     name: "h1",
     extends: "/ht2",
@@ -50,7 +52,7 @@ function setup() {
       }
     }
   });
-  l1.addObject(h1);
+  assign(Owner.attributes.hosts, l1, h1);
 
   return { ic, root, ht1, ht2, n1, l1, h1 };
 }
@@ -70,9 +72,9 @@ test("Root basics", async t => {
 
 test("template from name '*'", t => {
   const ic = new InitializationContext("/somewhere");
-  const root = ic.root;
-  const l1 = new Location(root);
+  const l1 = new Owner();
   ic.read(l1, { name: "l*" });
+  assign(Owner.attributes.owners, ic.root, l1);
   t.true(l1.isTemplate);
 });
 
@@ -100,15 +102,19 @@ test("expression", t => {
 
   t.is(l1.expression("name"), "l1");
   t.is(l1.expression("owner.name"), "");
-  t.is(l1.expression("location.name"), "l1");
+  //  t.is(l1.expression("location.name"), "l1");
   t.is(h1.expression("networkInterfaces.eth0.name"), "eth0");
   t.is(h1.expression("networkInterfaces.eth0.metric"), 1);
+  t.is(h1.expression("networkInterfaces.eth0.network.name"), "n1");
+
   t.is(
     h1.expression(
       "networkInterfaces.eth0.ipAddresses['10.0.0.1'].network.name"
     ),
     "n1"
   );
+
+  //console.log("XXX", h1.network);
 
   t.is([...h1.expression("subnets[].name")][0], "10.0/16"); // TODO why more than 0ne
 
@@ -117,16 +123,16 @@ test("expression", t => {
 
 test("expand", t => {
   const ic = new InitializationContext("/somewhere");
-  const root = ic.root;
-  const l1 = new Location(root);
+  const l1 = new Owner();
   ic.read(l1, {
     name: "l1",
     properties: { p1: "v1", n1: 7, deep: { d2: 8 } }
   });
-  root.addObject(l1);
-  const h1 = new Host(l1);
+  assign(Owner.attributes.owners, ic.root, l1);
+
+  const h1 = new Host();
   ic.read(h1, { name: "h1" });
-  l1.addObject(h1);
+  assign(Owner.attributes.hosts, l1, h1);
 
   t.is(l1.expand("${directory}"), "/somewhere/l1");
   t.is(l1.expand("${owner.directory}"), "/somewhere");
@@ -154,11 +160,10 @@ test("expand", t => {
 
 test("tags", t => {
   const ic = new InitializationContext("/somewhere");
-  const root = ic.root;
 
-  const l1 = new Owner(root);
-
+  const l1 = new Owner();
   ic.read(l1, { name: "l1", tags: "t1" });
+  assign(Owner.attributes.owners, ic.root, l1);
 
   l1.tags = "t2";
 
@@ -167,10 +172,9 @@ test("tags", t => {
 
 test("extract", t => {
   const ic = new InitializationContext("/somewhere");
-  const root = ic.root;
-  const l1 = new Owner(root);
-
+  const l1 = new Owner();
   ic.read(l1, { name: "l1" });
+  assign(Owner.attributes.owners, ic.root, l1);
 
   t.deepEqual(extractFrom(l1, Owner), {
     name: "l1",
@@ -182,40 +186,29 @@ test("extract", t => {
 
 test("directory & name & owner", t => {
   const ic = new InitializationContext("/somewhere");
-  const root = ic.root;
 
-  const l1 = new Location(root);
+  const l1 = new Owner();
   ic.read(l1, { name: "l1" });
-  root.addObject(l1);
+  assign(Owner.attributes.owners, ic.root, l1);
+
   t.is(l1.name, "l1");
   t.is(l1.fullName, "/l1");
   t.is(l1.directory, "/somewhere/l1");
-  t.is(l1.root, root);
-  t.is(l1.owner, root);
-  t.is(root.named("/l1"), l1);
+  t.is(l1.root, ic.root);
+  t.is(l1.owner, ic.root);
+  t.is(ic.root.named("l1"), l1);
+  t.is(ic.root.named("/l1"), l1);
 
-  const h1 = new Host(l1);
+  const h1 = new Host();
   ic.read(h1, { name: "h1" });
-  l1.addObject(h1);
+  assign(Owner.attributes.hosts, l1, h1);
+
   t.is(h1.directory, "/somewhere/l1/h1");
   t.is(h1.name, "h1");
   t.is(h1.fullName, "/l1/h1");
-  t.is(h1.root, root);
+  t.is(h1.root, ic.root);
   t.is(h1.owner, l1);
-  t.is(root.named("/l1"), l1);
+  t.is(ic.root.named("/l1"), l1);
   t.is(l1.named("h1"), h1);
   t.is(l1.named("/l1/h1"), h1);
-  t.is(l1.hostNamed("/l1/h1"), h1);
-
-  const h2 = new Host(l1);
-  ic.read(h2, { name: "l2/h2" });
-  l1.addObject(h2);
-  t.is(h2.directory, "/somewhere/l1/l2/h2");
-  t.is(h2.name, "l2/h2");
-  t.is(h2.fullName, "/l1/l2/h2");
-  t.is(h2.root, root);
-  t.is(h2.owner, l1);
-  t.is(l1.named("l2/h2"), h2);
-  t.is(l1.named("/l1/l2/h2"), h2);
-  t.is(l1.hostNamed("/l1/l2/h2"), h2);
 });

@@ -1,9 +1,14 @@
 import { readFile, glob } from "node:fs/promises";
 import { join } from "node:path";
-import { toInternal, attributeIterator, types, resolveTypeLinks } from "pacc";
-import { asArray } from "./utils.mjs";
+import {
+  attributeIterator,
+  extendingAttributeIterator,
+  types,
+  resolveTypeLinks
+} from "pacc";
 import { Base } from "./base.mjs";
 import { root } from "./root.mjs";
+import { assign, create } from "pmcf";
 
 /**
  * Keeps track of all in flight object creations and loose ends during config initialization.
@@ -18,106 +23,37 @@ export class InitializationContext {
   }
 
   resolveOutstanding() {
-    nextOutstanding: for (let { object, attribute, name, value } of this
+    nextOutstanding: for (let { object, attribute, value } of this
       .outstandingResolves) {
       value = object.expand(value);
 
       for (const type of attribute.type.members || [attribute.type]) {
         for (const node of object.walkDirections(["this", "owner"])) {
-          const resolved = node.typeNamed(type.name, value);
+          const resolved = node.named(value);
           if (resolved) {
-            this.assign(object, name, attribute, resolved);
+            assign(attribute, object, resolved);
             continue nextOutstanding;
           }
         }
       }
 
       this.error(
-        `Unable to resolve "${value}" (${attribute.type.name}) for attribute ${name}`,
-        object.root.named(value)?.toString()
+        `Unknown ${attribute.name}(${attribute.type.name}): "${value}"`
       );
     }
   }
 
-  resolveLater(object, attribute, name, value) {
-    this.outstandingResolves.push({ object, attribute, name, value });
+  resolveLater(object, attribute, value) {
+    this.outstandingResolves.push({ object, attribute, value });
   }
 
   error(...args) {
     console.error(...args);
   }
 
-  assign(object, name, attribute, value) {
-    value = toInternal(value, attribute);
-    value ??= attribute.default;
-
-    if (value !== undefined) {
-      if (attribute.values) {
-        if (attribute.values.indexOf(value) < 0) {
-          this.error(name, "unknown value", value, attribute.values);
-        }
-      }
-
-      if (attribute.collection) {
-        const current = object[name];
-
-        switch (typeof current) {
-          case "undefined":
-            if (attribute.constructor === value.constructor) {
-              object[name] = value;
-            } else {
-              object[name] = asArray(value);
-            }
-            break;
-          case "object":
-            if (Array.isArray(current)) {
-              if (Array.isArray(value)) {
-                current.push(...value);
-              } else {
-                current.push(value);
-              }
-            } else {
-              if (current instanceof Set) {
-                if (value instanceof Set) {
-                  object[name] = current.union(value);
-                } else {
-                  /*if(name === 'extends') {
-                    console.log("EXT",object.fullName,value.fullName)
-                  }*/
-                  object[name].add(value);
-                }
-              } else if (current instanceof Map) {
-                const keyName = attribute.type.key;
-                if (keyName) {
-                  current.set(value[keyName], value);
-                } else {
-                  // TODO
-                  object[name] = value;
-                }
-              } else {
-                const keyName = attribute.type.key;
-                object[name][value[keyName]] = value;
-              }
-            }
-            break;
-          case "function":
-            if (value instanceof Base) {
-              object.addObject(value);
-            } else {
-              this.error("Unknown collection type", name, current);
-            }
-            break;
-        }
-      } else {
-        object[name] = value;
-      }
-    }
-  }
-
-  instantiateAndAssign(object, name, attribute, value) {
+  instantiateAndAssign(object, attribute, value) {
     if (attribute.type.primitive) {
-      this.assign(object, name, attribute, value);
-      return;
+      return assign(attribute, object, value);
     }
 
     switch (typeof value) {
@@ -125,7 +61,7 @@ export class InitializationContext {
         return;
 
       case "function":
-        this.error("Invalid value", name, value);
+        this.error("Invalid value", attribute.name, value);
         break;
 
       case "boolean":
@@ -133,27 +69,32 @@ export class InitializationContext {
       case "number":
       case "string":
         {
-          let o;
+          let o =
+            value[0] === "/"
+              ? this.root.named(value.substring(1))
+              : object.named(value);
 
-          for (const type of attribute.type.members || [attribute.type]) {
-            o = object.typeNamed(type.name, value);
-            if (o) {
-              break;
-            }
-          }
+          /*console.log(
+            "NAMED",
+            object.fullName,
+            value,
+            o?.fullName,
+            attribute.name
+          );*/
 
-          if (o) {
-            this.assign(object, name, attribute, o);
+          if (
+            o &&
+            (o.typeName === attribute.type.name ||
+              attribute.type.members?.has(o.typeName))
+          ) {
+            assign(attribute, object, o);
           } else {
             if (attribute.type.constructWithIdentifierOnly) {
-              o = new attribute.type(
-                object.ownerFor(attribute, value),
-                value
-              );
+              o = create(attribute.type, object, value);
               this.read(o, value);
-              object.addObject(o);
+              assign(attribute, object, o);
             } else {
-              this.resolveLater(object, attribute, name, value);
+              this.resolveLater(object, attribute, value);
             }
           }
         }
@@ -162,30 +103,14 @@ export class InitializationContext {
 
       case "object":
         if (attribute.type && value instanceof attribute.type) {
-          this.assign(object, name, attribute, value);
+          assign(attribute, object, value);
         } else {
-          this.assign(
-            object,
-            name,
-            attribute,
-            this.typeFactory(
-              attribute.type,
-              object.ownerFor(attribute, value),
-              value
-            )
-          );
+          const newObject = create(attribute.type, object, value);
+          this.read(newObject, value);
+          assign(attribute, object, newObject);
         }
         break;
     }
-  }
-
-  typeFactory(type, owner, data) {
-    const factory = type.factoryFor?.(owner, data) || type;
-    const object = new factory(owner);
-
-    this.read(object, data);
-    owner.addObject(object);
-    return object;
   }
 
   read(object, data, type = object.constructor) {
@@ -193,103 +118,117 @@ export class InitializationContext {
       Object.assign(object.properties, data.properties);
     }
 
-    this._read(object, data, type);
+    for (const [path, attribute] of extendingAttributeIterator(
+      type,
+      attribute => attribute.writable
+    )) {
+      const name = path.join(".");
+      const value = object.expand(data[name]);
+
+      if (attribute.collection) {
+        if (typeof value === "object") {
+          if (Array.isArray(value)) {
+            for (const v of value) {
+              this.instantiateAndAssign(object, attribute, v);
+            }
+          } else {
+            if (value instanceof Base) {
+              assign(attribute, object, value);
+            } else {
+              for (const [objectName, objectData] of Object.entries(value)) {
+                if (typeof objectData === "object") {
+                  objectData[attribute.type.key] = objectName;
+                }
+                this.instantiateAndAssign(object, attribute, objectData);
+              }
+            }
+          }
+          continue;
+        }
+      }
+      this.instantiateAndAssign(object, attribute, value);
+    }
 
     if (data.extends) {
       object.materializeExtends();
     }
   }
 
-  _read(object, data, type) {
-    if (type.extends) {
-      this._read(object, data, type.extends);
+  async load(fileName, type) {
+    const name = fileName.replace(/\/?([^\/]+\.json)?$/, "");
+
+    let object = this.root.named(name);
+    if (object) {
+      return object;
     }
+    //console.log(`LOAD A "${fileName}" "${name}" "${type?.name}"`);
 
-    for (const [path, attribute] of attributeIterator(type.attributes)) {
-      if (attribute.writable) {
-        const name = path.join(".");
-        const value = object.expand(data[name]);
+    if (type === undefined) {
+      const tn = fileName.substring(name.length, fileName.length - 5);
 
-        if (attribute.collection) {
-          if (typeof value === "object") {
-            if (Array.isArray(value)) {
-              for (const v of value) {
-                this.instantiateAndAssign(object, name, attribute, v);
-              }
-            } else {
-              if (value instanceof Base) {
-                this.assign(object, name, attribute, value);
-              } else {
-                for (const [objectName, objectData] of Object.entries(value)) {
-                  if (typeof objectData === "object") {
-                    objectData[attribute.type.key] = objectName;
-                  }
-                  this.instantiateAndAssign(
-                    object,
-                    name,
-                    attribute,
-                    objectData
-                  );
-                }
-              }
-            }
-            continue;
-          }
+      type = types[tn];
+
+      if (!type) {
+        for (const type of Object.values(types).filter(type => type.fileName)) {
+          try {
+            return await this.load(fileName, type);
+          } catch {}
         }
-        this.instantiateAndAssign(object, name, attribute, value);
+
+        this.error(`No type for "${fileName}"`);
       }
     }
-  }
 
-  async loadType(name, type) {
     const data = JSON.parse(
-      await readFile(
-        join(this.directory, name, type.fileName),
-        "utf8"
-      )
+      await readFile(join(this.directory, name, type.fileName), "utf8")
     );
 
     let owner;
     if (name[0] === "/") {
       const parentName = name.replace(/\/[^\/]+$/, "");
+
       owner = await this.load(parentName);
-      data.name = name.substring(owner.fullName.length + 1);
+
+      if (owner) {
+        //console.log(`PARENT NAME A "${name}" "${parentName}"`, owner?.fullName);
+
+        data.name = name.substring(owner.fullName.length + 1);
+
+        /*console.log(
+          `PARENT NAME B "${name}" "${parentName}" >"${data.name}"<`,
+          owner.typeName,
+          owner.fullName
+        );*/
+      } else {
+        this.error(`No Parent for "${name}" "${parentName}"`);
+        return;
+      }
     } else {
       owner = this.root;
       data.name = name;
     }
 
-    const object = this.typeFactory(type, owner, data);
+    object = create(type, owner, data);
 
-    //console.log("LOAD", [name, type.name, owner.fullName, data.name, object.fullName]);
+    //console.log(`LOAD B "${fileName}" "${name}" "${type?.name}"`);
 
-    this.root.addTypeObject(type.name, name, object);
+    this.read(object, data);
 
-    return object;
-  }
-
-  async load(name, options) {
-    name = name.replace(/\/?([^\/]+\.json)?$/, "");
-
-    const object = this.root.named(name);
-    if (object) {
-      return object;
+    for (const [path, attribute] of attributeIterator(
+      owner.constructor.attributes,
+      attribute => attribute.type === type
+    )) {
+      //console.log("ASSIGN",attribute.name, owner.fullName, object.name);
+      return assign(attribute, owner, object);
     }
 
-    if (options?.type) {
-      return this.loadType(name, options.type);
-    } else {
-      for (const type of Object.values(types).filter(
-        type => type?.fileName
-      )) {
-        try {
-          return await this.loadType(name, type);
-        } catch {}
-      }
-    }
-
-    const parentName = name.replace(/\/[^\/]$/, "");
-    return name === parentName ? this.root : this.load(parentName, options);
+    /*console.log("LOAD", [
+      name,
+      type.name,
+      owner.fullName,
+      data.name,
+      object.fullName
+    ]);*/
   }
 
   async loadAll() {
@@ -300,14 +239,7 @@ export class InitializationContext {
         for await (const name of glob("**/" + type.fileName, {
           cwd: this.directory
         })) {
-          if (type === this.root.constructor) {
-            const data = JSON.parse(
-              await readFile(join(this.directory, name), "utf8")
-            );
-            this.root.properties = data.properties;
-          } else {
-            await this.load("/" + name, { type });
-          }
+          await this.load("/" + name, type);
         }
       }
     }

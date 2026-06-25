@@ -3,17 +3,20 @@ import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import {
   InitializationContext,
   Host,
+  Owner,
   kea,
+  ServiceOwner,
   Endpoint,
   HTTPEndpoint,
-  sortByFamilyAndAddress
+  sortByFamilyAndAddress,
+  assign
 } from "pmcf";
 
 test("kea basics", t => {
   const ic = new InitializationContext();
   const owner = ic.root;
 
-  const linux = new Host(owner);
+  const linux = new Host();
   ic.read(linux, {
     name: "linux",
     os: "linux",
@@ -23,8 +26,9 @@ test("kea basics", t => {
       }
     }
   });
+  assign(Owner.attributes.hosts, owner, linux);
 
-  const h1 = new Host(owner);
+  const h1 = new Host();
   ic.read(h1, {
     extends: [linux],
     name: "h1",
@@ -32,7 +36,7 @@ test("kea basics", t => {
       eth0: { ipAddresses: "10.0.0.1/16" }
     }
   });
-  owner.addObject(h1);
+  assign(Owner.attributes.hosts, owner, h1);
 
   /*const la = h1.networkAddresses(
     na => na.networkInterface.kind === "loopback" && na.family === FAMILY_IPV4
@@ -40,7 +44,7 @@ test("kea basics", t => {
 
   // console.log(h1.networkInterfaces, [...la].map(l=>l.toString()));
 
-  const keaInst = new kea(h1);
+  const keaInst = new kea();
   ic.read(keaInst, {
     name: "kea",
     subsystems: {
@@ -52,10 +56,16 @@ test("kea basics", t => {
       }
     }
   });
-  h1.services = keaInst;
+
+  assign(ServiceOwner.attributes.services, h1, keaInst);
+
+  // h1.services = keaInst;
 
   t.is(keaInst.endpoint("dhcp").toString(), "dhcp:IPv4/10.0.0.1[547]");
-  t.is(keaInst.endpoint("kea-ddns").toString(), "kea-ddns:IPv4/127.0.0.1[53001]");
+  t.is(
+    keaInst.endpoint("kea-ddns").toString(),
+    "kea-ddns:IPv4/127.0.0.1[53001]"
+  );
   t.is(
     keaInst.endpoint("kea-control-dhcp4").toString(),
     "kea-control-dhcp4:unix:/run/kea/ctrl-4"

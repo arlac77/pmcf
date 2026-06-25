@@ -1,0 +1,8 @@
+{
+  "description": "somewhere",
+  "networks": {
+    "eth": {
+      "subnet": "192.168.1/24"
+    }
+  }
+}

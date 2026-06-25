@@ -38,7 +38,7 @@
     "mosquitto": {
       "acl_file": "/etc/mosquitto/acl"
     },
-    "dns": { "alias": "dns" },
+    "dns": {},
     "openldap": {
       "alias": "ldap",
       "base": "${ldap_base}",

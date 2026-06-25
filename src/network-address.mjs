@@ -56,8 +56,8 @@ export function addresses(sources, options) {
           if (typeof s === "string") {
             return s;
           }
-          if (options?.aggregate && s instanceof Owner && s.subnets) {
-            return [...s.subnets];
+          if (options?.aggregate && s instanceof Owner && s.subnets.size > 0) {
+            return [...s.subnets.keys()];
           }
 
           return s.networkAddresses

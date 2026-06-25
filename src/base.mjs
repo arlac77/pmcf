@@ -17,10 +17,9 @@ import {
   extendingAttributeIterator,
   default_attribute,
   name_attribute_writable,
-  string_attribute,
+  type_attribute,
   string_attribute_writable,
   string_set_attribute_writable,
-  number_attribute_writable,
   description_attribute_writable,
   boolean_attribute_writable
 } from "pacc";
@@ -39,13 +38,12 @@ export class Base {
   static attributes = {
     name: name_attribute_writable,
     description: description_attribute_writable,
-    priority: number_attribute_writable,
-    directory: string_attribute_writable,
-    packaging: string_attribute_writable,
-    disabled: boolean_attribute_writable,
-    tags: string_set_attribute_writable,
-    owner: { ...default_attribute, type: "base", owner: false },
-    type: string_attribute
+    directory: { ...string_attribute_writable, name: "directory" },
+    packaging: { ...string_attribute_writable, name: "packaging" },
+    disabled: { ...boolean_attribute_writable, name: "disabled" },
+    tags: { ...string_set_attribute_writable, name: "tags" },
+    owner: { ...default_attribute, name: "owner", type: Base, owner: false },
+    type: type_attribute
   };
 
   static {
@@ -64,21 +62,6 @@ export class Base {
   _tags = new Set();
   _packaging = new Set();
   _directory;
-
-  /**
-   *
-   * @param {Base} owner
-   * @param {object} [data]
-   */
-  constructor(owner, data) {
-    this.owner = owner;
-
-    switch (typeof data) {
-      case "string":
-        this.name = data;
-        break;
-    }
-  }
 
   ownerFor(attribute, data) {
     const owners = attribute.type.owners;
@@ -102,37 +85,27 @@ export class Base {
   materializeExtends() {}
 
   named(name) {
+    if (name[0] === "/") {
+      return this.root.named(name.substring(1));
+    }
+
+    const parts = name.split("/");
+    const first = parts.shift();
+
+    //  console.log("NAMED",this.fullName,name,parts,first);
+
     for (const [path, attribute] of extendingAttributeIterator(
       this.constructor,
-      (name, attribute) => !attribute.type.primitive
+      attribute => !attribute.type.primitive
     )) {
       const value = this[path];
       if (typeof value?.get === "function") {
-        const object = value.get(name);
-        // console.log("NAMED", name, object.fullName);
+        const object = value.get(first);
         if (object) {
-          return object;
+          return parts.length >= 1 ? object.named(parts.join("/")) : object;
         }
       }
     }
-  }
-
-  typeNamed(typeName, name) {
-    if (this.owner) {
-      const object = this.owner.typeNamed(typeName, name); // TODO split
-      if (object) {
-        return object;
-      }
-    }
-
-    const object = this.named(name);
-    if (object?.typeName === typeName) {
-      return object;
-    }
-  }
-
-  addObject(object) {
-    return this.owner.addObject(object);
   }
 
   /**
@@ -167,22 +140,29 @@ export class Base {
 
     for (const [path, attribute] of extendingAttributeIterator(
       this.constructor,
-      (name, attribute) => attribute.owner && !attribute.type.primitive
+      attribute => attribute.owner && !attribute.type.primitive
     )) {
       const value = this[path];
+
       if (value) {
         if (attribute.collection) {
-          if (typeof value.values !== "function") {
+          if (typeof value.values === "function") {
+            all.push(...value.values());
+          } else {
             if (value instanceof Iterator) {
               all.push(...value);
             } else {
-              if (typeof value === "object") {
+              if (value instanceof Base) {
+                this.error(
+                  `Unexpected scalar value for "${attribute.name}"`,
+                  value.fullName
+                );
+                all.push(value); // TODO should not happen
+              } else if (typeof value === "object") {
                 //console.log("NO F", this.fullName, path, value);
                 all.push(...Object.values(value));
               }
             }
-          } else {
-            all.push(...value.values());
           }
         } else {
           all.push(value);
@@ -409,9 +389,7 @@ export class Base {
   }
 
   get fullName() {
-    return this.name
-      ? join(this.owner.fullName, "/", this.name)
-      : this.owner.fullName;
+    return this.owner ? join(this.owner.fullName, "/", this.name) : this.name;
   }
 
   get derivedPackaging() {

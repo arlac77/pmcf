@@ -1,16 +1,12 @@
 import { join } from "node:path";
 import { hasWellKnownSubnet, normalizeIP } from "ip-utilties";
-import {
-  default_attribute_writable,
-  string_attribute_writable,
-  hostname_attribute,
-  addType
-} from "pacc";
-import { Host, cidrAddresses } from "pmcf";
+import { default_attribute_writable, string_attribute_writable } from "pacc";
+import { Host, cidrAddresses, addType } from "pmcf";
 import {
   networkAttributes,
-  networkAddressAttributes
-} from "../network-support.mjs";
+  networkAddressAttributes,
+  hostname_attribute
+} from "../common-attributes.mjs";
 import { asArray, writeLines, sectionLines } from "../utils.mjs";
 import { SkeletonNetworkInterface } from "./skeleton.mjs";
 import { Network } from "../network.mjs";
@@ -41,17 +37,18 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     return this;
   }
   static attributes = {
-    ...networkAttributes,
-    ...networkAddressAttributes,
-    hostName: { ...hostname_attribute, writable: true },
-    ipAddresses: string_attribute_writable,
-    hwaddr: string_attribute_writable,
     network: {
       ...default_attribute_writable,
+      name: "network",
       type: Network,
       owner: false
     },
-    destination: string_attribute_writable
+    ...networkAttributes,
+    ...networkAddressAttributes,
+    hostName: hostname_attribute,
+    ipAddresses: { ...string_attribute_writable, name: "ipAddresses" },
+    hwaddr: { ...string_attribute_writable, name: "hwaddr" },
+    destination: { ...string_attribute_writable, name: "destination" }
   };
 
   static {
@@ -71,12 +68,12 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   _class;
 
   addSubnet(address) {
-    if (!this.network) {
+    if (this.network) {
+      return this.network.addSubnet(address);
+    } else {
       if (!hasWellKnownSubnet(address)) {
         this.error("Missing network", address);
       }
-    } else {
-      return this.network.addSubnet(address);
     }
   }
 
@@ -86,7 +83,13 @@ export class NetworkInterface extends SkeletonNetworkInterface {
 
   set ipAddresses(value) {
     for (const address of asArray(value)) {
-      this._ipAddresses.set(normalizeIP(address), this.addSubnet(address));
+      /*console.log(
+        "SET ADDR",
+        address,
+        normalizeIP(address),
+        this.addSubnet(address)
+      );*/
+      this._ipAddresses.set(normalizeIP(address), this.addSubnet(address)||address); // TODO resolve addr to Subnet
     }
   }
 

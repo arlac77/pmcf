@@ -7,11 +7,13 @@ import {
   string_attribute_writable,
   string_set_attribute_writable,
   number_attribute_writable,
-  boolean_attribute_false
+  boolean_attribute_false,
+  priority_attribute
 } from "pacc";
-import { NetworkInterface, addresses, addType } from "pmcf";
+import { addresses, addType } from "pmcf";
+import { AggregatedMap } from "aggregated-map";
 import { ServiceOwner } from "./service-owner.mjs";
-import { networkAddressAttributes } from "./network-support.mjs";
+import { networkAddressAttributes } from "./common-attributes.mjs";
 import { addHook } from "./hooks.mjs";
 import {
   domainFromDominName,
@@ -30,26 +32,31 @@ export class Host extends ServiceOwner {
     ...networkAddressAttributes,
     networkInterfaces: {
       ...default_attribute_writable,
+      name: "networkInterfaces",
       type: "network_interface",
       collection: true
     },
-    aliases: string_set_attribute_writable,
+    aliases: { ...string_set_attribute_writable, name: "aliases" },
     os: {
       ...string_attribute_writable,
+      name: "os",
       values: ["osx", "windows", "linux"]
     },
-    "machine-id": string_attribute_writable,
-    distribution: string_attribute_writable,
+    "machine-id": { ...string_attribute_writable, name: "machine-id" },
+    distribution: { ...string_attribute_writable, name: "distribution" },
     deployment: {
       ...string_attribute_writable,
+      name: "deployment",
       values: ["production", "development"]
     },
-    weight: number_attribute_writable,
-    serial: string_attribute_writable,
-    vendor: string_attribute_writable,
-    keymap: string_attribute_writable,
+    priority: priority_attribute,
+    weight: { ...number_attribute_writable, name: "weight" },
+    serial: { ...string_attribute_writable, name: "serial" },
+    vendor: { ...string_attribute_writable, name: "vendor" },
+    keymap: { ...string_attribute_writable, name: "keymap" },
     chassis: {
       ...string_attribute_writable,
+      name: "chassis",
       values: [
         "phone",
         "tablet",
@@ -68,19 +75,21 @@ export class Host extends ServiceOwner {
     },
     architecture: {
       ...string_attribute_writable,
+      name: "architecture",
       values: ["x86", "x86_64", "aarch64", "armv7", "riscv"]
     },
-    replaces: string_set_attribute_writable,
-    depends: string_set_attribute_writable,
-    provides: string_set_attribute_writable,
+    replaces: { ...string_set_attribute_writable, name: "replaces" },
+    depends: { ...string_set_attribute_writable, name: "depends" },
+    provides: { ...string_set_attribute_writable, name: "provides" },
     extends: {
       ...default_attribute_writable,
+      name: "extends",
       type: Host,
       collection: true,
       owner: false
     },
-    model: string_attribute,
-    isModel: boolean_attribute_false
+    model: { ...string_attribute, name: "model" },
+    isModel: { ...boolean_attribute_false, name: "isModel" }
   };
 
   static {
@@ -106,7 +115,7 @@ export class Host extends ServiceOwner {
     super.materializeExtends();
 
     for (const host of this.walkDirections(["extends"])) {
-      for (const [name, ni] of host.networkInterfaces) {
+      for (const ni of host.networkInterfaces.values()) {
         const present = this._networkInterfaces.get(ni.name);
 
         if (present) {
@@ -292,6 +301,9 @@ export class Host extends ServiceOwner {
     );
   }
 
+  /**
+   * @return {Set<string>}
+   */
   get domainNames() {
     return new Set(
       [
@@ -333,16 +345,6 @@ export class Host extends ServiceOwner {
 
   get hosts() {
     return [this];
-  }
-
-  typeNamed(typeName, name) {
-    if (typeName === NetworkInterface.name) {
-      const ni = this._networkInterfaces.get(name);
-      if (ni) {
-        return ni;
-      }
-    }
-    return super.typeNamed(typeName, name);
   }
 
   get network() {
@@ -390,13 +392,9 @@ export class Host extends ServiceOwner {
   }
 
   get subnets() {
-    let all = new Set();
-
-    for (const networkInterface of this.networkInterfaces.values()) {
-      all = all.union(networkInterface.subnets);
-    }
-
-    return all;
+    return new AggregatedMap(
+      [...this.networkInterfaces.values()].map(ni => ni.subnets)
+    );
   }
 
   async publicKey(type = "ed25519") {
@@ -421,7 +419,7 @@ export class Host extends ServiceOwner {
     Object.assign(packageData.properties, {
       description: `${this.typeName} definitions for ${this.fullName}`,
       dependencies: [
-        `${this.location.typeName}-${this.location.name}`,
+        `${this.owner.typeName}-${this.owner.name}`,
         ...this.depends
       ],
       provides: [...this.provides],
@@ -440,7 +438,10 @@ export class Host extends ServiceOwner {
       await ni.systemdDefinitions(dir, packageData);
     }
 
-    await generateKnownHosts(this.owner.hosts, join(dir, "root", ".ssh"));
+    await generateKnownHosts(
+      this.owner.hosts.values(),
+      join(dir, "root", ".ssh")
+    );
 
     //console.log([...this.walkDirections(["extends"])].map(e => e.fullName));
 
