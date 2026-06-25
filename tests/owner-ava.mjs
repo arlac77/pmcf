@@ -1,22 +1,20 @@
 import test from "ava";
 import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
-import { root, Owner, Location, Network, Host, Cluster } from "pmcf";
+import { root, Owner, Network, Host, Cluster, assign } from "pmcf";
 import { InitializationContext } from "../src/initialization-context.mjs";
 
 function to(t, owner) {
-  const types = { l1: Location, h1: Host, n1: Network, c1: Cluster };
+  const types = { l1: Owner, h1: Host, n1: Network, c1: Cluster };
 
   for (let [name, factory] of Object.entries(types)) {
     t.log(`${factory.typeName} factory`);
     const object = new factory(owner, { name });
-    owner.addObject(object);
 
     name = object.fullName;
 
     t.is(object.owner, owner);
     t.deepEqual([...owner.typeList(factory.typeName)], [object]);
     t.is(owner.named(name), object);
-    t.is(owner.typeNamed(factory.typeName, name), object);
   }
 }
 
@@ -27,23 +25,21 @@ test.skip("Owner", to, new Owner(new root("/tmp"), { name: "o1" }));
 
 test("Owner ownerFor", t => {
   const ic = new InitializationContext();
-  const rootInst = new root("/");
-  const o1 = new Owner(rootInst);
-  ic.read(o1, { name: "o1" });
-  rootInst.addObject(o1);
 
-  t.is(
-    o1.ownerFor(Owner.attributes.networks, { name: "n1" }),
-    o1
-  );
+  const o1 = new Owner();
+  ic.read(o1, { name: "o1" });
+  assign(Owner.attributes.owners, ic.root, o1);
+
+  t.is(o1.ownerFor(Owner.attributes.networks, { name: "n1" }), o1);
 });
 
 test("Owner read write", t => {
   const ic = new InitializationContext();
-  const rootInst = new root("/");
-  const o1 = new Owner(rootInst);
+  const o1 = new Owner();
 
-  t.is(o1.owner, rootInst);
+  assign(Owner.attributes.owners, ic.root, o1);
+
+  t.is(o1.owner, ic.root);
   ic.read(o1, {
     name: "o1",
     administratorEmail: "master@somewhere",
@@ -52,16 +48,20 @@ test("Owner read write", t => {
     template: true
   });
 
-  rootInst.addObject(o1);
-
   t.is(o1.isTemplate, true);
   t.is(o1.name, "o1");
   t.is(o1.directory, "/o1");
   t.is(o1.administratorEmail, "master@somewhere");
-  t.is(o1.subnetNamed("10.0/16").name, "10.0/16");
-  t.is(o1.subnetNamed("fe80::/64").name, "fe80::/64");
+  t.is(
+    o1.subnets.values().find(subnet => subnet.name === "10.0/16").name,
+    "10.0/16"
+  );
+  t.is(
+    o1.subnets.values().find(subnet => subnet.name === "fe80::/64").name,
+    "fe80::/64"
+  );
 
-  t.is(o1.networkNamed("n1").kind, "ethernet");
+  t.is(o1.networks.get("n1").kind, "ethernet");
 
   t.deepEqual(o1.toJSON(), {
     name: "o1",
@@ -82,7 +82,6 @@ test("Owner read write", t => {
           name: "o1",
           type: "owner"
         },
-
         subnets: [
           {
             address: "10.0/16",

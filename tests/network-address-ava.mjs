@@ -12,7 +12,6 @@ test("NetworkAddress filter", t => {
     name: "n1",
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
   });
-  owner.addObject(n1);
 
   const [s1, s2] = [...n1.subnets];
 

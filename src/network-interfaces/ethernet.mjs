@@ -1,12 +1,14 @@
-import { default_attribute_writable, addType } from "pacc";
+import { default_attribute_writable } from "pacc";
 import { NetworkInterface } from "./network-interface.mjs";
+import { addType} from "../type.mjs";
 
 export class ethernet extends NetworkInterface {
   static specializationOf = NetworkInterface;
   static attributes = {
     arpbridge: {
       ...default_attribute_writable,
-      type: "network_interface",
+      name: "arpbridge",
+      type: NetworkInterface,
       collection: true,
       owner: false
     }

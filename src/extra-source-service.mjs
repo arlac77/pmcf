@@ -8,6 +8,7 @@ export class ExtraSourceService extends Service {
   static attributes = {
     source: {
       ...default_attribute_writable,
+      name: "source",
       type: networkAddressType,
       collection: true
     }

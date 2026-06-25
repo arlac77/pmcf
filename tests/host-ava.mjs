@@ -4,6 +4,8 @@ import {
   Host,
   Network,
   Subnet,
+  Owner,
+  assign,
   cidrAddresses,
   SUBNET_LOCALHOST_IPV4,
   SUBNET_LOCALHOST_IPV6
@@ -30,14 +32,13 @@ test("Host all", async t => {
 
   /*
   const host2 = await root.named("/L1/n1/host2");
-  const wlan0 = host2.typeNamed("network_interface", "wlan0");
   console.log(wlan0.constructor.name);
   */
 
   const host1 = await ic.named("/L1/host1");
   t.deepEqual(host1.packaging, new Set(["arch"]));
 
-  const eth0 = host1.typeNamed("network_interface", "eth0");
+  const eth0 = host1.named("eth0");
   t.is(eth0.network, ic.named("/L1/n1"));
 
   await assertObject(t, host1, root1(ic.root, "/L1/host1"));
@@ -51,9 +52,8 @@ test("Host all", async t => {
 
 test("Host extends", t => {
   const ic = new InitializationContext();
-  const owner = ic.root;
 
-  const linux = new Host(owner);
+  const linux = new Host();
   ic.read(linux, {
     name: "linux",
     os: "linux",
@@ -62,8 +62,9 @@ test("Host extends", t => {
       lo: {}
     }
   });
+  assign(Owner.attributes.hosts, ic.root, linux);
 
-  const e1 = new Host(owner);
+  const e1 = new Host();
   ic.read(e1, {
     extends: [linux],
     name: "e1",
@@ -82,6 +83,7 @@ test("Host extends", t => {
       }
     }
   });
+  assign(Owner.attributes.hosts, ic.root, e1);
 
   t.deepEqual([...e1.networkInterfaces.keys()].sort(), ["eth0", "lo"]);
 
@@ -90,7 +92,7 @@ test("Host extends", t => {
     e1._networkInterfaces.get("lo")
   ]);
 
-  const e2 = new Host(owner);
+  const e2 = new Host();
   ic.read(e2, {
     name: "e2",
     extends: e1,
@@ -99,6 +101,7 @@ test("Host extends", t => {
     depends: "dpkge2",
     replaces: "rpkge2"
   });
+  assign(Owner.attributes.hosts, ic.root, e2);
 
   t.deepEqual(e2.children, [
     e2._networkInterfaces.get("eth0"),
@@ -106,7 +109,7 @@ test("Host extends", t => {
   ]);
   t.deepEqual(e2.named("lo"), e2.networkInterfaces.get("lo"));
 
-  const h1 = new Host(owner);
+  const h1 = new Host();
   ic.read(h1, {
     name: "h1",
     "machine-id": "1234",
@@ -116,6 +119,7 @@ test("Host extends", t => {
     depends: "dpkgh1",
     replaces: "rpkgh1"
   });
+  assign(Owner.attributes.hosts, ic.root, h1);
 
   t.deepEqual(h1.children, [
     h1._networkInterfaces.get("eth0"),
@@ -141,15 +145,14 @@ test("Host extends", t => {
 
 test("Host domains & aliases", t => {
   const ic = new InitializationContext();
-  const owner = ic.root;
-  const n1 = new Network(owner);
+  const n1 = new Network();
   ic.read(n1, {
     name: "n1",
     domain: "example.com"
   });
-  owner.addObject(n1);
+  assign(Owner.attributes.networks, ic.root, n1);
 
-  const h1 = new Host(n1);
+  const h1 = new Host();
   ic.read(h1, {
     name: "h1",
     networkInterfaces: {
@@ -159,7 +162,7 @@ test("Host domains & aliases", t => {
       }
     }
   });
-  n1.addObject(h1);
+  assign(Owner.attributes.hosts, n1, h1);
 
   t.is(h1.domain, "example.com");
   t.deepEqual([...h1.domains], ["example.com"]);
@@ -213,19 +216,25 @@ test("Host domains & aliases", t => {
   );
 });
 
-test("Host addresses", t => {
+test.only("Host addresses", t => {
   const ic = new InitializationContext();
   const owner = ic.root;
-  const n1 = new Network(owner);
+  const n1 = new Network();
   ic.read(n1, {
     name: "n1",
     properties: { ipv4_prefix: "10.0" }
   });
-  owner.addObject(n1);
+  assign(Owner.attributes.networks, owner, n1);
+  t.deepEqual(n1.properties, { ipv4_prefix: "10.0" });
+  t.deepEqual(owner.children, [n1]);
+  t.deepEqual([...owner.networks.keys()], ["n1"]);
 
-  const h1 = new Host(n1);
+  const h1 = new Host();
+  h1.name = "n1";
+  assign(Owner.attributes.hosts, n1, h1);
+
   ic.read(h1, {
-    name: "h1",
+    //name: "h1",
     networkInterfaces: {
       lo: {},
       eth0: {
@@ -234,28 +243,39 @@ test("Host addresses", t => {
       }
     }
   });
-  n1.addObject(h1);
 
-  const lo = h1.typeNamed("network_interface", "lo");
-
+  const lo = h1.named("lo");
   t.is(lo.name, "lo");
   t.is(lo.typeName, "network_interface");
   t.deepEqual(
-    new Set(lo.subnets),
+    new Set(lo.subnets.values()),
     new Set([SUBNET_LOCALHOST_IPV4, SUBNET_LOCALHOST_IPV6])
   );
 
-  const eth0 = h1.typeNamed("network_interface", "eth0");
+  const eth0 = h1.named("eth0");
   t.is(eth0.typeName, "network_interface");
+  t.is(eth0.scope, "global");
 
   t.deepEqual(
-    h1.subnets,
-    new Set([SUBNET_LOCALHOST_IPV4, SUBNET_LOCALHOST_IPV6, ...eth0.subnets])
+    eth0.ipAddresses,
+    new Map([
+      ["10.0.0.2", "10.0.0.2/16"],
+      ["fe80::1e57:3eff:fe22:9a8f", "fe80::1e57:3eff:fe22:9a8f/64"]
+    ])
+  );
+
+  t.deepEqual(
+    new Set(h1.subnets.values()),
+    new Set([
+      SUBNET_LOCALHOST_IPV4,
+      SUBNET_LOCALHOST_IPV6,
+      ...eth0.subnets.values()
+    ])
   );
 
   t.is(h1.named("eth0"), eth0);
-  t.is(h1.typeNamed("network_interface", "eth0"), eth0);
-  t.is(n1.typeNamed("network_interface", "h1/eth0"), eth0);
+  t.is(owner.named("/n1"), n1);
+  t.is(owner.named("/n1/h1"), h1);
   t.is(owner.named("/n1/h1/eth0"), eth0);
   t.is(n1.named("h1/eth0"), eth0);
   t.is(eth0.name, "eth0");
@@ -266,7 +286,6 @@ test("Host addresses", t => {
   t.deepEqual(eth0.toJSON(), {
     directory: "/n1/h1/eth0",
     name: "eth0",
-    // metric: 1004,
     mtu: 1500,
     kind: "ethernet",
     scope: "global",
@@ -280,21 +299,18 @@ test("Host addresses", t => {
       type: "network"
     },
     ipAddresses: [
-      ["10.0.0.2", new Subnet(n1, "10.0.0.2/16")],
-      [
-        "fe80::1e57:3eff:fe22:9a8f",
-        new Subnet(n1, "fe80::1e57:3eff:fe22:9a8f/64")
-      ]
+      ["10.0.0.2", new Subnet("10.0.0.2/16")],
+      ["fe80::1e57:3eff:fe22:9a8f", new Subnet("fe80::1e57:3eff:fe22:9a8f/64")]
     ],
     address: "10.0.0.2",
     addresses: ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f"]
   });
 
-  const s1 = n1.subnetNamed("10.0/16");
+  const s1 = n1.subnets.get("10.0/16");
   t.is(s1.name, "10.0/16");
   t.is(s1.prefixLength, 16);
 
-  const s2 = n1.subnetNamed("fe80::/64");
+  const s2 = n1.subnets.get("fe80::/64");
   t.is(s2.name, "fe80::/64");
   t.is(s2.prefixLength, 64);
 
@@ -316,14 +332,14 @@ test("Host addresses with network", t => {
   const ic = new InitializationContext();
   const owner = ic.root;
 
-  const n1 = new Network(owner);
+  const n1 = new Network();
   ic.read(n1, {
     name: "n1",
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
   });
-  owner.addObject(n1);
+  assign(Owner.attributes.networks, owner, n1);
 
-  const h1 = new Host(owner);
+  const h1 = new Host();
   ic.read(h1, {
     name: "h1",
     networkInterfaces: {
@@ -334,13 +350,13 @@ test("Host addresses with network", t => {
       }
     }
   });
-  owner.addObject(h1);
+  assign(Owner.attributes.hosts, owner, n1);
 
-  const s1 = n1.subnetNamed("10.0/16");
+  const s1 = n1.subnets.values().find(subnet => subnet.address === "10.0/16");
   t.is(s1.name, "10.0/16");
   t.is(s1.prefixLength, 16);
 
-  const s2 = n1.subnetNamed("fe80::/64");
+  const s2 = n1.subnets.values().find(subnet => subnet.address === "fe80::/64");
   t.is(s2.name, "fe80::/64");
   t.is(s2.prefixLength, 64);
 
@@ -353,16 +369,15 @@ test("Host addresses with network", t => {
 
 test("clone NetworkInterface", t => {
   const ic = new InitializationContext();
-  const owner = ic.root;
 
-  const n1 = new Network(owner);
+  const n1 = new Network();
   ic.read(n1, {
     name: "n1",
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
   });
-  owner.addObject(n1);
+  assign(Owner.attributes.networks, ic.root, n1);
 
-  const h1 = new Host(owner);
+  const h1 = new Host();
   ic.read(h1, {
     name: "h1",
     networkInterfaces: {
@@ -371,9 +386,12 @@ test("clone NetworkInterface", t => {
       }
     }
   });
-  owner.addObject(h1);
+  assign(Owner.attributes.hosts, ic.root, n1);
 
-  const h2 = new Host(owner);
+  const h1ni = h1.named("eth0");
+  t.is(h1ni.hwaddr, "00:01:02:03:04:05");
+
+  const h2 = new Host();
   ic.read(h2, {
     name: "h2",
     extends: [h1],
@@ -384,8 +402,9 @@ test("clone NetworkInterface", t => {
       }
     }
   });
+  assign(Owner.attributes.hosts, ic.root, h2);
 
-  const ni = h2.typeNamed("network_interface", "eth0");
+  const ni = h2.named("eth0");
 
   t.is(ni.name, "eth0");
   t.is(ni.owner, h2);

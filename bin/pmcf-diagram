@@ -27,7 +27,7 @@ for await (const host of location.hosts()) {
 
 for await (const network of location.networks) {
   console.log(
-    `  ${q(network.name)} [label="${network.name}\\n${[...network.subnets()]
+    `  ${q(network.name)} [label="${network.name}\\n${[...network.subnets.keys()]
       .map(s => s.address)
       .join(" ")}" shape=circle];`
   );

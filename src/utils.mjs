@@ -9,7 +9,7 @@ export function yesno(flag) {
  * Appends default domain if name does not already have a domain.
  * @param {string} name
  * @param {string} [defaultDomain]
- * @returns {string|undefined}
+ * @returns {string}
  */
 export function domainName(name, defaultDomain) {
   const dcs = name.split(".");
@@ -118,7 +118,7 @@ export function asIterator(value) {
   return asArray(value);
 }
 
-export const filterConfigurable = (name, attribute) =>
+export const filterConfigurable = attribute =>
   !attribute.private && attribute.configurable;
 
 export function union(value, present = new Set()) {

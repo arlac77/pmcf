@@ -7,13 +7,13 @@ export class SystemdTimesyncdService extends ExtraSourceService {
   static specializationOf = Service;
 
   static attributes = {
-    NTP: { ...string_attribute_writable, configurable: true },
-    FallbackNTP: { ...string_attribute_writable, configurable: true },
-    RootDistanceMaxSec: { ...duration_attribute_writable, configurable: true },
-    PollIntervalMinSec: { ...duration_attribute_writable, configurable: true },
-    PollIntervalMaxSec: { ...duration_attribute_writable, configurable: true },
-    ConnectionRetrySec: { ...duration_attribute_writable, configurable: true },
-    SaveIntervalSec: { ...duration_attribute_writable, configurable: true }
+    NTP: { ...string_attribute_writable, name: "NTP", configurable: true },
+    FallbackNTP: { ...string_attribute_writable, name: "FallbackNTP", configurable: true },
+    RootDistanceMaxSec: { ...duration_attribute_writable, name: "RootDistanceMaxSec",configurable: true },
+    PollIntervalMinSec: { ...duration_attribute_writable, name: "PollIntervalMinSec",configurable: true },
+    PollIntervalMaxSec: { ...duration_attribute_writable, name: "PollIntervalMaxSec",configurable: true },
+    ConnectionRetrySec: { ...duration_attribute_writable, name: "ConnectionRetrySec",configurable: true },
+    SaveIntervalSec: { ...duration_attribute_writable, name: "SaveIntervalSec", configurable: true }
   };
   static service = {
     systemdService: "systemd-timesyncd.service"

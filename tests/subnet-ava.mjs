@@ -2,9 +2,10 @@ import test from "ava";
 import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import {
   InitializationContext,
-  root,
   Network,
   Subnet,
+  Owner,
+  assign,
   SUBNET_LOCALHOST_IPV4,
   SUBNET_LOCALHOST_IPV6
 } from "pmcf";
@@ -12,29 +13,29 @@ import { asArray } from "../src/utils.mjs";
 
 test("Subnet owner", t => {
   const ic = new InitializationContext();
-  const s1 = new Subnet(ic.root, "10.0.0.77/16");
+  const s1 = new Subnet("10.0.0.77/16");
 
-  t.is(ic.root.subnetNamed("10.0/16"), s1);
+  assign(Owner.attributes.subnets, ic.root, s1);
+  t.is(ic.root.subnets.get("10.0/16"), s1);
 
-  const n1 = new Network(ic.root, "n1");
-  const n2 = new Network(ic.root, "n2");
+  const n1 = new Network();
+  ic.read(n1, { name: "n1" });
+  assign(Owner.attributes.networks, ic.root, n1);
 
-  t.is(n1.subnetNamed("10.0/16"), s1);
+  const n2 = new Network();
+  ic.read(n2, { name: "n2" });
+  assign(Owner.attributes.networks, ic.root, n2);
 
-  const s2 = new Subnet(n1, "192.168.1/24");
+  const s2 = new Subnet("192.168.1/24");
+  assign(Owner.attributes.subnets, n1, s2);
 
-  t.is(ic.root.subnetNamed("192.168.1/24"), undefined);
-  t.is(n1.subnetNamed("192.168.1/24"), s2);
-  t.is(n2.subnetNamed("192.168.1/24"), undefined);
-
-  t.deepEqual([...ic.root.subnets].map(s => s.name), ["10.0/16"]);
-  t.deepEqual([...n2.subnets].map(s => s.name), ["10.0/16"]);
-  t.deepEqual([...n1.subnets].map(s => s.name).sort(), ["10.0/16", "192.168.1/24"].sort());
+  t.is(ic.root.subnets.get("192.168.1/24"), undefined);
+  t.is(n1.subnets.get("192.168.1/24"), s2);
+  t.is(n2.subnets.get("192.168.1/24"), undefined);
 });
 
 test("Subnet ipv6", t => {
-  const ic = new InitializationContext();
-  const s1 = new Subnet(ic.root, "fe80::1e57:3eff:fe22:9a8f/64");
+  const s1 = new Subnet("fe80::1e57:3eff:fe22:9a8f/64");
 
   t.is(s1.name, "fe80::/64");
   t.is(s1.prefixLength, 64);
@@ -49,15 +50,13 @@ test("Subnet ipv6", t => {
 });
 
 test("Subnet match with prefix length", t => {
-  const ic = new InitializationContext();
-  const s1 = new Subnet(ic.root, "192.168.1/24");
+  const s1 = new Subnet("192.168.1/24");
   t.true(s1.matchesAddress("192.168.1.60"));
   t.true(s1.matchesAddress("192.168.1.60/30"));
 });
 
 function st(t, address, expected) {
-  const subnet =
-    address instanceof Subnet ? address : new Subnet(new root("/"), address);
+  const subnet = address instanceof Subnet ? address : new Subnet(address);
 
   for (const property of [
     "address",

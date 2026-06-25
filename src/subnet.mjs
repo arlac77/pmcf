@@ -7,22 +7,22 @@ import {
   matchPrefixIP,
   FAMILY_IPV6
 } from "ip-utilties";
-import { string_attribute, name_attribute, number_attribute } from "pacc";
-import { networks_attribute } from "./network-support.mjs";
+import { string_attribute, name_attribute, integer_attribute } from "pacc";
+import { networks_attribute } from "./common-attributes.mjs";
 import { Base } from "./base.mjs";
 import { addType } from "pmcf";
 
 export class Subnet extends Base {
   static name = "subnet";
   static priority = 1;
-  static owners = ["location", "owner", "network", "root"];
+  static owners = ["owner", "network", "root"];
   static constructWithIdentifierOnly = true;
   static key = "address";
   static attributes = {
-    address: name_attribute,
+    address: { ...name_attribute, name: "address" },
     networks: networks_attribute,
-    prefixLength: number_attribute,
-    family: string_attribute
+    prefixLength: { ...integer_attribute, name: "prefixLength" },
+    family: { ...string_attribute, name: "family" }
   };
 
   static {
@@ -31,16 +31,16 @@ export class Subnet extends Base {
 
   networks = new Set();
 
-  constructor(owner, address) {
-    const { longPrefix, prefix, prefixLength, cidr } = normalizeCIDR(address);
-    super(owner, cidr);
+  constructor(address) {
+    super();
 
+    const { longPrefix, prefix, prefixLength, cidr } = normalizeCIDR(address);
+
+    this.name = cidr;
     this.prefix = prefix;
     this.prefixLength = prefixLength;
     this.longPrefix = longPrefix;
     this.family = familyIP(address);
-
-    owner.addObject(this);
   }
 
   get cidr() {
@@ -82,18 +82,22 @@ export class Subnet extends Base {
   }
 }
 
-const _owner = { addObject() {} };
-export const SUBNET_GLOBAL_IPV4 = new Subnet(_owner, "0.0.0.0/0");
-export const SUBNET_GLOBAL_IPV6 = new Subnet(_owner, "::0/0");
-export const SUBNET_LOCALHOST_IPV4 = new Subnet(_owner, "127.0.0.1/8");
-export const SUBNET_LOCALHOST_IPV6 = new Subnet(_owner, "::1/128");
-export const SUBNET_LINK_LOCAL_IPV6 = new Subnet(_owner, "fe80::/64");
+export const SUBNET_GLOBAL_IPV4 = new Subnet("0.0.0.0/0");
+export const SUBNET_GLOBAL_IPV6 = new Subnet("::0/0");
+export const SUBNET_LOCALHOST_IPV4 = new Subnet("127.0.0.1/8");
+export const SUBNET_LOCALHOST_IPV6 = new Subnet("::1/128");
+export const SUBNET_LINK_LOCAL_IPV6 = new Subnet("fe80::/64");
 
+/**
+ * 
+ * @param {*} sources 
+ * @returns {Set<string>}
+ */
 export function subnets(sources) {
   let all = new Set();
 
   for (const source of sources) {
-    all = all.union(source.subnets);
+    all = all.union(source.subnets.values());
   }
 
   return all;

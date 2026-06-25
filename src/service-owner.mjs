@@ -8,6 +8,7 @@ export class ServiceOwner extends Base {
   static attributes = {
     services: {
       ...default_attribute_writable,
+      name: "services",
       type: "service",
       collection: true
     }
@@ -27,14 +28,6 @@ export class ServiceOwner extends Base {
     return this._services;
   }
 
-  addObject(object) {
-    if (object instanceof Service) {
-      this._services.set(object.name, object);
-    } else {
-      super.addObject(object);
-    }
-  }
-
   materializeExtends() {
     super.materializeExtends();
 
@@ -52,17 +45,4 @@ export class ServiceOwner extends Base {
     }
   }
 
-  typeNamed(typeName, name) {
-    if (typeName === "service") {
-      const service = this.services.get(name);
-      if (service) {
-        return service;
-      }
-    }
-
-    if (typeName === "number") {
-      throw new Error("invalidType", { cause: typeName });
-    }
-    return super.typeNamed(typeName, name);
-  }
 }

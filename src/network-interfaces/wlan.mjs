@@ -1,20 +1,17 @@
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
-import {
-  string_attribute_writable,
-  secret_attribute_writable,
-  addType
-} from "pacc";
+import { string_attribute_writable, addType } from "pacc";
 import { writeLines, sectionLines } from "../utils.mjs";
+import { psk_attribute, ssid_attribute } from "../common-attributes.mjs";
 import { NetworkInterface } from "./network-interface.mjs";
 import { ethernet } from "./ethernet.mjs";
 
 export class wlan extends ethernet {
   static specializationOf = NetworkInterface;
   static attributes = {
-    ssid: string_attribute_writable,
-    psk: secret_attribute_writable,
-    secretName: string_attribute_writable
+    ssid: ssid_attribute,
+    psk: psk_attribute,
+    secretName: { ...string_attribute_writable, name: "secretName" }
   };
 
   static {

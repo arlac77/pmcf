@@ -3,7 +3,7 @@
   "country": "DE",
   "locales": ["C.UTF-8", "de_DE.UTF-8", "en_US.UTF-8"],
   "timezone": "Europe/Berlin",
-  "domain": "mydomain.com",
+  "domain": "${domain}",
   "subnets": "192.168.1/24",
 
   "properties": {

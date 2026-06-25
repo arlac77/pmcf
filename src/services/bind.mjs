@@ -1,7 +1,12 @@
 import { join, dirname } from "node:path";
 import { createHmac } from "node:crypto";
 import { FileContentProvider } from "npm-pkgbuild";
-import { isLinkLocal, reverseArpa, FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
+import {
+  isLinkLocal,
+  reverseArpa,
+  FAMILY_IPV4,
+  FAMILY_IPV6
+} from "ip-utilties";
 import {
   default_attribute_writable,
   duration_attribute_writable,
@@ -37,42 +42,70 @@ class bind_group extends Base {
     name: name_attribute_writable,
     access: {
       type: bindNetworkAddressTypes,
+      name: "access",
       collection: true,
       writable: true
     },
-    excludeInterfaceKinds: string_set_attribute_writable,
+    excludeInterfaceKinds: {
+      ...string_set_attribute_writable,
+      name: "excludeInterfaceKinds"
+    },
     exclude: {
       ...default_attribute_writable,
+      name: "exclude",
       type: networkAddressType,
       collection: true
     },
     entries: {
-      type: networkAddressType + "|location|owner",
+      type: networkAddressType + "|owner",
+      name: "entries",
       collection: true,
       writable: true
     },
-    sharedWith: { ...default_attribute_writable, type: bind_group },
+    sharedWith: {
+      ...default_attribute_writable,
+      name: "sharedWith",
+      type: bind_group
+    },
     allowedUpdates: {
       type: bindNetworkAddressTypes,
+      name: "allowedUpdates",
       collection: true,
       writable: true
     },
-    notify: boolean_attribute_writable_false,
-    hasCatalog: boolean_attribute_writable_true,
-    hasReverse: boolean_attribute_writable_false,
-    hasSVRRecords: boolean_attribute_writable_false,
-    hasLinkLocalAdresses: boolean_attribute_writable_false,
-    hasLocationRecord: boolean_attribute_writable_true,
-
-    recordTTL: { ...duration_attribute_writable, default: "1W" },
+    notify: { ...boolean_attribute_writable_false, name: "notify" },
+    hasCatalog: { ...boolean_attribute_writable_true, name: "hasCatalog" },
+    hasReverse: { ...boolean_attribute_writable_false, name: "hasReverse" },
+    hasSVRRecords: {
+      ...boolean_attribute_writable_false,
+      name: "hasSVRRecords"
+    },
+    hasLinkLocalAdresses: {
+      ...boolean_attribute_writable_false,
+      name: "hasLinkLocalAdresses"
+    },
+    hasLocationRecord: {
+      ...boolean_attribute_writable_true,
+      name: "hasLocationRecord"
+    },
+    recordTTL: {
+      ...duration_attribute_writable,
+      name: "recordTTL",
+      default: "1W"
+    },
     serial: {
       ...integer_attribute_writable,
+      name: "serial",
       default: Math.ceil(Date.now() / 1000)
     },
-    refresh: { ...duration_attribute_writable, default: 36000 },
-    retry: { ...duration_attribute_writable, default: 72000 },
-    expire: { ...duration_attribute_writable, default: 600000 },
-    minimum: { ...duration_attribute_writable, default: 60000 }
+    refresh: {
+      ...duration_attribute_writable,
+      name: "refresh",
+      default: 36000
+    },
+    retry: { ...duration_attribute_writable, name: "retry", default: 72000 },
+    expire: { ...duration_attribute_writable, name: "expire", default: 600000 },
+    minimum: { ...duration_attribute_writable, name: "minimum", default: 60000 }
   };
 
   static {
@@ -101,9 +134,9 @@ class bind_group extends Base {
 
   get defaultRecords() {
     /*
-     const ss = this.location.services.filter(s=>s.types.has('dns') && s.priority>=300);
+     const ss = this.owner.services.filter(s=>s.types.has('dns') && s.priority>=300);
     const ss = [
-      ...this.location.expression("services[types['dns'] && priority>=300]")
+      ...this.owner.expression("services[types['dns'] && priority>=300]")
     ].sort(sortAscendingByPriority)
 */
     const nameService = this.owner; //ss[0];
@@ -399,12 +432,14 @@ export class bind extends ExtraSourceService {
   static attributes = {
     groups: {
       ...default_attribute_writable,
+      name: "groups",
       type: bind_group,
       collection: true,
       writable: true
     },
     primaries: {
       ...default_attribute_writable,
+      name: "primaries",
       type: networkAddressType,
       collection: true
     }
@@ -451,7 +486,7 @@ export class bind extends ExtraSourceService {
     addType(this);
   }
 
-  groups = {};
+  groups = new Map();
 
   materializeExtends() {
     super.materializeExtends();
@@ -464,18 +499,18 @@ export class bind extends ExtraSourceService {
         service.fullName
       );
 
-      for (const group of Object.values(service.groups)) {
-        const present = this.groups[group.name];
+      for (const group of service.groups.values()) {
+        const present = this.groups.get(group.name);
 
         if (present) {
           //console.log("LINK", present.fullName, group.fullName);
-          present.extends.push(group);
+          present.extends.add(group);
         } else {
-          this.groups[group.name] = group.forOwner(this);
+          this.groups.set(group.name, group.forOwner(this));
 
           console.log(
             group.fullName,
-            this.groups[group.name].entries.map(e => e.fullName)
+            this.groups.get(group.name).entries.map(e => e.fullName)
           );
         }
 
@@ -487,14 +522,6 @@ export class bind extends ExtraSourceService {
         //console.log("EXTENDS", this.fullName, service.fullName, eg.fullName, eg.owner.fullName);
       }
     }
-  }
-
-  typeNamed(type, name) {
-    if (type === bind_group.name) {
-      return this.groups[name];
-    }
-
-    return super.typeNamed(type, name);
   }
 
   get serverType() {
@@ -596,11 +623,11 @@ export class bind extends ExtraSourceService {
 
   async *generateOutfacingDefs(outputControl, sources) {
     for (const source of sources) {
-      for (const host of source.hosts) {
+      for (const host of source.hosts.values()) {
         this.outfacingZones(
           outputControl,
           host,
-          this.groups.internal,
+          this.groups.get('internal'),
           this.defaultRecords
         );
       }
@@ -631,7 +658,7 @@ export class bind extends ExtraSourceService {
 
       const zone = {
         id: domain,
-        file: `${host.location.name}/outfacing/${domain}.zone`,
+        file: `${host.owner.name}/outfacing/${domain}.zone`,
         records: new Set(records)
       };
       const config = {
@@ -663,7 +690,7 @@ export class bind extends ExtraSourceService {
       this.assignCatalog(
         outputControl,
         zone,
-        `outfacting.${host.location.name}`
+        `outfacting.${host.owner.name}`
       );
     });
   }

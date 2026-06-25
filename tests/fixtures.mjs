@@ -1,6 +1,5 @@
 import {
   Owner,
-  Location,
   Network,
   Subnet,
   Host,
@@ -24,7 +23,7 @@ export function root1(root, filter) {
   };
 
   const L1 = {
-    instanceof: Location,
+    instanceof: Owner,
     owner: root,
     description: "somewhere",
     domain: "mydomain.com",
@@ -34,7 +33,7 @@ export function root1(root, filter) {
     administratorEmail: "admin@mydomain.com"
   };
   const L2 = {
-    instanceof: Location,
+    instanceof: Owner,
     owner: root,
     description: "somewhere else"
   };
