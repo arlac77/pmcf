@@ -377,7 +377,7 @@ export class Base {
   }
 
   get services() {
-    return this.owner?.services || [];
+    return this.owner?.services || new Map();
   }
 
   set directory(directory) {

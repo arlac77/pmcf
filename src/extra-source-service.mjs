@@ -1,3 +1,4 @@
+import { AggregatedMap } from "aggregated-map";
 import { default_attribute_writable, addType } from "pacc";
 import { Service } from "./service.mjs";
 import { networkAddressType } from "pmcf";
@@ -25,9 +26,6 @@ export class ExtraSourceService extends Service {
   }
 
   get services() {
-    return [
-      this.owner.owner.services,
-      ...this.source.map(s => s.services)
-    ].flat();
+    return new AggregatedMap([this.owner.owner.services,this.source.map(s => s.services)]);
   }
 }

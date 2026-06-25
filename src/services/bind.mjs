@@ -133,12 +133,6 @@ class bind_group extends Base {
   }
 
   get defaultRecords() {
-    /*
-     const ss = this.owner.services.filter(s=>s.types.has('dns') && s.priority>=300);
-    const ss = [
-      ...this.owner.expression("services[types['dns'] && priority>=300]")
-    ].sort(sortAscendingByPriority)
-*/
     const nameService = this.owner; //ss[0];
 
     console.log(
@@ -303,7 +297,7 @@ class bind_group extends Base {
 
               const sm = new Map();
 
-              for (const service of host.services) {
+              for (const service of host.services.values()) {
                 for (const record of service.dnsRecordsForDomainName(
                   host.domainName,
                   this.hasSVRRecords

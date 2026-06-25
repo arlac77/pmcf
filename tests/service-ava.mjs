@@ -23,13 +23,13 @@ function setup() {
     name: "n1",
     subnets: "10.0/16"
   });
-  assign(Owner.attributes.networks,rootInst,n1);
+  assign(Owner.attributes.networks, rootInst, n1);
 
   const l1 = new Owner();
   ic.read(l1, {
     name: "l1"
   });
-  assign(Owner.attributes.owners,rootInst,l1);
+  assign(Owner.attributes.owners, rootInst, l1);
 
   const dns = new Service();
   ic.read(dns, {
@@ -172,13 +172,19 @@ test("Service basics", t => {
 
   t.is([...h2.expression("services[types[dns]]")][0], s2);
 
-  t.deepEqual(Array.from(l1.services.values()), [s1]);
+  t.deepEqual(Array.from(l1.services.keys()), ["dns", "dns"]);
+  t.deepEqual(
+    Array.from(l1.services.values()).map(s => s.fullName),
+    ["/l1/h1/dns", "/l1/h2/dns"]
+  );
+  t.deepEqual(Array.from(l1.services.values()), [s1, s2]);
 
-  t.deepEqual(Array.from(l1.expression("services[]")), [s1]);
-  t.deepEqual(Array.from(l1.expression('services[name="dns"]')), [s1]);
-  t.deepEqual(Array.from(l1.expression("services[types[dns]]")), [s1]);
+  t.deepEqual(Array.from(l1.expression("services[]")), [s1, s2]);
+  t.deepEqual(Array.from(l1.expression('services[name="dns"]')), [s1, s2]);
+  t.deepEqual(Array.from(l1.expression("services[types[dns]]")), [s1, s2]);
   t.deepEqual(Array.from(l1.expression('services[types[dns] && name="dns"]')), [
-    s1
+    s1,
+    s2
   ]);
   t.deepEqual(
     Array.from(l1.expression('services[types[dns] && name="dnss"]')),
@@ -188,15 +194,15 @@ test("Service basics", t => {
     Array.from(
       l1.expression('services[types[dns] && (name="dns" || name="http")]')
     ),
-    [s1]
+    [s1, s2]
   );
   t.deepEqual(
     Array.from(l1.expression("services[types[dns] && priority<20]")),
-    [s1]
+    [s1, s2]
   );
   t.deepEqual(
     Array.from(l1.expression("services[types[dns] && priority<=20]")),
-    [s1]
+    [s1, s2]
   );
 
   t.is(s1, l1.expression("services[types[dns]][0]"));
@@ -208,7 +214,7 @@ test("Service basics", t => {
     priority: 0
   });
 
-    assign(ServiceOwner.attributes.services,h1,s3);
+  assign(ServiceOwner.attributes.services, h1, s3);
 
   t.is(s3.priority, 0);
   t.is(s3.priority, 0);

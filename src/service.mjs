@@ -226,6 +226,14 @@ export class Service extends Base {
     );
   }
 
+  set priority(value) {
+    this._priority = value;
+  }
+
+  get priority() {
+    return this.attribute("_priority") ?? this.owner?.priority ?? 1;
+  }
+
   set weight(value) {
     this._weight = value;
   }

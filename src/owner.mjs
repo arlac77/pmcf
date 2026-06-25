@@ -1,5 +1,7 @@
 import { normalizeCIDR, familyIP, FAMILY_IPV4 } from "ip-utilties";
 import { FileContentProvider } from "npm-pkgbuild";
+import { AggregatedMap } from "aggregated-map";
+
 import {
   default_attribute_writable,
   string_set_attribute_writable,
@@ -86,9 +88,9 @@ export class Owner extends Base {
   }
 
   get services() {
-    return [...this.hosts.values()]
-      .map(host => Array.from(host.services.values()))
-      .flat();
+    return new AggregatedMap(
+      [...this.hosts.values()].map(host => host.services)
+    );
   }
 
   hostNamed(name) {
@@ -112,7 +114,7 @@ export class Owner extends Base {
   }
 
   addSubnet(address) {
-    if(address instanceof Subnet) {
+    if (address instanceof Subnet) {
       this._subnets.set(address.name, address);
       return address;
     }
@@ -145,8 +147,8 @@ export class Owner extends Base {
   }
 
   /**
-   * 
-   * @param {string} address 
+   *
+   * @param {string} address
    * @returns {Subnet?}
    */
   subnetForAddress(address) {
