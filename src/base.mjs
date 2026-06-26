@@ -304,7 +304,7 @@ export class Base {
   }
 
   get root() {
-    return this.owner.root;
+    return this.owner?.root;
   }
 
   get host() {
