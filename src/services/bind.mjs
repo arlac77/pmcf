@@ -428,8 +428,7 @@ export class bind extends ExtraSourceService {
       ...default_attribute_writable,
       name: "groups",
       type: bind_group,
-      collection: true,
-      writable: true
+      collection: true
     },
     primaries: {
       ...default_attribute_writable,
@@ -487,12 +486,6 @@ export class bind extends ExtraSourceService {
 
     //console.log("ME", this.fullName, this.extends);
     for (const service of this.walkDirections(["extends"])) {
-      console.log(
-        "BindService materializeExtends",
-        this.fullName,
-        service.fullName
-      );
-
       for (const group of service.groups.values()) {
         const present = this.groups.get(group.name);
 
@@ -507,13 +500,6 @@ export class bind extends ExtraSourceService {
             this.groups.get(group.name).entries.map(e => e.fullName)
           );
         }
-
-        /*
-      console.log(
-        eg.fullName,
-        eg.entries.map(e => e.fullName)
-      );*/
-        //console.log("EXTENDS", this.fullName, service.fullName, eg.fullName, eg.owner.fullName);
       }
     }
   }
