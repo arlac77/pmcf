@@ -3,7 +3,6 @@ import { FAMILY_IPV4 } from "ip-utilties";
 import {
   InitializationContext,
   Host,
-  Owner,
   Network,
   Service,
   ServiceOwner,
@@ -14,7 +13,9 @@ import {
   DomainNameEndpoint,
   UnixEndpoint,
   sortByFamilyAndAddress,
-  assign
+  assign,
+  networks_attribute,
+  hosts_attribute
 } from "pmcf";
 
 function prepare() {
@@ -26,7 +27,7 @@ function prepare() {
     name: "n1",
     subnets: "10.0/16"
   });
-  assign(Owner.attributes.networks, root, n1);
+  assign(networks_attribute, root, n1);
 
   addServiceType({}, "http-control");
 
@@ -39,7 +40,7 @@ function prepare() {
     },
     priority: 19
   });
-  assign(Owner.attributes.hosts, ic.root, h1);
+  assign(hosts_attribute, ic.root, h1);
 
   const s1 = new Service();
   ic.read(s1, {
@@ -151,7 +152,7 @@ test("DomainNameEndpoint", t => {
     }*/
   });
 
-  assign(Owner.attributes.hosts, root, h1);
+  assign(hosts_attribute, root, h1);
 
   const s1 = new Service();
   ic.read(s1, {
@@ -179,7 +180,7 @@ test("UnixEndpoint", t => {
   ic.read(h1, {
     name: "h1"
   });
-  assign(Owner.attributes.hosts, root, h1);
+  assign(hosts_attribute, root, h1);
 
   const s1 = new Service();
 

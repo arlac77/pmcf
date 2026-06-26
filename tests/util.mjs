@@ -30,9 +30,15 @@ async function _assertObject(t, visited, object, expected, path = []) {
   if (Array.isArray(expected)) {
     let i = 0;
 
-    object = [...object].sort((a, b) =>
-      a.name ? a.name.localeCompare(b.name) : a.localeCompare(b)
-    );
+    if (typeof object.values === "function") {
+      object = [...object.values()].sort((a, b) =>
+        a.name ? a.name.localeCompare(b.name) : a.localeCompare(b)
+      );
+    } else {
+      object = [...object].sort((a, b) =>
+        a.name ? a.name.localeCompare(b.name) : a.localeCompare(b)
+      );
+    }
 
     for (const o of object) {
       t.log(`${pathToString(path)}: ${o}`);

@@ -5,7 +5,10 @@ import {
   Network,
   Host,
   Owner,
-  assign
+  assign,
+  hosts_attribute,
+  networks_attribute,
+  owners_attribute
 } from "pmcf";
 
 function setup() {
@@ -14,25 +17,25 @@ function setup() {
 
   const ht1 = new Host();
   ic.read(ht1, { name: "ht1", properties: { p1: "ht1" } });
-  assign(Owner.attributes.hosts, root, ht1);
+  assign(hosts_attribute, root, ht1);
 
   const ht2 = new Host();
   ic.read(ht2, { name: "ht2", extends: "/ht1" });
-  assign(Owner.attributes.hosts, root, ht2);
+  assign(hosts_attribute, root, ht2);
 
   const n1 = new Network();
   ic.read(n1, {
     name: "n1",
     subnets: "10.0/16"
   });
-  assign(Owner.attributes.networks, root, n1);
+  assign(networks_attribute, root, n1);
 
   const l1 = new Owner();
   ic.read(l1, {
     name: "l1",
     properties: { p1: "v1", n1: 7 }
   });
-  assign(Owner.attributes.owners, root, l1);
+  assign(owners_attribute, root, l1);
 
   const h1 = new Host();
   ic.read(h1, {
@@ -52,7 +55,7 @@ function setup() {
       }
     }
   });
-  assign(Owner.attributes.hosts, l1, h1);
+  assign(hosts_attribute, l1, h1);
 
   return { ic, root, ht1, ht2, n1, l1, h1 };
 }
@@ -74,7 +77,7 @@ test("template from name '*'", t => {
   const ic = new InitializationContext("/somewhere");
   const l1 = new Owner();
   ic.read(l1, { name: "l*" });
-  assign(Owner.attributes.owners, ic.root, l1);
+  assign(owners_attribute, ic.root, l1);
   t.true(l1.isTemplate);
 });
 
@@ -128,11 +131,11 @@ test("expand", t => {
     name: "l1",
     properties: { p1: "v1", n1: 7, deep: { d2: 8 } }
   });
-  assign(Owner.attributes.owners, ic.root, l1);
+  assign(owners_attribute, ic.root, l1);
 
   const h1 = new Host();
   ic.read(h1, { name: "h1" });
-  assign(Owner.attributes.hosts, l1, h1);
+  assign(hosts_attribute, l1, h1);
 
   t.is(l1.expand("${directory}"), "/somewhere/l1");
   t.is(l1.expand("${owner.directory}"), "/somewhere");
@@ -163,7 +166,7 @@ test("tags", t => {
 
   const l1 = new Owner();
   ic.read(l1, { name: "l1", tags: "t1" });
-  assign(Owner.attributes.owners, ic.root, l1);
+  assign(owners_attribute, ic.root, l1);
 
   l1.tags = "t2";
 
@@ -174,7 +177,7 @@ test("extract", t => {
   const ic = new InitializationContext("/somewhere");
   const l1 = new Owner();
   ic.read(l1, { name: "l1" });
-  assign(Owner.attributes.owners, ic.root, l1);
+  assign(owners_attribute, ic.root, l1);
 
   t.deepEqual(extractFrom(l1, Owner), {
     name: "l1",
@@ -189,7 +192,7 @@ test("directory & name & owner", t => {
 
   const l1 = new Owner();
   ic.read(l1, { name: "l1" });
-  assign(Owner.attributes.owners, ic.root, l1);
+  assign(owners_attribute, ic.root, l1);
 
   t.is(l1.name, "l1");
   t.is(l1.fullName, "/l1");
@@ -201,7 +204,7 @@ test("directory & name & owner", t => {
 
   const h1 = new Host();
   ic.read(h1, { name: "h1" });
-  assign(Owner.attributes.hosts, l1, h1);
+  assign(hosts_attribute, l1, h1);
 
   t.is(h1.directory, "/somewhere/l1/h1");
   t.is(h1.name, "h1");

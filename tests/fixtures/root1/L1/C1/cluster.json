@@ -35,6 +35,7 @@
       "source": "/GLOBAL"
     },
     "systemd-timesyncd": {
+      "SaveIntervalSec": 100,
       "source": "/GLOBAL"
     },
     "systemd-resolved": {

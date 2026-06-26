@@ -9,7 +9,6 @@ import {
 } from "pmcf";
 
 test("systemd-timesyncd service type", t => {
-  const ic = new InitializationContext();
   const h1 = new Host();
   const service = new SystemdTimesyncdService();
   assign(ServiceOwner.attributes.services, h1, service);
@@ -26,13 +25,15 @@ test("systemd-timesyncd basics", async t => {
 
   const ntp = ic.named("/L1/C1/systemd-timesyncd");
 
+  console.log(ntp.services);
   t.deepEqual(ntp.systemdConfigs("ABC"), {
     serviceName: "systemd-timesyncd.service",
     configFileName: "etc/systemd/timesyncd.conf.d/ABC.conf",
     content: [
       "[Time]",
       "NTP=192.168.1.11 c1.mydomain.com",
-      "FallbackNTP=2.arch.pool.ntp.org"
+      "FallbackNTP=2.arch.pool.ntp.org",
+      "SaveIntervalSec=1m 40s"
     ]
   });
 });

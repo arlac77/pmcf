@@ -1,5 +1,5 @@
 import { default_attribute_writable } from "pacc";
-import { Base, Service, addType } from "pmcf";
+import { Base, addType } from "pmcf";
 
 export class ServiceOwner extends Base {
   static name = "service-owner";
@@ -39,6 +39,7 @@ export class ServiceOwner extends Base {
 
       if (present) {
         present.extends.add(service);
+        present.materializeExtends();
       } else {
         this.services = service.forOwner(this);
       }
