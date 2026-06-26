@@ -6,7 +6,8 @@ import { Host, cidrAddresses, addType } from "pmcf";
 import {
   networkAttributes,
   networkAddressAttributes,
-  hostname_attribute
+  hostname_attribute,
+  cluster_attribute
 } from "../common-attributes.mjs";
 import { asArray, writeLines, sectionLines } from "../utils.mjs";
 import { SkeletonNetworkInterface } from "./skeleton.mjs";
@@ -41,6 +42,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
       ...network_attribute,
       owner: false
     },
+    cluster: cluster_attribute,
     ...networkAttributes,
     ...networkAddressAttributes,
     hostName: hostname_attribute,

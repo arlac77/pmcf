@@ -40,28 +40,10 @@ export class Cluster extends Host {
     addType(this);
   }
 
-  _masters = [];
-  _backups = [];
+  masters = [];
+  backups = [];
   routerId = 100;
   checkInterval = 60;
-
-  set masters(value) {
-    this._masters.push(value);
-    value.cluster = this;
-  }
-
-  get masters() {
-    return this._masters;
-  }
-
-  set backups(value) {
-    this._backups.push(value);
-    value.cluster = this;
-  }
-
-  get backups() {
-    return this._backups;
-  }
 
   get members() {
     return new Set(this.masters).union(new Set(this.backups));

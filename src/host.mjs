@@ -49,7 +49,6 @@ export class Host extends ServiceOwner {
       values: ["production", "development"]
     },
     priority: priority_attribute,
-    cluster: cluster_attribute,
     weight: { ...number_attribute_writable, name: "weight" },
     serial: { ...string_attribute_writable, name: "serial" },
     vendor: { ...string_attribute_writable, name: "vendor" },
