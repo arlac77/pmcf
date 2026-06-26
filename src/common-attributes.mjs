@@ -1,4 +1,5 @@
 import {
+  default_attribute,
   default_attribute_writable,
   default_collection_attribute_writable,
   string_collection_attribute_writable,
@@ -10,6 +11,13 @@ import {
 
 export const networkAddressType = "network|host|network_interface";
 
+export const owner_attribute = {
+  ...default_attribute,
+  name: "owner",
+  type: "owner",
+  owner: false
+};
+
 export const network_attribute = {
   ...default_attribute_writable,
   name: "network",
@@ -19,25 +27,29 @@ export const network_attribute = {
 export const networks_attribute = {
   ...default_collection_attribute_writable,
   name: "networks",
-  type: "network"
+  type: "network",
+  backpointer: owner_attribute
 };
 
 export const networkInterfaces_attribute = {
   ...default_collection_attribute_writable,
   name: "networkInterfaces",
-  type: "network_interface"
+  type: "network_interface",
+  backpointer: owner_attribute
 };
 
 export const hosts_attribute = {
   ...default_collection_attribute_writable,
   name: "hosts",
-  type: "host"
+  type: "host",
+  backpointer: owner_attribute
 };
 
 export const owners_attribute = {
   ...default_collection_attribute_writable,
   name: "owners",
-  type: "owner"
+  type: "owner",
+  backpointer: owner_attribute
 };
 
 export const cluster_attribute = {
@@ -49,13 +61,15 @@ export const cluster_attribute = {
 export const clusters_attribute = {
   ...default_collection_attribute_writable,
   name: "clusters",
-  type: "cluster"
+  type: "cluster",
+  backpointer: owner_attribute
 };
 
 export const subnets_attribute = {
   ...default_collection_attribute_writable,
   name: "subnets",
-  type: "subnet"
+  type: "subnet",
+  backpointer: owner_attribute
 };
 
 export const psk_attribute = { ...string_attribute_writable, name: "psk" };
