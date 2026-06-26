@@ -40,6 +40,12 @@ export const owners_attribute = {
   type: "owner"
 };
 
+export const cluster_attribute = {
+  ...default_attribute_writable,
+  name: "cluster",
+  type: "cluster"
+};
+
 export const clusters_attribute = {
   ...default_collection_attribute_writable,
   name: "clusters",
