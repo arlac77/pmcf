@@ -1,14 +1,10 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { FAMILY_IPV4 } from "ip-utilties";
-import {
-  default_attribute_writable,
-  default_attribute,
-  number_attribute_writable,
-  duration_attribute_writable
-} from "pacc";
+import { number_attribute_writable, duration_attribute_writable } from "pacc";
 import { Host } from "./host.mjs";
 import { addType, serviceEndpoints } from "pmcf";
+import { networkInterfaces_attribute } from "./common-attributes.mjs";
 import { writeLines } from "./utils.mjs";
 
 export class Cluster extends Host {
@@ -17,22 +13,16 @@ export class Cluster extends Host {
   static attributes = {
     routerId: { ...number_attribute_writable, name: "routerId", default: 100 },
     masters: {
-      ...default_attribute_writable,
-      name: "masters",
-      type: "network_interface",
-      collection: true
+      ...networkInterfaces_attribute,
+      name: "masters"
     },
     backups: {
-      ...default_attribute_writable,
-      name: "backups",
-      type: "network_interface",
-      collection: true
+      ...networkInterfaces_attribute,
+      name: "backups"
     },
     members: {
-      ...default_attribute,
-      name: "members",
-      type: "network_interface",
-      collection: true
+      ...networkInterfaces_attribute,
+      name: "members"
     },
     checkInterval: {
       ...duration_attribute_writable,

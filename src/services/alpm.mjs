@@ -1,5 +1,5 @@
 import {
-  default_attribute_writable,
+  default_collection_attribute_writable,
   name_attribute_writable,
   string_attribute_writable,
   string_set_attribute_writable
@@ -24,10 +24,9 @@ export class alpm extends Service {
   static specializationOf = Service;
   static attributes = {
     repositories: {
-      ...default_attribute_writable,
+      ...default_collection_attribute_writable,
       name: "repositories",
-      type: alpm_repository,
-      collection: true
+      type: alpm_repository
     }
   };
 

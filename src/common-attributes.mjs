@@ -1,5 +1,6 @@
 import {
   default_attribute_writable,
+  default_collection_attribute_writable,
   string_collection_attribute_writable,
   string_attribute_writable,
   integer_attribute_writable,
@@ -9,39 +10,46 @@ import {
 
 export const networkAddressType = "network|host|network_interface";
 
-export const networks_attribute = {
+export const network_attribute = {
   ...default_attribute_writable,
+  name: "network",
+  type: "network"
+};
+
+export const networks_attribute = {
+  ...default_collection_attribute_writable,
   name: "networks",
-  type: "network",
-  collection: true
+  type: "network"
+};
+
+export const networkInterfaces_attribute = {
+  ...default_collection_attribute_writable,
+  name: "networkInterfaces",
+  type: "network_interface"
 };
 
 export const hosts_attribute = {
-  ...default_attribute_writable,
+  ...default_collection_attribute_writable,
   name: "hosts",
-  type: "host",
-  collection: true
+  type: "host"
 };
 
 export const owners_attribute = {
-  ...default_attribute_writable,
+  ...default_collection_attribute_writable,
   name: "owners",
-  type: "owner",
-  collection: true
+  type: "owner"
 };
 
 export const clusters_attribute = {
-  ...default_attribute_writable,
+  ...default_collection_attribute_writable,
   name: "clusters",
-  type: "cluster",
-  collection: true
+  type: "cluster"
 };
 
 export const subnets_attribute = {
-  ...default_attribute_writable,
+  ...default_collection_attribute_writable,
   name: "subnets",
-  type: "subnet",
-  collection: true
+  type: "subnet"
 };
 
 export const psk_attribute = { ...string_attribute_writable, name: "psk" };

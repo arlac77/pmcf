@@ -1,8 +1,9 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
+import { AggregatedMap } from "aggregated-map";
 import {
-  default_attribute_writable,
+  default_collection_attribute_writable,
   string_attribute,
   string_attribute_writable,
   string_set_attribute_writable,
@@ -11,9 +12,11 @@ import {
   priority_attribute
 } from "pacc";
 import { addresses, addType } from "pmcf";
-import { AggregatedMap } from "aggregated-map";
+import {
+  networkInterfaces_attribute,
+  networkAddressAttributes
+} from "./common-attributes.mjs";
 import { ServiceOwner } from "./service-owner.mjs";
-import { networkAddressAttributes } from "./common-attributes.mjs";
 import { addHook } from "./hooks.mjs";
 import {
   domainFromDominName,
@@ -30,12 +33,7 @@ export class Host extends ServiceOwner {
   static priority = 1.9;
   static attributes = {
     ...networkAddressAttributes,
-    networkInterfaces: {
-      ...default_attribute_writable,
-      name: "networkInterfaces",
-      type: "network_interface",
-      collection: true
-    },
+    networkInterfaces: networkInterfaces_attribute,
     aliases: { ...string_set_attribute_writable, name: "aliases" },
     os: {
       ...string_attribute_writable,
@@ -82,10 +80,9 @@ export class Host extends ServiceOwner {
     depends: { ...string_set_attribute_writable, name: "depends" },
     provides: { ...string_set_attribute_writable, name: "provides" },
     extends: {
-      ...default_attribute_writable,
+      ...default_collection_attribute_writable,
       name: "extends",
       type: Host,
-      collection: true,
       owner: false
     },
     model: { ...string_attribute, name: "model" },

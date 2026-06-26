@@ -3,7 +3,7 @@ import {
   string_attribute_writable,
   number_attribute_writable,
   string_set_attribute,
-  default_attribute_writable,
+  default_collection_attribute_writable,
   boolean_attribute_false,
   port_attribute_writable,
   type_attribute_writable,
@@ -65,10 +65,9 @@ export class Service extends Base {
     ...networkAddressAttributes,
     ...endpointAttributes,
     extends: {
-      ...default_attribute_writable,
+      ...default_collection_attribute_writable,
       name: "extends",
       type: Service,
-      collection: true,
       owner: false
     },
     alias: { ...string_attribute_writable, name: "alias" },

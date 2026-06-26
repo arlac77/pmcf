@@ -54,7 +54,7 @@
     "content-entry-transform": "^1.6.9",
     "ip-utilties": "^3.1.1",
     "npm-pkgbuild": "^20.7.9",
-    "pacc": "^10.0.4",
+    "pacc": "^10.1.1",
     "package-directory": "^8.2.0"
   },
   "devDependencies": {
