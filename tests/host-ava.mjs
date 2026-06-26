@@ -216,7 +216,7 @@ test("Host domains & aliases", t => {
   );
 });
 
-test.only("Host addresses", t => {
+test("Host addresses", t => {
   const ic = new InitializationContext();
   const owner = ic.root;
   const n1 = new Network();
