@@ -13,8 +13,9 @@ import {
 } from "pacc";
 import { addresses, addType } from "pmcf";
 import {
+  networkAddressAttributes,
   networkInterfaces_attribute,
-  networkAddressAttributes
+  cluster_attribute
 } from "./common-attributes.mjs";
 import { ServiceOwner } from "./service-owner.mjs";
 import { addHook } from "./hooks.mjs";
@@ -48,6 +49,7 @@ export class Host extends ServiceOwner {
       values: ["production", "development"]
     },
     priority: priority_attribute,
+    cluster: cluster_attribute,
     weight: { ...number_attribute_writable, name: "weight" },
     serial: { ...string_attribute_writable, name: "serial" },
     vendor: { ...string_attribute_writable, name: "vendor" },

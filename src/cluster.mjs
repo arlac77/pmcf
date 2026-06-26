@@ -4,7 +4,10 @@ import { FAMILY_IPV4 } from "ip-utilties";
 import { number_attribute_writable, duration_attribute_writable } from "pacc";
 import { Host } from "./host.mjs";
 import { addType, serviceEndpoints } from "pmcf";
-import { networkInterfaces_attribute } from "./common-attributes.mjs";
+import {
+  networkInterfaces_attribute,
+  cluster_attribute
+} from "./common-attributes.mjs";
 import { writeLines } from "./utils.mjs";
 
 export class Cluster extends Host {
@@ -14,11 +17,13 @@ export class Cluster extends Host {
     routerId: { ...number_attribute_writable, name: "routerId", default: 100 },
     masters: {
       ...networkInterfaces_attribute,
-      name: "masters"
+      name: "masters",
+      backpointer: cluster_attribute
     },
     backups: {
       ...networkInterfaces_attribute,
-      name: "backups"
+      name: "backups",
+      backpointer: cluster_attribute
     },
     members: {
       ...networkInterfaces_attribute,
