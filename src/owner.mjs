@@ -11,8 +11,15 @@ import {
 import { asIterator, asArray, union } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { Subnet, SUBNET_GLOBAL_IPV4, SUBNET_GLOBAL_IPV6 } from "./subnet.mjs";
-import { networks_attribute, owners_attribute, hosts_attribute, clusters_attribute, subnets_attribute } from "./common-attributes.mjs";
-import { addType, assign,  } from "pmcf";
+import {
+  networks_attribute,
+  owners_attribute,
+  hosts_attribute,
+  clusters_attribute,
+  subnets_attribute,
+  networkInterfaces_attribute
+} from "./common-attributes.mjs";
+import { addType, assign } from "pmcf";
 import { loadHooks } from "./hooks.mjs";
 
 export class Owner extends Base {
@@ -25,6 +32,7 @@ export class Owner extends Base {
     clusters: clusters_attribute,
     owners: owners_attribute,
     subnets: subnets_attribute,
+    networkInterfaces: networkInterfaces_attribute,
     country: { ...string_attribute_writable, name: "country" },
     domain: { ...string_attribute_writable, name: "domain" },
     domains: { ...string_set_attribute_writable, name: "domains" },
@@ -53,6 +61,7 @@ export class Owner extends Base {
 
   owners = new Map();
   networks = new Map();
+  networkInterfaces = new Map();
   clusters = new Map();
   hosts = new Map();
   _bridges = new Set();
