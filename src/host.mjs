@@ -120,6 +120,7 @@ export class Host extends ServiceOwner {
 
         if (present) {
           present.extends.add(ni);
+          present.materializeExtends();
         } else {
           this.networkInterfaces = ni.forOwner(this);
         }

@@ -484,21 +484,14 @@ export class bind extends ExtraSourceService {
   materializeExtends() {
     super.materializeExtends();
 
-    //console.log("ME", this.fullName, this.extends);
     for (const service of this.walkDirections(["extends"])) {
       for (const group of service.groups.values()) {
         const present = this.groups.get(group.name);
 
         if (present) {
-          //console.log("LINK", present.fullName, group.fullName);
           present.extends.add(group);
         } else {
           this.groups.set(group.name, group.forOwner(this));
-
-          console.log(
-            group.fullName,
-            this.groups.get(group.name).entries.map(e => e.fullName)
-          );
         }
       }
     }
@@ -607,7 +600,7 @@ export class bind extends ExtraSourceService {
         this.outfacingZones(
           outputControl,
           host,
-          this.groups.get('internal'),
+          this.groups.get("internal"),
           this.defaultRecords
         );
       }
@@ -667,11 +660,7 @@ export class bind extends ExtraSourceService {
         }
       }
 
-      this.assignCatalog(
-        outputControl,
-        zone,
-        `outfacting.${host.owner.name}`
-      );
+      this.assignCatalog(outputControl, zone, `outfacting.${host.owner.name}`);
     });
   }
 }
