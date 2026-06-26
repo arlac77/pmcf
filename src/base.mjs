@@ -23,7 +23,7 @@ import {
   boolean_attribute_writable
 } from "pacc";
 import { union } from "./utils.mjs";
-import { addType } from "pmcf";
+import { addType, extract } from "pmcf";
 import { owner_attribute } from "./common-attributes.mjs";
 
 /**
@@ -41,7 +41,7 @@ export class Base {
     owner: owner_attribute,
     type: type_attribute,
     directory: { ...string_attribute_writable, name: "directory" },
-    packaging: { ...string_attribute_writable, name: "packaging" },
+    packaging: { ...string_set_attribute_writable, name: "packaging" },
     disabled: { ...boolean_attribute_writable, name: "disabled" },
     tags: { ...string_set_attribute_writable, name: "tags" }
   };
@@ -513,98 +513,6 @@ export class Base {
   }
 
   toJSON() {
-    return extractFrom(this, this.constructor);
+    return extract(this, this.constructor);
   }
-}
-
-export function extractFrom(object, type = object?.constructor) {
-  switch (typeof object) {
-    case "undefined":
-    case "string":
-    case "number":
-    case "boolean":
-      return object;
-  }
-
-  if (object instanceof Set) {
-    object = [...object];
-  }
-
-  if (typeof object[Symbol.iterator] === "function") {
-    object = [...object].map(o => (o instanceof Base ? extractFrom(o) : o));
-
-    if (object.length === 0) {
-      return undefined;
-    }
-
-    if (type?.key) {
-      return Object.fromEntries(
-        object.map(o => {
-          o = extractFrom(o);
-          const name = o[type.key];
-          delete o[type.key];
-          return [name, o];
-        })
-      );
-    }
-
-    return object.length ? object : undefined;
-  }
-
-  const json = {};
-
-  for (const [path, def] of extendingAttributeIterator(type, filterPublic)) {
-    const name = path.join(".");
-    let value = object[name];
-
-    switch (typeof value) {
-      case "function":
-        {
-          value = object[name]();
-
-          if (typeof value?.next === "function") {
-            value = [...value];
-          }
-
-          value = extractFrom(value, def.type);
-          if (value !== undefined) {
-            json[name] = value;
-          }
-        }
-        break;
-      case "object":
-        if (value instanceof Base) {
-          json[name] = { type: value.typeName };
-          if (value.name) {
-            json[name].name = value.name;
-          }
-        } else {
-          if (typeof value[Symbol.iterator] === "function") {
-            value = extractFrom(value);
-
-            if (value !== undefined) {
-              json[name] = value;
-            }
-          } else {
-            const resultObject = Object.fromEntries(
-              Object.entries(value).map(([k, v]) => [
-                k,
-                v // extractFrom(v, def.type)
-              ])
-            );
-            if (Object.keys(resultObject).length > 0) {
-              json[name] = resultObject;
-            }
-          }
-        }
-        break;
-      case "undefined":
-        break;
-
-      default:
-        json[name] = value;
-    }
-  }
-
-  return json;
 }
