@@ -1,5 +1,6 @@
 import { default_collection_attribute_writable } from "pacc";
 import { Base, addType } from "pmcf";
+import { owner_attribute } from "./common-attributes.mjs";
 
 export class ServiceOwner extends Base {
   static name = "service-owner";
@@ -9,7 +10,8 @@ export class ServiceOwner extends Base {
     services: {
       ...default_collection_attribute_writable,
       name: "services",
-      type: "service"
+      type: "service",
+      backpointer: owner_attribute
     }
   };
 
@@ -44,5 +46,4 @@ export class ServiceOwner extends Base {
       }
     }
   }
-
 }

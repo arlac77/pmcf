@@ -34,6 +34,7 @@ import {
   sortZoneRecords
 } from "../dns-utils.mjs";
 import { addHook } from "../hooks.mjs";
+import { owner_attribute } from "../common-attributes.mjs";
 
 const bindNetworkAddressTypes = networkAddressType + "|bind_group";
 
@@ -41,6 +42,7 @@ class bind_group extends Base {
   static priority = 1;
   static attributes = {
     name: name_attribute_writable,
+    owner: owner_attribute,
     access: {
       type: bindNetworkAddressTypes,
       name: "access",
@@ -426,12 +428,13 @@ export class bind extends ExtraSourceService {
     groups: {
       ...default_collection_attribute_writable,
       name: "groups",
-      type: bind_group
+      type: bind_group,
+      backpointer: owner_attribute
     },
     primaries: {
       ...default_collection_attribute_writable,
       name: "primaries",
-      type: networkAddressType
+      type: networkAddressType,
     }
   };
   static service = {

@@ -18,9 +18,6 @@ export class SystemdResolvedService extends ExtraSourceService {
   static name = "systemd-resolved";
   static specializationOf = Service;
   static attributes = {
-    /* Resolve: {
-      ...object_attribute,
-      attributes: {*/
     DNS: { ...string_attribute_writable, name: "DNS", configurable: true },
     FallbackDNS: {
       ...string_attribute_writable,
@@ -28,9 +25,9 @@ export class SystemdResolvedService extends ExtraSourceService {
       configurable: true
     },
     domains: {
+      ...string_collection_attribute_writable,
       name: "domains",
       externalName: "Domains",
-      ...string_collection_attribute_writable,
       configurable: true
     },
 
@@ -87,8 +84,6 @@ export class SystemdResolvedService extends ExtraSourceService {
       configurable: true
     },
     LLMNR: { ...yesno_attribute_writable, name: "LLMNR", configurable: true }
-    /* }
-    }*/
   };
   static service = {
     extends: ["dns", "mdns", "llmnr"],

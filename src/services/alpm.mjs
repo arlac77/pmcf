@@ -5,12 +5,14 @@ import {
   string_set_attribute_writable
 } from "pacc";
 import { addType, Service, Base } from "pmcf";
+import { owner_attribute } from "../common-attributes.mjs";
 
 class alpm_repository extends Base {
   static attributes = {
     name: name_attribute_writable,
     base: { ...string_attribute_writable, name: "base" },
-    architectures: { ...string_set_attribute_writable, name: "architectures" }
+    architectures: { ...string_set_attribute_writable, name: "architectures" },
+    owner: owner_attribute
   };
 
   static {
@@ -26,7 +28,8 @@ export class alpm extends Service {
     repositories: {
       ...default_collection_attribute_writable,
       name: "repositories",
-      type: alpm_repository
+      type: alpm_repository,
+      backpointer: owner_attribute
     }
   };
 
