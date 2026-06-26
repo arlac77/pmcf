@@ -10,7 +10,10 @@ import {
   DomainNameEndpoint,
   ServiceTypes,
   ServiceOwner,
-  assign
+  assign,
+  networks_attribute,
+  owners_attribute,
+  hosts_attribute
 } from "pmcf";
 import { InitializationContext } from "../src/initialization-context.mjs";
 
@@ -23,13 +26,13 @@ function setup() {
     name: "n1",
     subnets: "10.0/16"
   });
-  assign(Owner.attributes.networks, rootInst, n1);
+  assign(networks_attribute, rootInst, n1);
 
   const l1 = new Owner();
   ic.read(l1, {
     name: "l1"
   });
-  assign(Owner.attributes.owners, rootInst, l1);
+  assign(owners_attribute, rootInst, l1);
 
   const dns = new Service();
   ic.read(dns, {
@@ -38,7 +41,7 @@ function setup() {
     priority: 3
   });
 
-  //assign(Owner.attributes.owners,rootInst,l1);
+  //assign(owners_attribute,rootInst,l1);
 
   return { ic, root: rootInst, n1, l1, dns };
 }
@@ -56,7 +59,7 @@ test("Service basics", t => {
     priority: 19
   });
 
-  assign(Owner.attributes.hosts, l1, h1);
+  assign(hosts_attribute, l1, h1);
   const lna = h1.networkAddresses(
     na => na.networkInterface.kind === "loopback" && na.family === FAMILY_IPV4
   );
@@ -144,7 +147,7 @@ test("Service basics", t => {
     priority: 3,
     networkInterfaces: { eth0: { ipAddresses: "10.0.0.2" } }
   });
-  assign(Owner.attributes.hosts, l1, h2);
+  assign(hosts_attribute, l1, h2);
 
   const s2 = s1.forOwner(h2);
   h2.services.set(s2.name, s2);
@@ -229,9 +232,9 @@ test("Service basics", t => {
 });
 
 test("Service without protocol", t => {
-  const { ic, root } = setup();
+  const { ic } = setup();
 
-  const h1 = new Host(root);
+  const h1 = new Host();
   ic.read(h1, {
     name: "h1",
     networkInterfaces: { eth0: { network: "/n1", ipAddresses: "10.0.0.1" } }
@@ -287,7 +290,7 @@ test("Service owner", t => {
     priority: 3,
     weight: 5
   });
-  assign(Owner.attributes.hosts, root, h1);
+  assign(hosts_attribute, root, h1);
 
   const h2 = new Host();
   ic.read(h2, {
@@ -298,7 +301,7 @@ test("Service owner", t => {
       eth0: { network: "/n1", ipAddresses: "10.0.0.1" }
     }
   });
-  assign(Owner.attributes.hosts, root, h2);
+  assign(hosts_attribute, root, h2);
 
   t.is(h2.weight, 7);
   const s1 = new Service();
@@ -337,7 +340,7 @@ test("Service type extension", t => {
       bind: {}
     }
   });
-  assign(Owner.attributes.hosts, root, h1);
+  assign(hosts_attribute, root, h1);
 
   const s0 = h1.services.get("bind");
 

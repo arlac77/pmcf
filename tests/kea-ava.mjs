@@ -3,13 +3,13 @@ import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import {
   InitializationContext,
   Host,
-  Owner,
   kea,
   ServiceOwner,
   Endpoint,
   HTTPEndpoint,
   sortByFamilyAndAddress,
-  assign
+  assign,
+  hosts_attribute
 } from "pmcf";
 
 test("kea basics", t => {
@@ -26,7 +26,7 @@ test("kea basics", t => {
       }
     }
   });
-  assign(Owner.attributes.hosts, owner, linux);
+  assign(hosts_attribute, owner, linux);
 
   const h1 = new Host();
   ic.read(h1, {
@@ -36,7 +36,7 @@ test("kea basics", t => {
       eth0: { ipAddresses: "10.0.0.1/16" }
     }
   });
-  assign(Owner.attributes.hosts, owner, h1);
+  assign(hosts_attribute, owner, h1);
 
   /*const la = h1.networkAddresses(
     na => na.networkInterface.kind === "loopback" && na.family === FAMILY_IPV4

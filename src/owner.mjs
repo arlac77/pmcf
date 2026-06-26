@@ -3,7 +3,6 @@ import { FileContentProvider } from "npm-pkgbuild";
 import { AggregatedMap } from "aggregated-map";
 
 import {
-  default_attribute_writable,
   string_set_attribute_writable,
   string_attribute_writable,
   boolean_attribute_writable,
@@ -12,9 +11,8 @@ import {
 import { asIterator, asArray, union } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { Subnet, SUBNET_GLOBAL_IPV4, SUBNET_GLOBAL_IPV6 } from "./subnet.mjs";
-import { networks_attribute } from "./common-attributes.mjs";
-import { Host } from "./host.mjs";
-import { addType, assign } from "pmcf";
+import { networks_attribute, owners_attribute, hosts_attribute, clusters_attribute, subnets_attribute } from "./common-attributes.mjs";
+import { addType, assign,  } from "pmcf";
 import { loadHooks } from "./hooks.mjs";
 
 export class Owner extends Base {
@@ -23,30 +21,10 @@ export class Owner extends Base {
   static owners = [Owner, "root"];
   static attributes = {
     networks: networks_attribute,
-    owners: {
-      ...default_attribute_writable,
-      name: "owners",
-      type: Owner,
-      collection: true
-    },
-    hosts: {
-      ...default_attribute_writable,
-      name: "hosts",
-      type: Host,
-      collection: true
-    },
-    clusters: {
-      ...default_attribute_writable,
-      name: "clusters",
-      type: "cluster",
-      collection: true
-    },
-    subnets: {
-      ...default_attribute_writable,
-      name: "subnets",
-      type: Subnet,
-      collection: true
-    },
+    hosts: hosts_attribute,
+    clusters: clusters_attribute,
+    owners: owners_attribute,
+    subnets: subnets_attribute,
     country: { ...string_attribute_writable, name: "country" },
     domain: { ...string_attribute_writable, name: "domain" },
     domains: { ...string_set_attribute_writable, name: "domains" },
@@ -126,7 +104,7 @@ export class Owner extends Base {
       if (subnet) {
         return subnet;
       }
-      return assign(Owner.attributes.subnets, this, new Subnet(cidr));
+      return assign(subnets_attribute, this, new Subnet(cidr));
     }
 
     let subnet = this.subnetForAddress(address);
