@@ -1,7 +1,6 @@
 import test from "ava";
 import {
   InitializationContext,
-  extractFrom,
   Network,
   Host,
   Owner,
@@ -176,14 +175,15 @@ test("tags", t => {
 test("extract", t => {
   const ic = new InitializationContext("/somewhere");
   const l1 = new Owner();
-  ic.read(l1, { name: "l1" });
+  ic.read(l1, { name: "l1", tags: "tag1" });
   assign(owners_attribute, ic.root, l1);
 
-  t.deepEqual(extractFrom(l1), {
+  t.deepEqual(l1.toJSON(), {
     name: "l1",
-    owner: { type: "root" },
+    owner: { name: "", type: "root" },
     administratorEmail: "admin@undefined",
-    directory: "/somewhere/l1"
+    directory: "/somewhere/l1",
+    tags: ["tag1"]
   });
 });
 
