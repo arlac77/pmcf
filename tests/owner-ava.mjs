@@ -61,14 +61,8 @@ test("Owner read write", t => {
   t.is(o1.name, "o1");
   t.is(o1.directory, "/o1");
   t.is(o1.administratorEmail, "master@somewhere");
-  t.is(
-    o1.subnets.values().find(subnet => subnet.name === "10.0/16").name,
-    "10.0/16"
-  );
-  t.is(
-    o1.subnets.values().find(subnet => subnet.name === "fe80::/64").name,
-    "fe80::/64"
-  );
+  t.is(o1.subnets.get("10.0/16").name, "10.0/16");
+  t.is(o1.subnets.get("fe80::/64").name, "fe80::/64");
 
   t.is(o1.networks.get("n1").kind, "ethernet");
 
