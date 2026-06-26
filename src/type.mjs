@@ -30,20 +30,18 @@ export function assign(attribute, object, value) {
       }
     }
 
-    if (attribute.collection) {
-      const current = object[attribute.name];
-
-      if (!attribute.type.primitive) {
-        if (attribute.backpointer) {
-          /*console.log(
+    if (attribute.backpointer) {
+      /*console.log(
             "BACKPOINTER",
             attribute.backpointer.name,
             value.fullName,
             object.fullName
           );*/
-          assign(attribute.backpointer, value, object);
-        }
-      }
+      assign(attribute.backpointer, value, object);
+    }
+
+    if (attribute.collection) {
+      const current = object[attribute.name];
 
       //console.log("ASSIGN", object.fullName, attribute.name, value.name);
       if (current) {
