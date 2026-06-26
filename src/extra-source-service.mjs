@@ -1,5 +1,5 @@
 import { AggregatedMap } from "aggregated-map";
-import { default_attribute_writable, addType } from "pacc";
+import { default_collection_attribute_writable, addType } from "pacc";
 import { Service } from "./service.mjs";
 import { networkAddressType } from "pmcf";
 
@@ -8,10 +8,9 @@ export class ExtraSourceService extends Service {
   static specializationOf = Service;
   static attributes = {
     source: {
-      ...default_attribute_writable,
+      ...default_collection_attribute_writable,
       name: "source",
-      type: networkAddressType,
-      collection: true
+      type: networkAddressType
     }
   };
 
@@ -26,6 +25,9 @@ export class ExtraSourceService extends Service {
   }
 
   get services() {
-    return new AggregatedMap([this.owner.owner.services,this.source.map(s => s.services)]);
+    return new AggregatedMap([
+      this.owner.owner.services,
+      this.source.map(s => s.services)
+    ]);
   }
 }

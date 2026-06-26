@@ -21,7 +21,7 @@ test("NetworkAddress filter", t => {
 
   assign(networks_attribute, ic.root, n1);
 
-  const [s1, s2] = [...n1.subnets];
+  const [s1, s2] = [...n1.subnets.values()];
 
   const h2 = new Host();
   ic.read(h2, {

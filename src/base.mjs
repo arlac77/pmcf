@@ -15,7 +15,6 @@ import {
   toExternal,
   filterPublic,
   extendingAttributeIterator,
-  default_attribute,
   name_attribute_writable,
   type_attribute,
   string_attribute_writable,
@@ -25,6 +24,7 @@ import {
 } from "pacc";
 import { union } from "./utils.mjs";
 import { addType } from "pmcf";
+import { owner_attribute } from "./common-attributes.mjs";
 
 /**
  *
@@ -38,12 +38,12 @@ export class Base {
   static attributes = {
     name: name_attribute_writable,
     description: description_attribute_writable,
+    owner: owner_attribute,
+    type: type_attribute,
     directory: { ...string_attribute_writable, name: "directory" },
     packaging: { ...string_attribute_writable, name: "packaging" },
     disabled: { ...boolean_attribute_writable, name: "disabled" },
-    tags: { ...string_set_attribute_writable, name: "tags" },
-    owner: { ...default_attribute, name: "owner", type: Base, owner: false },
-    type: type_attribute
+    tags: { ...string_set_attribute_writable, name: "tags" }
   };
 
   static {
@@ -140,11 +140,11 @@ export class Base {
 
     for (const [path, attribute] of extendingAttributeIterator(
       this.constructor,
-      attribute => attribute.owner && !attribute.type.primitive
+      attribute => attribute.backpointer?.name === "owner"
     )) {
       const value = this[path];
 
-      if (value) {
+      if (value !== undefined) {
         if (attribute.collection) {
           if (typeof value.values === "function") {
             all.push(...value.values());

@@ -1,7 +1,6 @@
-import { default_attribute_writable } from "pacc";
 import { addType } from "pmcf";
 import { Owner } from "./owner.mjs";
-import { networkAttributes } from "./common-attributes.mjs";
+import { networkAttributes, networks_attribute } from "./common-attributes.mjs";
 
 export class Network extends Owner {
   static name = "network";
@@ -9,11 +8,8 @@ export class Network extends Owner {
   static attributes = {
     ...networkAttributes,
     bridge: {
-      ...default_attribute_writable,
-      name: "bridge",
-      type: Network,
-      collection: true,
-      owner: false
+      ...networks_attribute,
+      name: "bridge"
     }
   };
 

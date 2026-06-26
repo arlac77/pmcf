@@ -89,8 +89,8 @@ test("Host extends", t => {
   t.deepEqual([...e1.networkInterfaces.keys()].sort(), ["eth0", "lo"]);
 
   t.deepEqual(e1.children, [
-    e1._networkInterfaces.get("eth0"),
-    e1._networkInterfaces.get("lo")
+    e1.networkInterfaces.get("eth0"),
+    e1.networkInterfaces.get("lo")
   ]);
 
   const e2 = new Host();

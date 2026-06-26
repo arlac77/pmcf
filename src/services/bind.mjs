@@ -8,6 +8,7 @@ import {
   FAMILY_IPV6
 } from "ip-utilties";
 import {
+  default_collection_attribute_writable,
   default_attribute_writable,
   duration_attribute_writable,
   string_set_attribute_writable,
@@ -33,6 +34,7 @@ import {
   sortZoneRecords
 } from "../dns-utils.mjs";
 import { addHook } from "../hooks.mjs";
+import { owner_attribute } from "../common-attributes.mjs";
 
 const bindNetworkAddressTypes = networkAddressType + "|bind_group";
 
@@ -40,6 +42,7 @@ class bind_group extends Base {
   static priority = 1;
   static attributes = {
     name: name_attribute_writable,
+    owner: owner_attribute,
     access: {
       type: bindNetworkAddressTypes,
       name: "access",
@@ -51,16 +54,14 @@ class bind_group extends Base {
       name: "excludeInterfaceKinds"
     },
     exclude: {
-      ...default_attribute_writable,
+      ...default_collection_attribute_writable,
       name: "exclude",
-      type: networkAddressType,
-      collection: true
+      type: networkAddressType
     },
     entries: {
+      ...default_collection_attribute_writable,
       type: networkAddressType + "|owner",
-      name: "entries",
-      collection: true,
-      writable: true
+      name: "entries"
     },
     sharedWith: {
       ...default_attribute_writable,
@@ -425,16 +426,15 @@ export class bind extends ExtraSourceService {
   static specializationOf = Service;
   static attributes = {
     groups: {
-      ...default_attribute_writable,
+      ...default_collection_attribute_writable,
       name: "groups",
       type: bind_group,
-      collection: true
+      backpointer: owner_attribute
     },
     primaries: {
-      ...default_attribute_writable,
+      ...default_collection_attribute_writable,
       name: "primaries",
       type: networkAddressType,
-      collection: true
     }
   };
   static service = {

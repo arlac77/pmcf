@@ -8,7 +8,6 @@ export class SystemdJournaldService extends Service {
   static attributes = {
     Storage: {
       ...string_attribute_writable,
-
       name: "Storage",
       configurable: true
     },
