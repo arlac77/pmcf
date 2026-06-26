@@ -1,4 +1,4 @@
-import { default_attribute_writable } from "pacc";
+import { default_collection_attribute_writable } from "pacc";
 import { Base, addType } from "pmcf";
 
 export class ServiceOwner extends Base {
@@ -7,10 +7,9 @@ export class ServiceOwner extends Base {
   static owners = ["owner", "network", "root"];
   static attributes = {
     services: {
-      ...default_attribute_writable,
+      ...default_collection_attribute_writable,
       name: "services",
-      type: "service",
-      collection: true
+      type: "service"
     }
   };
 

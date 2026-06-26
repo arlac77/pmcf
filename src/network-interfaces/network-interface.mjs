@@ -1,6 +1,7 @@
 import { join } from "node:path";
 import { hasWellKnownSubnet, normalizeIP } from "ip-utilties";
-import { default_attribute_writable, string_attribute_writable } from "pacc";
+import { string_attribute_writable } from "pacc";
+import { network_attribute } from "../common-attributes.mjs";
 import { Host, cidrAddresses, addType } from "pmcf";
 import {
   networkAttributes,
@@ -9,7 +10,6 @@ import {
 } from "../common-attributes.mjs";
 import { asArray, writeLines, sectionLines } from "../utils.mjs";
 import { SkeletonNetworkInterface } from "./skeleton.mjs";
-import { Network } from "../network.mjs";
 import { yesno } from "../utils.mjs";
 
 export class NetworkInterface extends SkeletonNetworkInterface {
@@ -38,9 +38,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   }
   static attributes = {
     network: {
-      ...default_attribute_writable,
-      name: "network",
-      type: Network,
+      ...network_attribute,
       owner: false
     },
     ...networkAttributes,
@@ -89,7 +87,10 @@ export class NetworkInterface extends SkeletonNetworkInterface {
         normalizeIP(address),
         this.addSubnet(address)
       );*/
-      this._ipAddresses.set(normalizeIP(address), this.addSubnet(address)||address); // TODO resolve addr to Subnet
+      this._ipAddresses.set(
+        normalizeIP(address),
+        this.addSubnet(address) || address
+      ); // TODO resolve addr to Subnet
     }
   }
 
