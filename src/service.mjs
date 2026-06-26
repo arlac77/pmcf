@@ -67,8 +67,7 @@ export class Service extends Base {
     extends: {
       ...default_collection_attribute_writable,
       name: "extends",
-      type: Service,
-      owner: false
+      type: Service
     },
     alias: { ...string_attribute_writable, name: "alias" },
     priority: priority_attribute,

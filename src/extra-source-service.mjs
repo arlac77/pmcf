@@ -10,8 +10,7 @@ export class ExtraSourceService extends Service {
     source: {
       ...default_collection_attribute_writable,
       name: "source",
-      type: networkAddressType,
-      owner: false
+      type: networkAddressType
     }
   };
 

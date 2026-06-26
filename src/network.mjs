@@ -9,8 +9,7 @@ export class Network extends Owner {
     ...networkAttributes,
     bridge: {
       ...networks_attribute,
-      name: "bridge",
-      owner: false
+      name: "bridge"
     }
   };
 
