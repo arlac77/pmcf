@@ -307,10 +307,6 @@ export class Base {
     return this.owner.root;
   }
 
-  get location() {
-    return this.owner?.location;
-  }
-
   get host() {
     return this.owner?.host;
   }

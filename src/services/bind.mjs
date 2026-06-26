@@ -195,7 +195,7 @@ class bind_group extends Base {
       );
 
       for (const domain of source.localDomains) {
-        const locationName = source.location.name;
+        const locationName = source.owner.name;
         const reverseZones = new Map();
 
         const config = {
@@ -644,7 +644,7 @@ export class bind extends ExtraSourceService {
       outputControl.configs.push(config);
 
       if (this.hasLocationRecord) {
-        zone.records.add(DNSRecord("location", "TXT", host.location.name));
+        zone.records.add(DNSRecord("location", "TXT", host.owner.name));
       }
       for (const na of host.networkAddresses(
         na => na.networkInterface.kind !== "loopback"

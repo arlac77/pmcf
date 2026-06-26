@@ -231,11 +231,11 @@ test("Host addresses", t => {
   t.deepEqual([...owner.networks.keys()], ["n1"]);
 
   const h1 = new Host();
-  h1.name = "n1";
+  h1.name = "h1";
   assign(hosts_attribute, n1, h1);
+  t.is(n1.named("h1"), h1);
 
   ic.read(h1, {
-    //name: "h1",
     networkInterfaces: {
       lo: {},
       eth0: {
@@ -276,6 +276,7 @@ test("Host addresses", t => {
 
   t.is(h1.named("eth0"), eth0);
   t.is(owner.named("/n1"), n1);
+  t.is(n1.named("h1"), h1);
   t.is(owner.named("/n1/h1"), h1);
   t.is(owner.named("/n1/h1/eth0"), eth0);
   t.is(n1.named("h1/eth0"), eth0);
@@ -300,8 +301,8 @@ test("Host addresses", t => {
       type: "network"
     },
     ipAddresses: [
-      ["10.0.0.2", new Subnet("10.0.0.2/16")],
-      ["fe80::1e57:3eff:fe22:9a8f", new Subnet("fe80::1e57:3eff:fe22:9a8f/64")]
+      ["10.0.0.2", "10.0.0.2/16"],
+      ["fe80::1e57:3eff:fe22:9a8f", "fe80::1e57:3eff:fe22:9a8f/64"]
     ],
     address: "10.0.0.2",
     addresses: ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f"]
