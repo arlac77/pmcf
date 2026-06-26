@@ -38,10 +38,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     return this;
   }
   static attributes = {
-    network: {
-      ...network_attribute,
-      owner: false
-    },
+    network: network_attribute,
     cluster: cluster_attribute,
     ...networkAttributes,
     ...networkAddressAttributes,

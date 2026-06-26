@@ -14,8 +14,7 @@ export const networkAddressType = "network|host|network_interface";
 export const owner_attribute = {
   ...default_attribute,
   name: "owner",
-  type: "owner",
-  owner: false
+  type: "owner"
 };
 
 export const network_attribute = {

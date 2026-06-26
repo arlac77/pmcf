@@ -7,8 +7,7 @@ export class ethernet extends NetworkInterface {
   static attributes = {
     arpbridge: {
       ...networkInterfaces_attribute,
-      name: "arpbridge",
-      owner: false
+      name: "arpbridge"
     }
   };
 

@@ -83,8 +83,7 @@ export class Host extends ServiceOwner {
     extends: {
       ...default_collection_attribute_writable,
       name: "extends",
-      type: Host,
-      owner: false
+      type: Host
     },
     model: { ...string_attribute, name: "model" },
     isModel: { ...boolean_attribute_false, name: "isModel" }

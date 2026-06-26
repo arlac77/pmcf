@@ -42,11 +42,6 @@ export function assign(attribute, object, value) {
             object.fullName
           );*/
           assign(attribute.backpointer, value, object);
-        } else {
-          if (attribute.owner) {
-            console.log("OWNER", value.fullName, object.fullName);
-            //    value.owner = object;
-          }
         }
       }
 
