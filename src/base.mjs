@@ -140,11 +140,11 @@ export class Base {
 
     for (const [path, attribute] of extendingAttributeIterator(
       this.constructor,
-      attribute => attribute.owner && !attribute.type.primitive
+      attribute => attribute.backpointer?.name === "owner"
     )) {
       const value = this[path];
 
-      if (value) {
+      if (value !== undefined) {
         if (attribute.collection) {
           if (typeof value.values === "function") {
             all.push(...value.values());
