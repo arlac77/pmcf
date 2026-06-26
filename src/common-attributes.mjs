@@ -16,6 +16,34 @@ export const networks_attribute = {
   collection: true
 };
 
+export const hosts_attribute = {
+  ...default_attribute_writable,
+  name: "hosts",
+  type: "host",
+  collection: true
+};
+
+export const owners_attribute = {
+  ...default_attribute_writable,
+  name: "owners",
+  type: "owner",
+  collection: true
+};
+
+export const clusters_attribute = {
+  ...default_attribute_writable,
+  name: "clusters",
+  type: "cluster",
+  collection: true
+};
+
+export const subnets_attribute = {
+  ...default_attribute_writable,
+  name: "subnets",
+  type: "subnet",
+  collection: true
+};
+
 export const psk_attribute = { ...string_attribute_writable, name: "psk" };
 export const ssid_attribute = { ...string_attribute_writable, name: "ssid" };
 export const hostname_attribute = {

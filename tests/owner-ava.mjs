@@ -1,6 +1,15 @@
 import test from "ava";
 import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
-import { root, Owner, Network, Host, Cluster, assign } from "pmcf";
+import {
+  root,
+  Owner,
+  Network,
+  Host,
+  Cluster,
+  assign,
+  owners_attribute,
+  networks_attribute
+} from "pmcf";
 import { InitializationContext } from "../src/initialization-context.mjs";
 
 function to(t, owner) {
@@ -28,16 +37,16 @@ test("Owner ownerFor", t => {
 
   const o1 = new Owner();
   ic.read(o1, { name: "o1" });
-  assign(Owner.attributes.owners, ic.root, o1);
+  assign(owners_attribute, ic.root, o1);
 
-  t.is(o1.ownerFor(Owner.attributes.networks, { name: "n1" }), o1);
+  t.is(o1.ownerFor(networks_attribute, { name: "n1" }), o1);
 });
 
 test("Owner read write", t => {
   const ic = new InitializationContext();
   const o1 = new Owner();
 
-  assign(Owner.attributes.owners, ic.root, o1);
+  assign(owners_attribute, ic.root, o1);
 
   t.is(o1.owner, ic.root);
   ic.read(o1, {

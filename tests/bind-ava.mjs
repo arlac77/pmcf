@@ -51,13 +51,17 @@ test("BIND groups", async t => {
 
   const bindInst = await ic.named("/L1/C1/bind");
 
+  //console.log([...bindInst.extends].map(e=>e.fullName));
   t.is(bindInst.fullName, "/L1/C1/bind");
   t.true(bindInst instanceof bind);
 
-  const internalGroup = bindInst.groups.get('internal');
-  const protectedGroup = bindInst.groups.get('protected');
+  const internalGroup = bindInst.groups.get("internal");
+  const protectedGroup = bindInst.groups.get("protected");
 
-  //t.deepEqual(Object.keys(bind.groups), ["internal", "protected", "trusted"]);
+  t.deepEqual(
+    [...bindInst.groups.keys()],
+    ["internal", "protected", "trusted"]
+  );
   t.is(internalGroup.name, "internal");
   t.is(protectedGroup.name, "protected");
   t.is(protectedGroup.sharedWith, internalGroup);

@@ -1,5 +1,5 @@
 import test from "ava";
-import { InitializationContext, Owner, Network, assign } from "pmcf";
+import { InitializationContext, Network, assign, networks_attribute } from "pmcf";
 import { assertObject } from "./util.mjs";
 import { root1 } from "./fixtures.mjs";
 
@@ -15,7 +15,7 @@ test("Network basics", async t => {
   );
 });
 
-test.only("Network addresses", t => {
+test("Network addresses", t => {
   const ic = new InitializationContext("/");
   const n1 = new Network();
   ic.read(n1, {
@@ -24,7 +24,7 @@ test.only("Network addresses", t => {
     kind: "ethernet",
     scope: "global"
   });
-  assign(Owner.attributes.networks, ic.root, n1);
+  assign(networks_attribute, ic.root, n1);
 
   t.is(n1.name, "n1");
   t.is(n1.kind, "ethernet");
@@ -53,10 +53,10 @@ test("Network bridges", t => {
 
   const n3 = new Network();
   ic.read(n3, { name: "n3", bridge: "/n4" });
-  assign(Owner.attributes.networks, ic.root, n3);
+  assign(networks_attribute, ic.root, n3);
   const n4 = new Network();
   ic.read(n4, { name: "n4" });
-  assign(Owner.attributes.networks, ic.root, n4);
+  assign(networks_attribute, ic.root, n4);
 
   ic.resolveOutstanding();
 

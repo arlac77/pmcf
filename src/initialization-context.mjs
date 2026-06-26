@@ -6,9 +6,7 @@ import {
   types,
   resolveTypeLinks
 } from "pacc";
-import { Base } from "./base.mjs";
-import { root } from "./root.mjs";
-import { assign, create } from "pmcf";
+import { Base, root, assign, create } from "pmcf";
 
 /**
  * Keeps track of all in flight object creations and loose ends during config initialization.
@@ -71,7 +69,7 @@ export class InitializationContext {
         {
           let o =
             value[0] === "/"
-              ? this.root.named(value.substring(1))
+              ? this.named(value.substring(1))
               : object.named(value);
 
           /*console.log(

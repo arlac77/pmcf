@@ -133,12 +133,6 @@ class bind_group extends Base {
   }
 
   get defaultRecords() {
-    /*
-     const ss = this.owner.services.filter(s=>s.types.has('dns') && s.priority>=300);
-    const ss = [
-      ...this.owner.expression("services[types['dns'] && priority>=300]")
-    ].sort(sortAscendingByPriority)
-*/
     const nameService = this.owner; //ss[0];
 
     console.log(
@@ -303,7 +297,7 @@ class bind_group extends Base {
 
               const sm = new Map();
 
-              for (const service of host.services) {
+              for (const service of host.services.values()) {
                 for (const record of service.dnsRecordsForDomainName(
                   host.domainName,
                   this.hasSVRRecords
@@ -434,8 +428,7 @@ export class bind extends ExtraSourceService {
       ...default_attribute_writable,
       name: "groups",
       type: bind_group,
-      collection: true,
-      writable: true
+      collection: true
     },
     primaries: {
       ...default_attribute_writable,
@@ -491,35 +484,15 @@ export class bind extends ExtraSourceService {
   materializeExtends() {
     super.materializeExtends();
 
-    //console.log("ME", this.fullName, this.extends);
     for (const service of this.walkDirections(["extends"])) {
-      console.log(
-        "BindService materializeExtends",
-        this.fullName,
-        service.fullName
-      );
-
       for (const group of service.groups.values()) {
         const present = this.groups.get(group.name);
 
         if (present) {
-          //console.log("LINK", present.fullName, group.fullName);
           present.extends.add(group);
         } else {
           this.groups.set(group.name, group.forOwner(this));
-
-          console.log(
-            group.fullName,
-            this.groups.get(group.name).entries.map(e => e.fullName)
-          );
         }
-
-        /*
-      console.log(
-        eg.fullName,
-        eg.entries.map(e => e.fullName)
-      );*/
-        //console.log("EXTENDS", this.fullName, service.fullName, eg.fullName, eg.owner.fullName);
       }
     }
   }
@@ -627,7 +600,7 @@ export class bind extends ExtraSourceService {
         this.outfacingZones(
           outputControl,
           host,
-          this.groups.get('internal'),
+          this.groups.get("internal"),
           this.defaultRecords
         );
       }
@@ -687,11 +660,7 @@ export class bind extends ExtraSourceService {
         }
       }
 
-      this.assignCatalog(
-        outputControl,
-        zone,
-        `outfacting.${host.owner.name}`
-      );
+      this.assignCatalog(outputControl, zone, `outfacting.${host.owner.name}`);
     });
   }
 }

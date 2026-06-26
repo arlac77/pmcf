@@ -6,7 +6,7 @@ test("load basics", async t => {
   t.is(await ic.load("/"), ic.root);
 });
 
-test.only("load all", async t => {
+test("load all", async t => {
   const ic = new InitializationContext(new URL("fixtures/root1", import.meta.url).pathname);
 
   await ic.loadAll();
