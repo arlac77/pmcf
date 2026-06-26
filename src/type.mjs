@@ -23,10 +23,6 @@ export function assign(attribute, object, value) {
   value = toInternal(value, attribute);
   value ??= attribute.default;
 
-  /*if (attribute.name === "architectures") {
-    console.log("ASSIGN architectures", object.fullName, value);
-  }*/
-
   if (value !== undefined) {
     if (attribute.values) {
       if (attribute.values.indexOf(value) < 0) {
@@ -38,9 +34,14 @@ export function assign(attribute, object, value) {
       const current = object[attribute.name];
 
       if (!attribute.type.primitive) {
-        if (attribute.owner) {
-          // TODO generalize
-          value.owner = object;
+        if (attribute.backpointer) {
+          /*console.log(
+            "BACKPOINTER",
+            attribute.backpointer.name,
+            value.fullName,
+            object.fullName
+          );*/
+          assign(attribute.backpointer, value, object);
         }
       }
 
