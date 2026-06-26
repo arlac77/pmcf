@@ -179,7 +179,7 @@ test("extract", t => {
   ic.read(l1, { name: "l1" });
   assign(owners_attribute, ic.root, l1);
 
-  t.deepEqual(extractFrom(l1, Owner), {
+  t.deepEqual(extractFrom(l1), {
     name: "l1",
     owner: { type: "root" },
     administratorEmail: "admin@undefined",
@@ -189,7 +189,6 @@ test("extract", t => {
 
 test("directory & name & owner", t => {
   const ic = new InitializationContext("/somewhere");
-
   const l1 = new Owner();
   ic.read(l1, { name: "l1" });
   assign(owners_attribute, ic.root, l1);
