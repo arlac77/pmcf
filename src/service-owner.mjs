@@ -39,6 +39,7 @@ export class ServiceOwner extends Base {
 
       if (present) {
         present.extends.add(service);
+        present.materializeExtends();
       } else {
         this.services = service.forOwner(this);
       }
