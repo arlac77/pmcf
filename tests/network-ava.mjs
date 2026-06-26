@@ -15,7 +15,7 @@ test("Network basics", async t => {
   );
 });
 
-test.only("Network addresses", t => {
+test("Network addresses", t => {
   const ic = new InitializationContext("/");
   const n1 = new Network();
   ic.read(n1, {
