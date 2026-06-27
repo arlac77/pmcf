@@ -27,7 +27,7 @@ export class InitializationContext {
 
       for (const type of attribute.type.members || [attribute.type]) {
         for (const node of object.walkDirections(["this", "owner"])) {
-          const resolved = node.named(value);
+          const resolved = this.named(value, node);
           if (resolved) {
             assign(attribute, object, resolved);
             continue nextOutstanding;
@@ -67,10 +67,7 @@ export class InitializationContext {
       case "number":
       case "string":
         {
-          let o =
-            value[0] === "/"
-              ? this.named(value.substring(1))
-              : object.named(value);
+          let o = this.named(value, object);
 
           /*console.log(
             "NAMED",
@@ -245,7 +242,9 @@ export class InitializationContext {
     this.resolveOutstanding();
   }
 
-  named(name) {
-    return this.root.named(name);
+  named(name, base) {
+    return name[0] === "/"
+      ? this.root.named(name.substring(1))
+      : base.named(name);
   }
 }
