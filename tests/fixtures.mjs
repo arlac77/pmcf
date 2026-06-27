@@ -172,7 +172,6 @@ export function root1(root, filter) {
       name: "m1",
       instanceof: Host,
       owner: model,
-      isModel: true,
       isTemplate: true,
       packaging: new Set(["arch"]),
       chassis: "server",
