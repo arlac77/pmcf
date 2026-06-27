@@ -80,6 +80,16 @@ export function assign(attribute, object, value) {
       assign(attribute.backpointer, value, object);
     }
 
+    /*if (!attribute.type.primitive) {
+      if (typeof attribute.type !== "function") {
+        //   error(`XX Invalide type ${attribute.name} ${attribute.type}`,attribute);
+      } else {
+        if (value.constructor instanceof attribute.type) {
+          error(`Invalide type ${value.constructor.name}`, attribute);
+        }
+      }
+    }*/
+
     if (attribute.collection) {
       const current = object[attribute.name];
 

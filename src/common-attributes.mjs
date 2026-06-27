@@ -68,7 +68,7 @@ export const subnets_attribute = {
   ...default_collection_attribute_writable,
   name: "subnets",
   type: "subnet",
-  backpointer: owner_attribute
+  backpointer: networks_attribute
 };
 
 export const psk_attribute = { ...string_attribute_writable, name: "psk" };

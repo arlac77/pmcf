@@ -45,6 +45,8 @@ test("Owner read write", t => {
 
   assign(owners_attribute, ic.root, o1);
 
+  t.is(ic.root.directory, "/");
+
   t.is(o1.owner, ic.root);
   ic.read(o1, {
     name: "o1",
@@ -53,6 +55,8 @@ test("Owner read write", t => {
     networks: { n1: { kind: "ethernet" } },
     template: true
   });
+
+  t.is(o1.owner, ic.root);
 
   t.is(o1.isTemplate, true);
   t.is(o1.name, "o1");
@@ -83,7 +87,7 @@ test("Owner read write", t => {
         owner: {
           name: "o1",
           type: "owner"
-        },
+        }
         /*subnets: [
           {
             address: "10.0/16",
