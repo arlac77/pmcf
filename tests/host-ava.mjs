@@ -39,21 +39,21 @@ test("Host load", async t => {
   const eth0 = host1.named("eth0");
   t.is(eth0.network, ic.named("/L1/n1"));
 
-  
+  /*
   console.log([...ic.root.hosts.values()].map(h => h.fullName));
   console.log([...ic.root.networks.values()].map(h => h.fullName));
+  */
 
-  //await assertObject(t, host1, root1(ic.root, "/L1/host1"));
-  //await assertObject(t, host2, root1(ic.root, "/L1/n1/host2"));
+  await assertObject(t, host1, root1(ic.root, "/L1/host1"));
+  await assertObject(t, host2, root1(ic.root, "/L1/n1/host2"));
 
+  // console.log(ic.root.hosts.get("host2"));
 
-    console.log(ic.root.hosts.get("host2"));
-
-  await assertObjects(
+  /*await assertObjects(
     t,
     ic.root.hosts,
     root1(ic.root, ["/L1/n1/host2", "/L1/host1"])
-  );
+  );*/
 });
 
 test("Host extends", t => {
