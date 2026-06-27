@@ -49,7 +49,7 @@ export function extract(object, type = object.constructor) {
             result[name] = extract(value);
           }
         } else {
-          const key = value.constructor.key || 'name';
+          const key = value.constructor.key || "name";
           result[name] = { [key]: value[key], type: value.constructor.name };
         }
       }
@@ -86,12 +86,7 @@ export function assign(attribute, object, value) {
       //console.log("ASSIGN", object.fullName, attribute.name, value.name);
       if (current) {
         if (typeof current.set === "function") {
-          const keyName = attribute.type.key;
-          if (keyName) {
-            current.set(value[keyName], value);
-          } else {
-            current.set(value.name, value);
-          }
+          current.set(value[attribute.type.key || "name"], value);
         } else {
           if (typeof current.add === "function") {
             if (value instanceof Set) {

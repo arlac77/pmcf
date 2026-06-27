@@ -31,14 +31,14 @@ test("Network addresses", t => {
   t.is(n1.scope, "global");
 
   const s1 = n1.subnets.get("10.0/16");
+  t.true(s1.networks.has(n1));
   t.is(s1.name, "10.0/16");
   t.is(s1.prefixLength, 16);
-  t.true(s1.networks.has(n1));
 
   const s2 = n1.subnets.get("fe80::/64");
+  t.true(s2.networks.has(n1));
   t.is(s2.name, "fe80::/64");
   t.is(s2.prefixLength, 64);
-  t.true(s2.networks.has(n1));
 });
 
 test("Network bridges", t => {
