@@ -11,18 +11,18 @@ test("load all", async t => {
 
   await ic.loadAll();
 
-  const location1 = await ic.named("/L1");
-  t.is(location1.owner, ic.root);
-  t.is(location1.name, "L1");
-  t.is(location1.fullName, "/L1");
+  const owner1 = await ic.named("/L1");
+  t.is(owner1.owner, ic.root);
+  t.is(owner1.name, "L1");
+  t.is(owner1.fullName, "/L1");
 
   const host1 = await ic.named("/L1/host1");
-  t.is(host1.owner, location1);
+  t.is(host1.owner, owner1);
   t.is(host1.name, "host1");
   t.is(host1.fullName, "/L1/host1");
 
   const network1 = await ic.named("/L1/n1");
-  t.is(network1.owner, location1);
+  t.is(network1.owner, owner1);
   t.is(network1.name, "n1");
   t.is(network1.fullName, "/L1/n1");
 

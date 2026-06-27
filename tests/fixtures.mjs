@@ -67,7 +67,6 @@ export function root1(root, filter) {
     name: "host1",
     instanceof: Host,
     owner: L1,
-    location: L1,
     os: "linux",
     depends: ["btrfs-progs", "d1", "d2-linux", "d3"],
     replaces: ["r1", "r2-linux", "r3"],
@@ -119,7 +118,6 @@ export function root1(root, filter) {
     domain: "mydomain.com",
     instanceof: Host,
     owner: L1n1,
-    location: L1,
     os: "linux",
     packaging: new Set(["arch"]),
     networkInterfaces: {
