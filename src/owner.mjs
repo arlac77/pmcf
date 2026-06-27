@@ -5,10 +5,9 @@ import { AggregatedMap } from "aggregated-map";
 import {
   string_set_attribute_writable,
   string_attribute_writable,
-  boolean_attribute_writable,
   email_attribute
 } from "pacc";
-import { asIterator, asArray, union } from "./utils.mjs";
+import { asArray, union } from "./utils.mjs";
 import { Base } from "./base.mjs";
 import { Subnet, SUBNET_GLOBAL_IPV4, SUBNET_GLOBAL_IPV6 } from "./subnet.mjs";
 import {
@@ -51,8 +50,7 @@ export class Owner extends Base {
       ...email_attribute,
       name: "administratorEmail",
       writable: true
-    },
-    template: { ...boolean_attribute_writable, name: "template", private: true }
+    }
   };
 
   static {
@@ -63,15 +61,17 @@ export class Owner extends Base {
   networks = new Map();
   networkInterfaces = new Map();
   clusters = new Map();
-  hosts = new Map();
-  _bridges = new Set();
+  _hosts = new Map();
   _subnets = new Map();
 
-  /**
-   * @return {boolean}
-   */
-  get isTemplate() {
-    return this.template ?? super.isTemplate;
+  get hosts()
+  {
+    return this._hosts;
+  }
+
+  set hosts(value)
+  {
+    this._hosts = value;
   }
 
   get services() {
@@ -141,87 +141,6 @@ export class Owner extends Base {
   subnetForAddress(address) {
     return this.subnets.values().find(subnet => subnet.matchesAddress(address));
   }
-
-  get bridges() {
-    return this._bridges;
-  }
-
-  addBridge(network, destinationNetworks) {
-    if (destinationNetworks) {
-      let bridge;
-
-      for (bridge of this._bridges) {
-        if (bridge.has(network.name)) {
-          bridge.delete(network.name);
-          bridge.add(network);
-          break;
-        }
-
-        if (bridge.has(network)) {
-          break;
-        }
-      }
-
-      if (!bridge) {
-        bridge = new Set([network]);
-        this._bridges.add(bridge);
-      }
-
-      for (const nameOrNetwork of asIterator(destinationNetworks)) {
-        const other =
-          nameOrNetwork instanceof Owner
-            ? nameOrNetwork
-            : this.networkNamed(nameOrNetwork);
-        if (other) {
-          if (!bridge.has(other)) {
-            bridge.add(other);
-            other.bridge = bridge;
-          }
-        } else {
-          this.error("Unknown destination", nameOrNetwork);
-          //  bridge.add(nameOrNetwork);
-          //  this.finalize(() => this._resolveBridges());
-        }
-      }
-
-      return bridge;
-    }
-  }
-
-  /*
-  _resolveBridges() {
-    for (const bridge of this._bridges) {
-      const subnets = new Map();
-
-      for (let network of bridge) {
-        if (typeof network === "string") {
-          const other = this.networkNamed(network);
-
-          if (other) {
-            bridge.delete(network);
-            bridge.add(other);
-            other.bridge = bridge;
-            network = other;
-          } else {
-            this.error(`Unresolvabale bridge network`, network);
-          }
-        }
-        // enshure only one subnet address in the bridge
-        for (const subnet of network.subnets) {
-          const present = subnets.get(subnet.address);
-          if (present) {
-
-            for (const n of subnet.networks) {
-              present.networks.add(n);
-            }
-          } else {
-            subnets.set(subnet.address, subnet);
-          }
-        }
-      }
-    }
-  }
-*/
 
   get derivedPackaging() {
     let all = new Set();
