@@ -85,8 +85,7 @@ export class Host extends ServiceOwner {
       name: "extends",
       type: Host
     },
-    model: { ...string_attribute, name: "model" },
-    isModel: { ...boolean_attribute_false, name: "isModel" }
+    model: { ...string_attribute, name: "model" }
   };
 
   static {
