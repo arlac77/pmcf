@@ -1,18 +1,14 @@
 import { AggregatedMap } from "aggregated-map";
 import { addType } from "pmcf";
 import { Owner } from "./owner.mjs";
-import { networkAttributes, networks_attribute } from "./common-attributes.mjs";
+import { networkAttributes, bridges_attribute } from "./common-attributes.mjs";
 
 export class Network extends Owner {
   static name = "network";
   static owners = [Owner, "root"];
   static attributes = {
     ...networkAttributes,
-    bridges: {
-      ...networks_attribute,
-      name: "bridges",
-      backpointer: { ...networks_attribute, name: "bridges" }
-    }
+    bridges: bridges_attribute
   };
 
   static {
@@ -43,7 +39,7 @@ export class Network extends Owner {
   get hosts() {
     return this.bridges.size > 1
       ? new AggregatedMap([...this.bridges].map(network => network._hosts))
-      : super.hosts;      
+      : super.hosts;
   }
 
   set secretName(value) {
