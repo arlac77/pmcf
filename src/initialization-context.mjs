@@ -61,11 +61,17 @@ export class InitializationContext {
       case "function":
         this.error("Invalid value", attribute.name, value);
         break;
+      case "object":
+        if (attribute.type && value instanceof attribute.type) {
+          assign(attribute, object, value);
+        } else {
+          const newObject = create(attribute.type, object, value);
+          this.read(newObject, value);
+          assign(attribute, object, newObject);
+        }
+        break;
 
-      case "boolean":
-      case "bigint":
-      case "number":
-      case "string":
+      default:
         {
           let o = this.named(value, object);
 
@@ -92,17 +98,6 @@ export class InitializationContext {
               this.resolveLater(object, attribute, value);
             }
           }
-        }
-
-        break;
-
-      case "object":
-        if (attribute.type && value instanceof attribute.type) {
-          assign(attribute, object, value);
-        } else {
-          const newObject = create(attribute.type, object, value);
-          this.read(newObject, value);
-          assign(attribute, object, newObject);
         }
         break;
     }
