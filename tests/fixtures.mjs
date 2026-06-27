@@ -119,7 +119,6 @@ export function root1(root, filter) {
     domain: "mydomain.com",
     instanceof: Host,
     owner: L1n1,
-    location: L1,
     os: "linux",
     packaging: new Set(["arch"]),
     networkInterfaces: {

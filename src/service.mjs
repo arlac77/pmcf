@@ -261,10 +261,10 @@ export class Service extends Base {
 
   get packageData() {
     const packageData = super.packageData;
-    const location = `${this.owner.name}-${this.host.name}`;
-    packageData.properties.name = `${this.type}-${location}`;
+    const name = `${this.owner.name}-${this.host.name}`;
+    packageData.properties.name = `${this.type}-${name}`;
     packageData.properties.description = `${this.type} service definitions for ${this.fullName}`;
-    packageData.properties.groups.push("service-config", location);
+    packageData.properties.groups.push("service-config", name);
     return packageData;
   }
 

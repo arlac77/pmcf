@@ -104,7 +104,6 @@ test("expression", t => {
 
   t.is(l1.expression("name"), "l1");
   t.is(l1.expression("owner.name"), "");
-  //  t.is(l1.expression("location.name"), "l1");
   t.is(h1.expression("networkInterfaces.eth0.name"), "eth0");
   t.is(h1.expression("networkInterfaces.eth0.metric"), 1);
   t.is(h1.expression("networkInterfaces.eth0.network.name"), "n1");
