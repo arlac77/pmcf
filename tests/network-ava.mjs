@@ -2,28 +2,25 @@ import test from "ava";
 import {
   InitializationContext,
   Network,
-  Host,
   assign,
-  networks_attribute,
-  hosts_attribute
+  networks_attribute
 } from "pmcf";
 import { assertObject } from "./util.mjs";
 import { root1 } from "./fixtures.mjs";
 
-test("Network basics", async t => {
+test("Network load", async t => {
   const ic = new InitializationContext(
     new URL("fixtures/root1", import.meta.url).pathname
   );
   await ic.loadAll();
-  await assertObject(
-    t,
-    await ic.root.named("/L1/n1"),
-    root1(ic.root, "/L1/n1")
-  );
+
+  const n1 = ic.root.named("/L1/n1");
+  console.log(n1);
+  await assertObject(t, n1, root1(ic.root, "/L1/n1"));
 });
 
 test("Network addresses", t => {
-  const ic = new InitializationContext("/");
+  const ic = new InitializationContext();
   const n1 = new Network();
   ic.read(n1, {
     name: "n1",
