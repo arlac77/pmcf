@@ -24,7 +24,7 @@ export class SystemdJournalRemoteService extends Service {
     SplitMode: {
       ...string_attribute_writable,
       name: "SplitMode",
-      values: [false, "host"],
+      values: new Set([false, "host"]),
       configurable: true
     },
     ServerKeyFile: {

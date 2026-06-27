@@ -54,7 +54,7 @@ export class kea extends Service {
       ...string_attribute_writable,
       name: "ddns-conflict-resolution-mode",
       configurable: true
-      //values: ["check-exists-with-dhcid","no-check-with-dhcid"]
+      //values: new Set(["check-exists-with-dhcid","no-check-with-dhcid"])
     }
   };
   static service = {

@@ -39,14 +39,14 @@ export class Host extends ServiceOwner {
     os: {
       ...string_attribute_writable,
       name: "os",
-      values: ["osx", "windows", "linux"]
+      values: new Set(["osx", "windows", "linux"])
     },
     "machine-id": { ...string_attribute_writable, name: "machine-id" },
     distribution: { ...string_attribute_writable, name: "distribution" },
     deployment: {
       ...string_attribute_writable,
       name: "deployment",
-      values: ["production", "development"]
+      values: new Set(["production", "development"])
     },
     priority: priority_attribute,
     weight: { ...number_attribute_writable, name: "weight" },
@@ -56,7 +56,7 @@ export class Host extends ServiceOwner {
     chassis: {
       ...string_attribute_writable,
       name: "chassis",
-      values: [
+      values: new Set([
         "phone",
         "tablet",
         "router",
@@ -70,12 +70,12 @@ export class Host extends ServiceOwner {
         "battery",
         "virtual",
         "dehumidifier"
-      ]
+      ])
     },
     architecture: {
       ...string_attribute_writable,
       name: "architecture",
-      values: ["x86", "x86_64", "aarch64", "armv7", "riscv"]
+      values: new Set(["x86", "x86_64", "aarch64", "armv7", "riscv"])
     },
     replaces: { ...string_set_attribute_writable, name: "replaces" },
     depends: { ...string_set_attribute_writable, name: "depends" },
@@ -85,8 +85,7 @@ export class Host extends ServiceOwner {
       name: "extends",
       type: Host
     },
-    model: { ...string_attribute, name: "model" },
-    isModel: { ...boolean_attribute_false, name: "isModel" }
+    model: { ...string_attribute, name: "model" }
   };
 
   static {
