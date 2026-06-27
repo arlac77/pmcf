@@ -184,20 +184,19 @@ export class InitializationContext {
 
       owner = await this.load(parentName);
 
-      if (owner) {
-        //console.log(`PARENT NAME A "${name}" "${parentName}"`, owner?.fullName);
+      if (!owner) {
+        this.error(`No Parent for "${name}" "${parentName}"`);
+        return;
+      }
+      //console.log(`PARENT NAME A "${name}" "${parentName}"`, owner?.fullName);
 
-        data.name = name.substring(owner.fullName.length + 1);
+      data.name = name.substring(owner.fullName.length + 1);
 
-        /*console.log(
+      /*console.log(
           `PARENT NAME B "${name}" "${parentName}" >"${data.name}"<`,
           owner.typeName,
           owner.fullName
         );*/
-      } else {
-        this.error(`No Parent for "${name}" "${parentName}"`);
-        return;
-      }
     } else {
       owner = this.root;
       data.name = name;
@@ -217,13 +216,7 @@ export class InitializationContext {
       return assign(attribute, owner, object);
     }
 
-    /*console.log("LOAD", [
-      name,
-      type.name,
-      owner.fullName,
-      data.name,
-      object.fullName
-    ]);*/
+    this.error(`No attribute to assign ${type.name} to ${owner.fullName}`);
   }
 
   async loadAll() {
