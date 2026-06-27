@@ -96,7 +96,6 @@ generates config packages for:
 *   [cidrAddresses](#cidraddresses)
     *   [Parameters](#parameters-18)
 *   [secretName](#secretname)
-*   [isTemplate](#istemplate-1)
 *   [subnetForAddress](#subnetforaddress)
     *   [Parameters](#parameters-19)
 *   [serviceEndpoints](#serviceendpoints)
@@ -363,9 +362,13 @@ Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Gl
 
 Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
-## isTemplate
+## subnetForAddress
 
-Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
+### Parameters
+
+*   `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+
+Returns **Subnet?**&#x20;
 
 ## subnetForAddress
 
