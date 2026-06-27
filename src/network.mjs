@@ -1,3 +1,4 @@
+import { AggregatedMap } from "aggregated-map";
 import { addType } from "pmcf";
 import { Owner } from "./owner.mjs";
 import { networkAttributes, networks_attribute } from "./common-attributes.mjs";
@@ -7,9 +8,10 @@ export class Network extends Owner {
   static owners = [Owner, "root"];
   static attributes = {
     ...networkAttributes,
-    bridge: {
+    bridges: {
       ...networks_attribute,
-      name: "bridge"
+      name: "bridges",
+      backpointer: { ...networks_attribute, name: "bridges" }
     }
   };
 
@@ -21,7 +23,12 @@ export class Network extends Owner {
   scope;
   metric;
   gateway;
-  _bridge;
+  bridges = new Set();
+
+  constructor() {
+    super();
+    this.bridges.add(this);
+  }
 
   get network() {
     return this;
@@ -33,32 +40,10 @@ export class Network extends Owner {
     }
   }
 
-  networkNamed(name) {
-    if (this.isNamed(name)) {
-      return this;
-    }
-    return super.networkNamed(name);
-  }
-
   get hosts() {
-    if (this.bridge) {
-      let hosts = new Set();
-      for (const network of this.bridge) {
-        hosts = hosts.union(network.hosts());
-      }
-      return hosts;
-    }
-
-    return super.hosts;
-  }
-
-  get bridge() {
-    return this._bridge;
-  }
-
-  set bridge(network) {
-    this._bridge = this.addBridge(this, network);
-    network.bridge = this.bridge; // TODO should happen in addBridge
+    return this.bridges.size > 1
+      ? new AggregatedMap([...this.bridges].map(network => network._hosts))
+      : super.hosts;      
   }
 
   set secretName(value) {

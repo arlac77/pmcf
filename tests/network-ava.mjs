@@ -1,5 +1,12 @@
 import test from "ava";
-import { InitializationContext, Network, assign, networks_attribute } from "pmcf";
+import {
+  InitializationContext,
+  Network,
+  Host,
+  assign,
+  networks_attribute,
+  hosts_attribute
+} from "pmcf";
 import { assertObject } from "./util.mjs";
 import { root1 } from "./fixtures.mjs";
 
@@ -42,24 +49,37 @@ test("Network addresses", t => {
 });
 
 test("Network bridges", t => {
-  const ic = new InitializationContext("/");
+  const ic = new InitializationContext();
 
-  /*
-  const n1 = new Network(owner, { name: "n1" });
-  const n2 = new Network(owner, { name: "n2", bridge: "n1" });
-  t.true(n2.bridge.has(n1));
-  t.true(n1.bridge.has(n2));
-  */
+  const n1 = new Network();
+  ic.read(n1, { name: "n1", bridges: "/n2" });
+  assign(networks_attribute, ic.root, n1);
 
-  const n3 = new Network();
-  ic.read(n3, { name: "n3", bridge: "/n4" });
-  assign(networks_attribute, ic.root, n3);
-  const n4 = new Network();
-  ic.read(n4, { name: "n4" });
-  assign(networks_attribute, ic.root, n4);
+  const n1h1 = new Host();
+  ic.read(n1h1, { name: "n1h1" });
+  assign(hosts_attribute, n1, n1h1);
+
+  const n2 = new Network();
+  ic.read(n2, { name: "n2", hosts: { name: "n2h1" } });
+  assign(networks_attribute, ic.root, n2);
+
+  const n2h1 = new Host();
+  ic.read(n2h1, { name: "n2h1" });
+  assign(hosts_attribute, n2, n2h1);
 
   ic.resolveOutstanding();
 
-  t.true(n4.bridge.has(n3));
-  t.true(n3.bridge.has(n4));
+  //console.log(n1.bridges);
+  //console.log(n2.bridges);
+  //console.log([...n1.bridges].map(n => n.name));
+  //console.log([...n1.hosts].map(n => n.name));
+
+  t.true(n1.bridges.has(n2));
+  t.true(n2.bridges.has(n1));
+
+  t.is(n1.hosts.get("n1h1"), n1h1);
+  t.is(n1.hosts.get("n2h1"), n2h1);
+
+  t.is(n2.hosts.get("n1h1"), n1h1);
+  t.is(n2.hosts.get("n2h1"), n2h1);
 });
