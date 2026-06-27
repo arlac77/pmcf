@@ -80,16 +80,8 @@ export class Owner extends Base {
     );
   }
 
-  hostNamed(name) {
-    return this.hosts.get(name) || this.clusters.get(name);
-  }
-
   get network() {
     return [...this.networks.values()][0] || super.network;
-  }
-
-  networkNamed(name) {
-    return this.networks.get(name);
   }
 
   get subnets() {
