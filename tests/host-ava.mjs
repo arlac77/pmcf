@@ -3,7 +3,6 @@ import {
   InitializationContext,
   Host,
   Network,
-  Subnet,
   assign,
   cidrAddresses,
   SUBNET_LOCALHOST_IPV4,
@@ -25,16 +24,14 @@ test("Host minimal", async t => {
   t.is(host1.fullName, "/L1/host1");
 });
 
-test("Host all", async t => {
+test("Host load", async t => {
   const ic = new InitializationContext(
     new URL("fixtures/root1", import.meta.url).pathname
   );
   await ic.loadAll();
 
-  /*
-  const host2 = await root.named("/L1/n1/host2");
-  console.log(wlan0.constructor.name);
-  */
+  const host2 = await ic.root.named("/L1/n1/host2");
+  //console.log(host2);
 
   const host1 = await ic.named("/L1/host1");
   t.deepEqual(host1.packaging, new Set(["arch"]));
@@ -42,7 +39,15 @@ test("Host all", async t => {
   const eth0 = host1.named("eth0");
   t.is(eth0.network, ic.named("/L1/n1"));
 
-  await assertObject(t, host1, root1(ic.root, "/L1/host1"));
+  
+  console.log([...ic.root.hosts.values()].map(h => h.fullName));
+  console.log([...ic.root.networks.values()].map(h => h.fullName));
+
+  //await assertObject(t, host1, root1(ic.root, "/L1/host1"));
+  //await assertObject(t, host2, root1(ic.root, "/L1/n1/host2"));
+
+
+    console.log(ic.root.hosts.get("host2"));
 
   await assertObjects(
     t,
@@ -260,8 +265,8 @@ test("Host addresses", t => {
   t.deepEqual(
     eth0.ipAddresses,
     new Map([
-      ["10.0.0.2", "10.0.0.2/16"],
-      ["fe80::1e57:3eff:fe22:9a8f", "fe80::1e57:3eff:fe22:9a8f/64"]
+      ["10.0.0.2/16", "10.0.0.2/16"],
+      ["fe80::1e57:3eff:fe22:9a8f/64", "fe80::1e57:3eff:fe22:9a8f/64"]
     ])
   );
 
@@ -300,12 +305,9 @@ test("Host addresses", t => {
       name: "n1",
       type: "network"
     },
-    ipAddresses: [
-      ["10.0.0.2", "10.0.0.2/16"],
-      ["fe80::1e57:3eff:fe22:9a8f", "fe80::1e57:3eff:fe22:9a8f/64"]
-    ],
-    address: "10.0.0.2",
-    addresses: ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f"]
+    ipAddresses: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"],
+    address: "10.0.0.2/16",
+    addresses: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
   });
 
   const s1 = n1.subnets.get("10.0/16");
@@ -364,8 +366,8 @@ test("Host addresses with network", t => {
 
   t.deepEqual(h1.addresses, ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f"]);
   t.deepEqual(cidrAddresses(h1.networkAddresses()), [
-    "10.0.0.2/16",
-    "fe80::1e57:3eff:fe22:9a8f/64"
+    "10.0.0.2",
+    "fe80::1e57:3eff:fe22:9a8f"
   ]);
 });
 

@@ -205,13 +205,13 @@ export class InitializationContext {
 
     object = create(type, owner, data);
 
-    //console.log(`LOAD B "${fileName}" "${name}" "${type?.name}"`);
-
     this.read(object, data);
 
-    for (const [path, attribute] of attributeIterator(
-      owner.constructor.attributes,
-      attribute => attribute.type === type
+    //console.log(`LOAD B "${fileName}" "${name}" "${type?.name}" -> ${object.name}`);
+
+    for (const [path, attribute] of extendingAttributeIterator(
+      owner.constructor,
+      attribute => attribute.type === type && attribute.collection
     )) {
       //console.log("ASSIGN",attribute.name, owner.fullName, object.name);
       return assign(attribute, owner, object);

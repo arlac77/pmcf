@@ -42,81 +42,83 @@ generates config packages for:
 ### Table of Contents
 
 *   [Base](#base)
+    *   [Parameters](#parameters)
     *   [mapFromDirections](#mapfromdirections)
-        *   [Parameters](#parameters)
-    *   [unionFromDirections](#unionfromdirections)
         *   [Parameters](#parameters-1)
-    *   [walkDirections](#walkdirections)
+    *   [unionFromDirections](#unionfromdirections)
         *   [Parameters](#parameters-2)
-    *   [attribute](#attribute)
+    *   [walkDirections](#walkdirections)
         *   [Parameters](#parameters-3)
-    *   [attributeIterator](#attributeiterator)
+    *   [attribute](#attribute)
         *   [Parameters](#parameters-4)
-    *   [getAttributes](#getattributes)
+    *   [attributeIterator](#attributeiterator)
         *   [Parameters](#parameters-5)
-    *   [property](#property)
+    *   [getAttributes](#getattributes)
         *   [Parameters](#parameters-6)
+    *   [property](#property)
+        *   [Parameters](#parameters-7)
     *   [priority](#priority)
     *   [expression](#expression)
-        *   [Parameters](#parameters-7)
-    *   [templateContent](#templatecontent)
         *   [Parameters](#parameters-8)
+    *   [templateContent](#templatecontent)
+        *   [Parameters](#parameters-9)
     *   [isTemplate](#istemplate)
     *   [expand](#expand)
-        *   [Parameters](#parameters-9)
+        *   [Parameters](#parameters-10)
 *   [PortEndpoint](#portendpoint)
-    *   [Parameters](#parameters-10)
+    *   [Parameters](#parameters-11)
     *   [port](#port)
     *   [socketAddress](#socketaddress)
 *   [HTTPEndpoint](#httpendpoint)
-    *   [Parameters](#parameters-11)
+    *   [Parameters](#parameters-12)
     *   [port](#port-1)
 *   [id](#id)
-*   [domainNames](#domainnames)
 *   [InitializationContext](#initializationcontext)
-    *   [Parameters](#parameters-12)
+    *   [Parameters](#parameters-13)
+*   [SkeletonNetworkInterface](#skeletonnetworkinterface)
+    *   [networkAddresses](#networkaddresses)
+        *   [Parameters](#parameters-14)
 *   [SystemdJournalRemoteService](#systemdjournalremoteservice)
     *   [Properties](#properties)
     *   [systemdConfigs](#systemdconfigs)
-        *   [Parameters](#parameters-13)
+        *   [Parameters](#parameters-15)
 *   [SystemdJournalUploadService](#systemdjournaluploadservice)
     *   [Properties](#properties-1)
     *   [systemdConfigs](#systemdconfigs-1)
-        *   [Parameters](#parameters-14)
+        *   [Parameters](#parameters-16)
 *   [NetworkAddress](#networkaddress)
-    *   [Parameters](#parameters-15)
+    *   [Parameters](#parameters-17)
     *   [subnet](#subnet)
     *   [networkInterface](#networkinterface)
     *   [address](#address)
 *   [addresses](#addresses)
-    *   [Parameters](#parameters-16)
+    *   [Parameters](#parameters-18)
 *   [cidrAddresses](#cidraddresses)
-    *   [Parameters](#parameters-17)
-*   [SkeletonNetworkInterface](#skeletonnetworkinterface)
-    *   [networkAddresses](#networkaddresses)
-        *   [Parameters](#parameters-18)
-*   [secretName](#secretname)
-*   [subnetForAddress](#subnetforaddress)
     *   [Parameters](#parameters-19)
+*   [secretName](#secretname)
+*   [isTemplate](#istemplate-1)
 *   [serviceEndpoints](#serviceendpoints)
     *   [Parameters](#parameters-20)
-*   [subnets](#subnets)
-    *   [Parameters](#parameters-21)
 *   [domainName](#domainname)
-    *   [Parameters](#parameters-22)
+    *   [Parameters](#parameters-21)
 *   [domainFromDominName](#domainfromdominname)
-    *   [Parameters](#parameters-23)
+    *   [Parameters](#parameters-22)
 *   [sectionLines](#sectionlines)
-    *   [Parameters](#parameters-24)
+    *   [Parameters](#parameters-23)
 *   [asArray](#asarray)
-    *   [Parameters](#parameters-25)
+    *   [Parameters](#parameters-24)
 *   [asIterator](#asiterator)
-    *   [Parameters](#parameters-26)
+    *   [Parameters](#parameters-25)
 
 ## Base
 
 attributes: as declared in the types
 properties: use defined values to support attribute value definitions
+
+### Parameters
+
+*   `owner` **[Base](#base)**&#x20;
+*   `data` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?**&#x20;
 
 ### mapFromDirections
 
@@ -259,10 +261,6 @@ Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 
 Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
-## domainNames
-
-Returns **[Set](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
-
 ## InitializationContext
 
 Keeps track of all in flight object creations and loose ends during config initialization.
@@ -362,13 +360,9 @@ Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
 
 Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
-## subnetForAddress
+## isTemplate
 
-### Parameters
-
-*   `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
-
-Returns **Subnet?**&#x20;
+Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
 
 ## serviceEndpoints
 
@@ -385,14 +379,6 @@ Returns **Subnet?**&#x20;
 
 Returns **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | any)**&#x20;
 
-## subnets
-
-### Parameters
-
-*   `sources` **any**&#x20;
-
-Returns **[Set](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
-
 ## domainName
 
 Appends default domain if name does not already have a domain.
@@ -402,7 +388,7 @@ Appends default domain if name does not already have a domain.
 *   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 *   `defaultDomain` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**&#x20;
 
-Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+Returns **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ## domainFromDominName
 

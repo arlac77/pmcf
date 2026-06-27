@@ -117,7 +117,7 @@ async function _assertObject(t, visited, object, expected, path = []) {
 export async function assertObjects(t, iterator, expected, path = []) {
   const objects = new Map();
 
-  for await (const i of iterator) {
+  for (const i of iterator) {
     objects.set(i.fullName, i);
   }
 
