@@ -8,7 +8,7 @@ import {
   FAMILY_IPV6
 } from "ip-utilties";
 import { string_attribute, name_attribute, integer_attribute } from "pacc";
-import { networks_attribute, owner_attribute } from "./common-attributes.mjs";
+import { networks_attribute } from "./common-attributes.mjs";
 import { Base } from "./base.mjs";
 import { addType } from "pmcf";
 
@@ -22,8 +22,7 @@ export class Subnet extends Base {
     address: { ...name_attribute, name: "address" },
     networks: networks_attribute,
     prefixLength: { ...integer_attribute, name: "prefixLength" },
-    family: { ...string_attribute, name: "family" },
-    owner: owner_attribute
+    family: { ...string_attribute, name: "family" }
   };
 
   static {
@@ -90,8 +89,8 @@ export const SUBNET_LOCALHOST_IPV6 = new Subnet("::1/128");
 export const SUBNET_LINK_LOCAL_IPV6 = new Subnet("fe80::/64");
 
 /**
- * 
- * @param {*} sources 
+ *
+ * @param {*} sources
  * @returns {Set<string>}
  */
 export function subnets(sources) {

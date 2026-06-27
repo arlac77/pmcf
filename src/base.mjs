@@ -55,7 +55,6 @@ export class Base {
     return this.name + ".json";
   }
 
-  owner;
   description;
   name;
   properties = {};
@@ -64,22 +63,28 @@ export class Base {
   _packaging = new Set();
   _directory;
 
-  ownerFor(attribute, data) {
-    const owners = attribute.type.owners;
-
-    if (owners) {
-      for (const type of owners) {
-        if (this.typeName === type?.name) {
-          return this;
-        }
-      }
-      for (const type of owners) {
-        const owner = this[type?.name];
-        if (owner) {
-          return owner;
-        }
-      }
+  set owner(value) {
+    if (this === value || this === value?.owner) {
+      this.error("Unable to own myself",value.fullName);
+    } else {
+      this._owner = value;
     }
+  }
+
+  get owner() {
+    return this._owner;
+  }
+
+  forOwner(owner) {
+    /*if (owner === this) {
+      this.error("cant own myself");
+    }*/
+    if (this.owner !== owner) {
+      const newObject = Object.create(this);
+      newObject.owner = owner;
+      return newObject;
+    }
+
     return this;
   }
 
@@ -131,7 +136,7 @@ export class Base {
     let collected = new Set();
     for (const node of this.walkDirections(directions)) {
       const value = node[property];
-      if(value !== undefined) {
+      if (value !== undefined) {
         collected = collected.union(value);
       }
     }
@@ -211,16 +216,6 @@ export class Base {
         }
       }
     }
-  }
-
-  forOwner(owner) {
-    if (this.owner !== owner) {
-      const newObject = Object.create(this);
-      newObject.owner = owner;
-      return newObject;
-    }
-
-    return this;
   }
 
   isNamed(name) {
@@ -385,7 +380,12 @@ export class Base {
   }
 
   get directory() {
-    return this._directory ?? (this.owner?.directory ? join(this.owner.directory, this.name) : this.name);
+    return (
+      this._directory ??
+      (this.owner?.directory
+        ? join(this.owner.directory, this.name)
+        : this.name)
+    );
   }
 
   get fullName() {
@@ -484,8 +484,11 @@ export class Base {
    * @return {boolean}
    */
   get isTemplate() {
-    //console.log("T",this.name,this.owner?.name,this.owner?.owner?.name);
-    return this.template ?? (this.name?.indexOf("*") >= 0 || this.owner?.isTemplate || false);
+    //console.log("T", this.name, this.owner?.name, this.owner?.owner?.name);
+    return (
+      this.template ??
+      (this.name?.indexOf("*") >= 0 || this.owner?.isTemplate || false)
+    );
   }
 
   /**

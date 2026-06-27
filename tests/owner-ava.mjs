@@ -29,16 +29,6 @@ function to(t, owner) {
 
 to.title = (title, owner) => `${title || "owner"} ${owner.fullName}`;
 
-test("Owner ownerFor", t => {
-  const ic = new InitializationContext();
-
-  const o1 = new Owner();
-  ic.read(o1, { name: "o1" });
-  assign(owners_attribute, ic.root, o1);
-
-  t.is(o1.ownerFor(networks_attribute, { name: "n1" }), o1);
-});
-
 test("Owner read write", t => {
   const ic = new InitializationContext();
   const o1 = new Owner();
