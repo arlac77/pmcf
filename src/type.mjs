@@ -65,7 +65,7 @@ export function assign(attribute, object, value) {
 
   if (value !== undefined) {
     if (attribute.values) {
-      if (attribute.values.indexOf(value) < 0) {
+      if (!attribute.values.has(value)) {
         error("unkown value", attribute);
       }
     }

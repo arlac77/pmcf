@@ -38,7 +38,7 @@ export const endpointAttributes = {
   protocol: {
     ...string_attribute_writable,
     name: "protocol",
-    values: ["tcp", "udp", "quic"]
+    values: new Set(["tcp", "udp", "quic"])
   },
   type: type_attribute_writable,
   types: { ...string_set_attribute, name: "types" },

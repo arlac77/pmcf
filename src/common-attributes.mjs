@@ -89,18 +89,18 @@ export const networkAttributes = {
   scope: {
     ...string_attribute_writable,
     name: "scope",
-    values: ["global", "site", "link", "host"]
+    values: new Set(["global", "site", "link", "host"])
     //  default: "global"
   },
   class: {
     ...string_attribute_writable,
     name: "class",
-    values: ["10GBASE-T", "1000BASE-T", "100BASE-T", "10BASE-T"]
+    values: new Set(["10GBASE-T", "1000BASE-T", "100BASE-T", "10BASE-T"])
   },
   kind: {
     ...string_attribute_writable,
     name: "kind",
-    values: ["loopback", "ethernet", "wlan", "wireguard", "fiber", "dsl"]
+    values: new Set(["loopback", "ethernet", "wlan", "wireguard", "fiber", "dsl"])
   },
   ssid: ssid_attribute,
   psk: psk_attribute,
