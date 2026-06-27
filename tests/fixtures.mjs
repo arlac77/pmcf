@@ -125,7 +125,7 @@ export function root1(root, filter) {
         network: L1n1,
         metric: 1010,
         ssid: "ID2",
-        addresses: ["192.168.1.2"],
+        addresses: ["192.168.1.2/24"],
         kind: "wlan"
       }
     },

@@ -3,7 +3,6 @@ import {
   toInternal,
   extendingAttributeIterator
 } from "pacc";
-
 import { addServiceType } from "pmcf";
 import { asArray } from "./utils.mjs";
 
@@ -108,7 +107,7 @@ export function assign(attribute, object, value) {
             for (const v of asArray(value)) {
               current.set(v, v);
             }
-         //   console.log("SET", attribute.name, current);
+            //   console.log("SET", attribute.name, current);
           } else {
             current.set(value[attribute.type.key || "name"], value);
           }
