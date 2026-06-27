@@ -43,7 +43,8 @@ export class Base {
     directory: { ...string_attribute_writable, name: "directory" },
     packaging: { ...string_set_attribute_writable, name: "packaging" },
     disabled: { ...boolean_attribute_writable, name: "disabled" },
-    tags: { ...string_set_attribute_writable, name: "tags" }
+    tags: { ...string_set_attribute_writable, name: "tags" },
+    template: { ...boolean_attribute_writable, name: "template", private: true }
   };
 
   static {
@@ -483,7 +484,8 @@ export class Base {
    * @return {boolean}
    */
   get isTemplate() {
-    return this.name?.indexOf("*") >= 0 || this.owner?.isTemplate || false;
+    //console.log("T",this.name,this.owner?.name,this.owner?.owner?.name);
+    return this.template ?? (this.name?.indexOf("*") >= 0 || this.owner?.isTemplate || false);
   }
 
   /**

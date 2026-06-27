@@ -51,8 +51,7 @@ export class Owner extends Base {
       ...email_attribute,
       name: "administratorEmail",
       writable: true
-    },
-    template: { ...boolean_attribute_writable, name: "template", private: true }
+    }
   };
 
   static {
@@ -66,13 +65,6 @@ export class Owner extends Base {
   hosts = new Map();
   _bridges = new Set();
   _subnets = new Map();
-
-  /**
-   * @return {boolean}
-   */
-  get isTemplate() {
-    return this.template ?? super.isTemplate;
-  }
 
   get services() {
     return new AggregatedMap(
