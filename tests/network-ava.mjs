@@ -52,20 +52,14 @@ test("Network bridges", t => {
   const ic = new InitializationContext();
 
   const n1 = new Network();
-  ic.read(n1, { name: "n1", bridges: "/n2" });
+  ic.read(n1, { name: "n1", bridges: "/n2", hosts: { n1h1: {} } });
   assign(networks_attribute, ic.root, n1);
-
-  const n1h1 = new Host();
-  ic.read(n1h1, { name: "n1h1" });
-  assign(hosts_attribute, n1, n1h1);
+  const n1h1 = n1.named("n1h1");
 
   const n2 = new Network();
-  ic.read(n2, { name: "n2", hosts: { name: "n2h1" } });
+  ic.read(n2, { name: "n2", hosts: { n2h1: {} } });
   assign(networks_attribute, ic.root, n2);
-
-  const n2h1 = new Host();
-  ic.read(n2h1, { name: "n2h1" });
-  assign(hosts_attribute, n2, n2h1);
+  const n2h1 = n2.named("n2h1");
 
   ic.resolveOutstanding();
 
@@ -77,6 +71,7 @@ test("Network bridges", t => {
   t.true(n1.bridges.has(n2));
   t.true(n2.bridges.has(n1));
 
+  t.deepEqual([...n1.hosts.values()], [n1h1, n2h1]);
   t.is(n1.hosts.get("n1h1"), n1h1);
   t.is(n1.hosts.get("n2h1"), n2h1);
 
