@@ -129,7 +129,10 @@ export class Base {
   unionFromDirections(directions, property) {
     let collected = new Set();
     for (const node of this.walkDirections(directions)) {
-      collected = collected.union(node[property]);
+      const value = node[property];
+      if(value !== undefined) {
+        collected = collected.union(value);
+      }
     }
 
     return collected;
@@ -381,7 +384,7 @@ export class Base {
   }
 
   get directory() {
-    return this._directory ?? join(this.owner.directory, this.name);
+    return this._directory ?? (this.owner?.directory ? join(this.owner.directory, this.name) : this.name);
   }
 
   get fullName() {

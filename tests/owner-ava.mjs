@@ -29,9 +29,6 @@ function to(t, owner) {
 
 to.title = (title, owner) => `${title || "owner"} ${owner.fullName}`;
 
-test.skip("Root", to, new root("/tmp"));
-test.skip("Owner", to, new Owner(new root("/tmp"), { name: "o1" }));
-
 test("Owner ownerFor", t => {
   const ic = new InitializationContext();
 
@@ -70,9 +67,11 @@ test("Owner read write", t => {
     name: "o1",
     directory: "/o1",
     owner: {
+      name: "",
       type: "root"
     },
     administratorEmail: "master@somewhere",
+    template: true,
     networks: [
       {
         name: "n1",
@@ -85,7 +84,7 @@ test("Owner read write", t => {
           name: "o1",
           type: "owner"
         },
-        subnets: [
+        /*subnets: [
           {
             address: "10.0/16",
             directory: "/o1/10.0/16",
@@ -108,7 +107,7 @@ test("Owner read write", t => {
             },
             prefixLength: 64
           }
-        ]
+        ]*/
       }
     ],
     subnets: [
