@@ -71,6 +71,12 @@ export const subnets_attribute = {
   backpointer: networks_attribute
 };
 
+export const bridges_attribute = {
+  ...networks_attribute,
+  name: "bridges",
+  backpointer: { ...networks_attribute, name: "bridges" }
+};
+
 export const psk_attribute = { ...string_attribute_writable, name: "psk" };
 export const ssid_attribute = { ...string_attribute_writable, name: "ssid" };
 export const hostname_attribute = {

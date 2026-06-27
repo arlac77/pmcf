@@ -4,7 +4,7 @@
   "scope": "global",
   "ssid": "ID2",
   "metric": 1010,
-  "bridge": "/L1/n2",
+  "bridges": "/L1/n2",
   "gateway": "/L1/host1",
   "multicastDNS": true,
   "properties": {

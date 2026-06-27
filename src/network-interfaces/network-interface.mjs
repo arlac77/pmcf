@@ -81,10 +81,10 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   set ipAddresses(value) {
     for (const address of asArray(value)) {
       /*console.log(
-        "SET ADDR",
+        "SET ipAddresses",
         address,
         normalizeIP(address),
-        this.addSubnet(address)
+        this.addSubnet(address) || address
       );*/
       this._ipAddresses.set(
         normalizeIP(address),

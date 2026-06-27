@@ -11,11 +11,11 @@ import {
   boolean_attribute_false,
   priority_attribute
 } from "pacc";
-import { addresses, addType } from "pmcf";
+import { addresses, addType, assign } from "pmcf";
 import {
   networkAddressAttributes,
   networkInterfaces_attribute,
-  cluster_attribute
+  hosts_attribute
 } from "./common-attributes.mjs";
 import { ServiceOwner } from "./service-owner.mjs";
 import { addHook } from "./hooks.mjs";
@@ -371,7 +371,8 @@ export class Host extends ServiceOwner {
     this._networkInterfaces.set(networkInterface.name, networkInterface);
 
     if (!this.isTemplate && networkInterface.network) {
-      networkInterface.network.hosts = this;
+      assign(hosts_attribute, networkInterface.network, this);
+      //networkInterface.network.hosts = this;
     }
   }
 
