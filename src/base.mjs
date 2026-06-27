@@ -12,6 +12,7 @@ import {
   parse,
   globals,
   expand,
+  extract,
   toExternal,
   filterPublic,
   extendingAttributeIterator,
@@ -23,7 +24,7 @@ import {
   boolean_attribute_writable
 } from "pacc";
 import { union } from "./utils.mjs";
-import { addType, extract } from "pmcf";
+import { addType } from "pmcf";
 import { owner_attribute } from "./common-attributes.mjs";
 
 /**
@@ -521,6 +522,6 @@ export class Base {
   }
 
   toJSON() {
-    return extract(this, this.constructor);
+    return extract(this);
   }
 }

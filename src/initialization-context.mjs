@@ -1,12 +1,12 @@
 import { readFile, glob } from "node:fs/promises";
 import { join } from "node:path";
 import {
-  attributeIterator,
   extendingAttributeIterator,
   types,
-  resolveTypeLinks
+  resolveTypeLinks,
+  create
 } from "pacc";
-import { Base, root, assign, create } from "pmcf";
+import { Base, root, assign } from "pmcf";
 
 /**
  * Keeps track of all in flight object creations and loose ends during config initialization.
