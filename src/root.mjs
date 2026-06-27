@@ -6,7 +6,7 @@ export class root extends Owner {
     addType(this);
   }
 
-  constructor(directory) {
+  constructor(directory="/") {
     super();
     this.directory = directory;
     this.name = "";
