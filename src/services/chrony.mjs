@@ -2,11 +2,10 @@ import { join } from "node:path";
 import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import { FileContentProvider } from "npm-pkgbuild";
 import { isLinkLocal } from "ip-utilties";
-import { Service, serviceEndpoints, addType, ExtraSourceService } from "pmcf";
+import { serviceEndpoints, addType, ExtraSourceService } from "pmcf";
 import { writeLines } from "../utils.mjs";
 
 export class chrony extends ExtraSourceService {
-  
   static service = {
     systemdService: "chronyd.service",
     extends: ["ntp"],
