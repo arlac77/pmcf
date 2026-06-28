@@ -64,6 +64,10 @@ test("Network bridges", t => {
   t.is(n1.gateway, n1h1);
   const n1c1 = n1.named("n1c1");
 
+  n1.gateway = n1h1;
+  t.is(n1.gateway, n1h1);
+  const n1c1 = n1.named("n1c1");
+
   const n2 = new Network();
   ic.read(n2, { name: "n2", hosts: { n2h1: {} } });
   assign(networks_attribute, ic.root, n2);
