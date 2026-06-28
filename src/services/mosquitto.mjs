@@ -2,7 +2,7 @@ import { port_attribute, string_attribute_writable } from "pacc";
 import { Service, addType } from "pmcf";
 
 export class mosquitto extends Service {
-  static specializationOf = Service;
+  
   static attributes = {
     listener: {
       ...port_attribute,

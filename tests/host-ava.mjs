@@ -265,8 +265,8 @@ test("Host addresses", t => {
   t.deepEqual(
     eth0.ipAddresses,
     new Map([
-      ["10.0.0.2/16", "10.0.0.2/16"],
-      ["fe80::1e57:3eff:fe22:9a8f/64", "fe80::1e57:3eff:fe22:9a8f/64"]
+      ["10.0.0.2", "10.0.0.2/16"],
+      ["fe80::1e57:3eff:fe22:9a8f", "fe80::1e57:3eff:fe22:9a8f/64"]
     ])
   );
 
@@ -306,11 +306,12 @@ test("Host addresses", t => {
       type: "network"
     },
     ipAddresses: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"],
-    address: "10.0.0.2/16",
-    addresses: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
+    address: "10.0.0.2",
+    addresses: ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f"]
   });
 
-  const s1 = n1.subnets.get("10.0/16");
+  console.log(eth0.subnets);
+  const s1 = eth0.subnets.get("10.0/16");
   t.is(s1.name, "10.0/16");
   t.is(s1.prefixLength, 16);
 
@@ -356,11 +357,11 @@ test("Host addresses with network", t => {
   });
   assign(hosts_attribute, owner, n1);
 
-  const s1 = n1.subnets.values().find(subnet => subnet.address === "10.0/16");
+  const s1 = n1.subnets.get("10.0/16");
   t.is(s1.name, "10.0/16");
   t.is(s1.prefixLength, 16);
 
-  const s2 = n1.subnets.values().find(subnet => subnet.address === "fe80::/64");
+  const s2 = n1.subnets.get("fe80::/64");
   t.is(s2.name, "fe80::/64");
   t.is(s2.prefixLength, 64);
 

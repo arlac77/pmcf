@@ -6,7 +6,7 @@ import { Service, serviceEndpoints, addType, ExtraSourceService } from "pmcf";
 import { writeLines } from "../utils.mjs";
 
 export class chrony extends ExtraSourceService {
-  static specializationOf = Service;
+  
   static service = {
     systemdService: "chronyd.service",
     extends: ["ntp"],
