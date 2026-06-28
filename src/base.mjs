@@ -47,7 +47,9 @@ export class Base {
     tags: { ...string_set_attribute_writable, name: "tags" },
     template: { ...boolean_attribute_writable, name: "template", private: true }
   };
-
+  /*asMapEntry = (attribute, value, object) => {
+    console.log("asMapEntry",attribute?.name,value);
+    return [value.name, value]; };*/
   static {
     addType(this);
   }
@@ -66,7 +68,7 @@ export class Base {
 
   set owner(value) {
     if (this === value || this === value?.owner) {
-      this.error("Unable to own myself",value.fullName);
+      this.error("Unable to own myself", value.fullName);
     } else {
       this._owner = value;
     }
@@ -98,8 +100,6 @@ export class Base {
 
     const parts = name.split("/");
     const first = parts.shift();
-
-    //  console.log("NAMED",this.fullName,name,parts,first);
 
     for (const [path, attribute] of extendingAttributeIterator(
       this.constructor,
