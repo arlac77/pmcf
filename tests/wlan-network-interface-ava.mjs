@@ -1,17 +1,33 @@
 import test from "ava";
-import { InitializationContext, Host, Network } from "pmcf";
+import {
+  InitializationContext,
+  Host,
+  Network,
+  wlan,
+  networks_attribute,
+  hosts_attribute,
+  assign
+} from "pmcf";
+
+test("WLAN common names", t => {
+  t.false(wlan.isCommonName("eth0"));
+  t.true(wlan.isCommonName("wlan0"));
+});
 
 test("WLAN basics", t => {
-  const ic = new InitializationContext("/");
-  const n1 = new Network(ic.root);
-  ic.read(n1,{
+  const ic = new InitializationContext();
+  const n1 = new Network();
+  ic.read(n1, {
     name: "W1000000",
     subnets: ["10.0.0.2/16"]
   });
 
-  const h2 = new Host(ic.root);
-  ic.read(h2,{
-    name: "h2",
+  t.deepEqual([...n1.subnets.keys()], ["10.0/16"]);
+
+  assign(networks_attribute, ic.root, n1);
+  const h1 = new Host();
+  ic.read(h1, {
+    name: "h1",
     networkInterfaces: {
       wlan0: {
         network: n1,
@@ -19,8 +35,15 @@ test("WLAN basics", t => {
       }
     }
   });
-  const wlan0 = h2.networkInterfaces.get("wlan0");
+  assign(hosts_attribute, n1, h1);
 
+  const wlan0 = h1.networkInterfaces.get("wlan0");
+
+  t.is(wlan0.address, "10.0.0.2");
+
+  t.deepEqual([...wlan0.subnets.keys()], ["10.0/16"]);
+
+  t.true(wlan0 instanceof wlan);
   t.is(wlan0.name, "wlan0");
   t.is(wlan0.kind, "wlan");
   t.is(wlan0.secretName, "W1000000.password");

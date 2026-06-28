@@ -1,6 +1,17 @@
 import { addType as addTypeBasic, toInternal } from "pacc";
+import { normalizeCIDR, normalizeIP } from "ip-utilties";
+
 import { addServiceType } from "pmcf";
 import { asArray } from "./utils.mjs";
+
+addTypeBasic({
+  name: "ip",
+  primitive: true,
+  asMapEntry: (attribute, value, object) => [
+    normalizeIP(value),
+    object.addSubnet(value)
+  ]
+});
 
 export function addType(type) {
   addTypeBasic(type);
@@ -26,24 +37,8 @@ export function assign(attribute, object, value) {
     }
 
     if (attribute.backpointer) {
-      /*console.log(
-            "BACKPOINTER",
-            attribute.backpointer.name,
-            value.fullName,
-            object.fullName
-          );*/
       assign(attribute.backpointer, value, object);
     }
-
-    /*if (!attribute.type.primitive) {
-      if (typeof attribute.type !== "function") {
-        //   error(`XX Invalide type ${attribute.name} ${attribute.type}`,attribute);
-      } else {
-        if (value.constructor instanceof attribute.type) {
-          error(`Invalide type ${value.constructor.name}`, attribute);
-        }
-      }
-    }*/
 
     if (attribute.collection) {
       const current = object[attribute.name];
@@ -52,10 +47,20 @@ export function assign(attribute, object, value) {
       if (current) {
         if (typeof current.set === "function") {
           if (attribute.type.primitive) {
-            for (const v of asArray(value)) {
-              current.set(v, v);
+            if (attribute.type.asMapEntry) {
+              for (const v of asArray(value)) {
+                const [key, value] = attribute.type.asMapEntry(
+                  attribute,
+                  v,
+                  object
+                );
+                current.set(key, value);
+              }
+            } else {
+              for (const v of asArray(value)) {
+                current.set(v, v);
+              }
             }
-            //   console.log("SET", attribute.name, current);
           } else {
             current.set(value[attribute.type.key || "name"], value);
           }
