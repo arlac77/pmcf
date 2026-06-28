@@ -14,7 +14,7 @@ import { filterConfigurable, sectionLines } from "../utils.mjs";
  */
 export class SystemdJournalRemoteService extends Service {
   static name = "systemd-journal-remote";
-  static specializationOf = Service;
+  
   static attributes = {
     Seal: {
       ...boolean_attribute_writable,

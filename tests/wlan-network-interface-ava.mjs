@@ -12,6 +12,7 @@ import {
 test("WLAN common names", t => {
   t.false(wlan.isCommonName("eth0"));
   t.true(wlan.isCommonName("wlan0"));
+  t.true(wlan.isCommonName("wlan"));
 });
 
 test("WLAN basics", t => {

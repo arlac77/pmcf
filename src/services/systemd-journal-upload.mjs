@@ -13,7 +13,7 @@ import { filterConfigurable, sectionLines } from "../utils.mjs";
  */
 export class SystemdJournalUploadService extends Service {
   static name = "systemd-journal-upload";
-  static specializationOf = Service;
+  
   static attributes = {
     URL: { ...string_attribute_writable, name: "URL", configurable: true },
     ServerKeyFile: {

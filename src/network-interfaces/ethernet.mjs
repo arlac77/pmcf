@@ -3,7 +3,6 @@ import { addType } from "../type.mjs";
 import { networkInterfaces_attribute } from "../common-attributes.mjs";
 
 export class ethernet extends NetworkInterface {
-  static specializationOf = NetworkInterface;
   static attributes = {
     arpbridge: {
       ...networkInterfaces_attribute,
