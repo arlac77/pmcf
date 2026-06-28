@@ -224,7 +224,14 @@ export class Base {
   }
 
   *find(pattern) {
+    const seen = new Set();
+
     for (const node of this.walkDirections(["children"])) {
+      if (seen.has(node)) {
+        continue;
+      }
+      seen.add(node);
+
       for (const p of pattern) {
         if (node.fullName.match(p)) {
           yield node;
