@@ -18,8 +18,19 @@ export class Network extends Owner {
   kind;
   scope;
   metric;
-  gateway;
   bridges = new Set();
+
+  get gateway() {
+    for (const b of [this, ...this.bridges]) {
+      if (b._gateway) {
+        return b._gateway;
+      }
+    }
+  }
+
+  set gateway(value) {
+    this._gateway = value;
+  }
 
   get network() {
     return this;
