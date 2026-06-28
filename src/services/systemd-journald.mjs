@@ -4,7 +4,6 @@ import { filterConfigurable, sectionLines } from "../utils.mjs";
 
 export class SystemdJournaldService extends Service {
   static name = "systemd-journald";
-
   static attributes = {
     Storage: {
       ...string_attribute_writable,
