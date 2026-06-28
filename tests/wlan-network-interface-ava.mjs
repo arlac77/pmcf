@@ -1,17 +1,26 @@
 import test from "ava";
-import { InitializationContext, Host, Network, wlan } from "pmcf";
+import {
+  InitializationContext,
+  Host,
+  Network,
+  wlan,
+  networks_attribute,
+  hosts_attribute,
+  assign
+} from "pmcf";
 
 test("WLAN basics", t => {
   const ic = new InitializationContext();
   const n1 = new Network();
-  ic.read(n1,{
+  ic.read(n1, {
     name: "W1000000",
     subnets: ["10.0.0.2/16"]
   });
 
-  const h2 = new Host();
-  ic.read(h2,{
-    name: "h2",
+  assign(networks_attribute, ic.root, n1);
+  const h1 = new Host();
+  ic.read(h1, {
+    name: "h1",
     networkInterfaces: {
       wlan0: {
         network: n1,
@@ -19,7 +28,9 @@ test("WLAN basics", t => {
       }
     }
   });
-  const wlan0 = h2.networkInterfaces.get("wlan0");
+  assign(hosts_attribute, n1, h1);
+
+  const wlan0 = h1.networkInterfaces.get("wlan0");
 
   t.true(wlan0 instanceof wlan);
   t.is(wlan0.name, "wlan0");
@@ -31,4 +42,6 @@ test("WLAN basics", t => {
 
   wlan0.secretName = "b.password";
   t.is(wlan0.secretName, "b.password");
+
+  //t.deepEqual([...wlan0.subnets.keys()], ["10.0/16"]);
 });

@@ -19,5 +19,5 @@ export class ethernet extends NetworkInterface {
     return name.match(/^eth\d+$/);
   }
 
-  arpbridge;
+  arpbridge = new Map();
 }
