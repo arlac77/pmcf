@@ -68,7 +68,13 @@ export class InitializationContext {
         ) {
           return assign(attribute, object, present);
         } else {
-          if (!attribute.type.constructWithIdentifierOnly) {
+          if (attribute.type.constructWithIdentifierOnly) {
+            return assign(
+              attribute,
+              object,
+              create(attribute.type, object, value)
+            );
+          } else {
             return this.resolveLater(object, attribute, value);
           }
         }

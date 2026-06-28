@@ -19,7 +19,7 @@ export class Subnet extends Base {
   static constructWithIdentifierOnly = true;
   static key = "address";
   static attributes = {
-    address: { ...name_attribute, name: "address" },
+    address: { ...name_attribute, name: "address", private: true },
     networks: networks_attribute,
     prefixLength: { ...integer_attribute, name: "prefixLength" },
     family: { ...string_attribute, name: "family" }
