@@ -9,13 +9,14 @@ test("Cluster basics", async t => {
   );
   await ic.loadAll();
 
-  const c1 = await ic.named("/L1/C1");
+  const c1 = ic.named("/L1/C1");
 
-  const p1eth0 = await ic.named("/L1/host1/eth0");
+  t.deepEqual([...c1.owner.hosts.keys()].sort(), ["C1", "host1", "host2"]);
 
+  const p1eth0 = ic.named("/L1/host1/eth0");
   t.is(p1eth0.network.name, "n1");
-  t.is(p1eth0.network.owner.name, "host1");
+  t.is(p1eth0.network.owner.name, "L1");
   t.true(c1.masters.indexOf(p1eth0) >= 0);
 
-  await assertObject(t, await ic.named("/L1/C1"), root1(ic.root, "/L1/C1"));
+  await assertObject(t, ic.named("/L1/C1"), root1(ic.root, "/L1/C1"));
 });

@@ -58,22 +58,34 @@ export class Owner extends Base {
   }
 
   owners = new Map();
-  _networks = new Map();
   networkInterfaces = new Map();
-  clusters = new Map();
+  _networks = new Map();
+  _clusters = new Map();
   _hosts = new Map();
   _subnets = new Map();
 
   get hosts() {
     return new AggregatedMap(
-      [this, ...this.networks.values(), ...this.owners.values()].map(
-        node => node._hosts
-      )
+      [this, ...this.networks.values(), ...this.owners.values()]
+        .map(node => [node._hosts, node._clusters])
+        .flat()
     );
   }
 
   set hosts(value) {
     this._hosts = value;
+  }
+
+  get clusters() {
+    return new AggregatedMap(
+      [this, ...this.networks.values(), ...this.owners.values()].map(
+        node => node._clusters
+      )
+    );
+  }
+
+  set clusters(value) {
+    this._clusters = value;
   }
 
   get networks() {
