@@ -4,7 +4,7 @@ import { filterConfigurable, sectionLines } from "../utils.mjs";
 
 export class SystemdTimesyncdService extends ExtraSourceService {
   static name = "systemd-timesyncd";
-  static specializationOf = Service;
+  
 
   static attributes = {
     NTP: { ...string_attribute_writable, name: "NTP", configurable: true },

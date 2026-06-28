@@ -16,7 +16,7 @@ import {
 
 export class SystemdResolvedService extends ExtraSourceService {
   static name = "systemd-resolved";
-  static specializationOf = Service;
+  
   static attributes = {
     DNS: { ...string_attribute_writable, name: "DNS", configurable: true },
     FallbackDNS: {

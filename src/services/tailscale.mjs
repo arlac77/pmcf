@@ -2,7 +2,7 @@ import { FAMILY_IPV4 } from "ip-utilties";
 import { Service, addType } from "pmcf";
 
 export class tailscale extends Service {
-  static specializationOf = Service;
+  
   static service = {
     endpoints: [
       {

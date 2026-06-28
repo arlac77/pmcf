@@ -423,7 +423,7 @@ function addressesStatement(prefix, objects, generateEmpty = false) {
 }
 
 export class bind extends ExtraSourceService {
-  static specializationOf = Service;
+  
   static attributes = {
     groups: {
       ...default_collection_attribute_writable,

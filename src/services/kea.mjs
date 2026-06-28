@@ -24,7 +24,7 @@ import { writeLines } from "../utils.mjs";
 const keaVersion = "3.0.1";
 
 export class kea extends Service {
-  static specializationOf = Service;
+  
   static attributes = {
     "ddns-send-updates": {
       ...boolean_attribute_writable_true,
