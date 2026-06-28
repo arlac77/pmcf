@@ -71,7 +71,9 @@ export class SkeletonNetworkInterface extends ServiceOwner {
   }
 
   get subnets() {
-    return new Set(this.ipAddresses.values());
+    return new Map(
+      [...new Set(this.ipAddresses.values())].map(s => [s.name, s])
+    );
   }
 
   get ipAddresses() {
