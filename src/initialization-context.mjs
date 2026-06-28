@@ -53,53 +53,31 @@ export class InitializationContext {
     if (attribute.type.primitive) {
       return assign(attribute, object, value);
     }
-
-    switch (typeof value) {
-      case "undefined":
-        return;
-
-      case "function":
-        this.error("Invalid value", attribute.name, value);
-        break;
-      case "object":
+    if (value !== undefined) {
+      if (typeof value === "object") {
         if (attribute.type && value instanceof attribute.type) {
-          assign(attribute, object, value);
-        } else {
-          const newObject = create(attribute.type, object, value);
-          this.read(newObject, value);
-          assign(attribute, object, newObject);
+          return assign(attribute, object, value);
         }
-        break;
+      } else {
+        const present = this.named(value, object);
 
-      default:
-        {
-          let o = this.named(value, object);
-
-          /*console.log(
-            "NAMED",
-            object.fullName,
-            value,
-            o?.fullName,
-            attribute.name
-          );*/
-
-          if (
-            o &&
-            (o.typeName === attribute.type.name ||
-              attribute.type.members?.has(o.typeName))
-          ) {
-            assign(attribute, object, o);
-          } else {
-            if (attribute.type.constructWithIdentifierOnly) {
-              o = create(attribute.type, object, value);
-              this.read(o, value);
-              assign(attribute, object, o);
-            } else {
-              this.resolveLater(object, attribute, value);
-            }
+        if (
+          present &&
+          (present.typeName === attribute.type.name ||
+            attribute.type.members?.has(present.typeName))
+        ) {
+          return assign(attribute, object, present);
+        } else {
+          if (!attribute.type.constructWithIdentifierOnly) {
+            return this.resolveLater(object, attribute, value);
           }
         }
-        break;
+      }
+      return assign(
+        attribute,
+        object,
+        this.read(create(attribute.type, object, value), value)
+      );
     }
   }
 
@@ -142,6 +120,8 @@ export class InitializationContext {
     if (data.extends) {
       object.materializeExtends();
     }
+
+    return object;
   }
 
   async load(fileName, type) {
@@ -197,9 +177,7 @@ export class InitializationContext {
       data.name = name;
     }
 
-    object = create(type, owner, data);
-
-    this.read(object, data);
+    object = this.read(create(type, owner, data), data);
 
     //console.log(`LOAD B "${fileName}" "${name}" "${type?.name}" -> ${object.name}`);
 
