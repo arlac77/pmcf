@@ -19,6 +19,7 @@ import { yesno } from "../utils.mjs";
 export class NetworkInterface extends SkeletonNetworkInterface {
   static name = "network_interface";
   static owners = [Host];
+  static specializationOf = NetworkInterface;
   static specializations = {};
   static factoryFor(owner, value) {
     let st = this.specializations[value.kind];
