@@ -184,7 +184,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   }
 
   get kind() {
-    return this.attribute("_kind") ?? this.network?.kind;
+    return this.attribute("_kind") ?? this.network?.kind ?? super.kind;
   }
 
   async systemdDefinitions(dir, packageData) {
