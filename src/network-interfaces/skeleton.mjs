@@ -13,14 +13,20 @@ export class SkeletonNetworkInterface extends ServiceOwner {
     return "network_interface";
   }
 
+  static commonNamePattern = new RegExp(`^${this.name}\d+$`);
+
+  static isCommonName(name) {
+    return this.commonNamePattern.test(name);
+  }
+
   static {
     addType(this);
   }
 
   _network;
 
-  get typeName() {
-    return "network_interface";
+  get kind() {
+    return this.constructor.name;
   }
 
   get host() {
@@ -37,10 +43,6 @@ export class SkeletonNetworkInterface extends ServiceOwner {
 
   get hosts() {
     return asArray(this.host);
-  }
-
-  get network_interface() {
-    return this;
   }
 
   get domainName() {
@@ -69,7 +71,9 @@ export class SkeletonNetworkInterface extends ServiceOwner {
   }
 
   get subnets() {
-    return new Set(this.ipAddresses.values());
+    return new Map(
+      [...new Set(this.ipAddresses.values())].map(s => [s.name, s])
+    );
   }
 
   get ipAddresses() {

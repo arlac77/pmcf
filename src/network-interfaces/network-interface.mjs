@@ -1,6 +1,9 @@
 import { join } from "node:path";
 import { hasWellKnownSubnet, normalizeIP } from "ip-utilties";
-import { string_attribute_writable, string_collection_attribute_writable } from "pacc";
+import {
+  string_attribute_writable,
+  default_collection_attribute_writable
+} from "pacc";
 import { network_attribute } from "../common-attributes.mjs";
 import { Host, cidrAddresses, addType } from "pmcf";
 import {
@@ -23,7 +26,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     //console.log("factoryFor", owner, value);
     if (!st) {
       for (st of Object.values(this.specializations)) {
-        if (st.isCommonName && st.isCommonName(value.name)) {
+        if (st.isCommonName(value.name)) {
           break;
         }
       }
@@ -43,17 +46,17 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     ...networkAttributes,
     ...networkAddressAttributes,
     hostName: hostname_attribute,
-    ipAddresses: { ...string_collection_attribute_writable, name: "ipAddresses" },
+    ipAddresses: {
+      ...default_collection_attribute_writable,
+      type: "ip",
+      name: "ipAddresses"
+    },
     hwaddr: { ...string_attribute_writable, name: "hwaddr" },
     destination: { ...string_attribute_writable, name: "destination" }
   };
 
   static {
     addType(this);
-  }
-
-  static isCommonName(name) {
-    return false;
   }
 
   _ipAddresses = new Map();
@@ -68,9 +71,10 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     if (this.network) {
       return this.network.addSubnet(address);
     } else {
-      if (!hasWellKnownSubnet(address)) {
+      /*if (!hasWellKnownSubnet(address)) {
         this.error("Missing network", address);
-      }
+      }*/
+      return address;
     }
   }
 
@@ -84,12 +88,9 @@ export class NetworkInterface extends SkeletonNetworkInterface {
         "SET ipAddresses",
         address,
         normalizeIP(address),
-        this.addSubnet(address) || address
+        this.addSubnet(address)
       );*/
-      this._ipAddresses.set(
-        normalizeIP(address),
-        this.addSubnet(address) || address
-      ); // TODO resolve addr to Subnet
+      this._ipAddresses.set(normalizeIP(address), this.addSubnet(address)); // TODO resolve addr to Subnet
     }
   }
 
@@ -184,7 +185,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   }
 
   get kind() {
-    return this.attribute("_kind") ?? this.network?.kind;
+    return this.attribute("_kind") ?? this.network?.kind ?? super.kind;
   }
 
   async systemdDefinitions(dir, packageData) {

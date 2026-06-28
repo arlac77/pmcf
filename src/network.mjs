@@ -34,7 +34,7 @@ export class Network extends Owner {
   get hosts() {
     return this.bridges.size > 0
       ? new AggregatedMap(
-          [this, ...this.bridges].map(network => network._hosts)
+          [this, ...this.bridges].map(network => network.directHosts)
         )
       : super.hosts;
   }

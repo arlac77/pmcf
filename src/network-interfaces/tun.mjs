@@ -8,9 +8,5 @@ export class tun extends NetworkInterface {
     addType(this);
   }
 
-  get kind() {
-    return this.constructor.name;
-  }
-
   async systemdDefinitions(dir, packageData) {}
 }

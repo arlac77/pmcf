@@ -9,10 +9,6 @@ export class wireguard extends SkeletonNetworkInterface {
     addType(this);
   }
 
-  get kind() {
-    return this.constructor.name;
-  }
-
   get ipAddresses() {
     return new Map();
   }

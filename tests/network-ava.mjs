@@ -48,9 +48,10 @@ test("Network bridges", t => {
   const ic = new InitializationContext();
 
   const n1 = new Network();
-  ic.read(n1, { name: "n1", bridges: "/n2", hosts: { n1h1: {} } });
+  ic.read(n1, { name: "n1", bridges: "/n2", hosts: { n1h1: {} }, clusters: { n1c1: {}} });
   assign(networks_attribute, ic.root, n1);
   const n1h1 = n1.named("n1h1");
+  const n1c1 = n1.named("n1c1");
 
   const n2 = new Network();
   ic.read(n2, { name: "n2", hosts: { n2h1: {} } });
@@ -62,12 +63,13 @@ test("Network bridges", t => {
   //console.log(n1.bridges);
   //console.log(n2.bridges);
   //console.log([...n1.bridges].map(n => n.name));
-  //console.log([...n1.hosts].map(n => n.name));
+  //console.log([...n1.hosts.values()].map(n => n.name));
+  //console.log([...n1.clusters.values()].map(n => n.name));
 
   t.true(n1.bridges.has(n2));
   t.true(n2.bridges.has(n1));
 
-  t.deepEqual([...n1.hosts.values()], [n1h1, n2h1]);
+  t.deepEqual([...n1.hosts.values()], [n1h1, n1c1, n2h1 ]);
   t.is(n1.hosts.get("n1h1"), n1h1);
   t.is(n1.hosts.get("n2h1"), n2h1);
 
