@@ -19,8 +19,8 @@ export class SkeletonNetworkInterface extends ServiceOwner {
 
   _network;
 
-  get typeName() {
-    return "network_interface";
+  get kind() {
+    return this.constructor.name;
   }
 
   get host() {

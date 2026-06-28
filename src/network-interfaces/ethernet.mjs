@@ -20,8 +20,4 @@ export class ethernet extends NetworkInterface {
   }
 
   arpbridge;
-
-  get kind() {
-    return this.constructor.name;
-  }
 }

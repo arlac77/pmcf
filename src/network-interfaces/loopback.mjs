@@ -21,10 +21,6 @@ export class loopback extends SkeletonNetworkInterface {
     return name.match(/^lo\d*$/);
   }
 
-  get kind() {
-    return this.constructor.name;
-  }
-
   set scope(v) {}
   get scope() {
     return "host";

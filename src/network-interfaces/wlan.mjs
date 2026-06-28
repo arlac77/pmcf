@@ -26,10 +26,7 @@ export class wlan extends ethernet {
   _psk;
   _secretName;
 
-  get kind() {
-    return this.constructor.name;
-  }
-
+  
   set secretName(value) {
     this._secretName = value;
   }
