@@ -23,7 +23,6 @@ class alpm_repository extends Base {
 }
 
 export class alpm extends Service {
-  
   static attributes = {
     repositories: {
       ...default_collection_attribute_writable,

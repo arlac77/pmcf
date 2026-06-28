@@ -2,7 +2,6 @@ import { string_attribute_writable } from "pacc";
 import { Service, addType } from "pmcf";
 
 export class openldap extends Service {
-  
   static attributes = {
     base: { ...string_attribute_writable, name: "base" },
     uri: { ...string_attribute_writable, name: "uri" }
