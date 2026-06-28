@@ -64,11 +64,18 @@ export class Owner extends Base {
   _hosts = new Map();
   _subnets = new Map();
 
+  /**
+   * hosts we own direcly.
+   */
+  get directHosts() {
+    return new AggregatedMap([this._hosts, this._clusters]);
+  }
+
   get hosts() {
     return new AggregatedMap(
-      [this, ...this.networks.values(), ...this.owners.values()]
-        .map(node => [node._hosts, node._clusters])
-        .flat()
+      [this, ...this.networks.values(), ...this.owners.values()].map(
+        node => node.directHosts
+      )
     );
   }
 
