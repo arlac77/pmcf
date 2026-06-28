@@ -1,19 +1,41 @@
 import { string_attribute_writable, duration_attribute_writable } from "pacc";
-import { ExtraSourceService, Service, serviceEndpoints, addType } from "pmcf";
+import { ExtraSourceService, serviceEndpoints, addType } from "pmcf";
 import { filterConfigurable, sectionLines } from "../utils.mjs";
 
 export class SystemdTimesyncdService extends ExtraSourceService {
   static name = "systemd-timesyncd";
-  
-
   static attributes = {
     NTP: { ...string_attribute_writable, name: "NTP", configurable: true },
-    FallbackNTP: { ...string_attribute_writable, name: "FallbackNTP", configurable: true },
-    RootDistanceMaxSec: { ...duration_attribute_writable, name: "RootDistanceMaxSec",configurable: true },
-    PollIntervalMinSec: { ...duration_attribute_writable, name: "PollIntervalMinSec",configurable: true },
-    PollIntervalMaxSec: { ...duration_attribute_writable, name: "PollIntervalMaxSec",configurable: true },
-    ConnectionRetrySec: { ...duration_attribute_writable, name: "ConnectionRetrySec",configurable: true },
-    SaveIntervalSec: { ...duration_attribute_writable, name: "SaveIntervalSec", configurable: true }
+    FallbackNTP: {
+      ...string_attribute_writable,
+      name: "FallbackNTP",
+      configurable: true
+    },
+    RootDistanceMaxSec: {
+      ...duration_attribute_writable,
+      name: "RootDistanceMaxSec",
+      configurable: true
+    },
+    PollIntervalMinSec: {
+      ...duration_attribute_writable,
+      name: "PollIntervalMinSec",
+      configurable: true
+    },
+    PollIntervalMaxSec: {
+      ...duration_attribute_writable,
+      name: "PollIntervalMaxSec",
+      configurable: true
+    },
+    ConnectionRetrySec: {
+      ...duration_attribute_writable,
+      name: "ConnectionRetrySec",
+      configurable: true
+    },
+    SaveIntervalSec: {
+      ...duration_attribute_writable,
+      name: "SaveIntervalSec",
+      configurable: true
+    }
   };
   static service = {
     systemdService: "systemd-timesyncd.service"

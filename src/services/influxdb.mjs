@@ -10,7 +10,6 @@ import {
 } from "../utils.mjs";
 
 export class influxdb extends Service {
-  
   static attributes = {
     metricsDisabled: {
       ...boolean_attribute_writable_true,

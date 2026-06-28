@@ -18,7 +18,6 @@ import {
   name_attribute_writable
 } from "pacc";
 import {
-  Service,
   Base,
   ExtraSourceService,
   serviceEndpoints,
@@ -423,7 +422,6 @@ function addressesStatement(prefix, objects, generateEmpty = false) {
 }
 
 export class bind extends ExtraSourceService {
-  
   static attributes = {
     groups: {
       ...default_collection_attribute_writable,
@@ -434,7 +432,7 @@ export class bind extends ExtraSourceService {
     primaries: {
       ...default_collection_attribute_writable,
       name: "primaries",
-      type: networkAddressType,
+      type: networkAddressType
     }
   };
   static service = {

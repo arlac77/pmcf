@@ -19,12 +19,6 @@ export class SkeletonNetworkInterface extends ServiceOwner {
     return this.commonNamePattern.test(name);
   }
 
-  static commonNamePattern = new RegExp(`^${this.name}\d+$`);
-
-  static isCommonName(name) {
-    return this.commonNamePattern.test(name);
-  }
-
   static {
     addType(this);
   }
