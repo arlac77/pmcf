@@ -21,11 +21,6 @@ export class Network extends Owner {
   gateway;
   bridges = new Set();
 
-  constructor() {
-    super();
-    this.bridges.add(this);
-  }
-
   get network() {
     return this;
   }
@@ -37,8 +32,10 @@ export class Network extends Owner {
   }
 
   get hosts() {
-    return this.bridges.size > 1
-      ? new AggregatedMap([...this.bridges].map(network => network._hosts))
+    return this.bridges.size > 0
+      ? new AggregatedMap(
+          [this, ...this.bridges].map(network => network._hosts)
+        )
       : super.hosts;
   }
 
