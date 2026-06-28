@@ -1,6 +1,9 @@
 import { join } from "node:path";
 import { hasWellKnownSubnet, normalizeIP } from "ip-utilties";
-import { string_attribute_writable, string_collection_attribute_writable } from "pacc";
+import {
+  string_attribute_writable,
+  default_collection_attribute_writable
+} from "pacc";
 import { network_attribute } from "../common-attributes.mjs";
 import { Host, cidrAddresses, addType } from "pmcf";
 import {
@@ -43,7 +46,11 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     ...networkAttributes,
     ...networkAddressAttributes,
     hostName: hostname_attribute,
-    ipAddresses: { ...string_collection_attribute_writable, name: "ipAddresses" },
+    ipAddresses: {
+      ...default_collection_attribute_writable,
+      type: "ip",
+      name: "ipAddresses"
+    },
     hwaddr: { ...string_attribute_writable, name: "hwaddr" },
     destination: { ...string_attribute_writable, name: "destination" }
   };
@@ -64,9 +71,10 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     if (this.network) {
       return this.network.addSubnet(address);
     } else {
-      if (!hasWellKnownSubnet(address)) {
+      /*if (!hasWellKnownSubnet(address)) {
         this.error("Missing network", address);
-      }
+      }*/
+      return address;
     }
   }
 
@@ -80,12 +88,9 @@ export class NetworkInterface extends SkeletonNetworkInterface {
         "SET ipAddresses",
         address,
         normalizeIP(address),
-        this.addSubnet(address) || address
+        this.addSubnet(address)
       );*/
-      this._ipAddresses.set(
-        normalizeIP(address),
-        this.addSubnet(address) || address
-      ); // TODO resolve addr to Subnet
+      this._ipAddresses.set(normalizeIP(address), this.addSubnet(address)); // TODO resolve addr to Subnet
     }
   }
 

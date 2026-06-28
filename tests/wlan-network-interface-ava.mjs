@@ -22,6 +22,8 @@ test("WLAN basics", t => {
     subnets: ["10.0.0.2/16"]
   });
 
+  t.deepEqual([...n1.subnets.keys()], ["10.0/16"]);
+
   assign(networks_attribute, ic.root, n1);
   const h1 = new Host();
   ic.read(h1, {
@@ -37,7 +39,9 @@ test("WLAN basics", t => {
 
   const wlan0 = h1.networkInterfaces.get("wlan0");
 
-  //t.deepEqual([...wlan0.subnets.keys()], ["10.0/16"]);
+  t.is(wlan0.address, "10.0.0.2");
+
+  t.deepEqual([...wlan0.subnets.keys()], ["10.0/16"]);
 
   t.true(wlan0 instanceof wlan);
   t.is(wlan0.name, "wlan0");
