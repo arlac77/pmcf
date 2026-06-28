@@ -13,12 +13,10 @@ const _localDomains = new Set(["localhost"]);
 export class loopback extends SkeletonNetworkInterface {
   static specializationOf = NetworkInterface;
 
+  static commonNamePattern = new RegExp("^lo\d+$");
+
   static {
     addType(this);
-  }
-
-  static isCommonName(name) {
-    return name.match(/^lo\d*$/);
   }
 
   set scope(v) {}

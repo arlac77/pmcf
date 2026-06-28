@@ -9,6 +9,11 @@ import {
   assign
 } from "pmcf";
 
+test("WLAN common names", t => {
+  t.false(wlan.isCommonName("eth0"));
+  t.true(wlan.isCommonName("wlan0"));
+});
+
 test("WLAN basics", t => {
   const ic = new InitializationContext();
   const n1 = new Network();
@@ -32,6 +37,8 @@ test("WLAN basics", t => {
 
   const wlan0 = h1.networkInterfaces.get("wlan0");
 
+  //t.deepEqual([...wlan0.subnets.keys()], ["10.0/16"]);
+
   t.true(wlan0 instanceof wlan);
   t.is(wlan0.name, "wlan0");
   t.is(wlan0.kind, "wlan");
@@ -42,6 +49,4 @@ test("WLAN basics", t => {
 
   wlan0.secretName = "b.password";
   t.is(wlan0.secretName, "b.password");
-
-  //t.deepEqual([...wlan0.subnets.keys()], ["10.0/16"]);
 });

@@ -23,7 +23,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     //console.log("factoryFor", owner, value);
     if (!st) {
       for (st of Object.values(this.specializations)) {
-        if (st.isCommonName && st.isCommonName(value.name)) {
+        if (st.isCommonName(value.name)) {
           break;
         }
       }
@@ -50,10 +50,6 @@ export class NetworkInterface extends SkeletonNetworkInterface {
 
   static {
     addType(this);
-  }
-
-  static isCommonName(name) {
-    return false;
   }
 
   _ipAddresses = new Map();

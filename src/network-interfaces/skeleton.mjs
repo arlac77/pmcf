@@ -13,6 +13,13 @@ export class SkeletonNetworkInterface extends ServiceOwner {
     return "network_interface";
   }
 
+  static commonNamePattern = new RegExp(`^${this.name}\d+$`);
+
+  static isCommonName(name) {
+    console.log("isCommonName",this.commonNamePattern, name);
+    return this.commonNamePattern.test(name);
+  }
+
   static {
     addType(this);
   }

@@ -11,12 +11,10 @@ export class ethernet extends NetworkInterface {
     }
   };
 
+  static commonNamePattern = /^eth\d+$/;
+
   static {
     addType(this);
-  }
-
-  static isCommonName(name) {
-    return name.match(/^eth\d+$/);
   }
 
   arpbridge = new Map();

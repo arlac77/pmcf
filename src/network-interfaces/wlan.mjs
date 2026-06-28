@@ -14,12 +14,10 @@ export class wlan extends ethernet {
     secretName: { ...string_attribute_writable, name: "secretName" }
   };
 
+  static commonNamePattern = /^wlan\d+$/;
+
   static {
     addType(this);
-  }
-
-  static isCommonName(name) {
-    return name.match(/^wlan\d+$/);
   }
 
   _ssid;
