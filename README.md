@@ -101,16 +101,18 @@ generates config packages for:
     *   [Parameters](#parameters-19)
 *   [serviceEndpoints](#serviceendpoints)
     *   [Parameters](#parameters-20)
-*   [domainName](#domainname)
+*   [subnets](#subnets)
     *   [Parameters](#parameters-21)
-*   [domainFromDominName](#domainfromdominname)
+*   [domainName](#domainname)
     *   [Parameters](#parameters-22)
-*   [sectionLines](#sectionlines)
+*   [domainFromDominName](#domainfromdominname)
     *   [Parameters](#parameters-23)
-*   [asArray](#asarray)
+*   [sectionLines](#sectionlines)
     *   [Parameters](#parameters-24)
-*   [asIterator](#asiterator)
+*   [asArray](#asarray)
     *   [Parameters](#parameters-25)
+*   [asIterator](#asiterator)
+    *   [Parameters](#parameters-26)
 
 ## Base
 
@@ -387,6 +389,14 @@ Returns **Subnet?**&#x20;
     *   `options.join` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** join result(s) into a string
 
 Returns **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | any)**&#x20;
+
+## subnets
+
+### Parameters
+
+*   `sources` **any**&#x20;
+
+Returns **[Set](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
 
 ## domainName
 
