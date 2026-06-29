@@ -1,6 +1,5 @@
 import { addType as addTypeBasic, toInternal } from "pacc";
-import { normalizeCIDR, normalizeIP } from "ip-utilties";
-
+import { normalizeIP } from "ip-utilties";
 import { addServiceType } from "pmcf";
 import { asArray } from "./utils.mjs";
 
