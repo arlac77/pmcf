@@ -51,6 +51,14 @@ export class Subnet {
     }
   }
 
+  get children()
+  {
+    return [];
+  }
+
+  *_walkDirections(directions, seen) {
+  }
+
   get cidr() {
     return this.address;
   }
