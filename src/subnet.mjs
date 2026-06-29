@@ -9,7 +9,7 @@ import {
 } from "ip-utilties";
 import { string_attribute, name_attribute, integer_attribute } from "pacc";
 import { networks_attribute } from "./common-attributes.mjs";
-import { addType } from "pmcf";
+import { addType, Network } from "pmcf";
 
 export class Subnet {
   static name = "subnet";
@@ -38,6 +38,17 @@ export class Subnet {
     this.prefixLength = prefixLength;
     this.longPrefix = longPrefix;
     this.family = familyIP(address);
+  }
+
+  get owner() {
+    return this._owner;
+  }
+
+  set owner(value) {
+    this._owner = value;
+    if(value instanceof Network) {
+      this.networks.add(value);
+    }
   }
 
   get cidr() {
