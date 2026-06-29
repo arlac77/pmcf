@@ -13,7 +13,6 @@ import { filterConfigurable, sectionLines } from "../utils.mjs";
  */
 export class SystemdJournalUploadService extends Service {
   static name = "systemd-journal-upload";
-
   static attributes = {
     URL: { ...string_attribute_writable, name: "URL", configurable: true },
     ServerKeyFile: {
@@ -64,10 +63,12 @@ export class SystemdJournalUploadService extends Service {
    * @returns {Object}
    */
   systemdConfigs(name) {
+    /*
     console.log(this.fullName, this.owner.fullName);
     console.log(this.property("domainName"), this.name);
     console.log(this.property("certs_private_dir"));
     console.log("PROPS", this.expand(this.getAttributes(filterConfigurable)));
+    */
     return {
       serviceName: this.systemdService,
       configFileName: `etc/systemd/journal-upload.conf.d/${name}.conf`,
