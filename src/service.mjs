@@ -105,7 +105,7 @@ export class Service extends Base {
   }
 
   get domainName() {
-    return this.host.domainName;
+    return this.host?.domainName;
   }
 
   get networks() {

@@ -43,6 +43,7 @@ test("Host load", async t => {
   console.log([...ic.root.hosts.values()].map(h => h.fullName));
   console.log([...ic.root.networks.values()].map(h => h.fullName));
   */
+  //console.log(ic.root.named("/L1/n1"));
 
   await assertObject(t, host1, root1(ic.root, "/L1/host1"));
   await assertObject(t, host2, root1(ic.root, "/L1/n1/host2"));
