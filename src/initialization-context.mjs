@@ -133,11 +133,10 @@ export class InitializationContext {
   async load(fileName, type) {
     const name = fileName.replace(/\/?([^\/]+\.json)?$/, "");
 
-    let object = this.root.named(name);
+    const object = this.root.named(name);
     if (object) {
       return object;
     }
-    //console.log(`LOAD A "${fileName}" "${name}" "${type?.name}"`);
 
     if (type === undefined) {
       const tn = fileName.substring(name.length, fileName.length - 5);
@@ -169,30 +168,24 @@ export class InitializationContext {
         this.error(`No Parent for "${name}" "${parentName}"`);
         return;
       }
-      //console.log(`PARENT NAME A "${name}" "${parentName}"`, owner?.fullName);
 
       data.name = name.substring(owner.fullName.length + 1);
-
-      /*console.log(
-          `PARENT NAME B "${name}" "${parentName}" >"${data.name}"<`,
-          owner.typeName,
-          owner.fullName
-        );*/
     } else {
       owner = this.root;
       data.name = name;
     }
 
-    object = this.read(create(type, owner, data), data);
-
-    //console.log(`LOAD B "${fileName}" "${name}" "${type?.name}" -> ${object.name}`);
-
     for (const [path, attribute] of extendingAttributeIterator(
       owner.constructor,
       attribute => attribute.type === type && attribute.collection
     )) {
-      //console.log("ASSIGN",attribute.name, owner.fullName, object.name);
-      return assign(attribute, owner, object);
+      const object = create(type, owner, data);
+
+      // set backointer early so that parent properties can be found during load
+      if (attribute.backpointer) {
+        assign(attribute.backpointer, object, owner);
+      }
+      return assign(attribute, owner, this.read(object, data));
     }
 
     this.error(`No attribute to assign ${type.name} to ${owner.fullName}`);
