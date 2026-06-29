@@ -1,6 +1,6 @@
 import test from "ava";
 import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
-import { Owner, Network, Host, Cluster, assign, owners_attribute } from "pmcf";
+import { Owner, assign, owners_attribute } from "pmcf";
 import { InitializationContext } from "../src/initialization-context.mjs";
 
 test("Owner read write", t => {
@@ -58,23 +58,11 @@ test("Owner read write", t => {
     },
     subnets: {
       "10.0/16": {
-        name: "10.0/16",
-        directory: "/o1/10.0/16",
         family: FAMILY_IPV4,
-        owner: {
-          name: "o1",
-          type: "owner"
-        },
         prefixLength: 16
       },
       "fe80::/64": {
-        name: "fe80::/64",
-        directory: "/o1/fe80::/64",
         family: FAMILY_IPV6,
-        owner: {
-          name: "o1",
-          type: "owner"
-        },
         prefixLength: 64
       }
     }

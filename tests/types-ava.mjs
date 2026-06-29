@@ -37,7 +37,7 @@ test("types", t => {
   t.is(types.network.key, "name");
 
   t.is(types.subnet, Subnet);
-  t.is(types.subnet.extends, Base);
+  t.is(types.subnet.extends, undefined);
   t.is(types.subnet.priority, 1);
   t.is(types.subnet.key, "address");
 

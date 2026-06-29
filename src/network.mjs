@@ -50,6 +50,14 @@ export class Network extends Owner {
       : super.hosts;
   }
 
+  get subnets() {
+    return this.bridges.size > 0
+      ? new AggregatedMap(
+          [this, ...this.bridges].map(network => network._subnets)
+        )
+      : super.subnets;
+  }
+
   set secretName(value) {
     this._secretName = value;
   }

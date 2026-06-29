@@ -94,7 +94,7 @@ async function _assertObject(t, visited, object, expected, path = []) {
         break;
       default: {
         let o;
-        if (object instanceof Map) {
+        if (typeof object.get === "function") {
           o = object.get(k);
         } else {
           o = object.attribute(k); // ?? object[k];
