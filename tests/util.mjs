@@ -62,7 +62,7 @@ async function _assertObject(t, visited, object, expected, path = []) {
           object instanceof expected.instanceof,
           `${pathToString([...path, k])}: ${expected.instanceof.name} (${
             object?.constructor.name
-          })`
+          }) ${Object.keys(object)}}`
         );
         break;
       case "services":
@@ -97,7 +97,7 @@ async function _assertObject(t, visited, object, expected, path = []) {
         if (typeof object.get === "function") {
           o = object.get(k);
         } else {
-          o = object.attribute(k); // ?? object[k];
+          o = object.attribute && object.attribute(k); // ?? object[k];
 
           switch (typeof o) {
             case "function":
