@@ -13,6 +13,7 @@ test("ethernet common names", t => {
   t.false(ethernet.isCommonName("wlan0"));
   t.true(ethernet.isCommonName("eth0"));
   t.true(ethernet.isCommonName("end1"));
+  t.true(ethernet.isCommonName("en1"));
 });
 
 test("ethernet basics", t => {
