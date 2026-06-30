@@ -25,7 +25,7 @@ function setup() {
   const n1 = new Network();
   ic.read(n1, {
     name: "n1",
-    subnets: "10.0/16"
+    subnets: ["10.0/16", "10.1/16"]
   });
   assign(networks_attribute, root, n1);
 

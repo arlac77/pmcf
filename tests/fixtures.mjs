@@ -4,7 +4,6 @@ import {
   Subnet,
   Host,
   Cluster,
-  root as Root,
   mosquitto
 } from "pmcf";
 
@@ -38,7 +37,7 @@ export function root1(root, filter) {
     description: "somewhere else"
   };
 
-  const s1 = { instanceof: Subnet, name: "192.168.1/24", networks: [] };
+  const s1 = { /*instanceof: Subnet,*/ address: "192.168.1/24", networks: [] };
 
   const L1n1 = {
     instanceof: Network,

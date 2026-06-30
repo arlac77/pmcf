@@ -5,7 +5,7 @@ import { networkAddressType } from "pmcf";
 
 export class ExtraSourceService extends Service {
   static name = "extra-source-service";
-  
+
   static attributes = {
     source: {
       ...default_collection_attribute_writable,
@@ -27,7 +27,7 @@ export class ExtraSourceService extends Service {
   get services() {
     return new AggregatedMap([
       this.owner.owner.services,
-      this.source.map(s => s.services)
+      ...this.source.map(s => s.services)
     ]);
   }
 }
