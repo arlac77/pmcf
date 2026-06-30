@@ -6,7 +6,7 @@ import {
   boolean_attribute_writable,
   yesno_attribute_writable
 } from "pacc";
-import { ExtraSourceService, serviceEndpoints, addType, Service } from "pmcf";
+import { ExtraSourceService, serviceEndpoints, addType } from "pmcf";
 import {
   filterConfigurable,
   yesno,

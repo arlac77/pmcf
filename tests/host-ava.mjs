@@ -311,6 +311,8 @@ test("Host addresses", t => {
     addresses: ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f"]
   });
 
+  console.log(n1.subnets);
+  console.log(h1.subnets);
   console.log(eth0.subnets);
   const s1 = eth0.subnets.get("10.0/16");
   t.is(s1.name, "10.0/16");

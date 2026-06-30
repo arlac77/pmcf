@@ -10,7 +10,7 @@ export class ethernet extends NetworkInterface {
     }
   };
 
-  static commonNamePattern = /^eth\d+$/;
+  static commonNamePattern = /^(eth|end)\d+$/;
 
   static {
     addType(this);
