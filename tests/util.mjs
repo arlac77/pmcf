@@ -30,8 +30,8 @@ async function _assertObject(t, visited, object, expected, path = []) {
   if (Array.isArray(expected)) {
     let i = 0;
 
-    const compare = (a,b) => {
-      if(a.address) {
+    const compare = (a, b) => {
+      if (a.address) {
         return a.address.localeCompare(b.address);
       }
       return a.name ? a.name.localeCompare(b.name) : a.localeCompare(b);
@@ -87,14 +87,10 @@ async function _assertObject(t, visited, object, expected, path = []) {
         );
         break;
 
-      case "networks":
-        // TODO general case
-        await _assertObject(t, visited, object[k], v, [...path, k]);
-        break;
-
       case "properties":
         t.deepEqual(object?.properties, v);
         break;
+
       default: {
         let o;
         if (typeof object.get === "function") {
