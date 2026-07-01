@@ -125,18 +125,16 @@ export class Owner extends Base {
 
   addSubnet(address) {
     if (address instanceof Subnet) {
-      this._subnets.set(address.name, address);
-      return address;
+      return assign(subnets_attribute, this, address);
     }
 
     const { cidr, prefixLength } = normalizeCIDR(address);
 
     if (cidr && prefixLength !== 0) {
-      const subnet = this._subnets.get(cidr);
-      if (subnet) {
-        return subnet;
-      }
-      return assign(subnets_attribute, this, new Subnet(cidr));
+      return (
+        this._subnets.get(cidr) ||
+        assign(subnets_attribute, this, new Subnet(cidr))
+      );
     }
 
     let subnet = this.subnetForAddress(address);
