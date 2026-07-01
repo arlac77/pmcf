@@ -245,6 +245,7 @@ test("Host addresses", t => {
     networkInterfaces: {
       lo: {},
       eth0: {
+        network: n1,
         scope: "global",
         ipAddresses: ["${ipv4_prefix}.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
       }
@@ -266,8 +267,8 @@ test("Host addresses", t => {
   t.deepEqual(
     eth0.ipAddresses,
     new Map([
-      ["10.0.0.2", "10.0.0.2/16"],
-      ["fe80::1e57:3eff:fe22:9a8f", "fe80::1e57:3eff:fe22:9a8f/64"]
+      ["10.0.0.2", n1.subnets.get("10.0/16")],
+      ["fe80::1e57:3eff:fe22:9a8f", n1.subnets.get("fe80::/64")]
     ])
   );
 
@@ -306,14 +307,21 @@ test("Host addresses", t => {
       name: "n1",
       type: "network"
     },
-    ipAddresses: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"],
+    /*ipAddresses: [
+          "10.0.0.2", 
+          n1.subnets.get("10.0/16"),
+      "fe80::1e57:3eff:fe22:9a8f", 
+      n1.subnets.get("fe80::/64")
+    ],*/
     address: "10.0.0.2",
     addresses: ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f"]
   });
 
-  console.log(n1.subnets);
-  console.log(h1.subnets);
-  console.log(eth0.subnets);
+  /*
+  console.log("NETWORK", n1.subnets);
+  console.log("HOST", h1.subnets);
+  console.log("INTERFACE", eth0.subnets);
+  */
   const s1 = eth0.subnets.get("10.0/16");
   t.is(s1.name, "10.0/16");
   t.is(s1.prefixLength, 16);
