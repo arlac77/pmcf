@@ -38,6 +38,7 @@ export function root1(root, filter) {
   };
 
   const s1 = { /*instanceof: Subnet,*/ address: "192.168.1/24", networks: [] };
+  const s2 = { /*instanceof: Subnet,*/ address: "fe80::/64", networks: [] };
 
   const L1n1 = {
     instanceof: Network,
@@ -47,7 +48,7 @@ export function root1(root, filter) {
     metric: 1010,
     ssid: "ID2",
     description: "home wifi",
-    subnets: [s1]
+    subnets: [s1 /*,s2*/]
   };
   const L1n2 = {
     instanceof: Network,
@@ -55,7 +56,7 @@ export function root1(root, filter) {
     scope: "site",
     kind: "ethernet",
     metric: 1010,
-    subnets: [s1]
+    subnets: [s1 /*,s2*/]
   };
 
   L1.networks = [L1n1, L1n2];
