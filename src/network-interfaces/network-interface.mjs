@@ -1,5 +1,4 @@
 import { join } from "node:path";
-import { hasWellKnownSubnet, normalizeIP } from "ip-utilties";
 import {
   string_attribute_writable,
   default_collection_attribute_writable
@@ -12,7 +11,7 @@ import {
   hostname_attribute,
   cluster_attribute
 } from "../common-attributes.mjs";
-import { asArray, writeLines, sectionLines } from "../utils.mjs";
+import { writeLines, sectionLines } from "../utils.mjs";
 import { SkeletonNetworkInterface } from "./skeleton.mjs";
 import { yesno } from "../utils.mjs";
 
@@ -24,7 +23,6 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   static factoryFor(owner, value) {
     let st = this.specializations[value.kind];
 
-    //console.log("factoryFor", owner, value);
     if (!st) {
       for (st of Object.values(this.specializations)) {
         if (st.isCommonName(value.name)) {
@@ -50,7 +48,8 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     ipAddresses: {
       ...default_collection_attribute_writable,
       type: "ip",
-      name: "ipAddresses"
+      name: "ipAddresses",
+      private: true
     },
     hwaddr: { ...string_attribute_writable, name: "hwaddr" },
     destination: { ...string_attribute_writable, name: "destination" }
@@ -60,7 +59,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     addType(this);
   }
 
-  _ipAddresses = new Map();
+  ipAddresses = new Map();
   _scope;
   _metric;
   _kind;
@@ -76,22 +75,6 @@ export class NetworkInterface extends SkeletonNetworkInterface {
         this.error("Missing network", address);
       }*/
       return address;
-    }
-  }
-
-  get ipAddresses() {
-    return this._ipAddresses;
-  }
-
-  set ipAddresses(value) {
-    for (const address of asArray(value)) {
-      /*console.log(
-        "SET ipAddresses",
-        address,
-        normalizeIP(address),
-        this.addSubnet(address)
-      );*/
-      this._ipAddresses.set(normalizeIP(address), this.addSubnet(address)); // TODO resolve addr to Subnet
     }
   }
 
