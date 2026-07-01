@@ -25,7 +25,6 @@ test("systemd-timesyncd basics", async t => {
 
   const ntp = ic.named("/L1/C1/systemd-timesyncd");
 
-  console.log(ntp.services);
   t.deepEqual(ntp.systemdConfigs("ABC"), {
     serviceName: "systemd-timesyncd.service",
     configFileName: "etc/systemd/timesyncd.conf.d/ABC.conf",
