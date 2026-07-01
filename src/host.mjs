@@ -441,8 +441,6 @@ export class Host extends ServiceOwner {
       join(dir, "root", ".ssh")
     );
 
-    //console.log([...this.walkDirections(["extends"])].map(e => e.fullName));
-
     for (const [name, service] of this.services) {
       if (service.systemdConfigs) {
         for (const { serviceName, configFileName, content } of asArray(
