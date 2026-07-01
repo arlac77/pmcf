@@ -30,14 +30,17 @@ async function _assertObject(t, visited, object, expected, path = []) {
   if (Array.isArray(expected)) {
     let i = 0;
 
+    const compare = (a,b) => {
+      if(a.address) {
+        return a.address.localeCompare(b.address);
+      }
+      return a.name ? a.name.localeCompare(b.name) : a.localeCompare(b);
+    };
+
     if (typeof object.values === "function") {
-      object = [...object.values()].sort((a, b) =>
-        a.name ? a.name.localeCompare(b.name) : a.localeCompare(b)
-      );
+      object = [...object.values()].sort(compare);
     } else {
-      object = [...object].sort((a, b) =>
-        a.name ? a.name.localeCompare(b.name) : a.localeCompare(b)
-      );
+      object = [...object].sort(compare);
     }
 
     for (const o of object) {
