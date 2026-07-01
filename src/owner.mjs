@@ -1,7 +1,6 @@
 import { normalizeCIDR, familyIP, FAMILY_IPV4 } from "ip-utilties";
 import { FileContentProvider } from "npm-pkgbuild";
 import { AggregatedMap } from "aggregated-map";
-
 import {
   string_set_attribute_writable,
   string_attribute_writable,

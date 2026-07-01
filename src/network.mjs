@@ -1,7 +1,12 @@
 import { AggregatedMap } from "aggregated-map";
-import { addType } from "pmcf";
+import { addType, assign } from "pmcf";
 import { Owner } from "./owner.mjs";
-import { networkAttributes, bridges_attribute } from "./common-attributes.mjs";
+import {
+  networkAttributes,
+  bridges_attribute,
+  subnets_attribute
+} from "./common-attributes.mjs";
+import { Subnet } from "./subnet.mjs";
 
 export class Network extends Owner {
   static name = "network";
@@ -51,6 +56,12 @@ export class Network extends Owner {
   }
 
   get subnets() {
+    if (!this._subnets.get("fe80::/64")) {
+      const linkLocal = new Subnet("fe80::/64");
+      this._subnets.set(linkLocal.address,linkLocal);
+      //assign(subnets_attribute, this, linkLocal);
+    }
+
     return this.bridges.size > 0
       ? new AggregatedMap(
           [this, ...this.bridges].map(network => network._subnets)
