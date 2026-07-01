@@ -115,8 +115,6 @@ test("expression", t => {
     "n1"
   );
 
-  //console.log("XXX", h1.network);
-
   t.is([...h1.expression("subnets[].name")][0], "10.0/16"); // TODO why more than 0ne
 
   //t.is(h1.expression("networkInterfaces[name='eth0']"), "eth0");
