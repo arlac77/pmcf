@@ -76,6 +76,12 @@
     "type": "git",
     "url": "git+https://github.com/arlac77/pmcf.git"
   },
+  "release": {
+    "branches": [
+      "master",
+      "next"
+    ]
+  },
   "bugs": {
     "url": "https://github.com/arlac77/pmcf/issues"
   },
