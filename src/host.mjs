@@ -416,10 +416,7 @@ export class Host extends ServiceOwner {
 
     Object.assign(packageData.properties, {
       description: `${this.typeName} definitions for ${this.fullName}`,
-      dependencies: [
-        `${this.owner.typeName}-${this.owner.name}`,
-        ...this.depends
-      ],
+      dependencies: [...this.depends],
       provides: [...this.provides],
       replaces: [...this.replaces],
       depends: [...this.depends],
