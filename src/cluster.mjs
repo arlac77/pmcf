@@ -56,19 +56,15 @@ export class Cluster extends Host {
     )) {
       const host = ni.host;
       const packageStagingDir = join(stagingDir, host.name);
-      const location = `${this.owner.name}-${host.name}`;
+      const name = `${this.owner.name}-${host.name}`;
 
       const packageData = host.packageData;
       packageData.sources.push(
         new FileContentProvider(packageStagingDir + "/")
       );
-      packageData.properties.name = `keepalived-${location}`;
+      packageData.properties.name = `keepalived-${name}`;
       packageData.properties.description = `${this.typeName} definitions for ${this.fullName}`;
-      packageData.properties.groups.push(
-        "service-config",
-        location,
-        "keepalived"
-      );
+      packageData.properties.groups.push("service-config", name, "keepalived");
 
       const extra = [];
 
