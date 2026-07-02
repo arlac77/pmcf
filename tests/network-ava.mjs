@@ -8,7 +8,7 @@ import {
 import { assertObject } from "./util.mjs";
 import { root1 } from "./fixtures.mjs";
 
-test.only("Network load", async t => {
+test("Network load", async t => {
   const ic = new InitializationContext(
     new URL("fixtures/root1", import.meta.url).pathname
   );
@@ -24,7 +24,7 @@ test("Network addresses", t => {
   const n1 = new Network();
   ic.read(n1, {
     name: "n1",
-    subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"],
+    subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f", "169.254.1.2"],
     kind: "ethernet",
     scope: "global"
   });
@@ -36,13 +36,18 @@ test("Network addresses", t => {
 
   const s1 = n1.subnets.get("10.0/16");
   t.true(s1.networks.has(n1));
-  t.is(s1.name, "10.0/16");
+  t.is(s1.address, "10.0/16");
   t.is(s1.prefixLength, 16);
 
   const s2 = n1.subnets.get("fe80::/64");
   t.true(s2.networks.has(n1));
-  t.is(s2.name, "fe80::/64");
+  t.is(s2.address, "fe80::/64");
   t.is(s2.prefixLength, 64);
+
+  const s3 = n1.subnets.get("169.254/16");
+  t.true(s3.networks.has(n1));
+  t.is(s3.address, "169.254/16");
+  t.is(s3.prefixLength, 16);
 });
 
 test("Network bridges", t => {
