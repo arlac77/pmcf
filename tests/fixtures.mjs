@@ -1,11 +1,4 @@
-import {
-  Owner,
-  Network,
-  Subnet,
-  Host,
-  Cluster,
-  mosquitto
-} from "pmcf";
+import { Owner, Network, Subnet, Host, Cluster, mosquitto } from "pmcf";
 
 /**
  *
@@ -37,9 +30,13 @@ export function root1(root, filter) {
     description: "somewhere else"
   };
 
-  const s1 = { /*instanceof: Subnet,*/ address: "192.168.1/24", networks: [] };
+  const s1 = { /*instanceof: Subnet,*/ address: "fe80::/64" /*networks: []*/ };
+  const s2 = {
+    /*instanceof: Subnet,*/ address: "192.168.1/24" /*networks: []*/
+  };
 
   const L1n1 = {
+    name: "n1",
     instanceof: Network,
     owner: L1,
     scope: "global",
@@ -47,21 +44,23 @@ export function root1(root, filter) {
     metric: 1010,
     ssid: "ID2",
     description: "home wifi",
-    subnets: [s1]
+    subnets: [s2, s1]
   };
   const L1n2 = {
+    name: "n2",
     instanceof: Network,
     owner: L1,
     scope: "site",
     kind: "ethernet",
     metric: 1010,
-    subnets: [s1]
+    subnets: [s2, s1]
   };
 
-  L1.networks = [L1n1, L1n2];
+  L1.networks = [L1n2, L1n1];
+  /*
   s1.networks.push(L1n1);
   s1.networks.push(L1n2);
-
+*/
   const host1 = {
     name: "host1",
     instanceof: Host,
@@ -81,14 +80,14 @@ export function root1(root, filter) {
       dns: { type: "dns", alias: "dns" },
       smb: { type: "smb" },
       timemachine: {
-       // extends: ["/services/timemachine/timemachine"],
+        // extends: ["/services/timemachine/timemachine"],
         type: "timemachine"
       },
       mdns: {
-       // extends: ["/services/timemachine/mdns"]
+        // extends: ["/services/timemachine/mdns"]
       },
       mosquitto: {
-       // extends: ["/services/mosquitto/mosquitto"],
+        // extends: ["/services/mosquitto/mosquitto"],
         type: "mosquitto",
         alias: "mqtt",
         port: 1883,
@@ -97,15 +96,15 @@ export function root1(root, filter) {
         acl_file: "/etc/mosquitto/acl"
       },
       openldap: {
-      //  extends: ["/services/openldap/openldap"],
+        //  extends: ["/services/openldap/openldap"],
         type: "openldap",
         alias: "ldap",
         uri: "ldap://",
         properties: {
-  //        datadir: "/var/lib/openldap",
-  //        rundir: "/run/openldap",
-  //        rootpw: "{SHA}XXXX",
-  //        rootdn: "cn=Manager,${base_dn}"
+          //        datadir: "/var/lib/openldap",
+          //        rundir: "/run/openldap",
+          //        rootpw: "{SHA}XXXX",
+          //        rootdn: "cn=Manager,${base_dn}"
         }
       },
       chrony: { extends: [], type: "chrony", alias: "ntp", port: 323 }
