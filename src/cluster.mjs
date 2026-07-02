@@ -87,6 +87,7 @@ export class Cluster extends Host {
         ""
       ];
 
+      const credentials = [];
       for (const cluster of [...this.owner.clusters].sort((a, b) =>
         a.name.localeCompare(b.name)
       )) {
@@ -119,12 +120,14 @@ export class Cluster extends Host {
           reducedPrio = cluster.backups.indexOf(ni) + 5;
         }
 
+        const credential = cluster.name.toUpperCase() + "_PASSWORD";
+        credentials.push(credential);
         cfg.push(`  priority ${host.priority - reducedPrio}`);
         cfg.push("  smtp_alert");
         cfg.push("  advert_int 5");
         cfg.push("  authentication {");
         cfg.push("    auth_type PASS");
-        cfg.push("    auth_pass pass1234");
+        cfg.push("    auth_pass ${" + credential + "}");
         cfg.push("  }");
 
         cfg.push(
@@ -212,6 +215,18 @@ export class Cluster extends Host {
             "[Unit]",
             `Description=fault state of cluster ${cluster.name}`,
             `Conflicts=${cluster.name}-master.target ${cluster.name}-backup.target`
+          ]
+        );
+
+        await writeLines(
+          join(packageStagingDir, "/usr/lib/systemd/system/keepalived.d"),
+          `use-credentials.conf`,
+          [
+            "[Service]",
+            ...credentials.map(
+              c =>
+                `LoadCredentialEncrypted=${c}:/etc/credstore.encrypted/keepalived.password`
+            )
           ]
         );
       }
