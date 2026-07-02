@@ -6,11 +6,12 @@ export class ethernet extends NetworkInterface {
   static attributes = {
     arpbridge: {
       ...networkInterfaces_attribute,
-      name: "arpbridge"
+      name: "arpbridge",
+      description: "bridged interfaces"
     }
   };
 
-  static commonNamePattern = /^(eth|end)\d+$/;
+  static commonNamePattern = /^(eth|end|en)\d+$/;
 
   static {
     addType(this);

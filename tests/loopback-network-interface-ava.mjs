@@ -19,8 +19,7 @@ test("loopback basics", t => {
   ic.read(h1, {
     name: "h1",
     networkInterfaces: {
-      lo: {
-      }
+      lo: {}
     }
   });
   assign(hosts_attribute, ic.root, h1);
@@ -29,7 +28,7 @@ test("loopback basics", t => {
 
   t.is(lo.address, "127.0.0.1");
 
-  t.deepEqual([...lo.subnets.keys()], ["127/8","::1/128"]);
+  t.deepEqual([...lo.subnets.keys()], ["127/8", "::1/128"]);
 
   t.true(lo instanceof loopback);
   t.is(lo.name, "lo");
