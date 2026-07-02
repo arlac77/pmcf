@@ -206,7 +206,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
         ? { Gateway: this.gatewayAddress }
         : {};
 
-    const networkSectionExtra = this.arpbridge
+    const networkSectionExtra = this.arpbridge.size
       ? {
           IPForward: "yes",
           IPv4ProxyARP: "yes"
@@ -240,7 +240,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
       })
     );
 
-    if (this.arpbridge) {
+    if (this.arpbridge.size) {
       networkSections.push("", sectionLines("Link", { Promiscuous: "yes" }));
     }
 
