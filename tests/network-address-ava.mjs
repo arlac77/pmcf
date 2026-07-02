@@ -16,7 +16,7 @@ test("NetworkAddress filter", t => {
   const n1 = new Network();
   ic.read(n1, {
     name: "n1",
-    subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
+    subnets: ["10.0.0.2/16"]
   });
 
   assign(networks_attribute, ic.root, n1);
@@ -38,8 +38,8 @@ test("NetworkAddress filter", t => {
 
   const eth0 = h2.networkInterfaces.get("eth0");
 
-  const a1 = new NetworkAddress(eth0, "10.0.0.2", s1);
-  const a2 = new NetworkAddress(eth0, "fe80::1e57:3eff:fe22:9a8f", s2);
+  const a1 = new NetworkAddress(eth0, "10.0.0.2", s2);
+  const a2 = new NetworkAddress(eth0, "fe80::1e57:3eff:fe22:9a8f", s1);
 
   t.deepEqual([...h2.networkAddresses()], [a1, a2]);
 

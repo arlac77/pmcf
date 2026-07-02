@@ -23,7 +23,7 @@ test("WLAN basics", t => {
     subnets: ["10.0.0.2/16"]
   });
 
-  t.deepEqual([...n1.subnets.keys()], ["10.0/16"]);
+  t.deepEqual([...n1.subnets.keys()], ["fe80::/64", "10.0/16"]);
 
   assign(networks_attribute, ic.root, n1);
   const h1 = new Host();

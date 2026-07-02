@@ -8,13 +8,14 @@ import {
 import { assertObject } from "./util.mjs";
 import { root1 } from "./fixtures.mjs";
 
-test("Network load", async t => {
+test.only("Network load", async t => {
   const ic = new InitializationContext(
     new URL("fixtures/root1", import.meta.url).pathname
   );
   await ic.loadAll();
 
   const n1 = ic.root.named("/L1/n1");
+  //console.log(n1);
   await assertObject(t, n1, root1(ic.root, "/L1/n1"));
 });
 
