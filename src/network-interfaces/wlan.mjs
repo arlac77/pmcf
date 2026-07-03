@@ -64,7 +64,7 @@ export class wlan extends ethernet {
 
     await writeLines(
       join(dir, "usr/lib/systemd/system/iwd.service.d/"),
-      "pmcf.conf",
+      "credentials.conf",
       [
         sectionLines("Service", {
           LoadCredentialEncrypted: `${secretName}:/etc/credstore.encrypted/${secretName}`
