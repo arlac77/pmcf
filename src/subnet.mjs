@@ -51,11 +51,6 @@ export class Subnet {
     }
   }
 
-  get children()
-  {
-    return [];
-  }
-
   *_walkDirections(directions, seen) {
   }
 
