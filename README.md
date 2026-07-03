@@ -95,6 +95,7 @@ generates config packages for:
     *   [Parameters](#parameters-17)
 *   [cidrAddresses](#cidraddresses)
     *   [Parameters](#parameters-18)
+*   [families](#families)
 *   [secretName](#secretname)
 *   [directHosts](#directhosts)
 *   [subnetForAddress](#subnetforaddress)
@@ -356,6 +357,10 @@ Returns **Iterable<[string](https://developer.mozilla.org/docs/Web/JavaScript/Re
 *   `networkAddresses` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[NetworkAddress](#networkaddress)>**&#x20;
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
+
+## families
+
+Returns **[Set](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
 
 ## secretName
 
