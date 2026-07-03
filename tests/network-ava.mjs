@@ -1,4 +1,5 @@
 import test from "ava";
+import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import {
   InitializationContext,
   Network,
@@ -33,6 +34,7 @@ test("Network addresses", t => {
   t.is(n1.name, "n1");
   t.is(n1.kind, "ethernet");
   t.is(n1.scope, "global");
+  t.deepEqual(n1.families, new Set([FAMILY_IPV6, FAMILY_IPV4]));
 
   const s1 = n1.subnets.get("10.0/16");
   t.true(s1.networks.has(n1));
