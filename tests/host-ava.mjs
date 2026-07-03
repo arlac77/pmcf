@@ -247,7 +247,11 @@ test("Host addresses", t => {
       eth0: {
         network: n1,
         scope: "global",
-        ipAddresses: ["${ipv4_prefix}.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
+        ipAddresses: [
+          "${ipv4_prefix}.0.2/16",
+          "fe80::1e57:3eff:fe22:9a8f/64",
+          "169.254.1.2"
+        ]
       }
     }
   });
@@ -268,7 +272,8 @@ test("Host addresses", t => {
     eth0.ipAddresses,
     new Map([
       ["10.0.0.2", n1.subnets.get("10.0/16")],
-      ["fe80::1e57:3eff:fe22:9a8f", n1.subnets.get("fe80::/64")]
+      ["fe80::1e57:3eff:fe22:9a8f", n1.subnets.get("fe80::/64")],
+      ["169.254.1.2", n1.subnets.get("169.254/16")]
     ])
   );
 
@@ -314,7 +319,7 @@ test("Host addresses", t => {
       n1.subnets.get("fe80::/64")
     ],*/
     address: "10.0.0.2",
-    addresses: ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f"]
+    addresses: ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f","169.254.1.2"]
   });
 
   /*
@@ -334,13 +339,15 @@ test("Host addresses", t => {
     "127.0.0.1",
     "::1",
     "10.0.0.2",
-    "fe80::1e57:3eff:fe22:9a8f"
+    "fe80::1e57:3eff:fe22:9a8f",
+    "169.254.1.2"
   ]);
   t.deepEqual(cidrAddresses(h1.networkAddresses()), [
     "127.0.0.1/8",
     "::1/128",
     "10.0.0.2/16",
-    "fe80::1e57:3eff:fe22:9a8f/64"
+    "fe80::1e57:3eff:fe22:9a8f/64",
+    "169.254.1.2/16"
   ]);
 });
 
