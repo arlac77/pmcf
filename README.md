@@ -64,43 +64,43 @@ generates config packages for:
     *   [isTemplate](#istemplate)
     *   [expand](#expand)
         *   [Parameters](#parameters-9)
-*   [PortEndpoint](#portendpoint)
+*   [serviceEndpoints](#serviceendpoints)
     *   [Parameters](#parameters-10)
+*   [PortEndpoint](#portendpoint)
+    *   [Parameters](#parameters-11)
     *   [port](#port)
     *   [socketAddress](#socketaddress)
 *   [HTTPEndpoint](#httpendpoint)
-    *   [Parameters](#parameters-11)
+    *   [Parameters](#parameters-12)
     *   [port](#port-1)
 *   [id](#id)
 *   [domainNames](#domainnames)
 *   [InitializationContext](#initializationcontext)
-    *   [Parameters](#parameters-12)
+    *   [Parameters](#parameters-13)
 *   [SkeletonNetworkInterface](#skeletonnetworkinterface)
     *   [networkAddresses](#networkaddresses)
-        *   [Parameters](#parameters-13)
+        *   [Parameters](#parameters-14)
 *   [SystemdJournalRemoteService](#systemdjournalremoteservice)
     *   [Properties](#properties)
     *   [systemdConfigs](#systemdconfigs)
-        *   [Parameters](#parameters-14)
+        *   [Parameters](#parameters-15)
 *   [SystemdJournalUploadService](#systemdjournaluploadservice)
     *   [Properties](#properties-1)
     *   [systemdConfigs](#systemdconfigs-1)
-        *   [Parameters](#parameters-15)
+        *   [Parameters](#parameters-16)
 *   [NetworkAddress](#networkaddress)
-    *   [Parameters](#parameters-16)
+    *   [Parameters](#parameters-17)
     *   [subnet](#subnet)
     *   [networkInterface](#networkinterface)
     *   [address](#address)
 *   [addresses](#addresses)
-    *   [Parameters](#parameters-17)
-*   [cidrAddresses](#cidraddresses)
     *   [Parameters](#parameters-18)
+*   [cidrAddresses](#cidraddresses)
+    *   [Parameters](#parameters-19)
 *   [families](#families)
 *   [secretName](#secretname)
 *   [directHosts](#directhosts)
 *   [subnetForAddress](#subnetforaddress)
-    *   [Parameters](#parameters-19)
-*   [serviceEndpoints](#serviceendpoints)
     *   [Parameters](#parameters-20)
 *   [domainName](#domainname)
     *   [Parameters](#parameters-21)
@@ -220,6 +220,21 @@ Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 Returns **any**&#x20;
 
+## serviceEndpoints
+
+### Parameters
+
+*   `sources` **any**&#x20;
+*   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?**  (optional, default `{}`)
+
+    *   `options.services` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?** filter for services
+    *   `options.endpoints` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?** filter for endpoints
+    *   `options.select` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?** mapper from Endpoint into result
+    *   `options.limit` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** upper limit of # result items
+    *   `options.join` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** join result(s) into a string
+
+Returns **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | any)**&#x20;
+
 ## PortEndpoint
 
 **Extends BaseEndpoint**
@@ -285,7 +300,7 @@ Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
 
 ## SystemdJournalRemoteService
 
-**Extends Service**
+**Extends CoreService**
 
 ### Properties
 
@@ -302,7 +317,7 @@ Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 
 ## SystemdJournalUploadService
 
-**Extends Service**
+**Extends CoreService**
 
 ### Properties
 
@@ -377,21 +392,6 @@ hosts we own direcly.
 *   `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
 Returns **Subnet?**&#x20;
-
-## serviceEndpoints
-
-### Parameters
-
-*   `sources` **any**&#x20;
-*   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?**  (optional, default `{}`)
-
-    *   `options.services` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?** filter for services
-    *   `options.endpoints` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?** filter for endpoints
-    *   `options.select` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?** mapper from Endpoint into result
-    *   `options.limit` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** upper limit of # result items
-    *   `options.join` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** join result(s) into a string
-
-Returns **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | any)**&#x20;
 
 ## domainName
 
