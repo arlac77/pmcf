@@ -1,11 +1,10 @@
 import { AggregatedMap } from "aggregated-map";
 import { default_collection_attribute_writable, addType } from "pacc";
-import { Service } from "./service.mjs";
+import { CoreService } from "./core-service.mjs";
 import { networkAddressType } from "pmcf";
 
-export class ExtraSourceService extends Service {
+export class ExtraSourceService extends CoreService {
   static name = "extra-source-service";
-
   static attributes = {
     source: {
       ...default_collection_attribute_writable,
@@ -19,10 +18,6 @@ export class ExtraSourceService extends Service {
   }
 
   source = [];
-
-  get type() {
-    return this.constructor.name;
-  }
 
   get services() {
     return new AggregatedMap([

@@ -4,7 +4,7 @@ import {
   string_attribute_writable,
   string_set_attribute_writable
 } from "pacc";
-import { addType, Service, Base } from "pmcf";
+import { addType, CoreService, Base } from "pmcf";
 import { owner_attribute } from "../common-attributes.mjs";
 
 class alpm_repository extends Base {
@@ -22,7 +22,7 @@ class alpm_repository extends Base {
   architectures = new Set();
 }
 
-export class alpm extends Service {
+export class alpm extends CoreService {
   static attributes = {
     repositories: {
       ...default_collection_attribute_writable,

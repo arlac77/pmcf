@@ -16,6 +16,7 @@ export * from "./network-interfaces/wlan.mjs";
 export * from "./network-interfaces/wireguard.mjs";
 export * from "./network-interfaces/tun.mjs";
 export * from "./service-types.mjs";
+export * from "./core-service.mjs";
 export * from "./service.mjs";
 export * from "./extra-source-service.mjs";
 export * from "./endpoint.mjs";

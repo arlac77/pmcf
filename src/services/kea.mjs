@@ -13,7 +13,7 @@ import {
 } from "pacc";
 import {
   addType,
-  Service,
+  CoreService,
   sortDescendingByPriority,
   serviceEndpoints,
   SUBNET_LOCALHOST_IPV4,
@@ -23,7 +23,7 @@ import { writeLines } from "../utils.mjs";
 
 const keaVersion = "3.0.1";
 
-export class kea extends Service {
+export class kea extends CoreService {
   static attributes = {
     "ddns-send-updates": {
       ...boolean_attribute_writable_true,

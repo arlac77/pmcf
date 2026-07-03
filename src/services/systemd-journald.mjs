@@ -1,8 +1,8 @@
 import { string_attribute_writable, duration_attribute_writable } from "pacc";
-import { Service, addType } from "pmcf";
+import { CoreService, addType } from "pmcf";
 import { filterConfigurable, sectionLines } from "../utils.mjs";
 
-export class SystemdJournaldService extends Service {
+export class SystemdJournaldService extends CoreService {
   static name = "systemd-journald";
   static attributes = {
     Storage: {
@@ -126,10 +126,6 @@ export class SystemdJournaldService extends Service {
   };
   static {
     addType(this);
-  }
-
-  get type() {
-    return this.constructor.name;
   }
 
   systemdConfigs(name) {

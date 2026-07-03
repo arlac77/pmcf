@@ -5,6 +5,7 @@ import {
   Host,
   Network,
   Service,
+  CoreService,
   ServiceOwner,
   ServiceTypes,
   addServiceType,

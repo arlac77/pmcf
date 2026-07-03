@@ -6,6 +6,7 @@ import {
   root,
   Host,
   Network,
+  CoreService,
   Service,
   ExtraSourceService,
   Subnet,
@@ -42,8 +43,8 @@ test("types", t => {
   t.is(types.subnet.key, "address");
 
   t.is(types.service, Service);
-  t.is(types.service.extends, Base);
-  t.deepEqual(types.service.extends, types.base);
+  t.is(types.service.extends, CoreService);
+  t.deepEqual(types.service.extends, types['core-service']);
   t.deepEqual(types.service.owners, [
     Host,
     Cluster,
@@ -70,7 +71,7 @@ test("types", t => {
   t.is(types.chrony.priority, 1.1);
 
   t.is(types.alpm, alpm);
-  t.is(types.alpm.extends, Service);
+  t.is(types.alpm.extends, CoreService);
   t.is(types.alpm.priority, 1.1);
 
   t.is(types.cluster, Cluster);

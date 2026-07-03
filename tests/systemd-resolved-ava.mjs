@@ -1,9 +1,7 @@
 import test from "ava";
-import { InitializationContext, Host, SystemdResolvedService } from "pmcf";
+import { InitializationContext, SystemdResolvedService } from "pmcf";
 
 test("systemd-resolved service type", t => {
-  const ic = new InitializationContext();
-  const h1 = new Host();
   const service = new SystemdResolvedService();
 
   t.is(service.systemdService, "systemd-resolved.service");

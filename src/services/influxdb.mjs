@@ -2,14 +2,14 @@ import { join } from "node:path";
 import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import { FileContentProvider } from "npm-pkgbuild";
 import { boolean_attribute_writable_true } from "pacc";
-import { Service, addType } from "pmcf";
+import { CoreService, addType } from "pmcf";
 import {
   writeLines,
   setionLinesFromPropertyIterator,
   filterConfigurable
 } from "../utils.mjs";
 
-export class influxdb extends Service {
+export class influxdb extends CoreService {
   static attributes = {
     metricsDisabled: {
       ...boolean_attribute_writable_true,

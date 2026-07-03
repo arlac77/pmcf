@@ -1,7 +1,7 @@
 import { port_attribute, string_attribute_writable } from "pacc";
-import { Service, addType } from "pmcf";
+import { CoreService, addType } from "pmcf";
 
-export class mosquitto extends Service {
+export class mosquitto extends CoreService {
   static attributes = {
     listener: {
       ...port_attribute,

@@ -1,9 +1,8 @@
 import test from "ava";
-import { InitializationContext, Host, SystemdJournaldService } from "pmcf";
+import { InitializationContext, SystemdJournaldService } from "pmcf";
 
 test("systemd-journald service type", t => {
-  const ic = new InitializationContext();
-  const service = new SystemdJournaldService(new Host(ic.root));
+  const service = new SystemdJournaldService();
 
   t.is(service.systemdService, "systemd-journald.service");
   t.deepEqual(service.types, new Set(["systemd-journald"]));

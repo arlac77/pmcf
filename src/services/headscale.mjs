@@ -1,7 +1,7 @@
 import { FAMILY_IPV4 } from "ip-utilties";
-import { Service, addType } from "pmcf";
+import { CoreService, addType } from "pmcf";
 
-export class headscale extends Service {
+export class headscale extends CoreService {
   static service = {
     endpoints: [
       {

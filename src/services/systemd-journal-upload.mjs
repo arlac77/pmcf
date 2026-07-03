@@ -3,7 +3,7 @@ import {
   string_collection_attribute_writable,
   boolean_attribute_writable
 } from "pacc";
-import { Service, addType } from "pmcf";
+import { CoreService, addType } from "pmcf";
 import { filterConfigurable, sectionLines } from "../utils.mjs";
 
 /**
@@ -11,7 +11,7 @@ import { filterConfigurable, sectionLines } from "../utils.mjs";
  * @property {string} ServerCertificateFile
  * @property {string} ServerKeyFile
  */
-export class SystemdJournalUploadService extends Service {
+export class SystemdJournalUploadService extends CoreService {
   static name = "systemd-journal-upload";
   static attributes = {
     URL: { ...string_attribute_writable, name: "URL", configurable: true },
@@ -51,10 +51,6 @@ export class SystemdJournalUploadService extends Service {
   };
   static {
     addType(this);
-  }
-
-  get type() {
-    return this.constructor.name;
   }
 
   /**

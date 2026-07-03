@@ -1,11 +1,11 @@
 import { FAMILY_IPV6 } from "ip-utilties";
 import { addType } from "pmcf";
-import { endpointAttributes, Service } from "./service.mjs";
+import { endpointAttributes, CoreService } from "./core-service.mjs";
 
 class BaseEndpoint {
   static name = "endpoint";
   static priority = 1.1;
-  static owners = [Service, "network_interface"];
+  static owners = [CoreService, "network_interface"];
   static key = "type";
   attributes = endpointAttributes;
 

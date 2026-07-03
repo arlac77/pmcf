@@ -5,16 +5,15 @@ import {
   boolean_attribute_writable,
   integer_attribute_writable
 } from "pacc";
-import { Service, addType } from "pmcf";
+import { CoreService, addType } from "pmcf";
 import { filterConfigurable, sectionLines } from "../utils.mjs";
 
 /**
  * @property {string} ServerCertificateFile
  * @property {string} ServerKeyFile
  */
-export class SystemdJournalRemoteService extends Service {
+export class SystemdJournalRemoteService extends CoreService {
   static name = "systemd-journal-remote";
-
   static attributes = {
     Seal: {
       ...boolean_attribute_writable,
@@ -94,10 +93,6 @@ export class SystemdJournalRemoteService extends Service {
 
   static {
     addType(this);
-  }
-
-  get type() {
-    return this.constructor.name;
   }
 
   /**
