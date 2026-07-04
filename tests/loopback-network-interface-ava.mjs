@@ -9,6 +9,7 @@ import {
 
 test("loopback common names", t => {
   t.false(loopback.isCommonName("eth0"));
+  t.true(loopback.isCommonName("lo"));
   t.true(loopback.isCommonName("lo0"));
   t.true(loopback.isCommonName("loopback"));
 });
