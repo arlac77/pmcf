@@ -220,7 +220,7 @@ export class Cluster extends Host {
 
         await writeLines(
           join(packageStagingDir, "/usr/lib/systemd/system/keepalived.d"),
-          `use-credentials.conf`,
+          "credentials.conf",
           [
             "[Service]",
             ...credentials.map(
