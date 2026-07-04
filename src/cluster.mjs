@@ -91,7 +91,8 @@ export class Cluster extends Host {
       for (const cluster of [...this.owner.clusters].sort((a, b) =>
         a.name.localeCompare(b.name)
       )) {
-        cfg.push(`vrrp_instance ${cluster.name} {`);
+        const name = cluster.name;
+        cfg.push(`vrrp_instance ${name} {`);
         cfg.push(
           `  state ${cluster.masters.indexOf(ni) === 0 ? "MASTER" : "BACKUP"}`
         );
@@ -108,7 +109,7 @@ export class Cluster extends Host {
             } {`
           );
           cfg.push(
-            `    ${na.cidrAddress} dev ${ni.name} label ${cluster.name}`
+            `    ${na.cidrAddress} dev ${ni.name} label ${name}`
           );
           cfg.push("  }");
         }
@@ -120,7 +121,7 @@ export class Cluster extends Host {
           reducedPrio = cluster.backups.indexOf(ni) + 5;
         }
 
-        const credential = cluster.name.toUpperCase() + "_PASSWORD";
+        const credential = name.toUpperCase() + "_PASSWORD";
         credentials.push(credential);
         cfg.push(`  priority ${host.priority - reducedPrio}`);
         cfg.push("  smtp_alert");
@@ -131,9 +132,9 @@ export class Cluster extends Host {
         cfg.push("  }");
 
         cfg.push(
-          `  notify_master "/usr/bin/systemctl start ${cluster.name}-master.target"`,
-          `  notify_backup "/usr/bin/systemctl start ${cluster.name}-backup.target"`,
-          `  notify_fault "/usr/bin/systemctl start ${cluster.name}-fault.target"`
+          `  notify_master "/usr/bin/systemctl start ${name}-master.target"`,
+          `  notify_backup "/usr/bin/systemctl start ${name}-backup.target"`,
+          `  notify_fault "/usr/bin/systemctl start ${name}-fault.target"`
         );
 
         cfg.push("}", "");
@@ -188,33 +189,33 @@ export class Cluster extends Host {
         }
         await writeLines(
           join(packageStagingDir, "/usr/lib/systemd/system"),
-          `${cluster.name}-master.target`,
+          `${name}-master.target`,
           [
             "[Unit]",
-            `Description=master state of cluster ${cluster.name}`,
+            `Description=master state of cluster ${name}`,
             "PartOf=keepalived.service",
-            `Conflicts=${cluster.name}-backup.target ${cluster.name}-fault.target`
+            `Conflicts=${name}-backup.target ${name}-fault.target`
           ]
         );
 
         await writeLines(
           join(packageStagingDir, "/usr/lib/systemd/system"),
-          `${cluster.name}-backup.target`,
+          `${name}-backup.target`,
           [
             "[Unit]",
-            `Description=backup state of cluster ${cluster.name}`,
+            `Description=backup state of cluster ${name}`,
             "PartOf=keepalived.service",
-            `Conflicts=${cluster.name}-master.target ${cluster.name}-fault.target`
+            `Conflicts=${name}-master.target ${name}-fault.target`
           ]
         );
 
         await writeLines(
           join(packageStagingDir, "/usr/lib/systemd/system"),
-          `${cluster.name}-fault.target`,
+          `${name}-fault.target`,
           [
             "[Unit]",
-            `Description=fault state of cluster ${cluster.name}`,
-            `Conflicts=${cluster.name}-master.target ${cluster.name}-backup.target`
+            `Description=fault state of cluster ${name}`,
+            `Conflicts=${name}-master.target ${name}-backup.target`
           ]
         );
 
