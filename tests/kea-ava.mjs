@@ -1,5 +1,5 @@
 import test from "ava";
-import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
+import { FAMILY_IPV4 } from "ip-utilties";
 import {
   InitializationContext,
   Host,
@@ -21,9 +21,7 @@ test("kea basics", t => {
     name: "linux",
     os: "linux",
     networkInterfaces: {
-      lo: {
-        kind: "loopback"
-      }
+      lo: {}
     }
   });
   assign(hosts_attribute, owner, linux);
@@ -59,8 +57,6 @@ test("kea basics", t => {
 
   assign(ServiceOwner.attributes.services, h1, keaInst);
 
-  // h1.services = keaInst;
-
   t.is(keaInst.endpoint("dhcp").toString(), "dhcp:IPv4/10.0.0.1[547]");
   t.is(
     keaInst.endpoint("kea-ddns").toString(),
@@ -76,37 +72,31 @@ test("kea basics", t => {
   );
 
   /*
-  const a1 = [...h1.networkAddresses(na => na.family === FAMILY_IPV4)][0];
-
-  const result = kea
+  const result = keaInst
     .endpoints(e => e.family === FAMILY_IPV4)
     .sort(sortByFamilyAndAddress);
 
-  let expected = [
-    new HTTPEndpoint(kea, a1, {
+  const a1 = [...h1.networkAddresses(na => na.family === FAMILY_IPV4)][0];
+
+  const expected = [
+    new HTTPEndpoint(keaInst, a1, {
       type: "kea-control-agent",
       port: 53002,
       tls: false
     }),
-    new Endpoint(kea, a1, {
+    new Endpoint(keaInst, a1, {
       type: "dhcp",
       protocol: "udp",
       port: 547,
       tls: false
-    })
-  ];
-
-   expected.push(
-    new HTTPEndpoint(kea, a1, {
+    }),
+    new HTTPEndpoint(keaInst, a1, {
       type: "kea-ha-4",
       port: 53003,
       tls: false
     })
-  );
-  
-  expected = expected.sort(sortByFamilyAndAddress);
+  ].sort(sortByFamilyAndAddress);
 
-  //console.log([...la].map(a => a.toString()));
   console.log(result.map(na => na.toString()));
   console.log(expected.map(na => na.toString()));
 
