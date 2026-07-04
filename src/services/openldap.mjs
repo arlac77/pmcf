@@ -40,10 +40,6 @@ export class openldap extends CoreService {
 
     const packageData = this.packageData;
 
-    /*console.log(
-      [...this.walkDirections(["this", "extends"])].map(n => n.fullName)
-    );*/
-
     packageData.sources = await Array.fromAsync(
       this.templateContent(
         {

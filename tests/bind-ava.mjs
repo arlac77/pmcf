@@ -51,7 +51,6 @@ test("BIND groups", async t => {
 
   const bindInst = await ic.named("/L1/C1/bind");
 
-  //console.log([...bindInst.extends].map(e=>e.fullName));
   t.is(bindInst.fullName, "/L1/C1/bind");
   t.true(bindInst instanceof bind);
 

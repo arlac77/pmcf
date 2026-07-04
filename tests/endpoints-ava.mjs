@@ -64,8 +64,6 @@ test("Endpoint from Service basics", t => {
   const nas = [...h1.networkAddresses()].sort(sortByFamilyAndAddress);
   const eps = s1.endpoints().sort(sortByFamilyAndAddress);
 
-  //console.log(eps.map(e => e.toString()));
-
   const options = {
     type: ServiceTypes.dns,
     protocol: "udp",

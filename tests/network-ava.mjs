@@ -16,7 +16,6 @@ test("Network load", async t => {
   await ic.loadAll();
 
   const n1 = ic.root.named("/L1/n1");
-  //console.log(n1);
   await assertObject(t, n1, root1(ic.root, "/L1/n1"));
 });
 

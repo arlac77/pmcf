@@ -169,7 +169,6 @@ export class Base {
                 );
                 all.push(value); // TODO should not happen
               } else if (typeof value === "object") {
-                //console.log("NO F", this.fullName, path, value);
                 all.push(...Object.values(value));
               }
             }

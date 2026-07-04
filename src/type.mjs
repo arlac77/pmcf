@@ -42,7 +42,6 @@ export function assign(attribute, object, value) {
     if (attribute.collection) {
       const current = object[attribute.name];
 
-      //console.log("ASSIGN", object.fullName, attribute.name, value.name);
       if (current) {
         if (typeof current.set === "function") {
           if (attribute.type.primitive) {

@@ -30,9 +30,7 @@ test("Host load", async t => {
   );
   await ic.loadAll();
 
-  const host2 = await ic.root.named("/L1/n1/host2");
-  //console.log(host2);
-
+  const host2 = await ic.named("/L1/n1/host2");
   const host1 = await ic.named("/L1/host1");
   t.deepEqual(host1.packaging, new Set(["arch"]));
 
@@ -42,13 +40,11 @@ test("Host load", async t => {
   /*
   console.log([...ic.root.hosts.values()].map(h => h.fullName));
   console.log([...ic.root.networks.values()].map(h => h.fullName));
+  console.log(ic.root.named("/L1/n1"));
   */
-  //console.log(ic.root.named("/L1/n1"));
 
   await assertObject(t, host1, root1(ic.root, "/L1/host1"));
   await assertObject(t, host2, root1(ic.root, "/L1/n1/host2"));
-
-  // console.log(ic.root.hosts.get("host2"));
 
   /*await assertObjects(
     t,

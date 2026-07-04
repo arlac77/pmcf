@@ -32,7 +32,6 @@ test("Owner read write", t => {
 
   t.is(o1.networks.get("n1").kind, "ethernet");
 
-  //console.log([...o1.networks.values()]);
   t.deepEqual(o1.toJSON(), {
     name: "o1",
     directory: "/o1",
@@ -55,7 +54,7 @@ test("Owner read write", t => {
         },
         subnets: {
           "fe80::/64": {
-            family: "IPv6",
+            family: FAMILY_IPV6,
             prefixLength: 64
           }
         }
