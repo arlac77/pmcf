@@ -257,8 +257,8 @@ export class CoreService extends Base {
 
   get packageData() {
     const packageData = super.packageData;
-    const name = `${this.owner.name}-${this.host.name}`;
-    packageData.properties.name = `${this.type}-${name}`;
+    const name = `${this.owner.owner.name}-${this.owner.name}`;
+    packageData.properties.name = `${this.name}-${name}`;
     packageData.properties.description = `${this.type} service definitions for ${this.fullName}`;
     packageData.properties.groups.push("service-config", name);
     return packageData;
