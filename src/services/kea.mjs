@@ -309,7 +309,7 @@ export class kea extends CoreService {
 
     const subnetPrefixes = new Set(
       [...this.subnets.values()]
-        .filter(s => s != SUBNET_LOCALHOST_IPV4 && s != SUBNET_LOCALHOST_IPV6)
+        .filter(s => s !== SUBNET_LOCALHOST_IPV4 && s !== SUBNET_LOCALHOST_IPV6)
         .map(s => s.prefix)
     );
 
