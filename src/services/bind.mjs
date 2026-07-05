@@ -501,7 +501,7 @@ export class bind extends ExtraSourceService {
 
   async writeForwarders(outputControl) {
     const forwarders = serviceEndpoints(this.source, {
-      services: 'services[types[dns]" && priority>=100 && priority<200]',
+      services: 'services[types[dns] && priority>=100 && priority<200]',
       endpoints: endpoint => endpoint.family !== "dns",
       select: e => e.address,
       limit: 5
