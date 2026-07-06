@@ -4,10 +4,12 @@ import { InitializationContext, UnixEndpoint, ServiceTypes } from "pmcf";
 import { openldap } from "../src/services/openldap.mjs";
 
 test("OpenLDAPService basics", async t => {
-  const ic = new InitializationContext(new URL("fixtures/root1", import.meta.url).pathname);
+  const ic = new InitializationContext(
+    new URL("fixtures/root1", import.meta.url).pathname
+  );
   await ic.loadAll();
 
-  const openldapInst = await ic.named("/L1/host1/openldap");
+  const openldapInst = ic.named("/L1/host1/openldap");
 
   t.true(openldapInst instanceof openldap);
   t.is(openldapInst.base, "dc=mydomain,dc=com");
