@@ -188,7 +188,7 @@ export class InitializationContext {
       return assign(attribute, owner, this.read(object, data));
     }
 
-    this.error(`No attribute to assign ${type.name} to ${owner.fullName}`);
+    this.error(`No attribute to assign ${type.name} to ${owner.fullName}(${owner.typeName})`);
   }
 
   async loadAll() {
