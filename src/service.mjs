@@ -8,7 +8,6 @@ export class Service extends CoreService {
   };
   static {
     addType(this);
-
     setBaseService(this);
   }
 
