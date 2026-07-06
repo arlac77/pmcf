@@ -75,10 +75,7 @@ test("Service basics", t => {
     priority: 3,
     alias: "primary-dns"
   });
-
   assign(ServiceOwner.attributes.services, h1, s1);
-
-  //h1.services = s1;
 
   t.deepEqual(
     s1.endpoints(e => e.family === FAMILY_IPV4),
