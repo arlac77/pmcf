@@ -2,6 +2,8 @@ import { FAMILY_IPV6 } from "ip-utilties";
 import { addType } from "pmcf";
 import { endpointAttributes, CoreService } from "./core-service.mjs";
 
+export const FAMILY_UNIX = "unix";
+
 class BaseEndpoint {
   static name = "endpoint";
   static priority = 1.1;
@@ -198,7 +200,7 @@ export class UnixEndpoint extends BaseEndpoint {
   }
 
   get family() {
-    return "unix";
+    return FAMILY_UNIX;
   }
 
   get host() {

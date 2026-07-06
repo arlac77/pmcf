@@ -1,4 +1,5 @@
 import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
+import { FAMILY_UNIX } from "./endpoint.mjs";
 
 export const ServiceTypes = {
   "alpm-repo": {
@@ -83,7 +84,7 @@ export const ServiceTypes = {
     ]
   },
   ldapi: {
-    endpoints: [{ family: "unix", scheme: "ldapi", path: "/run/ldapi" }]
+    endpoints: [{ family: FAMILY_UNIX, scheme: "ldapi", path: "/run/ldapi" }]
   },
   http: {
     endpoints: [

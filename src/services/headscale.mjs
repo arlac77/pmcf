@@ -1,11 +1,11 @@
 import { FAMILY_IPV4 } from "ip-utilties";
-import { CoreService, addType } from "pmcf";
+import { CoreService, addType, FAMILY_UNIX } from "pmcf";
 
 export class headscale extends CoreService {
   static service = {
     endpoints: [
       {
-        family: "unix",
+        family: FAMILY_UNIX,
         path: "/run/headscale/headscale.sock"
       },
       {

@@ -5,7 +5,6 @@ import {
   Host,
   Network,
   Service,
-  CoreService,
   ServiceOwner,
   ServiceTypes,
   addServiceType,
@@ -16,7 +15,8 @@ import {
   sortByFamilyAndAddress,
   assign,
   networks_attribute,
-  hosts_attribute
+  hosts_attribute,
+  FAMILY_UNIX
 } from "pmcf";
 
 function prepare() {
@@ -194,7 +194,7 @@ test("UnixEndpoint", t => {
   const options = {
     type: ServiceTypes.ntp,
     path: "/run/xyz",
-    family: "unix",
+    family: FAMILY_UNIX,
     scheme: "ldapi",
     tls: false
   };

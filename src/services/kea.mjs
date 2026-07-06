@@ -17,7 +17,8 @@ import {
   sortDescendingByPriority,
   serviceEndpoints,
   SUBNET_LOCALHOST_IPV4,
-  SUBNET_LOCALHOST_IPV6
+  SUBNET_LOCALHOST_IPV6,
+  FAMILY_UNIX
 } from "pmcf";
 import { writeLines } from "../utils.mjs";
 
@@ -106,7 +107,7 @@ export class kea extends CoreService {
       "kea-control-dhcp4": {
         endpoints: [
           {
-            family: "unix",
+            family: FAMILY_UNIX,
             path: "/run/kea/ctrl-4"
           }
         ]
@@ -114,7 +115,7 @@ export class kea extends CoreService {
       "kea-control-dhcp6": {
         endpoints: [
           {
-            family: "unix",
+            family: FAMILY_UNIX,
             path: "/run/kea/ctrl-6"
           }
         ]
@@ -122,7 +123,7 @@ export class kea extends CoreService {
       "kea-control-ddns": {
         endpoints: [
           {
-            family: "unix",
+            family: FAMILY_UNIX,
             path: "/run/kea/ctrl-ddns"
           }
         ]
@@ -272,7 +273,7 @@ export class kea extends CoreService {
 
     const toUnix = endpoint => {
       return {
-        "socket-type": "unix",
+        "socket-type": FAMILY_UNIX,
         "socket-name": endpoint?.path
       };
     };

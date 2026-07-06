@@ -16,7 +16,8 @@ import {
   DomainNameEndpoint,
   HTTPEndpoint,
   UnixEndpoint,
-  addType
+  addType,
+  FAMILY_UNIX
 } from "pmcf";
 import { asArray } from "./utils.mjs";
 import { networkAddressAttributes } from "./common-attributes.mjs";
@@ -135,7 +136,7 @@ export class CoreService extends Base {
 
     for (const e of data) {
       switch (e.family) {
-        case "unix":
+        case FAMILY_UNIX:
           result.push(new UnixEndpoint(this, e.path, e));
           break;
 
