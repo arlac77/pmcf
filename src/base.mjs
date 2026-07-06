@@ -511,7 +511,7 @@ export class Base {
       stopClass: Base,
       root: this,
       valueFor: (name, at) =>
-        at === undefined ? globals[name] : this.value(name)
+        at === undefined ? globals[name] : at.value(name)
     });
   }
 
