@@ -3,6 +3,7 @@ import { addType } from "pmcf";
 import { endpointAttributes, CoreService } from "./core-service.mjs";
 
 export const FAMILY_UNIX = "unix";
+export const FAMILY_DNS = "dns";
 
 class BaseEndpoint {
   static name = "endpoint";
@@ -114,7 +115,7 @@ export class DomainNameEndpoint extends PortEndpoint {
   }
 
   get family() {
-    return "dns"; // TODO
+    return FAMILY_DNS;
   }
 
   get address() {

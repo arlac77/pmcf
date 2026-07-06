@@ -17,7 +17,8 @@ import {
   HTTPEndpoint,
   UnixEndpoint,
   addType,
-  FAMILY_UNIX
+  FAMILY_UNIX,
+  FAMILY_DNS
 } from "pmcf";
 import { asArray } from "./utils.mjs";
 import { networkAddressAttributes } from "./common-attributes.mjs";
@@ -141,7 +142,7 @@ export class CoreService extends Base {
           break;
 
         case undefined:
-        case "dns":
+        case FAMILY_DNS:
         case FAMILY_IPV4:
         case FAMILY_IPV6:
           const options =

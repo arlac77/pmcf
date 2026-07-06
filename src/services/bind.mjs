@@ -23,7 +23,8 @@ import {
   serviceEndpoints,
   addresses,
   networkAddressType,
-  addType
+  addType,
+  FAMILY_DNS
 } from "pmcf";
 import { yesno, writeLines, asArray } from "../utils.mjs";
 import {
@@ -501,8 +502,8 @@ export class bind extends ExtraSourceService {
 
   async writeForwarders(outputControl) {
     const forwarders = serviceEndpoints(this.source, {
-      services: 'services[types[dns] && priority>=100 && priority<200]',
-      endpoints: endpoint => endpoint.family !== "dns",
+      services: "services[types[dns] && priority>=100 && priority<200]",
+      endpoints: endpoint => endpoint.family !== FAMILY_DNS,
       select: e => e.address,
       limit: 5
     });
