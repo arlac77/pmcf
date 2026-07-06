@@ -7,7 +7,12 @@ import {
   matchPrefixIP,
   FAMILY_IPV6
 } from "ip-utilties";
-import { string_attribute, name_attribute, integer_attribute } from "pacc";
+import {
+  string_attribute,
+  name_attribute,
+  integer_attribute,
+  getAttribute
+} from "pacc";
 import { networks_attribute } from "./common-attributes.mjs";
 import { addType, Network } from "pmcf";
 
@@ -46,13 +51,20 @@ export class Subnet {
 
   set owner(value) {
     this._owner = value;
-    if(value instanceof Network) {
+    if (value instanceof Network) {
       this.networks.add(value);
     }
   }
 
-  *_walkDirections(directions, seen) {
+  value(name) {
+    const value = getAttribute(this, name);
+
+    console.log("SUBNET VALUE", name, value);
+
+    return value;
   }
+
+  *_walkDirections(directions, seen) {}
 
   get cidr() {
     return this.address;

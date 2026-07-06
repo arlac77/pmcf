@@ -287,12 +287,8 @@ export class Base {
     return Object.fromEntries(this.attributeIterator(filter));
   }
 
-  valueFor(name, at) {
-    if (at !== undefined) {
-      return this.attribute(name) ?? this.property(name);
-    }
-
-    return globals[name];
+  value(name) {
+    return this.attribute(name) ?? this.property(name);
   }
 
   /**
@@ -374,7 +370,8 @@ export class Base {
   expression(expression, options) {
     return parse(expression, {
       root: this,
-      valueFor: (name, at) => this.valueFor(name, at),
+      valueFor: (name, at) =>
+        at === undefined ? globals[name] : at.value(name),
       ...options
     });
   }
@@ -445,7 +442,8 @@ export class Base {
         expression =>
           parse(expression, {
             root: this,
-            valueFor: (name, at) => this.valueFor(name, at)
+            valueFor: (name, at) =>
+              at === undefined ? globals[name] : at.value(name)
           })
       )
     ];
@@ -512,7 +510,8 @@ export class Base {
     return expand(object, {
       stopClass: Base,
       root: this,
-      valueFor: (name, at) => this.valueFor(name, at)
+      valueFor: (name, at) =>
+        at === undefined ? globals[name] : this.value(name)
     });
   }
 
