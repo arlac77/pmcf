@@ -7,7 +7,7 @@ import {
   email_attribute
 } from "pacc";
 import { asArray, union } from "./utils.mjs";
-import { Base } from "./base.mjs";
+import { ServiceOwner } from "./service-owner.mjs";
 import { Subnet, SUBNET_GLOBAL_IPV4, SUBNET_GLOBAL_IPV6 } from "./subnet.mjs";
 import {
   networks_attribute,
@@ -20,7 +20,7 @@ import {
 import { addType, assign } from "pmcf";
 import { loadHooks } from "./hooks.mjs";
 
-export class Owner extends Base {
+export class Owner extends ServiceOwner {
   static name = "owner";
   static priority = 2;
   static owners = [Owner, "root"];
@@ -106,7 +106,7 @@ export class Owner extends Base {
 
   get services() {
     return new AggregatedMap(
-      [...this.hosts.values()].map(host => host.services)
+      [this, ...this.hosts.values()].map(host => host._services)
     );
   }
 
