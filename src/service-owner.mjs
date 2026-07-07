@@ -42,8 +42,7 @@ export class ServiceOwner extends Base {
         present.extends.add(service);
         present.materializeExtends();
       } else {
-        const so = service.forOwner(this);
-        this.services.set(so.name, so);
+        this.services.set(service.name, service.forOwner(this));
       }
     }
   }
