@@ -481,6 +481,7 @@ export class bind extends ExtraSourceService {
   groups = new Map();
 
   materializeExtends() {
+    console.log("materializeExtends", this.fullName, this.owner, this.extends);
     super.materializeExtends();
 
     for (const service of this.walkDirections(["extends"])) {
@@ -528,7 +529,7 @@ export class bind extends ExtraSourceService {
 
     let hasContent = false;
 
-    console.log("PAKAGE", Object.keys(this.groups));
+    console.log("PACKAGE", Object.keys(this.groups));
 
     for (const group of Object.values(this.groups)) {
       hasContent ||= await group.packageContent(outputControl);
