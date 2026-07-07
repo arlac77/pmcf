@@ -41,9 +41,7 @@ test("systemd-journal-remote", async t => {
   );
   await ic.loadAll();
 
-  const journalRemoteTemplate = await ic.named(
-    "/services/systemd-journal-remote/systemd-journal-remote"
-  );
+  const journalRemoteTemplate = ic.named("/templates/systemd-journal-remote");
 
   t.is(journalRemoteTemplate.isTemplate, true);
   t.is(journalRemoteTemplate.type, "systemd-journal-remote");
@@ -54,8 +52,9 @@ test("systemd-journal-remote", async t => {
     "/etc/ssl/certs/chain.cert.pem"
   );
 
-  const journalRemote = await ic.named("/L1/C1/systemd-journal-remote");
+  const journalRemote = ic.named("/L1/C1/systemd-journal-remote");
 
+  t.true(journalRemote.extends.has(journalRemoteTemplate));
   t.is(journalRemote.isTemplate, false);
   t.is(journalRemote.type, "systemd-journal-remote");
   t.is(journalRemote.name, "systemd-journal-remote");
@@ -70,7 +69,7 @@ test("systemd-journal-remote", async t => {
 
   t.deepEqual(
     [...journalRemote.extends].map(s => s.fullName),
-    ["/services/systemd-journal-remote/systemd-journal-remote"]
+    ["/templates/systemd-journal-remote"]
   );
 
   t.deepEqual(journalRemote.extends, new Set([journalRemoteTemplate]));

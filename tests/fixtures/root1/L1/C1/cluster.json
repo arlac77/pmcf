@@ -1,5 +1,4 @@
 {
-  "extends": ["/services/systemd-journal-remote", "/services/bind"],
   "priority": 390,
   "routerId": 77,
   "masters": "/L1/host1/eth0",
@@ -17,6 +16,7 @@
   },
   "services": {
     "bind": {
+      "extends": "/templates/bind",
       "source": ["/GLOBAL", "/L1/n2"],
       "groups": {
         "internal": {
@@ -50,6 +50,7 @@
       "ServerKeyFile": "/etc/ssl/${domainName}.key"
     },
     "systemd-journal-remote": {
+      "extends": "/templates/systemd-journal-remote",
       "ServerKeyFile": "/etc/ssl/server.key"
     }
   }

@@ -1,0 +1,7 @@
+{
+  "depends": "libmicrohttpd",
+  "alias": "journal",
+  "Seal": false,
+  "SplitMode": "host",
+  "TrustedCertificateFile": "/etc/ssl/certs/chain.cert.pem"
+}

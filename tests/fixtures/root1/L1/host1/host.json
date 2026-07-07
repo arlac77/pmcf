@@ -4,15 +4,7 @@
   "depends": ["d1", "d2-${os}"],
   "replaces": ["r1", "r2-${os}"],
   "provides": ["p1", "p2-${os}"],
-  "extends": [
-    "/model/m1",
-    "/model/${os}",
-    "/services/arch-linux",
-    "/services/timemachine",
-    "/services/openldap",
-    "/services/mosquitto",
-    "/services/postfix"
-  ],
+  "extends": ["/model/m1", "/model/${os}", "/templates/arch-linux"],
   "networkInterfaces": {
     "eth0": {
       "kind": "ethernet",
@@ -34,12 +26,19 @@
       }
     },
     "influxdb": {},
-    "postfix": {},
+    "postfix": {
+      "extends": "/templates/postfix"
+    },
+    "timemachine": {
+      "extends": "/templates/timemachine"
+    },
     "mosquitto": {
+      "extends": "/templates/mosquitto",
       "acl_file": "/etc/mosquitto/acl"
     },
     "dns": { "alias": "dns" },
     "openldap": {
+      "extends": "/templates/openldap",
       "alias": "ldap",
       "base": "${ldap_base}",
       "uri": "ldap://"

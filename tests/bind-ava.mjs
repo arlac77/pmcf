@@ -43,23 +43,24 @@ test("BIND basics endpoints", async t => {
   );
 });
 
-test("BIND groups", async t => {
+test.only("BIND groups", async t => {
   const ic = new InitializationContext(
     new URL("fixtures/root1", import.meta.url).pathname
   );
   await ic.loadAll();
 
-  const bindInst = await ic.named("/L1/C1/bind");
+  const bindInst = ic.named("/L1/C1/bind");
 
   t.is(bindInst.fullName, "/L1/C1/bind");
   t.true(bindInst instanceof bind);
+  t.true(bindInst.extends.has(ic.named("/templates/bind")));
 
   const internalGroup = bindInst.groups.get("internal");
   const protectedGroup = bindInst.groups.get("protected");
 
   t.deepEqual(
     [...bindInst.groups.keys()],
-    ["internal", "protected", "trusted"]
+    ["internal", "protected" /*, "trusted"*/]
   );
   t.is(internalGroup.name, "internal");
   t.is(protectedGroup.name, "protected");

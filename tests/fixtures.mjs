@@ -9,7 +9,7 @@ import { Owner, Network, Subnet, Host, Cluster, mosquitto } from "pmcf";
 export function root1(root, filter) {
   const mosquittoDef = {
     name: "mosquitto",
-    fullName: "services/mosquitto/mosquitto",
+    fullName: "templates/mosquitto",
     instanceof: mosquitto,
     isTemplate: true
   };
@@ -80,14 +80,14 @@ export function root1(root, filter) {
       dns: { type: "dns", alias: "dns" },
       smb: { type: "smb" },
       timemachine: {
-        // extends: ["/services/timemachine/timemachine"],
+        // extends: ["/templates/timemachine"],
         type: "timemachine"
       },
-      mdns: {
-        // extends: ["/services/timemachine/mdns"]
-      },
+    //  mdns: {
+        // extends: ["/templates/mdns"]
+    //  },
       mosquitto: {
-        // extends: ["/services/mosquitto/mosquitto"],
+        // extends: ["/templates/mosquitto"],
         type: "mosquitto",
         alias: "mqtt",
         port: 1883,
@@ -96,7 +96,7 @@ export function root1(root, filter) {
         acl_file: "/etc/mosquitto/acl"
       },
       openldap: {
-        //  extends: ["/services/openldap/openldap"],
+        //  extends: ["/templates/openldap"],
         type: "openldap",
         alias: "ldap",
         uri: "ldap://",
@@ -147,8 +147,8 @@ export function root1(root, filter) {
     isTemplate: true
   };
 
-  const services = {
-    name: "services",
+  const templates = {
+    name: "templates",
     instanceof: Owner,
     isTemplate: true
   };
@@ -161,8 +161,8 @@ export function root1(root, filter) {
     "/L1/n1/host2": host2,
     "/L1/host1": host1,
     "/L2": L2,
-    "/services": services,
-    "/services/mosquitto/mosquitto": mosquittoDef,
+    "/templates": templates,
+    "/templates/mosquitto": mosquittoDef,
     "/model": model,
     "/model/m1": {
       name: "m1",

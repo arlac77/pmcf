@@ -1,0 +1,12 @@
+{
+  "alias": "ldap",
+  "base": "dc=mf,dc=de",
+  "properties": {
+    "certname": "primary",
+    "configdir": "/etc/openldap/slapd.d/",
+    "datadir": "/var/lib/openldap/",
+    "rundir": "/run/openldap/",
+    "rootpw": "{SSHA}XXXX",
+    "rootdn": "cn=admin,${base}"
+  }
+}

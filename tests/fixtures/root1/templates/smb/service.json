@@ -1,0 +1,4 @@
+{
+  "depends": "samba",
+  "systemd": "smb.service"
+}

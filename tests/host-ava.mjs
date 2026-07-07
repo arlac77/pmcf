@@ -37,6 +37,15 @@ test("Host load", async t => {
   const eth0 = host1.named("eth0");
   t.is(eth0.network, ic.named("/L1/n1"));
 
+  //const templates = ic.root.named("/templates");
+  //console.log([...templates.children].map(n => [n.name, n.typeName]));
+  //console.log("HOST", services.hosts.get("timemachine").typeName);
+  //console.log("SERVICE", templates.services.get("timemachine").typeName);
+
+  /*t.is(
+    services.hosts.get("timemachine").services.get("timemachine"),
+    services.services.get("timemachine")
+  );*/
   /*
   console.log([...ic.root.hosts.values()].map(h => h.fullName));
   console.log([...ic.root.networks.values()].map(h => h.fullName));
@@ -315,7 +324,7 @@ test("Host addresses", t => {
       n1.subnets.get("fe80::/64")
     ],*/
     address: "10.0.0.2",
-    addresses: ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f","169.254.1.2"]
+    addresses: ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f", "169.254.1.2"]
   });
 
   /*

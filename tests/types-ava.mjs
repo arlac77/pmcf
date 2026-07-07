@@ -6,6 +6,7 @@ import {
   root,
   Host,
   Network,
+  ServiceOwner,
   CoreService,
   Service,
   ExtraSourceService,
@@ -23,10 +24,11 @@ test("types", t => {
   t.is(types.base.key, "name");
 
   t.is(types.owner, Owner);
-  t.is(types.owner.extends, Base);
+  t.is(types.owner.extends, ServiceOwner);
   t.is(types.owner.priority, 2);
   t.is(types.owner.key, "name");
   t.deepEqual(types.owner.owners, [types.owner, types.root]);
+  t.deepEqual(types.owner.extends, types["service-owner"]);
 
   t.is(types.root, root);
   t.is(types.root.extends, Owner);
@@ -81,7 +83,6 @@ test("types", t => {
   t.deepEqual(types.owner.attributes.hosts.type, types.host);
   t.deepEqual(types.owner.attributes.networks.type, types.network);
 
-  t.deepEqual(types.owner.extends, types.base);
   t.deepEqual(types.owner.key, "name");
   t.deepEqual(types.host.extends, types["service-owner"]);
 
