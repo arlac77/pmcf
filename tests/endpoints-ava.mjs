@@ -53,8 +53,6 @@ function prepare() {
 
   assign(ServiceOwner.attributes.services, h1, s1);
 
-  //h1.services = s1;
-
   return { ic, root, h1, s1 };
 }
 
@@ -159,8 +157,6 @@ test("DomainNameEndpoint", t => {
   });
   assign(ServiceOwner.attributes.services, h1, s1);
 
-  //1.services = s1;
-
   const options = {
     port: 123,
     type: ServiceTypes.ntp,
@@ -188,8 +184,6 @@ test("UnixEndpoint", t => {
   });
 
   assign(ServiceOwner.attributes.services, h1, s1);
-
-  //h1.services = s1;
 
   const options = {
     type: ServiceTypes.ntp,

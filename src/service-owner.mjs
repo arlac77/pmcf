@@ -21,8 +21,8 @@ export class ServiceOwner extends Base {
 
   _services = new Map();
 
-  set services(service) {
-    this._services.set(service.name, service);
+  set services(value) {
+    this._services = value;
   }
 
   get services() {
@@ -34,15 +34,16 @@ export class ServiceOwner extends Base {
 
     for (const [name, service] of this.mapFromDirections(
       ["extends"],
-      "_services"
+      "services"
     )) {
-      const present = this._services.get(service.name);
+      const present = this.services.get(service.name);
 
       if (present) {
         present.extends.add(service);
         present.materializeExtends();
       } else {
-        this.services = service.forOwner(this);
+        const so = service.forOwner(this);
+        this.services.set(so.name, so);
       }
     }
   }
