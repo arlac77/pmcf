@@ -179,16 +179,22 @@ export class InitializationContext {
       owner.constructor,
       attribute => attribute.type === type && attribute.collection
     )) {
-      const object = create(type, owner, data);
+      try {
+        const object = create(type, owner, data);
 
-      // set backointer early so that parent properties can be found during load
-      if (attribute.backpointer) {
-        assign(attribute.backpointer, object, owner);
+        // set backointer early so that parent properties can be found during load
+        if (attribute.backpointer) {
+          assign(attribute.backpointer, object, owner);
+        }
+        return assign(attribute, owner, this.read(object, data));
+      } catch (e) {
+        this.error(`Unable to assign ${type.name}.${attribute.name}`, data);
       }
-      return assign(attribute, owner, this.read(object, data));
     }
 
-    this.error(`No attribute to assign ${type.name} to ${owner.fullName}(${owner.typeName})`);
+    this.error(
+      `No attribute to assign ${type.name} to ${owner.fullName}(${owner.typeName})`
+    );
   }
 
   async loadAll() {
