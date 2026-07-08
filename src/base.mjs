@@ -461,6 +461,7 @@ export class Base {
 
       try {
         if ((await stat(dir)).isDirectory) {
+          console.log(dir, this.typeName, node.typeName);
           yield transform(
             new FileContentProvider(
               { dir, pattern: "**/*" },
