@@ -218,10 +218,6 @@ export class Base {
     }
   }
 
-  isNamed(name) {
-    return name[0] === "/" ? this.fullName === name : this.name === name;
-  }
-
   *find(pattern) {
     const seen = new Set();
 
@@ -461,7 +457,6 @@ export class Base {
 
       try {
         if ((await stat(dir)).isDirectory) {
-          console.log(dir, this.typeName, node.typeName);
           yield transform(
             new FileContentProvider(
               { dir, pattern: "**/*" },
