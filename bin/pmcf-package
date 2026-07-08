@@ -33,6 +33,7 @@ if (options.define) {
 options.output = options.output
   ? resolve(cwd(), options.output)
   : await mkdtemp(join(tmpdir(), "pmcf"));
+options.noPreserve = true;
 
 const pkgDir = await packageDirectory({ cwd: options.root });
 const pkg = JSON.parse(await readFile(join(pkgDir, "package.json"), "utf8"));
