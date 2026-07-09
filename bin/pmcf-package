@@ -33,7 +33,6 @@ if (options.define) {
 options.output = options.output
   ? resolve(cwd(), options.output)
   : await mkdtemp(join(tmpdir(), "pmcf"));
-options.noPreserve = true;
 
 const pkgDir = await packageDirectory({ cwd: options.root });
 const pkg = JSON.parse(await readFile(join(pkgDir, "package.json"), "utf8"));
@@ -48,7 +47,7 @@ for (const object of root.find(args)) {
   }
   const stagingDir = join(options.output, object.fullName);
 
-  for await (const { sources, outputs, properties } of object.preparePackages(
+  for await (let { sources, outputs, properties } of object.preparePackages(
     stagingDir
   )) {
     console.log(
