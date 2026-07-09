@@ -12,7 +12,7 @@ export class SkeletonNetworkInterface extends ServiceOwner {
   static get typeName() {
     return "network_interface";
   }
-  
+
   static commonNamePattern = new RegExp(`^${this.name}\d+$`);
 
   static isCommonName(name) {
@@ -24,6 +24,11 @@ export class SkeletonNetworkInterface extends ServiceOwner {
   }
 
   _network;
+
+  get typeName() {
+    const type = this.constructor;
+    return type.specializationOf?.name || type.name;
+  }
 
   get kind() {
     return this.constructor.name;

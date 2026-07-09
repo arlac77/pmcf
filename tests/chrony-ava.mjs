@@ -9,6 +9,7 @@ test("ChronyService basics", async t => {
   const chronyInst = await ic.named("/L1/host1/chrony");
 
   t.true(chronyInst instanceof chrony);
+  t.is(chronyInst.typeName, "chrony");
   t.deepEqual(chronyInst.types, new Set(["chrony", "ntp"]));
 
   //t.is(chrony.expression("endpoints[type='ntp']"), ["1.2.3.4"]);

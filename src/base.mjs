@@ -237,8 +237,7 @@ export class Base {
   }
 
   get typeName() {
-    const type = this.constructor;
-    return type.specializationOf?.name || type.name;
+    return this.constructor.name;
   }
 
   /**
