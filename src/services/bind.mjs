@@ -529,9 +529,9 @@ export class bind extends ExtraSourceService {
 
     let hasContent = false;
 
-    console.log("PACKAGE", Object.keys(this.groups));
+    console.log("BIND GROUPS", [...this.groups.keys()]);
 
-    for (const group of Object.values(this.groups)) {
+    for (const group of this.groups.values()) {
       hasContent ||= await group.packageContent(outputControl);
     }
 
