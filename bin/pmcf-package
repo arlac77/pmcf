@@ -41,11 +41,14 @@ const publishingDetails = createPublishingDetails(
   env
 );
 
+let suffixId = 1;
+
 for (const object of root.find(args)) {
   if (object.isTemplate) {
     continue;
   }
-  const stagingDir = join(options.output, object.fullName);
+
+  const stagingDir = join(options.output, String(suffixId++).padStart(5,'0'));
 
   for await (let { sources, outputs, properties } of object.preparePackages(
     stagingDir
