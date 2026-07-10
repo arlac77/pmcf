@@ -260,7 +260,7 @@ export class Base {
    * @return {Iterable<[string,any]>} values
    */
   *attributeIterator(filter) {
-    for (const [path, def] of extendingAttributeIterator(
+    for (const [path, attribute] of extendingAttributeIterator(
       this.constructor,
       filter
     )) {
@@ -268,7 +268,7 @@ export class Base {
       const value = this.attribute(name);
 
       if (value !== undefined) {
-        yield [def.externalName ?? name, toExternal(value, def), path, def];
+        yield [attribute.externalName ?? name, toExternal(value, attribute), path, attribute];
       }
     }
   }
