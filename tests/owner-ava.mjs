@@ -31,6 +31,7 @@ test("Owner read write", t => {
   t.is(o1.subnets.get("10.0/16").name, "10.0/16");
 
   t.is(o1.networks.get("n1").kind, "ethernet");
+  t.deepEqual([...o1.networkAddresses()], []);
 
   t.deepEqual(o1.toJSON(), {
     name: "o1",
