@@ -9,7 +9,8 @@ import {
 import {
   string_attribute_writable,
   number_attribute_writable,
-  boolean_attribute_writable_true
+  boolean_attribute_writable_true,
+  extendingAttributeIterator
 } from "pacc";
 import {
   addType,
@@ -21,8 +22,6 @@ import {
   FAMILY_UNIX
 } from "pmcf";
 import { writeLines } from "../utils.mjs";
-
-const keaVersion = "3.0.1";
 
 export class kea extends CoreService {
   static attributes = {
@@ -262,10 +261,14 @@ export class kea extends CoreService {
         ]
       };
 
-      for (const [key] of Object.entries(KeaService.attributes).filter(
-        ([key, attribute]) => attribute.configurable && this[key] !== undefined
+      for (const [path, attribute] of extendingAttributeIterator(
+        this.constructor,
+        attribute =>
+          attribute.configurable && this[attribute.name] !== undefined
       )) {
-        cfg[key] = this[key];
+        const name = path.join(".");
+
+        cfg[name] = this[name];
       }
 
       return cfg;
