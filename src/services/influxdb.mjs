@@ -1,4 +1,5 @@
 import { join } from "node:path";
+import { stringify } from "yaml";
 import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import { FileContentProvider } from "npm-pkgbuild";
 import { boolean_attribute_writable_true } from "pacc";
@@ -49,8 +50,12 @@ export class influxdb extends CoreService {
     await writeLines(
       join(dir, "etc", "influxdb"),
       "config.yml",
-      setionLinesFromPropertyIterator(
-        this.attributeIterator(filterConfigurable)
+      stringify(
+        Object.fromEntries(
+          [...this.attributeIterator(filterConfigurable)].map(
+            ([name, value, path, attribute]) => [attribute.externalName, value]
+          )
+        )
       )
     );
 
