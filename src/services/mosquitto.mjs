@@ -48,29 +48,34 @@ export class mosquitto extends CoreService {
     const owner = "mosquitto";
     const group = "mosquitto";
 
+    const premissions = [
+      {
+        mode: 0o644,
+        owner,
+        group
+      },
+      {
+        mode: 0o755,
+        owner,
+        group
+      }
+    ];
+
     const packageData = this.packageData;
     packageData.sources = await Array.fromAsync(
-      this.templateContent(
-        {
-          mode: 0o644,
-          owner,
-          group
-        },
-        {
-          mode: 0o755,
-          owner,
-          group
-        }
-      )
+      this.templateContent(...premissions)
     );
 
-    packageData.sources.push(new FileContentProvider(dir + "/"));
+    packageData.sources.push(
+      new FileContentProvider(dir + "/", ...premissions)
+    );
 
     await writeLines(
       join(dir, "etc", "mosquitto"),
       "mosquitto.conf",
       setionLinesFromAttributeIterator(
-        this.attributeIterator(filterConfigurable), " "
+        this.attributeIterator(filterConfigurable),
+        " "
       )
     );
 
