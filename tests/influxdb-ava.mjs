@@ -8,7 +8,7 @@ test("influxdb basics", async t => {
   );
   await ic.loadAll();
 
-  const inst = await ic.named("/L1/host1/influxdb");
+  const inst = ic.named("/L1/host1/influxdb");
 
   t.true(inst instanceof influxdb);
   t.is(inst.port, 8086);
