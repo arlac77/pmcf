@@ -77,12 +77,12 @@ export function sectionLines(sectionName, values) {
   return lines;
 }
 
-export function* setionLinesFromAttributeIterator(properties) {
+export function* setionLinesFromAttributeIterator(properties, separator="=") {
   for (const [name, value, path, attribute] of properties) {
     if (attribute.attributes) {
       yield `[${name}]`;
     } else {
-      yield `${name}=${value}`;
+      yield `${name}${separator}${value}`;
     }
   }
 }

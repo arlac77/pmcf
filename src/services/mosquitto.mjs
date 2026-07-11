@@ -1,5 +1,12 @@
+import { join } from "node:path";
+import { FileContentProvider } from "npm-pkgbuild";
 import { port_attribute, string_attribute_writable } from "pacc";
 import { CoreService, addType } from "pmcf";
+import {
+  writeLines,
+  setionLinesFromAttributeIterator,
+  filterConfigurable
+} from "../utils.mjs";
 
 export class mosquitto extends CoreService {
   static attributes = {
@@ -54,6 +61,16 @@ export class mosquitto extends CoreService {
           owner,
           group
         }
+      )
+    );
+
+    packageData.sources.push(new FileContentProvider(dir + "/"));
+
+    await writeLines(
+      join(dir, "etc", "mosquitto"),
+      "moquitto.conf",
+      setionLinesFromAttributeIterator(
+        this.attributeIterator(filterConfigurable), " "
       )
     );
 
