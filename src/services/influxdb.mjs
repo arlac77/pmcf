@@ -4,11 +4,7 @@ import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import { FileContentProvider } from "npm-pkgbuild";
 import { boolean_attribute_writable_true } from "pacc";
 import { CoreService, addType } from "pmcf";
-import {
-  writeLines,
-  setionLinesFromPropertyIterator,
-  filterConfigurable
-} from "../utils.mjs";
+import { writeLines, filterConfigurable } from "../utils.mjs";
 
 export class influxdb extends CoreService {
   static attributes = {
