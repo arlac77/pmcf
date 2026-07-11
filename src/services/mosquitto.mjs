@@ -45,6 +45,10 @@ export class mosquitto extends CoreService {
   }
 
   async *preparePackages(dir) {
+    console.log(
+      "MOSQUITTO",
+      [...this.walkDirections(["extends"])].map(n => this.fullName)
+    );
     const permissions = this.packageContentPermissions;
     const packageData = this.packageData;
 
