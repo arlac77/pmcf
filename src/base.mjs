@@ -268,7 +268,12 @@ export class Base {
       const value = this.attribute(name);
 
       if (value !== undefined) {
-        yield [attribute.externalName ?? name, toExternal(value, attribute), path, attribute];
+        yield [
+          attribute.externalName ?? name,
+          toExternal(value, attribute),
+          path,
+          attribute
+        ];
       }
     }
   }
@@ -412,6 +417,25 @@ export class Base {
 
   get outputs() {
     return new Set(allOutputs.filter(o => this.packaging.has(o.name)));
+  }
+
+  get packageContentPermissions() {
+    const owner = this.constructor.name;
+    const group = owner;
+    const premissions = [
+      {
+        mode: 0o644,
+        owner,
+        group
+      },
+      {
+        mode: 0o755,
+        owner,
+        group
+      }
+    ];
+
+    return premissions;
   }
 
   get packageData() {

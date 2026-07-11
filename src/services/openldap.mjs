@@ -34,24 +34,11 @@ export class openldap extends CoreService {
   }
 
   async *preparePackages(dir) {
-    const owner = "ldap";
-    const group = "ldap";
-
+    const permissions = this.packageContentPermissions;
     const packageData = this.packageData;
 
     packageData.sources = await Array.fromAsync(
-      this.templateContent(
-        {
-          mode: 0o644,
-          owner,
-          group
-        },
-        {
-          mode: 0o755,
-          owner,
-          group
-        }
-      )
+      this.templateContent(...permissions)
     );
 
     yield packageData;

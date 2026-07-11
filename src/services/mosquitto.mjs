@@ -45,29 +45,15 @@ export class mosquitto extends CoreService {
   }
 
   async *preparePackages(dir) {
-    const owner = "mosquitto";
-    const group = "mosquitto";
-
-    const premissions = [
-      {
-        mode: 0o644,
-        owner,
-        group
-      },
-      {
-        mode: 0o755,
-        owner,
-        group
-      }
-    ];
-
+    const permissions = this.packageContentPermissions;
     const packageData = this.packageData;
+
     packageData.sources = await Array.fromAsync(
-      this.templateContent(...premissions)
+      this.templateContent(...permissions)
     );
 
     packageData.sources.push(
-      new FileContentProvider(dir + "/", ...premissions)
+      new FileContentProvider(dir + "/", ...permissions)
     );
 
     await writeLines(
