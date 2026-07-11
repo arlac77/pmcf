@@ -6,7 +6,7 @@ import {
   boolean_attribute_writable,
   yesno_attribute_writable
 } from "pacc";
-import { ExtraSourceService, serviceEndpoints, addType } from "pmcf";
+import { ExtraSourceService, serviceEndpoints, addType, FAMILY_DNS } from "pmcf";
 import {
   filterConfigurable,
   yesno,
@@ -100,7 +100,7 @@ export class SystemdResolvedService extends ExtraSourceService {
           e.family == FAMILY_IPV4 &&
           e.networkInterface &&
           e.networkInterface.kind !== "loopback",
-        //e.family !== "dns",
+        //e.family !== FAMILY_DNS,
         select: endpoint => endpoint.address,
         join: " ",
         limit
