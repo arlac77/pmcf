@@ -11,7 +11,7 @@ import {
   filterConfigurable,
   yesno,
   sectionLines,
-  setionLinesFromPropertyIterator
+  setionLinesFromAttributeIterator
 } from "../utils.mjs";
 
 export class SystemdResolvedService extends ExtraSourceService {
@@ -110,7 +110,7 @@ export class SystemdResolvedService extends ExtraSourceService {
     return {
       serviceName: this.systemdService,
       configFileName: `etc/systemd/resolved.conf.d/${name}.conf`,
-      //content: [...setionLinesFromPropertyIterator(this.attributeIterator( filterConfigurable)), "A=1"]
+      //content: [...setionLinesFromAttributeIterator(this.attributeIterator( filterConfigurable)), "A=1"]
       content: sectionLines("Resolve", {
         DNS: serviceEndpoints(this, options(300, 399, 4)),
         FallbackDNS: serviceEndpoints(this, options(100, 199, 4)),

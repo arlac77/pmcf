@@ -77,7 +77,7 @@ export function sectionLines(sectionName, values) {
   return lines;
 }
 
-export function* setionLinesFromPropertyIterator(properties) {
+export function* setionLinesFromAttributeIterator(properties) {
   for (const [name, value, path, attribute] of properties) {
     if (attribute.attributes) {
       yield `[${name}]`;
