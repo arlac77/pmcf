@@ -68,7 +68,7 @@ export class mosquitto extends CoreService {
 
     await writeLines(
       join(dir, "etc", "mosquitto"),
-      "moquitto.conf",
+      "mosquitto.conf",
       setionLinesFromAttributeIterator(
         this.attributeIterator(filterConfigurable), " "
       )
