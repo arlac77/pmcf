@@ -1,7 +1,6 @@
 import { join } from "node:path";
-import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
+import { FAMILY_IPV4, FAMILY_IPV6, isLinkLocal } from "ip-utilties";
 import { FileContentProvider } from "npm-pkgbuild";
-import { isLinkLocal } from "ip-utilties";
 import { serviceEndpoints, addType, ExtraSourceService, FAMILY_UNIX } from "pmcf";
 import { writeLines } from "../utils.mjs";
 
