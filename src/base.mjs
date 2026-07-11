@@ -422,7 +422,7 @@ export class Base {
   get packageContentPermissions() {
     const owner = this.constructor.name;
     const group = owner;
-    const premissions = [
+    return [
       {
         mode: 0o644,
         owner,
@@ -434,8 +434,6 @@ export class Base {
         group
       }
     ];
-
-    return premissions;
   }
 
   get packageData() {
