@@ -14,7 +14,7 @@ test("systemd-journal-upload", async t => {
   );
   await ic.loadAll();
 
-  const journalUpload = await ic.named("/L1/C1/systemd-journal-upload");
+  const journalUpload = ic.named("/L1/C1/systemd-journal-upload");
 
   t.deepEqual(journalUpload.systemdConfigs("ABC"), {
     serviceName: "systemd-journal-upload.service",

@@ -6,7 +6,7 @@ test("ChronyService basics", async t => {
   const ic = new InitializationContext(new URL("fixtures/root1", import.meta.url).pathname);
   await ic.loadAll();
 
-  const chronyInst = await ic.named("/L1/host1/chrony");
+  const chronyInst = ic.named("/L1/host1/chrony");
 
   t.true(chronyInst instanceof chrony);
   t.is(chronyInst.typeName, "chrony");

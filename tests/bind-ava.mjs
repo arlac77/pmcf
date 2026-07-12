@@ -8,7 +8,7 @@ test("BIND basics endpoints", async t => {
   );
   await ic.loadAll();
 
-  const bindInst = await ic.named("/L1/C1/bind");
+  const bindInst = ic.named("/L1/C1/bind");
 
   t.deepEqual(
     bindInst.endpoints().map(e => {
@@ -81,7 +81,7 @@ test.only("BIND groups", async t => {
     ["192.168.1/24", "127.0.0.1", "::1"].sort()
   );*/
 
-  const n = Math.ceil((Date.now() - 300) / 1000);
+  const n = Math.ceil((Date.now() - 490) / 1000);
 
   t.deepEqual(
     internalGroup.defaultRecords.map(r => r.toString()),

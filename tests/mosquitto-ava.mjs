@@ -8,21 +8,15 @@ test("mosquitto basics", async t => {
   );
   await ic.loadAll();
 
-  const mosquittoInst = await ic.named("/L1/host1/mosquitto");
+  const mosquittoInst = ic.named("/L1/host1/mosquitto");
 
   t.true(mosquittoInst instanceof mosquitto);
   t.is(mosquittoInst.alias, "mqtt");
   t.is(mosquittoInst.listener, 1883);
 
-  t.is(
-    mosquittoInst.attribute("persistence_location"),
-    "/var/lib/mosquitto"
-  );
+  t.is(mosquittoInst.attribute("persistence_location"), "/var/lib/mosquitto");
 
-  t.is(
-    mosquittoInst.attribute("persistence_location"),
-    "/var/lib/mosquitto"
-  );
+  t.is(mosquittoInst.attribute("persistence_location"), "/var/lib/mosquitto");
   t.is(mosquittoInst.attribute("password_file"), "/etc/mosquitto/passwd");
   t.is(mosquittoInst.attribute("acl_file"), "/etc/mosquitto/acl");
 });

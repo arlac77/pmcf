@@ -30,8 +30,8 @@ test("Host load", async t => {
   );
   await ic.loadAll();
 
-  const host2 = await ic.named("/L1/n1/host2");
-  const host1 = await ic.named("/L1/host1");
+  const host2 = ic.named("/L1/n1/host2");
+  const host1 = ic.named("/L1/host1");
   t.deepEqual(host1.packaging, new Set(["arch"]));
 
   const eth0 = host1.named("eth0");

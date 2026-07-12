@@ -8,7 +8,7 @@ test("postfix basics", async t => {
   );
   await ic.loadAll();
 
-  const postfixInst = await ic.named("/L1/host1/postfix");
+  const postfixInst = ic.named("/L1/host1/postfix");
 
   t.true(postfixInst instanceof postfix);
 
