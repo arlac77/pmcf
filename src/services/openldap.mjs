@@ -33,6 +33,14 @@ export class openldap extends CoreService {
     this._uri = value;
   }
 
+  get systemUserName() {
+    return "ldap";
+  }
+
+  get systemGroupName() {
+    return "ldap";
+  }
+
   async *preparePackages(dir) {
     const permissions = this.packageContentPermissions;
     const packageData = this.packageData;

@@ -441,9 +441,19 @@ export class Base {
     return new Set(allOutputs.filter(o => this.packaging.has(o.name)));
   }
 
+  get systemUserName()
+  {
+    return this.constructor.name;
+  }
+
+  get systemGroupName()
+  {
+    return this.constructor.name;
+  }
+
   get packageContentPermissions() {
-    const owner = this.constructor.name;
-    const group = owner;
+    const owner = this.systemUserName;
+    const group = this.systemGroupName;
     return [
       {
         mode: 0o644,
