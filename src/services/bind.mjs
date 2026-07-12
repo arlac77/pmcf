@@ -480,23 +480,6 @@ export class bind extends ExtraSourceService {
 
   groups = new Map();
 
-  materializeExtends() {
-    console.log("materializeExtends", this.fullName, this.owner, this.extends);
-    super.materializeExtends();
-
-    for (const service of this.walkDirections(["extends"])) {
-      for (const group of service.groups.values()) {
-        const present = this.groups.get(group.name);
-
-        if (present) {
-          present.extends.add(group);
-        } else {
-          this.groups.set(group.name, group.forOwner(this));
-        }
-      }
-    }
-  }
-
   get serverType() {
     return this.primaries ? "secondary" : "primary";
   }

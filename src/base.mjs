@@ -92,6 +92,14 @@ export class Base {
   }
 
   materializeExtends() {
+    /*
+    console.log(
+      "materializeExtends",
+      this.fullName,
+      this.owner?.fullName,
+      [...this.extends].map(n => n.fullName)
+    );*/
+
     for (const [path, attribute] of extendingAttributeIterator(
       this.constructor,
       attribute => attribute.collection && !attribute.type.primitive
@@ -441,13 +449,11 @@ export class Base {
     return new Set(allOutputs.filter(o => this.packaging.has(o.name)));
   }
 
-  get systemUserName()
-  {
+  get systemUserName() {
     return this.constructor.name;
   }
 
-  get systemGroupName()
-  {
+  get systemGroupName() {
     return this.constructor.name;
   }
 
