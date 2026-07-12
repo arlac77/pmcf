@@ -106,23 +106,6 @@ export class Host extends ServiceOwner {
   _serial;
   _keymap;
 
-  materializeExtends() {
-    super.materializeExtends();
-
-    for (const host of this.walkDirections(["extends"])) {
-      for (const ni of host.networkInterfaces.values()) {
-        const present = this.networkInterfaces.get(ni.name);
-
-        if (present) {
-          present.extends.add(ni);
-          present.materializeExtends();
-        } else {
-          this.networkInterfaces.set(ni.name, ni.forOwner(this));
-        }
-      }
-    }
-  }
-
   set serial(value) {
     this._serial = value;
   }

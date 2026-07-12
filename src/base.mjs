@@ -91,7 +91,29 @@ export class Base {
     return this;
   }
 
-  materializeExtends() {}
+  materializeExtends() {
+    for (const [path, attribute] of extendingAttributeIterator(
+      this.constructor,
+      attribute => attribute.collection && !attribute.type.primitive
+    )) {
+      const collection = this[path];
+      if (typeof collection?.get === "function") {
+        for (const [name, extending] of this.mapFromDirections(
+          ["extends"],
+          path
+        )) {
+          const present = collection.get(extending.name);
+
+          if (present) {
+            present.extends.add(extending);
+            present.materializeExtends();
+          } else {
+            collection.set(extending.name, extending.forOwner(this));
+          }
+        }
+      }
+    }
+  }
 
   named(name) {
     if (name[0] === "/") {

@@ -28,22 +28,4 @@ export class ServiceOwner extends Base {
   get services() {
     return this._services;
   }
-
-  materializeExtends() {
-    super.materializeExtends();
-
-    for (const [name, service] of this.mapFromDirections(
-      ["extends"],
-      "services"
-    )) {
-      const present = this.services.get(service.name);
-
-      if (present) {
-        present.extends.add(service);
-        present.materializeExtends();
-      } else {
-        this.services.set(service.name, service.forOwner(this));
-      }
-    }
-  }
 }
