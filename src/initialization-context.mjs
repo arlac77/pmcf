@@ -25,13 +25,11 @@ export class InitializationContext {
       .outstandingResolves) {
       value = object.expand(value);
 
-      for (const type of attribute.type.members || [attribute.type]) {
-        for (const node of object.walkDirections(["this", "owner"])) {
-          const resolved = this.named(value, node);
-          if (resolved) {
-            assign(attribute, object, resolved);
-            continue nextOutstanding;
-          }
+      for (const node of object.walkDirections(["this", "owner"])) {
+        const resolved = this.named(value, node);
+        if (resolved) {
+          assign(attribute, object, resolved);
+          continue nextOutstanding;
         }
       }
 
