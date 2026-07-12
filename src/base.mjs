@@ -190,7 +190,7 @@ export class Base {
   *walkDirections(directions = ["this", "extends", "owner"]) {
     if (directions.indexOf("this") >= 0) {
       yield this;
-      directions = directions.filter(d => d != "this");
+      directions = directions.filter(d => d !== "this");
     }
 
     yield* this._walkDirections(directions, new Set());
