@@ -46,13 +46,15 @@ export class mosquitto extends CoreService {
 
   async *preparePackages(dir) {
     const pm = this.root.named("/services/primary-SW/mosquitto");
+    const wd = [...this.walkDirections(["this", "extends"])];
 
     console.log(
       "MOSQUITTO",
-      pm.fullName,
       this.fullName,
       [...this.extends].map(n => n.fullName),
-      [...this.walkDirections(["this", "extends"])].map(n => this.fullName)
+      pm.fullName,
+      [...pm.extends].map(n => n.fullName),
+      wd.map(n => [n.fullName, n.directory])
     );
 
     const permissions = this.packageContentPermissions;
