@@ -127,18 +127,18 @@ export class Owner extends ServiceOwner {
       return assign(subnets_attribute, this, address);
     }
 
-    const { cidr, prefixLength } = normalizeCIDR(address);
-
-    if (cidr && prefixLength !== 0) {
-      return (
-        this._subnets.get(cidr) ||
-        assign(subnets_attribute, this, new Subnet(cidr))
-      );
-    }
-
     let subnet = this.subnetForAddress(address);
 
     if (!subnet) {
+      const { cidr, prefixLength } = normalizeCIDR(address);
+
+      if (cidr && prefixLength !== 0) {
+        return (
+          this._subnets.get(cidr) ||
+          assign(subnets_attribute, this, new Subnet(cidr))
+        );
+      }
+
       subnet =
         familyIP(address) === FAMILY_IPV4
           ? SUBNET_GLOBAL_IPV4
