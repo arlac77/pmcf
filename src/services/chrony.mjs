@@ -40,6 +40,7 @@ export class chrony extends ExtraSourceService {
     const packageData = this.packageData;
     packageData.sources.push(new FileContentProvider(dir + "/"));
 
+    const subnets = [...new Set([...this.subnets.values()])]; // TODO should be normal
     const host = this.host;
 
     const lines = [
@@ -75,9 +76,9 @@ export class chrony extends ExtraSourceService {
       "ntsdumpdir /var/lib/chrony",
       "dumpdir /var/lib/chrony",
       "pidfile /run/chrony/chronyd.pid",
-      [...this.subnets.values()].map(s => `allow ${s.address}`),
+      subnets.map(s => `allow ${s.address}`),
       "cmdratelimit interval -4 burst 16",
-      [...this.subnets.values()].map(s => `cmdallow ${s.address}`)
+      subnets.map(s => `cmdallow ${s.address}`)
     ];
 
     await writeLines(join(dir, "etc"), "chrony.conf", lines);
