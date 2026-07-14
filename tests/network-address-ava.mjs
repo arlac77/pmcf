@@ -1,5 +1,5 @@
 import test from "ava";
-import { FAMILY_IPV4 } from "ip-utilties";
+import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import {
   Host,
   Network,
@@ -44,4 +44,5 @@ test("NetworkAddress filter", t => {
   t.deepEqual([...h2.networkAddresses()], [a1, a2]);
 
   t.deepEqual([...h2.networkAddresses(n => n.family === FAMILY_IPV4)], [a1]);
+  t.deepEqual([...h2.networkAddresses(n => n.family === FAMILY_IPV6)], [a2]);
 });
