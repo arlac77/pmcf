@@ -172,7 +172,7 @@ export class Owner extends ServiceOwner {
   }
 
   *networkAddresses(filter) {
-    for (const host of this.hosts) {
+    for (const host of this.hosts.values()) {
       yield* host.networkAddresses(filter);
     }
   }
