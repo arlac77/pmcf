@@ -143,9 +143,13 @@ export class kea extends CoreService {
 
     const network = this.network;
     const host = this.host;
+
+    const source = host.owner;
     const name = host.name;
 
-    const dnsServerEndpoints = serviceEndpoints(network, {
+    //console.log(source.fullName, [...source.hosts.keys()]);
+
+    const dnsServerEndpoints = serviceEndpoints(source, {
       services: "services[types[dns] && priority>=300]",
       endpoints: endpoint => endpoint.networkInterface?.kind !== "loopback"
     });
@@ -156,7 +160,7 @@ export class kea extends CoreService {
 
     const peers = async family =>
       Array.from(
-        network.expression(
+        source.expression(
           `services[types[kea] && priority>=${Math.min(this.priority, 100)}]`
         )
       )
@@ -350,7 +354,7 @@ export class kea extends CoreService {
     const hwmap = new Map();
     const hostNames = new Set();
 
-    for await (const { networkInterface } of network.networkAddresses()) {
+    for await (const { networkInterface } of source.networkAddresses()) {
       if (networkInterface.hwaddr) {
         if (!hostNames.has(networkInterface.hostName)) {
           hwmap.set(networkInterface.hwaddr, networkInterface);
@@ -379,7 +383,7 @@ export class kea extends CoreService {
             "client-classes": ["SKIP_DDNS"]
           };
         })
-        .sort((a, b) => a.hostname.localeCompare(b.hostname));
+        .sort((a, b) => a.hostname?.localeCompare(b.hostname));
 
     const listenInterfaces = family =>
       this.endpoints(
