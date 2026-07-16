@@ -101,7 +101,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   }
 
   get hostName() {
-    return this.attribute("_hostName") ?? this.host.hostName;
+    return this.attribute("_hostName") ?? this.host?.hostName;
   }
 
   set hostName(value) {
