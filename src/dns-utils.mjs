@@ -1,4 +1,4 @@
-import { decodeIPv4, decodeIPv6 } from "ip-utilties";
+import { decodeIPv4, decodeIPv6, FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import { asIterator } from "./utils.mjs";
 
 const typeOrder = {
