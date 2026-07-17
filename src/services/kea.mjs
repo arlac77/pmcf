@@ -147,6 +147,14 @@ export class kea extends CoreService {
     const source = host.owner;
     const name = host.name;
 
+    const subnets = [
+      ...new Set(
+        [...this.subnets.values()].filter(
+          s => s !== SUBNET_LOCALHOST_IPV4 && s !== SUBNET_LOCALHOST_IPV6
+        )
+      )
+    ]; // TODO should be normal
+
     //console.log(source.fullName, [...source.hosts.keys()]);
 
     const dnsServerEndpoints = serviceEndpoints(source, {
@@ -315,12 +323,6 @@ export class kea extends CoreService {
 
     const ddnsEndpoint = this.endpoint("kea-ddns");
 
-    const subnetPrefixes = new Set(
-      [...this.subnets.values()]
-        .filter(s => s !== SUBNET_LOCALHOST_IPV4 && s !== SUBNET_LOCALHOST_IPV6)
-        .map(s => s.prefix)
-    );
-
     const ddns = {
       DhcpDdns: {
         "ip-address": ddnsEndpoint.address,
@@ -334,7 +336,7 @@ export class kea extends CoreService {
         },
         "reverse-ddns": {
           "ddns-domains": dnsServersSlot(
-            [...subnetPrefixes].map(prefix => reverseArpa(prefix))
+            subnets.map(s => s.prefix).map(prefix => reverseArpa(prefix))
           )
         },
 
@@ -396,10 +398,6 @@ export class kea extends CoreService {
       ).map(
         endpoint => `${endpoint.networkInterface.name}/${endpoint.address}`
       );
-
-    const subnets = [...this.subnets.values()].filter(
-      s => s !== SUBNET_LOCALHOST_IPV4 && s !== SUBNET_LOCALHOST_IPV6
-    );
 
     const pools = subnet => {
       return subnet.dhcpPools.map(pool => {
