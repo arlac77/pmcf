@@ -156,20 +156,12 @@ class bind_group extends Base {
   }
 
   async packageContent(outputControl) {
-    let hasContent = false;
-
-    if (this.access.length) {
-      hasContent ||= await this.generateACLs(outputControl);
-    }
-
-    if (this.entries.length) {
-      hasContent ||= await this.generateZoneDefs(outputControl, this.entries);
-    }
-
-    return hasContent;
+    return await this.generateACLs(outputControl) && await this.generateZoneDefs(outputControl, this.entries);
   }
 
   async generateACLs(outputControl) {
+    console.log("generateACLs", this.name);
+
     const acls = addressesStatement(
       `acl ${this.name}`,
       addresses(this.access, { aggregate: true })
@@ -181,12 +173,16 @@ class bind_group extends Base {
         `0-acl-${this.name}.conf`,
         acls
       );
+
+      return true;
     }
 
-    return acls.length > 0;
+    return false;
   }
 
   async generateZoneDefs(outputControl, sources) {
+    console.log("generateZoneDefs", this.name);
+
     for (const source of sources) {
       console.log(
         "ZONE",
@@ -195,7 +191,7 @@ class bind_group extends Base {
       );
 
       for (const domain of source.localDomains) {
-        const locationName = source.owner.name;
+        const locationName = source.name;
         const reverseZones = new Map();
 
         const config = {
@@ -504,18 +500,16 @@ export class bind extends ExtraSourceService {
   }
 
   async *preparePackages(dir) {
-    const basePackageDir = dir;
     const packageData = this.packageData;
-    packageData.sources.push(new FileContentProvider(basePackageDir));
+    packageData.sources.push(new FileContentProvider(dir));
 
-    const outputControl = newOutputControl(packageData, basePackageDir);
+    const outputControl = newOutputControl(packageData, dir);
 
     let hasContent = false;
 
-    console.log("BIND GROUPS", [...this.groups.keys()]);
-
     for (const group of this.groups.values()) {
-      hasContent ||= await group.packageContent(outputControl);
+      const present = await group.packageContent(outputControl);
+      hasContent ||= present;
     }
 
     hasContent ||= await this.writeForwarders(outputControl);
