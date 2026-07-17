@@ -147,13 +147,13 @@ export class kea extends CoreService {
     const source = host.owner;
     const name = host.name;
 
-    const subnets = [
-      ...new Set(
-        [...this.subnets.values()].filter(
-          s => s !== SUBNET_LOCALHOST_IPV4 && s !== SUBNET_LOCALHOST_IPV6
-        )
-      )
-    ]; // TODO should be normal
+    const subnets = [...new Map(this.subnets).values()].filter(
+      s => s !== SUBNET_LOCALHOST_IPV4 && s !== SUBNET_LOCALHOST_IPV6
+    ); // TODO should be normal
+    /*console.log(
+      "SUBNETS",
+      subnets.map(s => s.fullName)
+    );*/
 
     //console.log(source.fullName, [...source.hosts.keys()]);
 

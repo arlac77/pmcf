@@ -40,7 +40,7 @@ export class chrony extends ExtraSourceService {
     const packageData = this.packageData;
     packageData.sources.push(new FileContentProvider(dir + "/"));
 
-    const subnets = [...new Set([...this.subnets.values()])]; // TODO should be normal
+    const subnets = [...new Map(this.subnets).values()]; // TODO should be normal
     const host = this.host;
 
     const lines = [
