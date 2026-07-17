@@ -109,6 +109,10 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   }
 
   get domainNames() {
+    if(!this.host) {
+      //console.log("NO HOST",this.fullName);
+      return new Set();
+    }
     return this.hostName
       ? this.host.directDomainNames.union(
           new Set([[this.hostName, this.host.domain].join(".")])
