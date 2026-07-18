@@ -262,7 +262,7 @@ export class CoreService extends Base {
     const name = `${this.owner.owner.name}-${this.owner.name}`;
     packageData.properties.name = `${this.name}-${name}`;
     packageData.properties.description = `${this.type} service definitions for ${this.fullName}`;
-    packageData.properties.groups.push("config", name);
+    packageData.properties.groups.push("service-config", name);
     return packageData;
   }
 
