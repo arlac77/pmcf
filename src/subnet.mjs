@@ -2,7 +2,6 @@ import {
   normalizeCIDR,
   rangeIP,
   decodeIP,
-  familyIP,
   matchPrefixIP,
   FAMILY_IPV6
 } from "ip-utilties";
@@ -35,13 +34,13 @@ export class Subnet {
   networks = new Set();
 
   constructor(address) {
-    const { longPrefix, prefix, prefixLength, cidr } = normalizeCIDR(address);
+    const { longPrefix, prefix, prefixLength, cidr, family } = normalizeCIDR(address);
 
     this.address = cidr;
     this.prefix = prefix;
     this.prefixLength = prefixLength;
     this.longPrefix = longPrefix;
-    this.family = familyIP(address);
+    this.family = family;
   }
 
   get owner() {

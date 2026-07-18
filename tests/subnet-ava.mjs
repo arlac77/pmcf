@@ -91,7 +91,7 @@ st.title = (providedTitle = "subnet", address, expected) =>
 
 test(st, SUBNET_LOCALHOST_IPV4, {
   address: "127/8",
-  longAddress: "127.0.0.0/8",
+  longAddress: "127.0.0.1/8",
   prefixLength: 8,
   family: FAMILY_IPV4,
   matches: ["127.0.01"],
@@ -111,7 +111,7 @@ test(st, SUBNET_LOCALHOST_IPV6, {
 
 test(st, "10.0.0.77/16", {
   address: "10.0/16",
-  longAddress: "10.0.0.0/16",
+  longAddress: "10.0.0.77/16",
   prefixLength: 16,
   family: FAMILY_IPV4,
   matches: ["10.0.0.77"],
@@ -131,7 +131,7 @@ test(st, "192.168.1/24", {
 
 test(st, "192.168.1.61/30", {
   address: "192.168.1.60/30",
-  longAddress: "192.168.1.60/30",
+  longAddress: "192.168.1.61/30",
   prefixLength: 30,
   family: FAMILY_IPV4,
   // matches: ["192.168.1.62/30"],

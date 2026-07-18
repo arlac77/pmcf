@@ -52,7 +52,7 @@
   "dependencies": {
     "aggregated-map": "^1.0.7",
     "content-entry-transform": "^1.6.9",
-    "ip-utilties": "^3.7.1",
+    "ip-utilties": "^3.7.4",
     "npm-pkgbuild": "^20.8.2",
     "pacc": "^10.4.1",
     "package-directory": "^8.2.0",
