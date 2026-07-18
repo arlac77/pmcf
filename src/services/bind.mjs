@@ -372,11 +372,7 @@ class bind_group extends Base {
           content.push(`  type ${config.type};`);
           content.push(`  file \"${zone.file}\";`);
           content.push(
-            `  allow-update { ${
-              this.allowedUpdates.length
-                ? this.allowedUpdates.join(";")
-                : "none"
-            }; };`
+            addressesStatement("  allow-update", this.allowedUpdates, "none;")
           );
           content.push(`  notify ${yesno(this.notify)};`);
         }
@@ -407,11 +403,17 @@ class bind_group extends Base {
   }
 }
 
-function addressesStatement(prefix, objects, generateEmpty = false) {
-  const body = asArray(objects).map(name => `  ${name};`);
+function addressesStatement(prefix, objects, empty = false) {
+  const body = asArray(objects).map(
+    value => `  ${typeof value === "string" ? value : value.name};`
+  );
 
-  if (body.length || generateEmpty) {
+  if (body.length) {
     return [`${prefix} {`, body, "};"];
+  }
+
+  if (empty) {
+    return [`${prefix} {`, empty, "};"];
   }
 
   return [];
