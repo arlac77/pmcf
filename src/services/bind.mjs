@@ -479,6 +479,14 @@ export class bind extends ExtraSourceService {
     return this.primaries ? "secondary" : "primary";
   }
 
+  get systemUserName() {
+    return "named";
+  }
+
+  get systemGroupName() {
+    return "named";
+  }
+
   async writeForwarders(outputControl) {
     const forwarders = serviceEndpoints(this.source, {
       services: "services[types[dns] && priority>=100 && priority<200]",
