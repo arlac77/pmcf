@@ -64,7 +64,7 @@ export class Cluster extends Host {
       );
       packageData.properties.name = `keepalived-${name}`;
       packageData.properties.description = `${this.typeName} definitions for ${this.fullName}`;
-      packageData.properties.groups.push("service-config", name, "keepalived");
+      packageData.properties.groups.push("config", name, "keepalived");
 
       const extra = [];
 
