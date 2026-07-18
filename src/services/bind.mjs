@@ -156,12 +156,13 @@ class bind_group extends Base {
   }
 
   async packageContent(outputControl) {
-    return await this.generateACLs(outputControl) && await this.generateZoneDefs(outputControl, this.entries);
+    return (
+      (await this.generateACLs(outputControl)) &&
+      (await this.generateZoneDefs(outputControl, this.entries))
+    );
   }
 
   async generateACLs(outputControl) {
-    console.log("generateACLs", this.name);
-
     const acls = addressesStatement(
       `acl ${this.name}`,
       addresses(this.access, { aggregate: true })
@@ -181,8 +182,6 @@ class bind_group extends Base {
   }
 
   async generateZoneDefs(outputControl, sources) {
-    console.log("generateZoneDefs", this.name);
-
     for (const source of sources) {
       console.log(
         "ZONE",
@@ -500,21 +499,30 @@ export class bind extends ExtraSourceService {
   }
 
   async *preparePackages(dir) {
+    const permissions = this.packageContentPermissions;
     const packageData = this.packageData;
-    packageData.sources.push(new FileContentProvider(dir));
+
+    packageData.sources = await Array.fromAsync(
+      this.templateContent(...permissions)
+    );
+
+    let hasContent = packageData.sources.length > 0;
+
+    packageData.sources.push(
+      new FileContentProvider(dir + "/", ...permissions)
+    );
 
     const outputControl = newOutputControl(packageData, dir);
-
-    let hasContent = false;
 
     for (const group of this.groups.values()) {
       const present = await group.packageContent(outputControl);
       hasContent ||= present;
     }
 
-    hasContent ||= await this.writeForwarders(outputControl);
+    const present = await this.writeForwarders(outputControl);
 
-    if (hasContent) {
+    if (hasContent || present) {
+      console.log(packageData);
       yield packageData;
     }
 
