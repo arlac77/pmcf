@@ -75,7 +75,9 @@ export class CoreService extends Base {
     alias: { ...string_attribute_writable, name: "alias" },
     priority: priority_attribute,
     weight: { ...number_attribute_writable, name: "weight" /*default: 1*/ },
-    systemdService: { ...string_attribute_writable, name: "systemdService" }
+    systemdService: { ...string_attribute_writable, name: "systemdService" },
+    systemUserName: { ...string_attribute_writable, name: "systemUserName" },
+    systemGroupName: { ...string_attribute_writable, name: "systemGroupName" }
   };
 
   static {
@@ -89,6 +91,22 @@ export class CoreService extends Base {
 
   toString() {
     return `${this.fullName}(${this.type})`;
+  }
+
+  set systemUserName(value) {
+    this._systemUserName = value;
+  }
+
+  get systemUserName() {
+    return this.attribute("_systemUserName") ?? super.systemUserName;
+  }
+
+  set systemGroupName(value) {
+    this._systemGroupName = value;
+  }
+
+  get systemGroupName() {
+    return this.attribute("_systemGroupName") ?? super.systemGroupName;
   }
 
   get network() {
