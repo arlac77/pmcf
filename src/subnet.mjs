@@ -1,6 +1,5 @@
 import {
   normalizeCIDR,
-  isLinkLocal,
   rangeIP,
   decodeIP,
   familyIP,
@@ -80,10 +79,6 @@ export class Subnet {
 
   matchesAddress(address) {
     return matchPrefixIP(this.address, this.prefixLength, address);
-  }
-
-  get isLinkLocal() {
-    return isLinkLocal(this.address);
   }
 
   get addressRange() {
