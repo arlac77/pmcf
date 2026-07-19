@@ -2,13 +2,17 @@ import test from "ava";
 import { InitializationContext } from "pmcf";
 import { bind } from "../src/services/bind.mjs";
 
-test("BIND basics endpoints", async t => {
+test("BIND basics", async t => {
   const ic = new InitializationContext(
     new URL("fixtures/root1", import.meta.url).pathname
   );
   await ic.loadAll();
 
   const bindInst = ic.named("/L1/C1/bind");
+
+  t.is(bindInst.systemdService, "named");
+  t.is(bindInst.systemUserName, "named");
+  t.is(bindInst.systemGroupName, "named");
 
   t.deepEqual(
     bindInst.endpoints().map(e => {
@@ -63,7 +67,10 @@ test.only("BIND groups", async t => {
     ["internal", "protected" /*, "trusted"*/]
   );
   t.is(internalGroup.name, "internal");
+  t.is(internalGroup.type, "view");
+
   t.is(protectedGroup.name, "protected");
+  t.is(protectedGroup.type, "view");
   t.is(protectedGroup.sharedWith, internalGroup);
   t.is(protectedGroup.owner, bindInst);
 
@@ -81,7 +88,7 @@ test.only("BIND groups", async t => {
     ["192.168.1/24", "127.0.0.1", "::1"].sort()
   );*/
 
-  const n = Math.ceil((Date.now() - 490) / 1000);
+  const n = Math.ceil((Date.now() - 499) / 1000);
 
   t.deepEqual(
     internalGroup.defaultRecords.map(r => r.toString()),

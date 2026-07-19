@@ -122,8 +122,15 @@ class bind_group extends Base {
   hasCatalog = true;
   hasSVRRecords = true;
   hasLinkLocalAdresses = bind_group.attributes.hasLinkLocalAdresses.default;
-
   recordTTL = "1W";
+
+  get type() {
+    if (this.entries.length > 0 || this.sharedWith) {
+      return "view";
+    }
+
+    return "unknown";
+  }
 
   get service() {
     return this.owner;
@@ -159,11 +166,26 @@ class bind_group extends Base {
     return (
       await Promise.all([
         this.generateACLs(outputControl),
+        this.generateTypeDefinition(outputControl),
         this.generateZoneDefs(outputControl, this.entries)
       ])
     ).find(r => r)
       ? true
       : false;
+  }
+
+  async generateTypeDefinition(outputControl) {
+    if (this.type === "view") {
+      await writeLines(
+        join(outputControl.dir, "etc/named/views"),
+        `gen-${this.name}.conf`,
+        [
+          `view ${this.name} {`,
+          `include "/etc/named/views/${this.name}/*.conf";`,
+          "};"
+        ]
+      );
+    }
   }
 
   async generateACLs(outputControl) {
