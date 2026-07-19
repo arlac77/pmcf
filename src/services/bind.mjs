@@ -157,9 +157,13 @@ class bind_group extends Base {
 
   async packageContent(outputControl) {
     return (
-      (await this.generateACLs(outputControl)) &&
-      (await this.generateZoneDefs(outputControl, this.entries))
-    );
+      await Promise.all([
+        this.generateACLs(outputControl),
+        this.generateZoneDefs(outputControl, this.entries)
+      ])
+    ).find(r => r)
+      ? true
+      : false;
   }
 
   async generateACLs(outputControl) {
