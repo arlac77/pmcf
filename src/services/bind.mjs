@@ -439,7 +439,7 @@ export class bind extends ExtraSourceService {
     }
   };
   static service = {
-    systemdService: "bind.service",
+    systemdService: "named.service",
     extends: ["dns"],
     services: {
       "bind-statistics": {
@@ -542,58 +542,6 @@ export class bind extends ExtraSourceService {
       console.log(packageData);
       yield packageData;
     }
-
-    /*
-    const sources = this.zones.length ? this.zones : [this.owner];
-    const names = sources.map(a => a.fullName).join(" ");
-    const name = this.owner.owner.name || this.owner.name;
-
-    Object.assign(packageData.properties, {
-      name: `named-${name}`,
-      description: `named definitions for ${names}`
-    });
-
-    const ownerAndGroup = { owner: "named", group: "named" };
-    const filePermissions = [
-      { ...ownerAndGroup, mode: 0o644 },
-      { ...ownerAndGroup, mode: 0o755 }
-    ];
-
-    const zonesPackageDir = join(dir, "zones") + "/";
-
-    packageData.sources = [
-      new FileContentProvider(zonesPackageDir, ...filePermissions)
-    ];
-    packageData.properties = {
-      name: `named-zones-${name}`,
-      description: `zone definitions for ${names}`,
-      dependencies: ["mf-named"],
-      access: "private"
-    };
-
-    yield this.generateZoneDefs(
-      newOutputControl(packageData, zonesPackageDir),
-      sources
-    );
-
-    const location = "outfacing";
-
-    const outfacingZonesPackageDir = join(dir, location) + "/";
-
-    packageData.sources = [
-      new FileContentProvider(outfacingZonesPackageDir, ...filePermissions)
-    ];
-    packageData.properties = {
-      name: `named-zones-${name}-${location}`,
-      description: `${location} zone definitions for ${names}`,
-      access: "private"
-    };
-
-    yield* this.generateOutfacingDefs(
-      newOutputControl(packageData, outfacingZonesPackageDir),
-      sources
-    );
-    */
   }
 
   async *generateOutfacingDefs(outputControl, sources) {
