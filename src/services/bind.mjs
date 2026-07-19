@@ -134,7 +134,7 @@ class bind_group extends Base {
   }
 
   get defaultRecords() {
-    const nameService = this.owner; //ss[0];
+    const nameService = this.owner;
 
     console.log(
       "nameService",
@@ -372,7 +372,12 @@ class bind_group extends Base {
           content.push(`  type ${config.type};`);
           content.push(`  file \"${zone.file}\";`);
           content.push(
-            addressesStatement("  allow-update", this.allowedUpdates, "none;")
+            addressesStatement(
+              "allow-update",
+              this.allowedUpdates,
+              "none;",
+              "  "
+            )
           );
           content.push(`  notify ${yesno(this.notify)};`);
         }
@@ -403,17 +408,17 @@ class bind_group extends Base {
   }
 }
 
-function addressesStatement(prefix, objects, empty = false) {
+function addressesStatement(prefix, objects, empty = false, indent = "") {
   const body = asArray(objects).map(
-    value => `  ${typeof value === "string" ? value : value.name};`
+    value => `${indent}  ${typeof value === "string" ? value : value.name};`
   );
 
   if (body.length) {
-    return [`${prefix} {`, body, "};"];
+    return [`${indent}${prefix} {`, body, `${indent}};`];
   }
 
   if (empty) {
-    return [`${prefix} {`, empty, "};"];
+    return [`${indent}${prefix} {`, indent + "  " + empty, `${indent}};`];
   }
 
   return [];
