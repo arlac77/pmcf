@@ -69,7 +69,7 @@ export function addresses(sources, options) {
           typeof object === "string" ? object : decodeIP(object.address)
         )
     )
-  ];
+  ].filter(e=>e!=='');
 }
 
 /**
