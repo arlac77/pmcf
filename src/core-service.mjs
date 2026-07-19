@@ -93,22 +93,6 @@ export class CoreService extends Base {
     return `${this.fullName}(${this.type})`;
   }
 
-  set systemUserName(value) {
-    this._systemUserName = value;
-  }
-
-  get systemUserName() {
-    return this.attribute("_systemUserName") ?? super.systemUserName;
-  }
-
-  set systemGroupName(value) {
-    this._systemGroupName = value;
-  }
-
-  get systemGroupName() {
-    return this.attribute("_systemGroupName") ?? super.systemGroupName;
-  }
-
   get network() {
     return this.host.network;
   }
@@ -272,6 +256,30 @@ export class CoreService extends Base {
     return (
       this.attribute("_systemdService") ??
       ServiceTypes[this.type]?.systemdService
+    );
+  }
+
+  set systemUserName(value) {
+    this._systemUserName = value;
+  }
+
+  get systemUserName() {
+    return (
+      this.attribute("_systemUserName") ??
+      ServiceTypes[this.type]?.systemUserName ??
+      super.systemUserName
+    );
+  }
+
+  set systemGroupName(value) {
+    this._systemGroupName = value;
+  }
+
+  get systemGroupName() {
+    return (
+      this.attribute("_systemGroupName") ??
+      ServiceTypes[this.type]?.systemGroupName ??
+      super.systemGroupName
     );
   }
 

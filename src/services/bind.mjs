@@ -465,8 +465,10 @@ export class bind extends ExtraSourceService {
     }
   };
   static service = {
-    systemdService: "named.service",
     extends: ["dns"],
+    systemdService: "named.service",
+    systemUserName: "named",
+    systemGroupName: "named",
     services: {
       "bind-statistics": {
         endpoints: [
@@ -510,14 +512,6 @@ export class bind extends ExtraSourceService {
 
   get serverType() {
     return this.primaries ? "secondary" : "primary";
-  }
-
-  get systemUserName() {
-    return "named";
-  }
-
-  get systemGroupName() {
-    return "named";
   }
 
   async writeForwarders(outputControl) {

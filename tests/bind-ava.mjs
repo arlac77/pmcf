@@ -10,7 +10,7 @@ test("BIND basics", async t => {
 
   const bindInst = ic.named("/L1/C1/bind");
 
-  t.is(bindInst.systemdService, "named");
+  t.is(bindInst.systemdService, "named.service");
   t.is(bindInst.systemUserName, "named");
   t.is(bindInst.systemGroupName, "named");
 
@@ -47,7 +47,7 @@ test("BIND basics", async t => {
   );
 });
 
-test.only("BIND groups", async t => {
+test("BIND groups", async t => {
   const ic = new InitializationContext(
     new URL("fixtures/root1", import.meta.url).pathname
   );
