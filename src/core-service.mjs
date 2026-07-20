@@ -169,7 +169,6 @@ export class CoreService extends Base {
             domainNames.add(this.domainName);
             result.push(new DomainNameEndpoint(this, this.domainName, options));
           }
-
           break;
       }
     }
