@@ -10,30 +10,67 @@ for (const expression of args) {
   show(result);
 }
 
-function show(value) {
+function show(value, indent = 0) {
   if (value instanceof Iterator) {
     for (const v of value) {
       show(v);
     }
   } else {
-    console.log(`${value.fullName}(${value.constructor.name}):`);
+    const type = value.constructor;
+    console.log(`${" ".repeat(indent)}${value.fullName}(${type.name}):`);
+
+    const ml = maxNameLength(type);
+    const name = attribute => "  " + attribute.name.padEnd(ml) + ": ";
 
     for (const [path, attribute] of extendingAttributeIterator(
-      value,
-      attribute => !attribute.private
+      type,
+      attribute =>
+        !attribute.key && !attribute.private && attribute.type.primitive
     )) {
-      console.log(path);
+      const v = value.attribute(attribute.name);
+      if (v !== undefined) {
+        if (attribute.collection) {
+          console.log(`${name(attribute)}${[...v]}`);
+        } else {
+          console.log(`${name(attribute)}${v}`);
+        }
+      }
     }
-    ex(value);
+
+    for (const [path, attribute] of extendingAttributeIterator(
+      type,
+      attribute => !attribute.private && !attribute.type.primitive
+    )) {
+      const v = value[attribute.name];
+      if (v !== undefined) {
+        if (attribute.collection) {
+          console.log(name(attribute));
+
+          if (attribute.backpointer) {
+            for (const o of v.values()) {
+              show(o, indent + 2);
+            }
+          } else {
+            for (const o of v.values()) {
+              console.log(" ".repeat(indent + 2) + o.fullName);
+            }
+          }
+        } else {
+          console.log(`${name(attribute)}${v.fullName}`);
+        }
+      }
+    }
   }
 }
 
-function ex(node, indent = 1) {
-  if (indent > 5) {
-    return;
+function maxNameLength(type) {
+  let maxLength = 0;
+  for (const [path, attribute] of extendingAttributeIterator(
+    type,
+    attribute => !attribute.key && !attribute.private
+  )) {
+    maxLength = Math.max(maxLength, attribute.name.length);
   }
-  for (const e of node.extends) {
-    console.log(" ".repeat(indent * 2) + e.fullName);
-    ex(e, indent + 1);
-  }
+
+  return maxLength;
 }
