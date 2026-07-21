@@ -135,6 +135,10 @@ class bind_group extends Base {
     return "unknown";
   }
 
+  get order() {
+    return this.sharedWith ? this.sharedWith.order + 1 : 0;
+  }
+
   get service() {
     return this.owner;
   }

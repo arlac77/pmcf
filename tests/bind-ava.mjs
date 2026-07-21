@@ -68,11 +68,13 @@ test("BIND groups", async t => {
   );
   t.is(internalGroup.name, "internal");
   t.is(internalGroup.type, "view");
+  t.is(internalGroup.order, 0);
 
   t.is(protectedGroup.name, "protected");
   t.is(protectedGroup.type, "view");
   t.is(protectedGroup.sharedWith, internalGroup);
   t.is(protectedGroup.owner, bindInst);
+  t.is(protectedGroup.order, 1);
 
   t.is(internalGroup.entries[0].name, "n1");
 
