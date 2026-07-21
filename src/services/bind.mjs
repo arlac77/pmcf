@@ -42,7 +42,6 @@ class bind_group extends Base {
   static priority = 1;
   static attributes = {
     name: name_attribute_writable,
-    owner: owner_attribute,
     access: {
       type: bindNetworkAddressTypes,
       name: "access",
