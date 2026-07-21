@@ -166,6 +166,10 @@ class bind_group extends Base {
   }
 
   async packageContent(outputControl) {
+    outputControl.packageData.sources.push(
+      ...(await Array.fromAsync(this.templateContent(...outputControl.permissions)))
+    );
+
     return (
       await Promise.all([
         this.generateACLs(outputControl),
@@ -552,7 +556,7 @@ export class bind extends ExtraSourceService {
       new FileContentProvider(dir + "/", ...permissions)
     );
 
-    const outputControl = newOutputControl(packageData, dir);
+    const outputControl = newOutputControl(packageData, dir, permissions);
 
     for (const group of this.groups.values()) {
       const present = await group.packageContent(outputControl);
@@ -638,6 +642,6 @@ export class bind extends ExtraSourceService {
   }
 }
 
-function newOutputControl(packageData, dir) {
-  return { configs: [], catalogs: new Map(), packageData, dir };
+function newOutputControl(packageData, dir, permissions) {
+  return { configs: [], catalogs: new Map(), packageData, dir, permissions};
 }
