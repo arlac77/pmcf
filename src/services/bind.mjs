@@ -124,6 +124,10 @@ class bind_group extends Base {
   hasLinkLocalAdresses = bind_group.attributes.hasLinkLocalAdresses.default;
   recordTTL = "1W";
 
+  /**
+   * Type of the group.
+   * @return {string} view | unknown
+   */
   get type() {
     if (this.entries.length > 0 || this.sharedWith) {
       return "view";
