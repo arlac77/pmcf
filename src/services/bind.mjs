@@ -167,32 +167,19 @@ class bind_group extends Base {
 
   async packageContent(outputControl) {
     outputControl.packageData.sources.push(
-      ...(await Array.fromAsync(this.templateContent(...outputControl.permissions)))
+      ...(await Array.fromAsync(
+        this.templateContent(...outputControl.permissions)
+      ))
     );
 
     return (
       await Promise.all([
         this.generateACLs(outputControl),
-        this.generateTypeDefinition(outputControl),
         this.generateZoneDefs(outputControl, this.entries)
       ])
     ).find(r => r)
       ? true
       : false;
-  }
-
-  async generateTypeDefinition(outputControl) {
-    if (this.type === "view") {
-      await writeLines(
-        join(outputControl.dir, "etc/named/views"),
-        `gen-${this.name}.conf`,
-        [
-          `view ${this.name} {`,
-          `include "/etc/named/views/${this.name}/*.conf";`,
-          "};"
-        ]
-      );
-    }
   }
 
   async generateACLs(outputControl) {
@@ -643,5 +630,5 @@ export class bind extends ExtraSourceService {
 }
 
 function newOutputControl(packageData, dir, permissions) {
-  return { configs: [], catalogs: new Map(), packageData, dir, permissions};
+  return { configs: [], catalogs: new Map(), packageData, dir, permissions };
 }
