@@ -80,6 +80,7 @@ generates config packages for:
 *   [SkeletonNetworkInterface](#skeletonnetworkinterface)
     *   [networkAddresses](#networkaddresses)
         *   [Parameters](#parameters-14)
+*   [type](#type)
 *   [SystemdJournalRemoteService](#systemdjournalremoteservice)
     *   [Properties](#properties)
     *   [systemdConfigs](#systemdconfigs)
@@ -297,6 +298,12 @@ Keeps track of all in flight object creations and loose ends during config initi
 *   `filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
 
 Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
+
+## type
+
+Type of the group.
+
+Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** view | unknown
 
 ## SystemdJournalRemoteService
 
