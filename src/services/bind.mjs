@@ -12,8 +12,10 @@ import {
   default_collection_attribute_writable,
   default_attribute_writable,
   duration_attribute_writable,
-  string_attribute_writable,
+  name_attribute,
+  string_attribute,
   string_set_attribute_writable,
+  string_set_attribute,
   boolean_attribute_writable_true,
   boolean_attribute_writable_false,
   integer_attribute_writable,
@@ -43,13 +45,29 @@ const bindNetworkAddressTypes = networkAddressType + "|bind_group";
 
 class zone extends Base {
   static priority = 1;
+  static key = "id";
   static attributes = {
-    id: { ...name_attribute_writable, name: "id" },
-    file: { ...string_attribute_writable, name: "file" }
+    id: { ...name_attribute, name: "id" },
+    file: { ...string_attribute, name: "file" },
+    records: { ...string_set_attribute, name: "records" }
   };
 
   static {
     addType(this);
+  }
+
+  records = new Set();
+
+  get domain() {
+    return this.id;
+  }
+
+  get directory() {
+    return this.source.name;
+  }
+
+  get file() {
+    return `${this.directory}/${this.domain}.zone`;
   }
 }
 
@@ -81,9 +99,9 @@ class bind_group extends Base {
     zones: {
       ...default_collection_attribute,
       type: zone,
+      backpointer: owner_attribute,
       name: "zones"
     },
-
     sharedWith: {
       ...default_attribute_writable,
       name: "sharedWith",
@@ -194,17 +212,35 @@ class bind_group extends Base {
   get zones() {
     const zs = new Map();
 
-    //console.log("ZONES",this.entries.length);
-
     for (const source of this.entries) {
       for (const domain of source.localDomains) {
+        const config = {
+          name: `${domain}.zone.conf`,
+          type: this.service.serverType,
+          zones: []
+        };
+
         const z = new zone();
 
         z.id = domain;
-        z.file = `${source.name}/${domain}.zone`;
+        z.source = source;
+        z.owner = this;
+        z.config = config;
         z.records = new Set(this.defaultRecords);
 
         zs.set(z.id, z);
+
+        config.zones.push(z);
+
+        for (const {
+          address,
+          subnet,
+          networkInterface,
+          domainNames,
+          family
+        } of source.networkAddresses()) {
+        //  console.log(address);
+        }
       }
     }
     return zs;
