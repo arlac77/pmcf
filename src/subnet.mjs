@@ -54,12 +54,8 @@ export class Subnet {
     }
   }
 
-  value(name) {
-    const value = getAttribute(this, name);
-
-    console.log("SUBNET VALUE", name, value);
-
-    return value;
+  attribute(name) {
+    return getAttribute(this, name);
   }
 
   *_walkDirections(directions, seen) {}
