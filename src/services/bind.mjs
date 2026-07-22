@@ -557,7 +557,7 @@ export class bind extends ExtraSourceService {
     const present = await this.writeForwarders(outputControl);
 
     if (hasContent || present) {
-      console.log(packageData);
+      //console.log(packageData);
       yield packageData;
     }
   }
