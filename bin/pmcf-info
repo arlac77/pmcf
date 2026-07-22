@@ -10,17 +10,23 @@ for (const expression of args) {
   show(result);
 }
 
-function show(value, indent = 0) {
+function show(value, indent = 0, short = false) {
   if (value instanceof Iterator) {
     for (const v of value) {
-      show(v);
+      show(v, indent);
     }
   } else {
     const type = value.constructor;
-    console.log(`${" ".repeat(indent)}${value.fullName}(${type.name}):`);
-
+    const prefix = (l = indent) => " ".repeat(l * 2);
     const ml = maxNameLength(type);
-    const name = attribute => "  " + attribute.name.padEnd(ml) + ": ";
+    const name = (attribute, l = indent + 1) =>
+      prefix(l) + attribute.name.padEnd(ml) + ": ";
+
+    if (short) {
+      console.log(`${prefix()}${value.name}:`);
+    } else {
+      console.log(`${prefix()}${value.fullName}(${type.name}):`);
+    }
 
     for (const [path, attribute] of extendingAttributeIterator(
       type,
@@ -30,7 +36,10 @@ function show(value, indent = 0) {
       const v = value.attribute(attribute.name);
       if (v !== undefined) {
         if (attribute.collection) {
-          console.log(`${name(attribute)}${[...v]}`);
+          const l = [...v];
+          if (l.length) {
+            console.log(`${name(attribute)}${l}`);
+          }
         } else {
           console.log(`${name(attribute)}${v}`);
         }
@@ -44,15 +53,22 @@ function show(value, indent = 0) {
       const v = value[attribute.name];
       if (v !== undefined) {
         if (attribute.collection) {
-          console.log(name(attribute));
-
           if (attribute.backpointer) {
+            console.log(name(attribute));
             for (const o of v.values()) {
-              show(o, indent + 2);
+              show(o, indent + 2, true);
             }
           } else {
-            for (const o of v.values()) {
-              console.log(" ".repeat(indent + 2) + o.fullName);
+            const l = [...v];
+
+            if (l.length > 1) {
+              console.log(name(attribute));
+
+              for (const o of l) {
+                console.log(prefix(indent + 2) + o.fullName);
+              }
+            } else if (l.length === 1) {
+              console.log(name(attribute) + l[0].fullName);
             }
           }
         } else {
