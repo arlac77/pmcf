@@ -23,7 +23,7 @@ function show(value, indent = 0, short = false) {
       prefix(l) + attribute.name.padEnd(ml) + ": ";
 
     if (short) {
-      console.log(`${prefix()}${value.name}:`);
+      console.log(`${prefix()}${value[type.key]}:`);
     } else {
       console.log(`${prefix()}${value.fullName}(${type.name}):`);
     }
