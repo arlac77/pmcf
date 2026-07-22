@@ -47,7 +47,7 @@ test("BIND basics", async t => {
   );
 });
 
-test("BIND groups", async t => {
+test.only("BIND groups", async t => {
   const ic = new InitializationContext(
     new URL("fixtures/root1", import.meta.url).pathname
   );
@@ -69,6 +69,15 @@ test("BIND groups", async t => {
   t.is(internalGroup.name, "internal");
   t.is(internalGroup.type, "view");
   t.is(internalGroup.order, 0);
+
+  t.deepEqual(internalGroup.entries, [ic.named("/L1/n1")]);
+
+  const zs = internalGroup.zones;
+
+  const z1 = zs.get("mydomain.com");
+
+  t.is(z1.id, "mydomain.com");
+  t.is(z1.file, "n1/mydomain.com.zone");
 
   t.is(protectedGroup.name, "protected");
   t.is(protectedGroup.type, "view");

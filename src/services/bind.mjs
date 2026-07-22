@@ -8,9 +8,11 @@ import {
   FAMILY_IPV6
 } from "ip-utilties";
 import {
+  default_collection_attribute,
   default_collection_attribute_writable,
   default_attribute_writable,
   duration_attribute_writable,
+  string_attribute_writable,
   string_set_attribute_writable,
   boolean_attribute_writable_true,
   boolean_attribute_writable_false,
@@ -39,6 +41,18 @@ import { owner_attribute } from "../common-attributes.mjs";
 
 const bindNetworkAddressTypes = networkAddressType + "|bind_group";
 
+class zone extends Base {
+  static priority = 1;
+  static attributes = {
+    id: { ...name_attribute_writable, name: "id" },
+    file: { ...string_attribute_writable, name: "file" }
+  };
+
+  static {
+    addType(this);
+  }
+}
+
 class bind_group extends Base {
   static priority = 1;
   static attributes = {
@@ -64,6 +78,12 @@ class bind_group extends Base {
       type: networkAddressType + "|owner",
       name: "entries"
     },
+    zones: {
+      ...default_collection_attribute,
+      type: zone,
+      name: "zones"
+    },
+
     sharedWith: {
       ...default_attribute_writable,
       name: "sharedWith",
@@ -169,6 +189,25 @@ class bind_group extends Base {
       ),
       DNSRecord("@", "NS", dnsFullName(service.address()))
     ];
+  }
+
+  get zones() {
+    const zs = new Map();
+
+    //console.log("ZONES",this.entries.length);
+
+    for (const source of this.entries) {
+      for (const domain of source.localDomains) {
+        const z = new zone();
+
+        z.id = domain;
+        z.file = `${source.name}/${domain}.zone`;
+        z.records = new Set(this.defaultRecords);
+
+        zs.set(z.id, z);
+      }
+    }
+    return zs;
   }
 
   async packageContent(outputControl) {
