@@ -1,3 +1,4 @@
+import { getAttribute } from "pacc";
 import { familyIP, formatCIDR, decodeIP } from "ip-utilties";
 import { Subnet } from "./subnet.mjs";
 import { Owner } from "pmcf";
@@ -12,10 +13,10 @@ export class NetworkAddress {
   /** @type {string|Uint8Array|Uint16Array} */ address;
 
   /**
-   * 
-   * @param {NetworkInterface} networkInterface 
-   * @param {string|Uint8Array|Uint16Array} address 
-   * @param {Subnet} subnet 
+   *
+   * @param {NetworkInterface} networkInterface
+   * @param {string|Uint8Array|Uint16Array} address
+   * @param {Subnet} subnet
    */
   constructor(networkInterface, address, subnet) {
     this.networkInterface = networkInterface;
@@ -37,6 +38,14 @@ export class NetworkAddress {
 
   toString() {
     return `${this.networkInterface.fullName} ${decodeIP(this.address)}`;
+  }
+
+  attribute(name) {
+    return getAttribute(this, name);
+  }
+
+  value(name) {
+    return this.attribute(name);
   }
 }
 
@@ -69,12 +78,12 @@ export function addresses(sources, options) {
           typeof object === "string" ? object : decodeIP(object.address)
         )
     )
-  ].filter(e=>e!=='');
+  ].filter(e => e !== "");
 }
 
 /**
- * 
- * @param {Array<NetworkAddress>} networkAddresses 
+ *
+ * @param {Array<NetworkAddress>} networkAddresses
  * @returns {Array<string>}
  */
 export function cidrAddresses(networkAddresses) {

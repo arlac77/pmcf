@@ -16,10 +16,18 @@ test("Network load", async t => {
   await ic.loadAll();
 
   const n1 = ic.root.named("/L1/n1");
+
+  t.deepEqual(
+    [
+      ...n1.expression("networkAddresses[networkInterface.kind='wlan'].address")
+    ],
+    ["192.168.1.2"]
+  );
+
   await assertObject(t, n1, root1(ic.root, "/L1/n1"));
 });
 
-test("Network addresses", t => {
+test("Network addresses subnets", t => {
   const ic = new InitializationContext();
   const n1 = new Network();
   ic.read(n1, {
@@ -53,7 +61,6 @@ test("Network addresses", t => {
 
 test("Network bridges", t => {
   const ic = new InitializationContext();
-
   const n1 = new Network();
   ic.read(n1, {
     name: "n1",

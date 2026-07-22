@@ -58,6 +58,10 @@ export class Subnet {
     return getAttribute(this, name);
   }
 
+  value(name) {
+    return this.attribute(name);
+  }
+
   *_walkDirections(directions, seen) {}
 
   get cidr() {
