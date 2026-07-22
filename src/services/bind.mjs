@@ -15,6 +15,7 @@ import {
   boolean_attribute_writable_true,
   boolean_attribute_writable_false,
   integer_attribute_writable,
+  integer_attribute,
   name_attribute_writable
 } from "pacc";
 import {
@@ -42,6 +43,7 @@ class bind_group extends Base {
   static priority = 1;
   static attributes = {
     name: name_attribute_writable,
+    order: { ...integer_attribute, name: "order" },
     access: {
       type: bindNetworkAddressTypes,
       name: "access",
@@ -148,24 +150,24 @@ class bind_group extends Base {
   }
 
   get defaultRecords() {
-    const nameService = this.owner;
+    const service = this.service;
 
-    console.log(
+    /*console.log(
       "nameService",
-      nameService.fullName,
-      nameService.domainName,
-      nameService.address()
-    );
+      service.fullName,
+      service.domainName,
+      service.address()
+    );*/
 
     return [
       DNSRecord(
         "@",
         "SOA",
-        dnsFullName(nameService.domainName),
+        dnsFullName(service.domainName),
         dnsFullName(this.administratorEmail.replace(/@/, ".")),
         `(${this.soaUpdates.join(" ")})`
       ),
-      DNSRecord("@", "NS", dnsFullName(nameService.address()))
+      DNSRecord("@", "NS", dnsFullName(service.address()))
     ];
   }
 
