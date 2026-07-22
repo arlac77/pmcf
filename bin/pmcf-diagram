@@ -32,7 +32,7 @@ for await (const network of location.networks) {
       .join(" ")}" shape=circle];`
   );
 
-  for await (const na of network.networkAddresses(
+  for (const na of network.networkAddresses(
     na =>
       na.networkInterface.network === network &&
       !na.networkInterface.isTemplate &&

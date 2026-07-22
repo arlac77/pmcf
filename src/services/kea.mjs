@@ -356,7 +356,7 @@ export class kea extends CoreService {
     const hwmap = new Map();
     const hostNames = new Set();
 
-    for await (const { networkInterface } of source.networkAddresses()) {
+    for (const { networkInterface } of source.networkAddresses()) {
       if (networkInterface.hwaddr) {
         if (!hostNames.has(networkInterface.hostName)) {
           hwmap.set(networkInterface.hwaddr, networkInterface);
