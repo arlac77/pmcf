@@ -58,6 +58,14 @@ class zone extends Base {
 
   records = new Set();
 
+  get name() {
+    return this.id;
+  }
+
+  get fullName() {
+    return this.id;
+  }
+
   get domain() {
     return this.id;
   }
@@ -239,7 +247,7 @@ class bind_group extends Base {
           domainNames,
           family
         } of source.networkAddresses()) {
-        //  console.log(address);
+          //  console.log(address);
         }
       }
     }
