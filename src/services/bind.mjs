@@ -79,6 +79,20 @@ class bind_zone extends Base {
   }
 }
 
+class bind_zone_config extends Base {
+  static priority = 1;
+  static attributes = {
+    type: { ...string_attribute, name: "type" },
+    zones: { ...default_collection_attribute, type: bind_zone, name: "zones" }
+  };
+
+  static {
+    addType(this);
+  }
+
+  zones = [];
+}
+
 class bind_group extends Base {
   static priority = 1;
   static attributes = {
@@ -233,11 +247,10 @@ class bind_group extends Base {
 
     for (const source of this.entries) {
       for (const domain of source.localDomains) {
-        const config = {
-          name: `${domain}.zone.conf`,
-          type: this.service.serverType,
-          zones: []
-        };
+        const config = new bind_zone_config();
+
+        config.name = `${domain}.zone.conf`;
+        config.type = this.service.serverType;
 
         const z = new bind_zone();
 
