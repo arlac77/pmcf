@@ -71,6 +71,7 @@ test.only("BIND groups", async t => {
   t.is(internalGroup.order, 0);
 
   t.deepEqual(internalGroup.entries, [ic.named("/L1/n1")]);
+  t.deepEqual(internalGroup.domains, new Set(["mydomain.com"]));
 
   const zs = internalGroup.zones;
 

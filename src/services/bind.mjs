@@ -104,6 +104,10 @@ class bind_group extends Base {
       type: networkAddressType + "|owner",
       name: "entries"
     },
+    domains: {
+      ...string_set_attribute,
+      name: "domains"
+    },
     zones: {
       ...default_collection_attribute,
       type: zone,
@@ -215,6 +219,13 @@ class bind_group extends Base {
       ),
       DNSRecord("@", "NS", dnsFullName(service.address()))
     ];
+  }
+
+  get domains() {
+    return this.entries.reduce(
+      (all, net) => all.union(net.localDomains),
+      new Set()
+    );
   }
 
   get zones() {
