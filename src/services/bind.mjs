@@ -43,7 +43,7 @@ import { owner_attribute } from "../common-attributes.mjs";
 
 const bindNetworkAddressTypes = networkAddressType + "|bind_group";
 
-class zone extends Base {
+class bind_zone extends Base {
   static priority = 1;
   static key = "id";
   static attributes = {
@@ -110,7 +110,7 @@ class bind_group extends Base {
     },
     zones: {
       ...default_collection_attribute,
-      type: zone,
+      type: bind_zone,
       backpointer: owner_attribute,
       name: "zones"
     },
@@ -239,7 +239,7 @@ class bind_group extends Base {
           zones: []
         };
 
-        const z = new zone();
+        const z = new bind_zone();
 
         z.id = domain;
         z.source = source;
