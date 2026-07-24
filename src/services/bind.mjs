@@ -56,8 +56,6 @@ class bind_zone extends Base {
     addType(this);
   }
 
-  records = new Set();
-
   get name() {
     return this.id;
   }
@@ -77,12 +75,21 @@ class bind_zone extends Base {
   get file() {
     return `${this.directory}/${this.domain}.zone`;
   }
+
+  constructor(owner, id, config, source) {
+    super();
+    this.id = id;
+    this.config = config;
+    this.source = source;
+    this.records = new Set(owner.defaultRecords);
+
+    config.zones.push(this);
+  }
 }
 
 class bind_zone_config extends Base {
   static priority = 1;
   static attributes = {
-    type: { ...string_attribute, name: "type" },
     zones: { ...default_collection_attribute, type: bind_zone, name: "zones" }
   };
 
@@ -91,6 +98,16 @@ class bind_zone_config extends Base {
   }
 
   zones = [];
+
+  get type() {
+    return this.owner.service.serverType;
+  }
+
+  constructor(owner, name) {
+    super();
+    this.owner = owner;
+    this.name = name;
+  }
 }
 
 class bind_group extends Base {
@@ -127,6 +144,12 @@ class bind_group extends Base {
       type: bind_zone,
       backpointer: owner_attribute,
       name: "zones"
+    },
+    zoneConfigs: {
+      ...default_collection_attribute,
+      type: bind_zone_config,
+      backpointer: owner_attribute,
+      name: "zoneConfigs"
     },
     sharedWith: {
       ...default_attribute_writable,
@@ -181,6 +204,7 @@ class bind_group extends Base {
   access = [];
   allowedUpdates = [];
   entries = [];
+  zoneConfigs = [];
   exclude = new Set();
   excludeInterfaceKinds = new Set();
   notify = true;
@@ -245,24 +269,16 @@ class bind_group extends Base {
   get zones() {
     const zs = new Map();
 
+    
     for (const source of this.entries) {
       for (const domain of source.localDomains) {
-        const config = new bind_zone_config();
+        const config = new bind_zone_config(this, `${domain}.zone.conf`);
 
-        config.name = `${domain}.zone.conf`;
-        config.type = this.service.serverType;
+        this.zoneConfigs.push(config);
 
-        const z = new bind_zone();
-
-        z.id = domain;
-        z.source = source;
-        z.owner = this;
-        z.config = config;
-        z.records = new Set(this.defaultRecords);
+        const z = new bind_zone(this, domain, config, source);
 
         zs.set(z.id, z);
-
-        config.zones.push(z);
 
         for (const {
           address,
