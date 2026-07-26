@@ -100,7 +100,29 @@ test("waking", t => {
 });
 
 test("expression", t => {
-  const { l1, h1 } = setup();
+  const { l1, h1, ht1, root } = setup();
+
+  //t.is(h1.expression("/owners/l1"), l1);
+  t.is(root.expression("owners/l1"), l1);
+  t.is(root.expression("hosts/ht1"), ht1);
+  t.is(root.expression("hosts/ht1/name"), "ht1");
+  t.is(root.expression("owners/l1/hosts/h1"), h1);
+  t.is(
+    root.expression("owners/l1/hosts/h1/networkInterfaces/eth0/name"),
+    "eth0"
+  );
+  t.is(
+    root.expression("owners/l1/hosts/h1/networkInterfaces/eth0/kind"),
+    "ethernet"
+  );
+  t.deepEqual(
+    [
+      ...root.expression(
+        "owners/l1/hosts/h1/networkInterfaces[kind='ethernet']/name"
+      )
+    ],
+    ["eth0", "eth1"]
+  );
 
   t.is(l1.expression("name"), "l1");
   t.is(l1.expression("owner.name"), "");
