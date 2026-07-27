@@ -399,7 +399,8 @@ export class Base {
    */
   expression(expression, options) {
     return parse(expression, {
-      root: this,
+      root: this.root,
+      current: this,
       valueFor: (name, at) =>
         at === undefined ? globals[name] : at.value(name),
       ...options
@@ -496,7 +497,8 @@ export class Base {
         e => e.isBlob,
         expression =>
           parse(expression, {
-            root: this,
+            root: this.root,
+            current: this,
             valueFor: (name, at) =>
               at === undefined ? globals[name] : at.value(name)
           })
@@ -565,7 +567,8 @@ export class Base {
 
     return expand(object, {
       stopClass: Base,
-      root: this,
+      root: this.root,
+      current: this,
       valueFor: (name, at) =>
         at === undefined ? globals[name] : at.value(name)
     });

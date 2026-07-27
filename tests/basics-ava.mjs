@@ -102,7 +102,7 @@ test("waking", t => {
 test("expression", t => {
   const { l1, h1, ht1, root } = setup();
 
-  //t.is(h1.expression("/owners/l1"), l1);
+  t.is(h1.expression("/owners/l1"), l1);
   t.is(root.expression("owners/l1"), l1);
   t.is(root.expression("hosts/ht1"), ht1);
   t.is(root.expression("hosts/ht1/name"), "ht1");
