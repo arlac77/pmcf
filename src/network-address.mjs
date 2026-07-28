@@ -1,13 +1,37 @@
-import { getAttribute } from "pacc";
+import {
+  default_attribute,
+  string_attribute,
+  name_attribute,
+  getAttribute
+} from "pacc";
+
 import { familyIP, formatCIDR, decodeIP } from "ip-utilties";
 import { Subnet } from "./subnet.mjs";
-import { Owner } from "pmcf";
+import { Owner, addType } from "pmcf";
 import { NetworkInterface } from "./network-interfaces/network-interface.mjs";
 
 /**
  *
  */
 export class NetworkAddress {
+    static name = "network-address";
+    static priority = 1;
+    static key = "address";
+    static attributes = {
+      address: { ...name_attribute, name: "address" },
+      cidrAddress: { ...string_attribute, name: "cidrAddress" },
+       networkInterface: {
+        ...default_attribute,
+        name: "networkInterface",
+        type: "network_interface"
+      },
+      family: { ...string_attribute, name: "family" }
+    };
+  
+  static {
+    addType(this);
+  }
+
   /** @type {Subnet} */ subnet;
   /** @type {NetworkInterface} */ networkInterface;
   /** @type {string|Uint8Array|Uint16Array} */ address;
