@@ -5,13 +5,21 @@ import { prepare } from "../src/cli.mjs";
 const { root, args, options } = await prepare({});
 
 for (const expression of args) {
-  const result = root.named(expression);
+  const result = root.expression(expression);
 
   show(result);
 }
 
 function show(value, indent = 0, short = false) {
-  if (value instanceof Iterator) {
+  switch (typeof value) {
+    case "string":
+    case "number":
+    case "bigint":
+      console.log(value);
+      return;
+  }
+
+  if (value instanceof Iterator || Array.isArray(value)) {
     for (const v of value) {
       show(v, indent);
     }
