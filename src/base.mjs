@@ -318,7 +318,7 @@ export class Base {
   }
 
   value(name) {
-    return this.attribute(name) ?? this.property(name);
+    return this.attribute(name) ?? this.property(name) ?? this.named(name);
   }
 
   /**
