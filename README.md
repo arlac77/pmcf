@@ -42,44 +42,42 @@ generates config packages for:
 ### Table of Contents
 
 *   [Base](#base)
+    *   [Parameters](#parameters)
     *   [mapFromDirections](#mapfromdirections)
-        *   [Parameters](#parameters)
-    *   [unionFromDirections](#unionfromdirections)
         *   [Parameters](#parameters-1)
-    *   [walkDirections](#walkdirections)
+    *   [unionFromDirections](#unionfromdirections)
         *   [Parameters](#parameters-2)
-    *   [attribute](#attribute)
+    *   [walkDirections](#walkdirections)
         *   [Parameters](#parameters-3)
-    *   [attributeIterator](#attributeiterator)
+    *   [attribute](#attribute)
         *   [Parameters](#parameters-4)
-    *   [getAttributes](#getattributes)
+    *   [attributeIterator](#attributeiterator)
         *   [Parameters](#parameters-5)
-    *   [property](#property)
+    *   [getAttributes](#getattributes)
         *   [Parameters](#parameters-6)
+    *   [property](#property)
+        *   [Parameters](#parameters-7)
     *   [priority](#priority)
     *   [expression](#expression)
-        *   [Parameters](#parameters-7)
-    *   [templateContent](#templatecontent)
         *   [Parameters](#parameters-8)
+    *   [templateContent](#templatecontent)
+        *   [Parameters](#parameters-9)
     *   [isTemplate](#istemplate)
     *   [expand](#expand)
-        *   [Parameters](#parameters-9)
+        *   [Parameters](#parameters-10)
 *   [serviceEndpoints](#serviceendpoints)
-    *   [Parameters](#parameters-10)
-*   [PortEndpoint](#portendpoint)
     *   [Parameters](#parameters-11)
+*   [PortEndpoint](#portendpoint)
+    *   [Parameters](#parameters-12)
     *   [port](#port)
     *   [socketAddress](#socketaddress)
 *   [HTTPEndpoint](#httpendpoint)
-    *   [Parameters](#parameters-12)
+    *   [Parameters](#parameters-13)
     *   [port](#port-1)
 *   [id](#id)
 *   [domainNames](#domainnames)
 *   [InitializationContext](#initializationcontext)
-    *   [Parameters](#parameters-13)
-*   [SkeletonNetworkInterface](#skeletonnetworkinterface)
-    *   [networkAddresses](#networkaddresses)
-        *   [Parameters](#parameters-14)
+    *   [Parameters](#parameters-14)
 *   [type](#type)
 *   [SystemdJournalRemoteService](#systemdjournalremoteservice)
     *   [Properties](#properties)
@@ -98,26 +96,34 @@ generates config packages for:
     *   [Parameters](#parameters-18)
 *   [cidrAddresses](#cidraddresses)
     *   [Parameters](#parameters-19)
+*   [SkeletonNetworkInterface](#skeletonnetworkinterface)
+    *   [networkAddresses](#networkaddresses)
+        *   [Parameters](#parameters-20)
 *   [families](#families)
 *   [secretName](#secretname)
 *   [directHosts](#directhosts)
 *   [subnetForAddress](#subnetforaddress)
-    *   [Parameters](#parameters-20)
-*   [domainName](#domainname)
     *   [Parameters](#parameters-21)
-*   [domainFromDominName](#domainfromdominname)
+*   [domainName](#domainname)
     *   [Parameters](#parameters-22)
-*   [sectionLines](#sectionlines)
+*   [domainFromDominName](#domainfromdominname)
     *   [Parameters](#parameters-23)
-*   [asArray](#asarray)
+*   [sectionLines](#sectionlines)
     *   [Parameters](#parameters-24)
-*   [asIterator](#asiterator)
+*   [asArray](#asarray)
     *   [Parameters](#parameters-25)
+*   [asIterator](#asiterator)
+    *   [Parameters](#parameters-26)
 
 ## Base
 
 attributes: as declared in the types
 properties: use defined values to support attribute value definitions
+
+### Parameters
+
+*   `owner` &#x20;
+*   `data` &#x20;
 
 ### mapFromDirections
 
@@ -287,18 +293,6 @@ Keeps track of all in flight object creations and loose ends during config initi
 
 *   `directory`   (optional, default `"/"`)
 
-## SkeletonNetworkInterface
-
-**Extends ServiceOwner**
-
-### networkAddresses
-
-#### Parameters
-
-*   `filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
-
-Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
-
 ## type
 
 Type of the group.
@@ -379,6 +373,18 @@ Returns **Iterable<[string](https://developer.mozilla.org/docs/Web/JavaScript/Re
 *   `networkAddresses` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[NetworkAddress](#networkaddress)>**&#x20;
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
+
+## SkeletonNetworkInterface
+
+**Extends ServiceOwner**
+
+### networkAddresses
+
+#### Parameters
+
+*   `filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
+
+Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
 
 ## families
 
