@@ -135,7 +135,7 @@ export class Owner extends ServiceOwner {
       if (cidr && prefixLength !== 0) {
         return (
           this._subnets.get(cidr) ||
-          assign(subnets_attribute, this, new Subnet(cidr))
+          assign(subnets_attribute, this, new Subnet(this, cidr))
         );
       }
 

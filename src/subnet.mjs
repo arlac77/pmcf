@@ -33,8 +33,9 @@ export class Subnet {
 
   networks = new Set();
 
-  constructor(address) {
-    const { longPrefix, prefix, prefixLength, cidr, family } = normalizeCIDR(address);
+  constructor(owner, address) {
+    const { longPrefix, prefix, prefixLength, cidr, family } =
+      normalizeCIDR(address);
 
     this.address = cidr;
     this.prefix = prefix;
@@ -99,7 +100,7 @@ export class Subnet {
   }
 }
 
-export const SUBNET_GLOBAL_IPV4 = new Subnet("0.0.0.0/0");
-export const SUBNET_GLOBAL_IPV6 = new Subnet("::0/0");
-export const SUBNET_LOCALHOST_IPV4 = new Subnet("127.0.0.1/8");
-export const SUBNET_LOCALHOST_IPV6 = new Subnet("::1/128");
+export const SUBNET_GLOBAL_IPV4 = new Subnet(undefined, "0.0.0.0/0");
+export const SUBNET_GLOBAL_IPV6 = new Subnet(undefined, "::0/0");
+export const SUBNET_LOCALHOST_IPV4 = new Subnet(undefined, "127.0.0.1/8");
+export const SUBNET_LOCALHOST_IPV6 = new Subnet(undefined, "::1/128");

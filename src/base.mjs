@@ -37,9 +37,9 @@ export class Base {
   static key = "name";
   static priority = 0;
   static attributes = {
+    owner: owner_attribute,
     name: name_attribute_writable,
     description: description_attribute_writable,
-    owner: owner_attribute,
     type: type_attribute,
     directory: { ...string_attribute_writable, name: "directory" },
     packaging: { ...string_set_attribute_writable, name: "packaging" },
@@ -65,6 +65,12 @@ export class Base {
   _tags = new Set();
   _packaging = new Set();
   _directory;
+
+  constructor(owner, data) {
+    if (owner) {
+      this.owner = owner;
+    }
+  }
 
   set owner(value) {
     if (this === value || this === value?.owner) {

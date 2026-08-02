@@ -14,7 +14,7 @@ import { asArray } from "../src/utils.mjs";
 
 test("Subnet owner", t => {
   const ic = new InitializationContext();
-  const s1 = new Subnet("10.0.0.77/16");
+  const s1 = new Subnet(undefined, "10.0.0.77/16");
 
   assign(subnets_attribute, ic.root, s1);
   t.is(ic.root.subnets.get("10.0/16"), s1);
@@ -27,7 +27,7 @@ test("Subnet owner", t => {
   ic.read(n2, { name: "n2" });
   assign(networks_attribute, ic.root, n2);
 
-  const s2 = new Subnet("192.168.1/24");
+  const s2 = new Subnet(undefined, "192.168.1/24");
   assign(subnets_attribute, n1, s2);
 
   t.is(ic.root.subnets.get("192.168.1/24"), undefined);
@@ -36,7 +36,7 @@ test("Subnet owner", t => {
 });
 
 test("Subnet ipv6", t => {
-  const s1 = new Subnet("fe80::1e57:3eff:fe22:9a8f/64");
+  const s1 = new Subnet(undefined, "fe80::1e57:3eff:fe22:9a8f/64");
 
   t.is(s1.name, "fe80::/64");
   t.is(s1.prefixLength, 64);
@@ -49,13 +49,14 @@ test("Subnet ipv6", t => {
 });
 
 test("Subnet match with prefix length", t => {
-  const s1 = new Subnet("192.168.1/24");
+  const s1 = new Subnet(undefined, "192.168.1/24");
   t.true(s1.matchesAddress("192.168.1.60"));
   t.true(s1.matchesAddress("192.168.1.60/30"));
 });
 
 function st(t, address, expected) {
-  const subnet = address instanceof Subnet ? address : new Subnet(address);
+  const subnet =
+    address instanceof Subnet ? address : new Subnet(undefined, address);
 
   for (const property of [
     "address",
@@ -103,7 +104,7 @@ test(st, SUBNET_LOCALHOST_IPV6, {
   address: "::1/128",
   longAddress: "::1/128",
   prefixLength: 128,
-  family: FAMILY_IPV6,
+  family: FAMILY_IPV6
   //matches: ["127.0.01"],
   //notMatches: ["10.2.0.77"]
   // addressRange: ["10.0.0.0", "10.0.255.255"]

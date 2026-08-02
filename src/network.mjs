@@ -53,7 +53,7 @@ export class Network extends Owner {
 
   get subnets() {
     if (!this._subnets.get("fe80::/64")) {
-      const linkLocal = new Subnet("fe80::/64");
+      const linkLocal = new Subnet(this, "fe80::/64");
       this._subnets.set(linkLocal.address, linkLocal);
       //assign(subnets_attribute, this, linkLocal);
     }
