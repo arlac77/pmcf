@@ -3,8 +3,7 @@ import { normalizeIP } from "ip-utilties";
 import { addServiceType } from "pmcf";
 import { asArray } from "./utils.mjs";
 
-
-const SLASH = {...DOT, str: "/" };
+const SLASH = { ...DOT, str: "/" };
 
 registerToken(SLASH);
 
@@ -34,14 +33,20 @@ export function assign(attribute, object, value) {
   value ??= attribute.default;
 
   if (value !== undefined) {
+    // set backointer early so that parent properties can be found during load
+    if (attribute.backpointer) {
+      assign(attribute.backpointer, value, object);
+    }
+
+    if (attribute.expression) { // TODO
+      object[attribute.name] = value;
+      return value;
+    }
+
     if (attribute.values) {
       if (!attribute.values.has(value)) {
         error("unkown value", attribute);
       }
-    }
-
-    if (attribute.backpointer) {
-      assign(attribute.backpointer, value, object);
     }
 
     if (attribute.collection) {

@@ -48,7 +48,7 @@ export class InitializationContext {
   }
 
   instantiateAndAssign(object, attribute, value) {
-    if (attribute.type.primitive) {
+    if (attribute.type.primitive || attribute.expression) {
       return assign(attribute, object, value);
     }
     if (value !== undefined) {
@@ -178,15 +178,9 @@ export class InitializationContext {
       attribute => attribute.type === type && attribute.collection
     )) {
       try {
-        const object = create(type, owner, data);
-
-        // set backointer early so that parent properties can be found during load
-        if (attribute.backpointer) {
-          assign(attribute.backpointer, object, owner);
-        }
-        return assign(attribute, owner, this.read(object, data));
+        return assign(attribute, owner, this.read(create(type, owner, data), data));
       } catch (e) {
-        this.error(`Unable to assign ${type.name}.${attribute.name}`, data);
+        this.error(`Unable to assign ${type.name}.${attribute.name}`, e, data);
       }
     }
 
