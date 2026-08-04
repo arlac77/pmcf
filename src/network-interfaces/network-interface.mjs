@@ -107,10 +107,17 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   set hostName(value) {
     this._hostName = value;
   }
+  
+  get domains() {
+    if (!this.host) {
+      return new Set();
+    }
+
+    return this.host.localDomains;
+  }
 
   get domainNames() {
-    if(!this.host) {
-      //console.log("NO HOST",this.fullName);
+    if (!this.host) {
       return new Set();
     }
     return this.hostName

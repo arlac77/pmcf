@@ -14,20 +14,20 @@ import { NetworkInterface } from "./network-interfaces/network-interface.mjs";
  *
  */
 export class NetworkAddress {
-    static name = "network-address";
-    static priority = 1;
-    static key = "address";
-    static attributes = {
-      address: { ...name_attribute, name: "address" },
-      cidrAddress: { ...string_attribute, name: "cidrAddress" },
-       networkInterface: {
-        ...default_attribute,
-        name: "networkInterface",
-        type: "network_interface"
-      },
-      family: { ...string_attribute, name: "family" }
-    };
-  
+  static name = "network-address";
+  static priority = 1;
+  static key = "address";
+  static attributes = {
+    address: { ...name_attribute, name: "address" },
+    cidrAddress: { ...string_attribute, name: "cidrAddress" },
+    networkInterface: {
+      ...default_attribute,
+      name: "networkInterface",
+      type: "network_interface"
+    },
+    family: { ...string_attribute, name: "family" }
+  };
+
   static {
     addType(this);
   }
@@ -48,8 +48,16 @@ export class NetworkAddress {
     this.subnet = subnet;
   }
 
+  get host() {
+    return this.networkInterface.host;
+  }
+
   get domainNames() {
     return this.networkInterface.domainNames;
+  }
+
+  get domains() {
+    return this.networkInterface.domains;
   }
 
   get family() {
@@ -58,6 +66,10 @@ export class NetworkAddress {
 
   get cidrAddress() {
     return formatCIDR(this.address, this.subnet.prefixLength);
+  }
+
+  get fullName() {
+    return `${this.networkInterface.fullName}/${decodeIP(this.address)}`;
   }
 
   toString() {
