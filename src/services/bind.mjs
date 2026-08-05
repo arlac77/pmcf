@@ -1,4 +1,4 @@
-import { join, dirname } from "node:path";
+import { join } from "node:path";
 import { createHmac } from "node:crypto";
 import { FileContentProvider } from "npm-pkgbuild";
 import { reverseArpa, FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
@@ -196,6 +196,10 @@ class bind_group extends Base {
       ...string_set_attribute,
       name: "domains"
     },
+    foreignDomains: {
+      ...string_set_attribute,
+      name: "foreignDomains"
+    },
     zones: {
       ...default_collection_attribute,
       type: bind_zone,
@@ -258,6 +262,7 @@ class bind_group extends Base {
     addType(this);
   }
 
+  foreignDomains = new Set();
   access = [];
   allowedUpdates = [];
   notify = true;
@@ -356,6 +361,7 @@ class bind_group extends Base {
   get zones() {
     const entries = [...this.entries];
 
+
     if (!this._zones && entries.length > 0) {
       this._zoneConfigs = new Map();
       this._zones = new Map();
@@ -398,10 +404,54 @@ class bind_group extends Base {
 
             if (host && !hosts.has(host)) {
               hosts.add(host);
-              for (const foreignDomainName of host.foreignDomainNames) {
-                zone.records.add(
-                  DNSRecord("outfacing", "PTR", dnsFullName(foreignDomainName))
+
+              for (let foreignDomain of host.foreignDomainNames) {
+                const wildcard = foreignDomain.startsWith("*.");
+                if (wildcard) {
+                  foreignDomain = foreignDomain.substring(2);
+                }
+
+                this.foreignDomains.add(foreignDomain);
+
+                const config = this.zoneConfigs.getOrInsertComputed(
+                  foreignDomain,
+                  domain => new bind_zone_config(this, `${domain}.zone.conf`)
                 );
+
+                const zone = this._zones.getOrInsertComputed(
+                  foreignDomain,
+                  domain =>
+                    this.intoCatalog(
+                      new bind_zone(this, domain, config, locationName),
+                      locationName
+                    )
+                );
+
+                for (const na of host.networkAddresses(
+                  na => na.networkInterface.kind !== "loopback"
+                )) {
+                  zone.records.add(
+                    DNSRecord(
+                      "@",
+                      dnsRecordTypeForAddressFamily(na.family),
+                      na.address
+                    )
+                  );
+
+                  if (wildcard) {
+                    zone.records.add(
+                      DNSRecord(
+                        "*",
+                        dnsRecordTypeForAddressFamily(na.family),
+                        na.address
+                      )
+                    );
+                  }
+                }
+
+                /*zone.records.add(
+                  DNSRecord("outfacing", "PTR", dnsFullName(foreignDomain))
+                );*/
               }
 
               const sm = new Map();
@@ -485,6 +535,14 @@ class bind_group extends Base {
   async generateZoneDefs(outputControl) {
     for (const config of this.zoneConfigs.values()) {
       await config.write(outputControl, this);
+    }
+
+    if (this.foreignDomains.size) {
+      addHook(
+        outputControl.packageData,
+        "post_upgrade",
+        `/usr/bin/named-hostname-update ${[...this.foreignDomains].join(" ")}`
+      );
     }
 
     return outputControl.packageData;
@@ -619,76 +677,8 @@ export class bind extends ExtraSourceService {
       yield packageData;
     }
   }
-
-  async *generateOutfacingDefs(outputControl, sources) {
-    for (const source of sources) {
-      for (const host of source.hosts.values()) {
-        this.outfacingZones(
-          outputControl,
-          host,
-          this.groups.get("internal"),
-          this.defaultRecords
-        );
-      }
-    }
-
-    if (outputControl.configs.length) {
-      addHook(
-        outputControl.packageData,
-        "post_upgrade",
-        `/usr/bin/named-hostname-update ${outputControl.configs
-          .map(config => config.zones.map(zone => zone.id))
-          .flat()
-          .join(" ")}`
-      );
-
-      await this.writeZones(outputControl);
-
-      yield outputControl.packageData;
-    }
-  }
-
-  outfacingZones(outputControl, host, group, records) {
-    host.foreignDomainNames.map(domain => {
-      const wildcard = domain.startsWith("*.");
-      if (wildcard) {
-        domain = domain.substring(2);
-      }
-
-      const zone = {
-        id: domain,
-        file: `${host.owner.name}/outfacing/${domain}.zone`,
-        records: new Set(records)
-      };
-      const config = {
-        group,
-        name: `${domain}.zone.conf`,
-        type: this.serverType,
-        zones: [zone]
-      };
-      zone.config = config;
-      outputControl.configs.push(config);
-
-      if (this.hasLocationRecord) {
-        zone.records.add(DNSRecord("location", "TXT", host.owner.name));
-      }
-      for (const na of host.networkAddresses(
-        na => na.networkInterface.kind !== "loopback"
-      )) {
-        zone.records.add(
-          DNSRecord("@", dnsRecordTypeForAddressFamily(na.family), na.address)
-        );
-
-        if (wildcard) {
-          zone.records.add(
-            DNSRecord("*", dnsRecordTypeForAddressFamily(na.family), na.address)
-          );
-        }
-      }
-    });
-  }
 }
 
 function newOutputControl(packageData, dir, permissions) {
-  return { configs: [], packageData, dir, permissions };
+  return { packageData, dir, permissions };
 }
