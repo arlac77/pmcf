@@ -686,12 +686,10 @@ export class bind extends ExtraSourceService {
           );
         }
       }
-
-      //this.assignCatalog(outputControl, zone, `outfacting.${host.owner.name}`);
     });
   }
 }
 
 function newOutputControl(packageData, dir, permissions) {
-  return { configs: [], catalogs: new Map(), packageData, dir, permissions };
+  return { configs: [], packageData, dir, permissions };
 }
