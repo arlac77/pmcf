@@ -50,9 +50,9 @@
     "lint:docs": "documentation lint ./src**/*.mjs"
   },
   "dependencies": {
-    "aggregated-map": "^1.0.9",
+    "aggregated-map": "^1.0.10",
     "content-entry-transform": "^1.7.0",
-    "ip-utilties": "^3.10.0",
+    "ip-utilties": "^3.10.1",
     "npm-pkgbuild": "^20.8.11",
     "pacc": "^11.0.2",
     "package-directory": "^8.2.0",
