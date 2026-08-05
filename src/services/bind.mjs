@@ -335,13 +335,13 @@ class bind_group extends Base {
   intoCatalog(zone, locationName) {
     if (this.hasCatalog) {
       const catalogConfig = this.zoneConfigs.getOrInsertComputed(
-        `catalog.${zone.id}`,
-        domain => new bind_zone_config(this, `${domain}.zone.conf`)
+        `catalog.${locationName}`,
+        id => new bind_zone_config(this, `${id}.zone.conf`)
       );
 
       const catalogZone = this._zones.getOrInsertComputed(
-        `catalog.${zone.id}`,
-        domain => new catalog_zone(this, domain, catalogConfig, locationName)
+        `catalog.${locationName}`,
+        id => new catalog_zone(this, id, catalogConfig, locationName)
       );
 
       const hash = createHmac("sha1", zone.id).digest("hex");
@@ -616,7 +616,6 @@ export class bind extends ExtraSourceService {
     const present = await this.writeForwarders(outputControl);
 
     if (hasContent || present) {
-      //console.log(packageData);
       yield packageData;
     }
   }
