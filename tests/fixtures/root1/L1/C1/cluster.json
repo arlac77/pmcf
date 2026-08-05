@@ -20,7 +20,7 @@
       "source": ["/GLOBAL", "/L1/n2"],
       "groups": {
         "internal": {
-          "entries": "/L1/n1",
+          "entries": "/L1/n1/networkAddresses[networkInterface/kind!='tan' && networkInterface/kind!='loopback']",
           "recordTTL": "1W",
           "access": "/L1/n1",
           "allowedUpdates": "trusted"

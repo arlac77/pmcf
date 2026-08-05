@@ -1,12 +1,7 @@
 import { join, dirname } from "node:path";
 import { createHmac } from "node:crypto";
 import { FileContentProvider } from "npm-pkgbuild";
-import {
-  isLinkLocal,
-  reverseArpa,
-  FAMILY_IPV4,
-  FAMILY_IPV6
-} from "ip-utilties";
+import { reverseArpa, FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import {
   default_collection_attribute,
   default_collection_attribute_writable,
@@ -14,7 +9,6 @@ import {
   duration_attribute_writable,
   name_attribute,
   string_attribute,
-  string_set_attribute_writable,
   string_set_attribute,
   boolean_attribute_writable_true,
   boolean_attribute_writable_false,
@@ -40,6 +34,7 @@ import {
 } from "../dns-utils.mjs";
 import { addHook } from "../hooks.mjs";
 import { owner_attribute } from "../common-attributes.mjs";
+import { NetworkAddress } from "../network-address.mjs";
 
 const bindNetworkAddressTypes = networkAddressType + "|bind_group";
 
@@ -68,22 +63,45 @@ class bind_zone extends Base {
     return this.id;
   }
 
-  get directory() {
-    return this.source.name;
-  }
-
   get file() {
     return `${this.directory}/${this.domain}.zone`;
   }
 
-  constructor(owner, id, config, source) {
+  constructor(owner, id, config, location) {
     super();
     this.id = id;
     this.config = config;
-    this.source = source;
+    this.directory = location;
     this.records = new Set(owner.defaultRecords);
 
+    if (owner.hasLocationRecord) {
+      this.records.add(DNSRecord("location", "TXT", location));
+    }
+
     config.zones.push(this);
+  }
+}
+
+class catalog_zone extends bind_zone {
+  static attributes = {
+    version: { ...string_attribute, name: "version" }
+  };
+
+  static {
+    addType(this);
+  }
+
+  constructor(owner, id, config, location) {
+    super(owner, id, config, location);
+    this.records.add(DNSRecord("version", "TXT", `"${this.version}"`));
+  }
+
+  get isCatalog() {
+    return true;
+  }
+
+  get version() {
+    return "2";
   }
 }
 
@@ -104,9 +122,56 @@ class bind_zone_config extends Base {
   }
 
   constructor(owner, name) {
-    super();
-    this.owner = owner;
+    super(owner);
     this.name = name;
+  }
+
+  async write(outputControl, group) {
+    const dir = outputControl.dir;
+
+    console.log(`config: ${group.name}/${this.name}`);
+
+    const content = [];
+
+    for (const zone of this.zones) {
+      console.log(`  file: ${zone.file}`);
+
+      content.push(`zone \"${zone.id}\" {`);
+
+      if (group.sharedWith) {
+        content.push(`  in-view ${group.sharedWith.name};`);
+      } else {
+        content.push(`  type ${this.type};`);
+        content.push(`  file \"${zone.file}\";`);
+        content.push(
+          addressesStatement(
+            "allow-update",
+            group.allowedUpdates,
+            "none;",
+            "  "
+          )
+        );
+        content.push(`  notify ${yesno(group.notify)};`);
+      }
+      content.push(`};`, "");
+
+      let maxKeyLength = 0;
+      for (const r of zone.records) {
+        if (r.key.length > maxKeyLength) {
+          maxKeyLength = r.key.length;
+        }
+      }
+
+      await writeLines(
+        join(dir, "var/lib/named"),
+        zone.file,
+        [...zone.records]
+          .sort(sortZoneRecords)
+          .map(r => r.toString(maxKeyLength, group.recordTTL))
+      );
+    }
+
+    await writeLines(join(dir, `etc/named/${group.name}`), this.name, content);
   }
 }
 
@@ -121,19 +186,11 @@ class bind_group extends Base {
       collection: true,
       writable: true
     },
-    excludeInterfaceKinds: {
-      ...string_set_attribute_writable,
-      name: "excludeInterfaceKinds"
-    },
-    exclude: {
-      ...default_collection_attribute_writable,
-      name: "exclude",
-      type: networkAddressType
-    },
     entries: {
       ...default_collection_attribute_writable,
-      type: networkAddressType + "|owner",
-      name: "entries"
+      type: NetworkAddress,
+      name: "entries",
+      expression: true
     },
     domains: {
       ...string_set_attribute,
@@ -203,22 +260,26 @@ class bind_group extends Base {
 
   access = [];
   allowedUpdates = [];
-  entries = [];
-  zoneConfigs = [];
-  exclude = new Set();
-  excludeInterfaceKinds = new Set();
   notify = true;
   hasCatalog = true;
   hasSVRRecords = true;
   hasLinkLocalAdresses = bind_group.attributes.hasLinkLocalAdresses.default;
   recordTTL = "1W";
 
+  set entries(value) {
+    this._entries = value;
+  }
+
+  get entries() {
+    return this._entries ? this.expression(this._entries) : [];
+  }
+
   /**
    * Type of the group.
    * @return {string} view | unknown
    */
   get type() {
-    if (this.entries.length > 0 || this.sharedWith) {
+    if (this.sharedWith || this._entries) {
       return "view";
     }
 
@@ -261,37 +322,128 @@ class bind_group extends Base {
 
   get domains() {
     return this.entries.reduce(
-      (all, net) => all.union(net.localDomains),
+      (all, address) => all.union(address.domains),
       new Set()
     );
   }
 
+  get zoneConfigs() {
+    this.zones;
+    return this._zoneConfigs || new Map();
+  }
+
+  intoCatalog(zone, locationName) {
+    if (this.hasCatalog) {
+      const catalogConfig = this.zoneConfigs.getOrInsertComputed(
+        `catalog.${zone.id}`,
+        domain => new bind_zone_config(this, `${domain}.zone.conf`)
+      );
+
+      const catalogZone = this._zones.getOrInsertComputed(
+        `catalog.${zone.id}`,
+        domain => new catalog_zone(this, domain, catalogConfig, locationName)
+      );
+
+      const hash = createHmac("sha1", zone.id).digest("hex");
+      catalogZone.records.add(
+        DNSRecord(`${hash}.zones`, "PTR", dnsFullName(zone.id))
+      );
+    }
+
+    return zone;
+  }
+
   get zones() {
-    const zs = new Map();
+    const entries = [...this.entries];
 
-    
-    for (const source of this.entries) {
-      for (const domain of source.localDomains) {
-        const config = new bind_zone_config(this, `${domain}.zone.conf`);
+    if (!this._zones && entries.length > 0) {
+      this._zoneConfigs = new Map();
+      this._zones = new Map();
 
-        this.zoneConfigs.push(config);
+      const hosts = new Set();
+      const addresses = new Set();
 
-        const z = new bind_zone(this, domain, config, source);
+      console.log("ZONES for", this.owner.owner.name, this.name);
 
-        zs.set(z.id, z);
+      for (const na of entries) {
+        const address = na.address;
+        const host = na.host;
 
-        for (const {
-          address,
-          subnet,
-          networkInterface,
-          domainNames,
-          family
-        } of source.networkAddresses()) {
-          //  console.log(address);
+        if (!addresses.has(address)) {
+          addresses.add(address);
+
+          const locationName = host.owner.name;
+
+          for (const domain of na.domains) {
+            const config = this.zoneConfigs.getOrInsertComputed(
+              domain,
+              domain => new bind_zone_config(this, `${domain}.zone.conf`)
+            );
+
+            const zone = this._zones.getOrInsertComputed(domain, domain =>
+              this.intoCatalog(
+                new bind_zone(this, domain, config, locationName),
+                locationName
+              )
+            );
+
+            const reverseZone = this._zones.getOrInsertComputed(
+              reverseArpa(na.subnet.prefix),
+              domain =>
+                this.intoCatalog(
+                  new bind_zone(this, domain, config, locationName),
+                  locationName
+                )
+            );
+
+            if (host && !hosts.has(host)) {
+              hosts.add(host);
+              for (const foreignDomainName of host.foreignDomainNames) {
+                zone.records.add(
+                  DNSRecord("outfacing", "PTR", dnsFullName(foreignDomainName))
+                );
+              }
+
+              const sm = new Map();
+
+              for (const service of host.services.values()) {
+                for (const record of service.dnsRecordsForDomainName(
+                  host.domainName,
+                  this.hasSVRRecords
+                )) {
+                  sm.set(record.toString(), record);
+                }
+              }
+
+              for (const r of sm.values()) {
+                zone.records.add(r);
+              }
+            }
+
+            for (const domainName of na.domainNames) {
+              if (domainName.endsWith(domain) && domainName[0] !== "*") {
+                zone.records.add(
+                  DNSRecord(
+                    dnsFullName(domainName),
+                    dnsRecordTypeForAddressFamily(na.family),
+                    address
+                  )
+                );
+
+                reverseZone.records.add(
+                  DNSRecord(
+                    dnsFullName(reverseArpa(address)),
+                    "PTR",
+                    dnsFullName(domainName)
+                  )
+                );
+              }
+            }
+          }
         }
       }
     }
-    return zs;
+    return this._zones;
   }
 
   async packageContent(outputControl) {
@@ -304,7 +456,7 @@ class bind_group extends Base {
     return (
       await Promise.all([
         this.generateACLs(outputControl),
-        this.generateZoneDefs(outputControl, this.entries)
+        this.generateZoneDefs(outputControl)
       ])
     ).find(r => r)
       ? true
@@ -330,230 +482,12 @@ class bind_group extends Base {
     return false;
   }
 
-  async generateZoneDefs(outputControl, sources) {
-    for (const source of sources) {
-      console.log(
-        "ZONE",
-        source.toString(),
-        [...source.localDomains].join(" ")
-      );
-
-      for (const domain of source.localDomains) {
-        const locationName = source.name;
-        const reverseZones = new Map();
-
-        const config = {
-          name: `${domain}.zone.conf`,
-          type: this.service.serverType,
-          zones: []
-        };
-        outputControl.configs.push(config);
-
-        const zone = {
-          id: domain,
-          config,
-          file: `${locationName}/${domain}.zone`,
-          records: new Set(this.defaultRecords)
-        };
-
-        if (this.hasLocationRecord) {
-          zone.records.add(DNSRecord("location", "TXT", locationName));
-        }
-
-        config.zones.push(zone);
-
-        this.assignCatalog(outputControl, zone, domain);
-
-        const hosts = new Set();
-        const addresses = new Set();
-
-        for (const {
-          address,
-          subnet,
-          networkInterface,
-          domainNames,
-          family
-        } of source.networkAddresses()) {
-          if (
-            !this.exclude.has(networkInterface.network) &&
-            !this.excludeInterfaceKinds.has(networkInterface.kind)
-          ) {
-            if (
-              !addresses.has(address) &&
-              (this.hasLinkLocalAdresses || !isLinkLocal(address))
-            ) {
-              addresses.add(address);
-
-              let reverseZone = reverseZones.get(subnet);
-
-              // is there already a matching subnet ?
-              if (!reverseZone) {
-                for (const [presentSubnet, zone] of reverseZones) {
-                  if (presentSubnet.matchesAddress(subnet.address)) {
-                    reverseZone = zone;
-                  }
-                }
-              }
-
-              if (!reverseZone) {
-                const id = reverseArpa(subnet.prefix);
-                reverseZone = {
-                  id,
-                  config,
-                  file: `${locationName}/${id}.zone`,
-                  records: new Set(this.defaultRecords)
-                };
-                config.zones.push(reverseZone);
-                reverseZones.set(subnet, reverseZone);
-
-                this.assignCatalog(outputControl, reverseZone, domain);
-              }
-
-              for (const domainName of domainNames) {
-                if (domainName.endsWith(zone.id) && domainName[0] !== "*") {
-                  zone.records.add(
-                    DNSRecord(
-                      dnsFullName(domainName),
-                      dnsRecordTypeForAddressFamily(family),
-                      address
-                    )
-                  );
-
-                  reverseZone.records.add(
-                    DNSRecord(
-                      dnsFullName(reverseArpa(address)),
-                      "PTR",
-                      dnsFullName(domainName)
-                    )
-                  );
-                }
-              }
-            }
-
-            const host = networkInterface.host;
-            if (host && !hosts.has(host)) {
-              hosts.add(host);
-
-              for (const foreignDomainName of host.foreignDomainNames) {
-                zone.records.add(
-                  DNSRecord("outfacing", "PTR", dnsFullName(foreignDomainName))
-                );
-              }
-
-              const sm = new Map();
-
-              for (const service of host.services.values()) {
-                for (const record of service.dnsRecordsForDomainName(
-                  host.domainName,
-                  this.hasSVRRecords
-                )) {
-                  sm.set(record.toString(), record);
-                }
-              }
-
-              for (const r of sm.values()) {
-                zone.records.add(r);
-              }
-            }
-          }
-        }
-      }
+  async generateZoneDefs(outputControl) {
+    for (const config of this.zoneConfigs.values()) {
+      await config.write(outputControl, this);
     }
-
-    await this.writeZones(outputControl);
 
     return outputControl.packageData;
-  }
-
-  assignCatalog(outputControl, zone, name) {
-    if (!this.hasCatalog) {
-      return;
-    }
-
-    const directory = dirname(zone.file);
-
-    let catalogZone = outputControl.catalogs.get(directory);
-
-    if (!catalogZone) {
-      catalogZone = {
-        catalog: true,
-        id: `catalog.${name}`,
-        file: `${directory}/catalog.${name}.zone`,
-        records: new Set([
-          ...this.defaultRecords,
-          DNSRecord("version", "TXT", '"2"')
-        ])
-      };
-      outputControl.catalogs.set(directory, catalogZone);
-
-      const config = {
-        name: `catalog.${name}.zone.conf`,
-        type: this.service.serverType,
-        zones: [catalogZone]
-      };
-      catalogZone.config = config;
-      outputControl.configs.push(config);
-    }
-    zone.catalogZone = catalogZone;
-
-    const hash = createHmac("sha1", zone.id).digest("hex");
-    catalogZone.records.add(
-      DNSRecord(`${hash}.zones`, "PTR", dnsFullName(zone.id))
-    );
-
-    return catalogZone;
-  }
-
-  async writeZones(outputControl) {
-    for (const config of outputControl.configs) {
-      console.log(`config: ${this.name}/${config.name}`);
-
-      const content = [];
-
-      for (const zone of config.zones) {
-        console.log(`  file: ${zone.file}`);
-
-        content.push(`zone \"${zone.id}\" {`);
-
-        if (this.sharedWith) {
-          content.push(`  in-view ${this.sharedWith.name};`);
-        } else {
-          content.push(`  type ${config.type};`);
-          content.push(`  file \"${zone.file}\";`);
-          content.push(
-            addressesStatement(
-              "allow-update",
-              this.allowedUpdates,
-              "none;",
-              "  "
-            )
-          );
-          content.push(`  notify ${yesno(this.notify)};`);
-        }
-        content.push(`};`, "");
-
-        let maxKeyLength = 0;
-        for (const r of zone.records) {
-          if (r.key.length > maxKeyLength) {
-            maxKeyLength = r.key.length;
-          }
-        }
-
-        await writeLines(
-          join(outputControl.dir, "var/lib/named"),
-          zone.file,
-          [...zone.records]
-            .sort(sortZoneRecords)
-            .map(r => r.toString(maxKeyLength, this.recordTTL))
-        );
-      }
-
-      await writeLines(
-        join(outputControl.dir, `etc/named/${this.name}`),
-        config.name,
-        content
-      );
-    }
   }
 }
 
@@ -753,7 +687,7 @@ export class bind extends ExtraSourceService {
         }
       }
 
-      this.assignCatalog(outputControl, zone, `outfacting.${host.owner.name}`);
+      //this.assignCatalog(outputControl, zone, `outfacting.${host.owner.name}`);
     });
   }
 }

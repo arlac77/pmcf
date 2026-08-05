@@ -47,7 +47,7 @@ test("BIND basics", async t => {
   );
 });
 
-test.only("BIND groups", async t => {
+test("BIND groups", async t => {
   const ic = new InitializationContext(
     new URL("fixtures/root1", import.meta.url).pathname
   );
@@ -70,7 +70,7 @@ test.only("BIND groups", async t => {
   t.is(internalGroup.type, "view");
   t.is(internalGroup.order, 0);
 
-  t.deepEqual(internalGroup.entries, [ic.named("/L1/n1")]);
+  t.deepEqual([...internalGroup.entries.map(e => e.address)], ["192.168.1.2"]);
   t.deepEqual(internalGroup.domains, new Set(["mydomain.com"]));
 
   const zs = internalGroup.zones;
@@ -86,7 +86,7 @@ test.only("BIND groups", async t => {
   t.is(protectedGroup.owner, bindInst);
   t.is(protectedGroup.order, 1);
 
-  t.is(internalGroup.entries[0].name, "n1");
+ // t.is(internalGroup.entries[0].name, "n1");
 
   //t.deepEqual(bind.groups.internal.allowedUpdates, [bind.groups.trusted]);
 
