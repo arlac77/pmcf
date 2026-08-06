@@ -543,6 +543,14 @@ class bind_group extends Base {
   }
 }
 
+/**
+ * 
+ * @param {string} prefix 
+ * @param {any} objects 
+ * @param {boolean|string} empty 
+ * @param {string} indent 
+ * @returns {string[]}
+ */
 function addressesStatement(prefix, objects, empty = false, indent = "") {
   const body = asArray(objects).map(
     value => `${indent}  ${typeof value === "string" ? value : value.name};`
