@@ -45,11 +45,16 @@ class bind_zone extends Base {
   static attributes = {
     id: { ...name_attribute, name: "id" },
     file: { ...string_attribute, name: "file" },
-    records: { ...string_set_attribute, name: "records" }
+    records: { ...string_set_attribute, name: "records" },
+    foreign: { ...boolean_attribute, name: "foreign" }
   };
 
   static {
     addType(this);
+  }
+
+  get isCatalog() {
+    return false;
   }
 
   get name() {
@@ -69,7 +74,7 @@ class bind_zone extends Base {
   }
 
   constructor(owner, id, config, location) {
-    super();
+    super(owner);
     this.id = id;
     this.config = config;
     this.directory = location;
@@ -117,7 +122,7 @@ class bind_zone_config extends Base {
     addType(this);
   }
 
-  zones = [];
+  /** @type {bind_zone[]} */ zones = [];
 
   get type() {
     return this.owner.service.serverType;
@@ -128,10 +133,11 @@ class bind_zone_config extends Base {
     this.name = name;
   }
 
-  async write(outputControl, group) {
+  async write(outputControl) {
     const dir = outputControl.dir;
+    const group = this.owner;
 
-    console.log(`config: ${group.name}/${this.name}`);
+    console.log(`config: ${group.name}/${this.name}${this.foreign ? " foreign" : ""}`);
 
     const content = [];
 
@@ -412,6 +418,7 @@ class bind_group extends Base {
                   domain => new bind_zone_config(this, `${domain}.zone.conf`)
                 );
 
+                config.foreign = true;
                 const zone = this._zones.getOrInsertComputed(
                   foreignDomain,
                   domain =>
@@ -420,6 +427,8 @@ class bind_group extends Base {
                       locationName
                     )
                 );
+
+                zone.foreign = true;
 
                 for (const na of host.networkAddresses(
                   na => na.networkInterface.kind !== "loopback"
@@ -528,7 +537,7 @@ class bind_group extends Base {
 
   async generateZoneDefs(outputControl) {
     for (const config of this.zoneConfigs.values()) {
-      await config.write(outputControl, this);
+      await config.write(outputControl);
     }
 
     if (this.foreignDomains.size) {
@@ -544,11 +553,11 @@ class bind_group extends Base {
 }
 
 /**
- * 
- * @param {string} prefix 
- * @param {any} objects 
- * @param {boolean|string} empty 
- * @param {string} indent 
+ *
+ * @param {string} prefix
+ * @param {any} objects
+ * @param {boolean|string} empty
+ * @param {string} indent
  * @returns {string[]}
  */
 function addressesStatement(prefix, objects, empty = false, indent = "") {
