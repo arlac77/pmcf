@@ -10,6 +10,7 @@ import {
   name_attribute,
   string_attribute,
   string_set_attribute,
+  boolean_attribute,
   boolean_attribute_writable_true,
   boolean_attribute_writable_false,
   integer_attribute_writable,
@@ -84,7 +85,8 @@ class bind_zone extends Base {
 
 class catalog_zone extends bind_zone {
   static attributes = {
-    version: { ...string_attribute, name: "version" }
+    version: { ...string_attribute, name: "version" },
+    isCatalog: { ...boolean_attribute, name: "isCatalog" }
   };
 
   static {
@@ -306,13 +308,6 @@ class bind_group extends Base {
   get defaultRecords() {
     const service = this.service;
 
-    /*console.log(
-      "nameService",
-      service.fullName,
-      service.domainName,
-      service.address()
-    );*/
-
     return [
       DNSRecord(
         "@",
@@ -360,7 +355,6 @@ class bind_group extends Base {
 
   get zones() {
     const entries = [...this.entries];
-
 
     if (!this._zones && entries.length > 0) {
       this._zoneConfigs = new Map();
@@ -664,7 +658,7 @@ export class bind extends ExtraSourceService {
       new FileContentProvider(dir + "/", ...permissions)
     );
 
-    const outputControl = newOutputControl(packageData, dir, permissions);
+    const outputControl = { packageData, dir, permissions };
 
     for (const group of this.groups.values()) {
       const present = await group.packageContent(outputControl);
@@ -677,8 +671,4 @@ export class bind extends ExtraSourceService {
       yield packageData;
     }
   }
-}
-
-function newOutputControl(packageData, dir, permissions) {
-  return { packageData, dir, permissions };
 }
