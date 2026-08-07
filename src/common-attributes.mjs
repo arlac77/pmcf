@@ -3,6 +3,7 @@ import {
   default_attribute_writable,
   default_collection_attribute_writable,
   string_collection_attribute_writable,
+  string_set_attribute_writable,
   string_attribute_writable,
   integer_attribute_writable,
   hostname_attribute as hostname_attribute_base,
@@ -10,6 +11,8 @@ import {
 } from "pacc";
 
 export const networkAddressType = "network|host|network_interface";
+
+export const aliases_attribute = { ...string_set_attribute_writable, name: "aliases" };
 
 export const owner_attribute = {
   ...default_attribute,
