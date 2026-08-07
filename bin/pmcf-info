@@ -16,6 +16,8 @@ function show(value, indent = 0, short = false) {
     case "number":
     case "bigint":
       console.log(value);
+
+    case "undefined":
       return;
   }
 
