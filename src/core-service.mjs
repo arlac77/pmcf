@@ -20,8 +20,11 @@ import {
   FAMILY_UNIX,
   FAMILY_DNS
 } from "pmcf";
-import { asArray } from "./utils.mjs";
-import { networkAddressAttributes } from "./common-attributes.mjs";
+import { asArray, union } from "./utils.mjs";
+import {
+  networkAddressAttributes,
+  aliases_attribute
+} from "./common-attributes.mjs";
 import {
   serviceTypeEndpoints,
   serviceTypes,
@@ -72,7 +75,7 @@ export class CoreService extends Base {
       name: "extends",
       type: CoreService
     },
-    alias: { ...string_attribute_writable, name: "alias" },
+    aliases: aliases_attribute,
     priority: priority_attribute,
     weight: { ...number_attribute_writable, name: "weight" /*default: 1*/ },
     systemdService: { ...string_attribute_writable, name: "systemdService" },
@@ -84,7 +87,7 @@ export class CoreService extends Base {
     addType(this);
   }
 
-  _alias;
+  _aliases = new Set();
   _weight;
   _port;
   _systemdService;
@@ -208,12 +211,14 @@ export class CoreService extends Base {
     return options.join !== undefined ? res.join(options.join) : res;
   }
 
-  set alias(value) {
-    this._alias = value;
+  set aliases(value) {
+    this._aliases = union(value, this._aliases);
   }
 
-  get alias() {
-    return this.attribute("_alias");
+  get aliases() {
+    return this.expand(
+      this.unionFromDirections(["this", "extends"], "_aliases")
+    );
   }
 
   set port(value) {
@@ -301,8 +306,13 @@ export class CoreService extends Base {
 
   dnsRecordsForDomainName(domainName, hasSVRRecords) {
     const records = [];
-    if (this.priority >= 390 && this.alias) {
-      records.push(DNSRecord(this.alias, "CNAME", dnsFullName(domainName)));
+
+    if (this.priority >= 390) {
+      console.log("DNS SERVICE ALIAS", this.aliases, dnsFullName(domainName));
+
+      for (const alias of this.aliases) {
+        records.push(DNSRecord(alias, "CNAME", dnsFullName(domainName)));
+      }
     }
 
     if (hasSVRRecords) {

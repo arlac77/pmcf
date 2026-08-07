@@ -36,15 +36,15 @@
       "extends": "/templates/mosquitto",
       "acl_file": "/etc/mosquitto/acl"
     },
-    "dns": { "alias": "dns" },
+    "dns": { "aliases": "dns" },
     "openldap": {
       "extends": "/templates/openldap",
-      "alias": "ldap",
+      "aliases": "ldap",
       "base": "${ldap_base}",
       "uri": "ldap://"
     },
     "chrony": {
-      "alias": "ntp",
+      "aliases": "ntp",
       "source": "/GLOBAL"
     }
   }

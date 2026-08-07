@@ -77,7 +77,7 @@ export function root1(root, filter) {
       }
     },
     services: {
-      dns: { type: "dns", alias: "dns" },
+      dns: { type: "dns", aliases: new Set("dns") },
       smb: { type: "smb" },
       timemachine: {
         // extends: ["/templates/timemachine"],
@@ -89,7 +89,7 @@ export function root1(root, filter) {
       mosquitto: {
         // extends: ["/templates/mosquitto"],
         type: "mosquitto",
-        alias: "mqtt",
+        aliases: new Set("mqtt"),
         port: 1883,
         persistence_location: "/var/lib/mosquitto",
         password_file: "/etc/mosquitto/passwd",
@@ -98,7 +98,7 @@ export function root1(root, filter) {
       openldap: {
         //  extends: ["/templates/openldap"],
         type: "openldap",
-        alias: "ldap",
+        aliases: new Set("ldap"),
         uri: "ldap://",
         properties: {
           //        datadir: "/var/lib/openldap",
@@ -107,7 +107,7 @@ export function root1(root, filter) {
           //        rootdn: "cn=Manager,${base_dn}"
         }
       },
-      chrony: { extends: [], type: "chrony", alias: "ntp", port: 323 }
+      chrony: { extends: [], type: "chrony", aliases: new Set("ntp"), port: 323 }
     }
   };
 
@@ -128,7 +128,7 @@ export function root1(root, filter) {
       }
     },
     services: {
-      dns: { type: "dns", alias: "dns", priority: 7 },
+      dns: { type: "dns", aliases: new Set("dns"), priority: 7 },
       smb: { type: "smb" }
     }
   };

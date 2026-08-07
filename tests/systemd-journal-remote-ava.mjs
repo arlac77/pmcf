@@ -46,7 +46,7 @@ test("systemd-journal-remote", async t => {
   t.is(journalRemoteTemplate.isTemplate, true);
   t.is(journalRemoteTemplate.type, "systemd-journal-remote");
   t.is(journalRemoteTemplate.name, "systemd-journal-remote");
-  t.is(journalRemoteTemplate.alias, "journal");
+  t.deepEqual(journalRemoteTemplate.aliases, new Set(["journal"]));
   t.is(
     journalRemoteTemplate.TrustedCertificateFile,
     "/etc/ssl/certs/chain.cert.pem"
@@ -58,7 +58,7 @@ test("systemd-journal-remote", async t => {
   t.is(journalRemote.isTemplate, false);
   t.is(journalRemote.type, "systemd-journal-remote");
   t.is(journalRemote.name, "systemd-journal-remote");
-  t.is(journalRemote.alias, "journal");
+  t.deepEqual(journalRemote.aliases, new Set(["journal"]));
   t.is(journalRemote.attribute("Seal"), false);
   t.is(journalRemote.attribute("SplitMode"), "host");
   t.is(

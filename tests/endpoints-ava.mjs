@@ -48,7 +48,7 @@ function prepare() {
     name: "dns",
     weight: 5,
     priority: 3,
-    alias: "primary-dns"
+    aliases: "primary-dns"
   });
 
   assign(ServiceOwner.attributes.services, h1, s1);

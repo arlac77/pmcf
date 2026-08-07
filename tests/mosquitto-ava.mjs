@@ -11,7 +11,7 @@ test("mosquitto basics", async t => {
   const mosquittoInst = ic.named("/L1/host1/mosquitto");
 
   t.true(mosquittoInst instanceof mosquitto);
-  t.is(mosquittoInst.alias, "mqtt");
+  t.deepEqual(mosquittoInst.aliases, new Set(["mqtt"]));
   t.is(mosquittoInst.listener, 1883);
 
   t.is(mosquittoInst.attribute("persistence_location"), "/var/lib/mosquitto");

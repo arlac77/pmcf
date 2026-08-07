@@ -10,6 +10,6 @@
     }
   },
   "services": {
-    "dns": { "type": "dns", "alias": "dns", "priority": 7 }
+    "dns": { "type": "dns", "aliases": "dns", "priority": 7 }
   }
 }

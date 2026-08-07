@@ -73,7 +73,7 @@ test("Service basics", t => {
     name: "dns",
     weight: 5,
     priority: 3,
-    alias: "primary-dns"
+    aliases: "primary-dns"
   });
   assign(ServiceOwner.attributes.services, h1, s1);
 
@@ -115,7 +115,7 @@ test("Service basics", t => {
 
   t.is(s1.name, "dns");
   t.is(s1.type, "dns");
-  t.is(s1.alias, "primary-dns");
+  t.deepEqual(s1.aliases, new Set(["primary-dns"]));
   t.is(s1.priority, 3);
   t.is(s1.weight, 5);
   t.is(s1.port, 53);
@@ -304,7 +304,7 @@ test("Service owner", t => {
   const s1 = new Service();
   ic.read(s1, {
     name: "dns",
-    alias: "primary-dns"
+    aliases: "primary-dns"
   });
   const s1b = s1.forOwner(h2);
 

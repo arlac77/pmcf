@@ -1,5 +1,5 @@
 {
-  "alias": "ldap",
+  "aliases": "ldap",
   "base": "dc=mf,dc=de",
   "properties": {
     "certname": "primary",
