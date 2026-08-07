@@ -81,39 +81,42 @@ generates config packages for:
 *   [SkeletonNetworkInterface](#skeletonnetworkinterface)
     *   [networkAddresses](#networkaddresses)
         *   [Parameters](#parameters-15)
+*   [zones](#zones)
 *   [type](#type)
+*   [addressesStatement](#addressesstatement)
+    *   [Parameters](#parameters-16)
 *   [SystemdJournalRemoteService](#systemdjournalremoteservice)
     *   [Properties](#properties)
     *   [systemdConfigs](#systemdconfigs)
-        *   [Parameters](#parameters-16)
+        *   [Parameters](#parameters-17)
 *   [SystemdJournalUploadService](#systemdjournaluploadservice)
     *   [Properties](#properties-1)
     *   [systemdConfigs](#systemdconfigs-1)
-        *   [Parameters](#parameters-17)
+        *   [Parameters](#parameters-18)
 *   [NetworkAddress](#networkaddress)
-    *   [Parameters](#parameters-18)
+    *   [Parameters](#parameters-19)
     *   [subnet](#subnet)
     *   [networkInterface](#networkinterface)
     *   [address](#address)
 *   [addresses](#addresses)
-    *   [Parameters](#parameters-19)
-*   [cidrAddresses](#cidraddresses)
     *   [Parameters](#parameters-20)
+*   [cidrAddresses](#cidraddresses)
+    *   [Parameters](#parameters-21)
 *   [families](#families)
 *   [secretName](#secretname)
 *   [directHosts](#directhosts)
 *   [subnetForAddress](#subnetforaddress)
-    *   [Parameters](#parameters-21)
-*   [domainName](#domainname)
     *   [Parameters](#parameters-22)
-*   [domainFromDominName](#domainfromdominname)
+*   [domainName](#domainname)
     *   [Parameters](#parameters-23)
-*   [sectionLines](#sectionlines)
+*   [domainFromDominName](#domainfromdominname)
     *   [Parameters](#parameters-24)
-*   [asArray](#asarray)
+*   [sectionLines](#sectionlines)
     *   [Parameters](#parameters-25)
-*   [asIterator](#asiterator)
+*   [asArray](#asarray)
     *   [Parameters](#parameters-26)
+*   [asIterator](#asiterator)
+    *   [Parameters](#parameters-27)
 
 ## Base
 
@@ -305,11 +308,26 @@ Keeps track of all in flight object creations and loose ends during config initi
 
 Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
 
+## zones
+
+Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<bind\_zone>
+
 ## type
 
 Type of the group.
 
 Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** view | unknown
+
+## addressesStatement
+
+### Parameters
+
+*   `prefix` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+*   `objects` **any**&#x20;
+*   `empty` **([boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))**  (optional, default `false`)
+*   `indent` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**  (optional, default `""`)
+
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
 
 ## SystemdJournalRemoteService
 
