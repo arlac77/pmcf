@@ -451,10 +451,6 @@ class bind_group extends Base {
                     );
                   }
                 }
-
-                /*zone.records.add(
-                  DNSRecord("outfacing", "PTR", dnsFullName(foreignDomain))
-                );*/
               }
 
               const sm = new Map();
