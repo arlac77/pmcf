@@ -291,7 +291,6 @@ export class CoreService extends Base {
     const packageData = super.packageData;
     const name = `${this.owner.owner.name}-${this.owner.name}`;
     packageData.properties.name = `${this.name}-${name}`;
-    packageData.properties.description = `${this.type} service definitions for ${this.fullName}`;
     packageData.properties.groups.push("config", name);
     return packageData;
   }
@@ -308,9 +307,8 @@ export class CoreService extends Base {
     const records = [];
 
     if (this.priority >= 390) {
-      console.log("DNS SERVICE ALIAS", this.aliases, dnsFullName(domainName));
-
       for (const alias of this.aliases) {
+        console.log("CNAME", alias, dnsFullName(domainName));
         records.push(DNSRecord(alias, "CNAME", dnsFullName(domainName)));
       }
     }

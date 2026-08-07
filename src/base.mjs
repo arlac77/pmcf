@@ -488,6 +488,7 @@ export class Base {
       outputs: this.outputs,
       properties: {
         name: nameParts.filter(n => n !== undefined && n.length > 0).join("-"),
+        description: `${this.type} definitions for ${this.fullName}`,
         access: "private",
         dependencies: this.depends,
         groups: [this.typeName]
