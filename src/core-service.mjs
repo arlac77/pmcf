@@ -20,7 +20,7 @@ import {
   FAMILY_UNIX,
   FAMILY_DNS
 } from "pmcf";
-import { asArray, union } from "./utils.mjs";
+import { asArray } from "./utils.mjs";
 import { networkAddressAttributes } from "./common-attributes.mjs";
 import {
   serviceTypeEndpoints,
