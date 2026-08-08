@@ -14,8 +14,7 @@ import { addresses, addType, assign } from "pmcf";
 import {
   networkAddressAttributes,
   networkInterfaces_attribute,
-  hosts_attribute,
-  aliases_attribute
+  hosts_attribute
 } from "./common-attributes.mjs";
 import { ServiceOwner } from "./service-owner.mjs";
 import { addHook } from "./hooks.mjs";
@@ -35,7 +34,6 @@ export class Host extends ServiceOwner {
   static attributes = {
     ...networkAddressAttributes,
     networkInterfaces: networkInterfaces_attribute,
-    aliases: aliases_attribute,
     os: {
       ...string_attribute_writable,
       name: "os",
@@ -92,7 +90,6 @@ export class Host extends ServiceOwner {
     addType(this);
   }
 
-  _aliases = new Set();
   _networkInterfaces = new Map();
   _provides = new Set();
   _replaces = new Set();
@@ -182,16 +179,6 @@ export class Host extends ServiceOwner {
         return node;
       }
     }
-  }
-
-  set aliases(value) {
-    this._aliases = union(value, this._aliases);
-  }
-
-  get aliases() {
-    return this.expand(
-      this.unionFromDirections(["this", "extends"], "_aliases")
-    );
   }
 
   set provides(value) {

@@ -21,10 +21,7 @@ import {
   FAMILY_DNS
 } from "pmcf";
 import { asArray, union } from "./utils.mjs";
-import {
-  networkAddressAttributes,
-  aliases_attribute
-} from "./common-attributes.mjs";
+import { networkAddressAttributes } from "./common-attributes.mjs";
 import {
   serviceTypeEndpoints,
   serviceTypes,
@@ -75,7 +72,6 @@ export class CoreService extends Base {
       name: "extends",
       type: CoreService
     },
-    aliases: aliases_attribute,
     priority: priority_attribute,
     weight: { ...number_attribute_writable, name: "weight" /*default: 1*/ },
     systemdService: { ...string_attribute_writable, name: "systemdService" },
@@ -87,7 +83,6 @@ export class CoreService extends Base {
     addType(this);
   }
 
-  _aliases = new Set();
   _weight;
   _port;
   _systemdService;
@@ -209,16 +204,6 @@ export class CoreService extends Base {
     }
 
     return options.join !== undefined ? res.join(options.join) : res;
-  }
-
-  set aliases(value) {
-    this._aliases = union(value, this._aliases);
-  }
-
-  get aliases() {
-    return this.expand(
-      this.unionFromDirections(["this", "extends"], "_aliases")
-    );
   }
 
   set port(value) {

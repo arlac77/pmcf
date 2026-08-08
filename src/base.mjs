@@ -25,7 +25,7 @@ import {
 } from "pacc";
 import { union } from "./utils.mjs";
 import { addType } from "pmcf";
-import { owner_attribute } from "./common-attributes.mjs";
+import { owner_attribute, aliases_attribute } from "./common-attributes.mjs";
 
 /**
  *
@@ -39,6 +39,7 @@ export class Base {
   static attributes = {
     owner: owner_attribute,
     name: name_attribute_writable,
+    aliases: aliases_attribute,
     description: description_attribute_writable,
     type: type_attribute,
     directory: { ...string_attribute_writable, name: "directory" },
@@ -62,6 +63,7 @@ export class Base {
   name;
   properties = {};
   extends = new Set();
+  _aliases = new Set();
   _tags = new Set();
   _packaging = new Set();
   _directory;
@@ -549,6 +551,16 @@ export class Base {
 
   set tags(value) {
     this._tags = union(value, this._tags);
+  }
+
+  set aliases(value) {
+    this._aliases = union(value, this._aliases);
+  }
+
+  get aliases() {
+    return this.expand(
+      this.unionFromDirections(["this", "extends"], "_aliases")
+    );
   }
 
   /**
