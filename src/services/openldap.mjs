@@ -8,6 +8,8 @@ export class openldap extends CoreService {
   };
   static service = {
     systemdService: "slapd.service",
+    systemUserName: "ldap",
+    systemGroupName: "ldap",
     extends: ["ldap", "ldapi"]
   };
 
@@ -31,14 +33,6 @@ export class openldap extends CoreService {
 
   set uri(value) {
     this._uri = value;
-  }
-
-  get systemUserName() {
-    return "ldap";
-  }
-
-  get systemGroupName() {
-    return "ldap";
   }
 
   async *preparePackages(dir) {
