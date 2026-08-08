@@ -112,14 +112,14 @@ export class Base {
       this.constructor,
       attribute => attribute.collection && !attribute.type.primitive
     )) {
-      const collection = this[path];
+      const collection = this[attribute.name];
       if (typeof collection?.get === "function") {
         for (const [name, extending] of this.mapFromDirections(
           ["extends"],
-          path
+          attribute.name
         )) {
           const present = collection.get(extending.name);
-
+//console.log("ME",this.fullName,attribute.name,extending.name);
           if (present) {
             present.extends.add(extending);
             present.materializeExtends();
@@ -128,6 +128,25 @@ export class Base {
           }
         }
       }
+      /*
+      else {
+        if (collection instanceof Set) {
+          for (const all of this.unionFromDirections(["extends"], attribute.name)) {
+            if (all instanceof Set) {
+              const d = collection.difference(all);
+
+              // if (d.size) {
+              console.log("ME", this.fullName, attribute.name, d);
+              //    }
+            }
+            else {
+            //  console.error("NO SET",this.fullName, attribute.name, typeof all, all.constructor.name);
+            }
+          }
+        } else {
+          //console.log("NO MAP OR SET", this.fullName, name);
+        }
+      }*/
     }
   }
 
