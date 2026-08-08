@@ -48,7 +48,14 @@ function show(value, indent = 0, short = false) {
         if (attribute.collection) {
           const l = [...v];
           if (l.length) {
-            console.log(`${name(attribute)}${l}`);
+            if (attribute.separator || l.length === 1) {
+              console.log(`${name(attribute)}${l.join(attribute.separator)}`);
+            } else {
+              console.log(`${name(attribute)}`);
+              for (const vv of l) {
+                console.log(prefix(indent + 2) + vv);
+              }
+            }
           }
         } else {
           console.log(`${name(attribute)}${v}`);

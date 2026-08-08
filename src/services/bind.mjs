@@ -10,6 +10,7 @@ import {
   name_attribute,
   string_attribute,
   string_set_attribute,
+  string_attribute_writable,
   boolean_attribute,
   boolean_attribute_writable_true,
   boolean_attribute_writable_false,
@@ -45,7 +46,7 @@ class bind_zone extends Base {
   static attributes = {
     id: { ...name_attribute, name: "id" },
     file: { ...string_attribute, name: "file" },
-    records: { ...string_set_attribute, name: "records" },
+    records: { ...string_attribute_writable, collection: true, name: "records" },
     foreign: { ...boolean_attribute, name: "foreign" }
   };
 
