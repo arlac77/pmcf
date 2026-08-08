@@ -370,7 +370,7 @@ class bind_group extends Base {
       const hosts = new Set();
       const addresses = new Set();
 
-      console.log("ZONES for", this.owner.owner.name, this.name);
+      //console.log("ZONES for", this.owner.owner.name, this.name);
 
       for (const na of entries) {
         const address = na.address;

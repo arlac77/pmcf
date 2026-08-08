@@ -293,7 +293,6 @@ export class CoreService extends Base {
 
     if (this.priority >= 390) {
       for (const alias of this.aliases) {
-        console.log("CNAME", alias, dnsFullName(domainName));
         records.push(DNSRecord(alias, "CNAME", dnsFullName(domainName)));
       }
     }
