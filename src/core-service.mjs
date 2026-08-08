@@ -282,7 +282,10 @@ export class CoreService extends Base {
 
   async *preparePackages(dir) {
     const pd = this.packageData;
-    pd.sources = await Array.fromAsync(this.templateContent());
+
+    pd.sources = await Array.fromAsync(
+      this.templateContent(...this.packageContentPermissions)
+    );
     if (pd.sources.length) {
       yield pd;
     }

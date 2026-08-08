@@ -34,15 +34,4 @@ export class openldap extends CoreService {
   set uri(value) {
     this._uri = value;
   }
-
-  async *preparePackages(dir) {
-    const permissions = this.packageContentPermissions;
-    const packageData = this.packageData;
-
-    packageData.sources = await Array.fromAsync(
-      this.templateContent(...permissions)
-    );
-
-    yield packageData;
-  }
 }
