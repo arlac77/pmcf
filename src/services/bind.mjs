@@ -555,7 +555,7 @@ class bind_group extends Base {
  * @param {any} objects
  * @param {boolean|string} empty
  * @param {string} indent
- * @returns {string[]}
+ * @returns {(string|string[])[]}
  */
 function addressesStatement(prefix, objects, empty = false, indent = "") {
   const body = asArray(objects).map(
