@@ -3,10 +3,8 @@ import {
   string_attribute_writable,
   number_attribute_writable,
   string_set_attribute,
-  default_collection_attribute_writable,
   boolean_attribute_false,
   port_attribute_writable,
-  type_attribute_writable,
   priority_attribute
 } from "pacc";
 import {
@@ -45,7 +43,6 @@ export const endpointAttributes = {
     name: "protocol",
     values: new Set(["tcp", "udp", "quic"])
   },
-  type: type_attribute_writable,
   types: { ...string_set_attribute, name: "types" },
   tls: { ...boolean_attribute_false, name: "tls" }
 };
