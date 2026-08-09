@@ -5,6 +5,10 @@ export const ServiceTypes = {
   "alpm-repo": {
     extends: ["https"]
   },
+  "asset-cache": {
+    // apple AssetCache
+    extends: ["http"]
+  },
   syslog: {
     endpoints: [
       {
