@@ -21,7 +21,10 @@ import {
   FAMILY_DNS
 } from "pmcf";
 import { asArray } from "./utils.mjs";
-import { networkAddressAttributes } from "./common-attributes.mjs";
+import {
+  networkAddressAttributes,
+  extends_attribute
+} from "./common-attributes.mjs";
 import {
   serviceTypeEndpoints,
   serviceTypes,
@@ -68,8 +71,7 @@ export class CoreService extends Base {
     ...networkAddressAttributes,
     ...endpointAttributes,
     extends: {
-      ...default_collection_attribute_writable,
-      name: "extends",
+      ...extends_attribute,
       type: CoreService
     },
     priority: priority_attribute,

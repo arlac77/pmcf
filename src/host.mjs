@@ -14,7 +14,8 @@ import { addresses, addType, assign } from "pmcf";
 import {
   networkAddressAttributes,
   networkInterfaces_attribute,
-  hosts_attribute
+  hosts_attribute,
+  extends_attribute
 } from "./common-attributes.mjs";
 import { ServiceOwner } from "./service-owner.mjs";
 import { addHook } from "./hooks.mjs";
@@ -79,8 +80,7 @@ export class Host extends ServiceOwner {
     depends: { ...string_set_attribute_writable, name: "depends" },
     provides: { ...string_set_attribute_writable, name: "provides" },
     extends: {
-      ...default_collection_attribute_writable,
-      name: "extends",
+      ...extends_attribute,
       type: Host
     },
     model: { ...string_attribute, name: "model" }

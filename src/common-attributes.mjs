@@ -12,7 +12,15 @@ import {
 
 export const networkAddressType = "network|host|network_interface";
 
-export const aliases_attribute = { ...string_set_attribute_writable, name: "aliases" };
+export const extends_attribute = {  
+  ...default_collection_attribute_writable,
+  name: "extends"
+};
+
+export const aliases_attribute = {
+  ...string_set_attribute_writable,
+  name: "aliases"
+};
 
 export const owner_attribute = {
   ...default_attribute,
@@ -103,7 +111,14 @@ export const networkAttributes = {
   kind: {
     ...string_attribute_writable,
     name: "kind",
-    values: new Set(["loopback", "ethernet", "wlan", "wireguard", "fiber", "dsl"])
+    values: new Set([
+      "loopback",
+      "ethernet",
+      "wlan",
+      "wireguard",
+      "fiber",
+      "dsl"
+    ])
   },
   ssid: ssid_attribute,
   psk: psk_attribute,
