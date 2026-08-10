@@ -95,9 +95,7 @@ export class CoreService extends Base {
   }
 
   get host() {
-    if (this.owner instanceof Host) {
-      return this.owner;
-    }
+    return this.owner.host;
   }
 
   get hosts() {
