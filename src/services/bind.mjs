@@ -46,7 +46,11 @@ class bind_zone extends Base {
   static attributes = {
     id: { ...name_attribute, name: "id" },
     file: { ...string_attribute, name: "file" },
-    records: { ...string_attribute_writable, collection: true, name: "records" },
+    records: {
+      ...string_attribute_writable,
+      collection: true,
+      name: "records"
+    },
     foreign: { ...boolean_attribute, name: "foreign" }
   };
 
@@ -138,7 +142,9 @@ class bind_zone_config extends Base {
     const dir = outputControl.dir;
     const group = this.owner;
 
-    console.log(`config: ${group.name}/${this.name}${this.foreign ? " foreign" : ""}`);
+    console.log(
+      `config: ${group.name}/${this.name}${this.foreign ? " foreign" : ""}`
+    );
 
     const content = [];
 
@@ -394,14 +400,16 @@ class bind_group extends Base {
               )
             );
 
-            const reverseZone = this._zones.getOrInsertComputed(
-              reverseArpa(na.subnet.prefix),
-              domain =>
-                this.intoCatalog(
-                  new bind_zone(this, domain, config, locationName),
-                  locationName
-                )
-            );
+            const reverseZone =
+              this.hasReverse && na.subnet.prefix &&
+              this._zones.getOrInsertComputed(
+                reverseArpa(na.subnet.prefix),
+                domain =>
+                  this.intoCatalog(
+                    new bind_zone(this, domain, config, locationName),
+                    locationName
+                  )
+              );
 
             if (host && !hosts.has(host)) {
               hosts.add(host);
@@ -480,13 +488,15 @@ class bind_group extends Base {
                   )
                 );
 
-                reverseZone.records.add(
-                  DNSRecord(
-                    dnsFullName(reverseArpa(address)),
-                    "PTR",
-                    dnsFullName(domainName)
-                  )
-                );
+                if (reverseZone) {
+                  reverseZone.records.add(
+                    DNSRecord(
+                      dnsFullName(reverseArpa(address)),
+                      "PTR",
+                      dnsFullName(domainName)
+                    )
+                  );
+                }
               }
             }
           }
