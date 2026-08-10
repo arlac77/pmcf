@@ -50,7 +50,7 @@ export class Cluster extends Host {
   }
 
   async *preparePackages(stagingDir) {
-    for (const ni of [...this.owner.clusters].reduce(
+    for (const ni of [...this.owner.clusters.values()].reduce(
       (all, cluster) => all.union(cluster.members),
       new Set()
     )) {
@@ -69,6 +69,7 @@ export class Cluster extends Host {
       const extra = [];
 
       const smtp = this.smtp;
+
       if (smtp) {
         extra.push(`  smtp_server ${smtp.address()}`);
       }
@@ -88,7 +89,7 @@ export class Cluster extends Host {
       ];
 
       const credentials = [];
-      for (const cluster of [...this.owner.clusters].sort((a, b) =>
+      for (const cluster of [...this.owner.clusters.values()].sort((a, b) =>
         a.name.localeCompare(b.name)
       )) {
         const name = cluster.name;
@@ -108,9 +109,7 @@ export class Cluster extends Host {
                 : "virtual_ipaddress_excluded"
             } {`
           );
-          cfg.push(
-            `    ${na.cidrAddress} dev ${ni.name} label ${name}`
-          );
+          cfg.push(`    ${na.cidrAddress} dev ${ni.name} label ${name}`);
           cfg.push("  }");
         }
 
