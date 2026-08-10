@@ -85,7 +85,7 @@ class bind_zone extends Base {
     this.directory = location;
     this.records = new Set(owner.defaultRecords);
 
-    if (owner.hasLocationRecord) {
+    if (!this.isCatalog && owner.hasLocationRecord) {
       this.records.add(DNSRecord("location", "TXT", location));
     }
 
