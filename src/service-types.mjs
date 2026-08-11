@@ -77,14 +77,38 @@ export const ServiceTypes = {
   },
   ldap: {
     endpoints: [
-      { family: FAMILY_IPV4, scheme: "ldap", protocol: "tcp", port: 389, tls: false },
-      { family: FAMILY_IPV6, scheme: "ldap", protocol: "tcp", port: 389, tls: false }
+      {
+        family: FAMILY_IPV4,
+        scheme: "ldap",
+        protocol: "tcp",
+        port: 389,
+        tls: false
+      },
+      {
+        family: FAMILY_IPV6,
+        scheme: "ldap",
+        protocol: "tcp",
+        port: 389,
+        tls: false
+      }
     ]
   },
   ldaps: {
     endpoints: [
-      { family: FAMILY_IPV4, scheme: "ldaps", protocol: "tcp", port: 636, tls: true },
-      { family: FAMILY_IPV6, scheme: "ldaps", protocol: "tcp", port: 636, tls: true }
+      {
+        family: FAMILY_IPV4,
+        scheme: "ldaps",
+        protocol: "tcp",
+        port: 636,
+        tls: true
+      },
+      {
+        family: FAMILY_IPV6,
+        scheme: "ldaps",
+        protocol: "tcp",
+        port: 636,
+        tls: true
+      }
     ]
   },
   ldapi: {
@@ -92,21 +116,57 @@ export const ServiceTypes = {
   },
   http: {
     endpoints: [
-      { family: FAMILY_IPV4, scheme: "http", protocol: "tcp", port: 80, tls: false },
-      { family: FAMILY_IPV6, scheme: "http", protocol: "tcp", port: 80, tls: false }
+      {
+        family: FAMILY_IPV4,
+        scheme: "http",
+        protocol: "tcp",
+        port: 80,
+        tls: false
+      },
+      {
+        family: FAMILY_IPV6,
+        scheme: "http",
+        protocol: "tcp",
+        port: 80,
+        tls: false
+      }
     ]
   },
   https: {
     endpoints: [
-      { family: FAMILY_IPV4, scheme: "https", protocol: "tcp", port: 443, tls: true },
-      { family: FAMILY_IPV6, scheme: "https", protocol: "tcp", port: 443, tls: true }
+      {
+        family: FAMILY_IPV4,
+        scheme: "https",
+        protocol: "tcp",
+        port: 443,
+        tls: true
+      },
+      {
+        family: FAMILY_IPV6,
+        scheme: "https",
+        protocol: "tcp",
+        port: 443,
+        tls: true
+      }
     ],
     dnsRecord: { type: "HTTPS", parameters: { alpn: "h2" } }
   },
   http3: {
     endpoints: [
-      { family: FAMILY_IPV4, scheme: "https", protocol: "udp", port: 443, tls: true },
-      { family: FAMILY_IPV6, scheme: "https", protocol: "udp", port: 443, tls: true }
+      {
+        family: FAMILY_IPV4,
+        scheme: "https",
+        protocol: "udp",
+        port: 443,
+        tls: true
+      },
+      {
+        family: FAMILY_IPV6,
+        scheme: "https",
+        protocol: "udp",
+        port: 443,
+        tls: true
+      }
     ],
     dnsRecord: {
       type: "HTTPS",
@@ -168,12 +228,17 @@ export const ServiceTypes = {
       { family: FAMILY_IPV6, protocol: "udp", port: 546, tls: false }
     ]
   },
-  "dhcpv6-server": { endpoints: [{ family: FAMILY_IPV6, port: 547, tls: false }] },
+  "dhcpv6-server": {
+    endpoints: [{ family: FAMILY_IPV6, port: 547, tls: false }]
+  },
   smb: {
     endpoints: [
       { family: FAMILY_IPV4, protocol: "tcp", port: 445, tls: false },
       { family: FAMILY_IPV6, protocol: "tcp", port: 445, tls: false }
     ]
+  },
+  nginx: {
+    extends: ["http", "https", "http3"]
   },
   timemachine: {
     extends: ["smb"],
