@@ -5,7 +5,7 @@ import {
   getAttribute
 } from "pacc";
 
-import { familyIP, formatCIDR, decodeIP } from "ip-utilties";
+import { familyIP, formatCIDR, decodeIP, addressType } from "ip-utilties";
 import { Subnet } from "./subnet.mjs";
 import { Owner, addType } from "pmcf";
 import { NetworkInterface } from "./network-interfaces/network-interface.mjs";
@@ -19,6 +19,7 @@ export class NetworkAddress {
   static key = "address";
   static attributes = {
     address: { ...name_attribute, name: "address" },
+    type: { ...string_attribute, name: "type" },
     cidrAddress: { ...string_attribute, name: "cidrAddress" },
     networkInterface: {
       ...default_attribute,
@@ -66,6 +67,10 @@ export class NetworkAddress {
 
   get cidrAddress() {
     return formatCIDR(this.address, this.subnet.prefixLength);
+  }
+
+  get type() {
+    return addressType(this.address);
   }
 
   get fullName() {
