@@ -119,7 +119,7 @@ export class Base {
           attribute.name
         )) {
           const present = collection.get(extending.name);
-//console.log("ME",this.fullName,attribute.name,extending.name);
+          //console.log("ME",this.fullName,attribute.name,extending.name);
           if (present) {
             present.extends.add(extending);
             present.materializeExtends();
@@ -528,7 +528,7 @@ export class Base {
             root: this.root,
             current: this,
             valueFor: (name, at) =>
-              at === undefined ? globals[name] : at.value(name)
+              typeof at?.value === "function" ? at.value(name) : globals[name]
           })
       )
     ];
