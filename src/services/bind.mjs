@@ -401,7 +401,8 @@ class bind_group extends Base {
             );
 
             const reverseZone =
-              this.hasReverse && na.subnet.prefix &&
+              this.hasReverse &&
+              na.subnet.prefix &&
               this._zones.getOrInsertComputed(
                 reverseArpa(na.subnet.prefix),
                 domain =>
@@ -585,6 +586,10 @@ function addressesStatement(prefix, objects, empty = false, indent = "") {
 
 export class bind extends ExtraSourceService {
   static attributes = {
+    forwarders: {
+      ...default_collection_attribute,
+      name: "forwarders"
+    },
     groups: {
       ...default_collection_attribute_writable,
       name: "groups",
@@ -647,13 +652,19 @@ export class bind extends ExtraSourceService {
     return this.primaries ? "secondary" : "primary";
   }
 
-  async writeForwarders(outputControl) {
+  get forwarders() {
     const forwarders = serviceEndpoints(this.source, {
       services: "services[types[dns] && priority>=100 && priority<200]",
       endpoints: endpoint => endpoint.family !== FAMILY_DNS,
       select: e => e.address,
       limit: 5
     });
+
+    return forwarders;
+  }
+
+  async writeForwarders(outputControl) {
+    const forwarders = this.forwarders;
 
     if (forwarders.length) {
       await writeLines(
