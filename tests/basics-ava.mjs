@@ -202,6 +202,7 @@ test("extract", t => {
 
   t.deepEqual(l1.toJSON(), {
     name: "l1",
+    enabled: true,
     owner: { name: "", type: "root" },
     administratorEmail: "admin@undefined",
     directory: "/somewhere/l1",

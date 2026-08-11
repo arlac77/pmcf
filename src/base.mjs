@@ -45,6 +45,7 @@ export class Base {
     directory: { ...string_attribute_writable, name: "directory" },
     packaging: { ...string_set_attribute_writable, name: "packaging" },
     disabled: { ...boolean_attribute_writable, name: "disabled" },
+    enabled: { ...boolean_attribute_writable, name: "enabled" },
     tags: { ...string_set_attribute_writable, name: "tags" },
     template: { ...boolean_attribute_writable, name: "template", private: true }
   };
@@ -562,6 +563,19 @@ export class Base {
         }
       }
     }
+  }
+
+  /**
+   * @return {boolean}
+   */
+  get enabled()
+  {
+    return !this.disabled;
+  }
+
+  set enabled(value)
+  {
+    this.disabled = !value;
   }
 
   get tags() {

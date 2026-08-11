@@ -36,6 +36,7 @@ test("Owner read write", t => {
   t.deepEqual(o1.toJSON(), {
     name: "o1",
     directory: "/o1",
+    enabled: true,
     owner: {
       name: "",
       type: "root"
@@ -44,6 +45,7 @@ test("Owner read write", t => {
     networks: {
       n1: {
         name: "n1",
+        enabled: true,
         administratorEmail: "master@somewhere",
         directory: "/o1/n1",
         kind: "ethernet",
