@@ -245,10 +245,6 @@ class bind_group extends Base {
       ...boolean_attribute_writable_false,
       name: "hasSVRRecords"
     },
-    hasLinkLocalAdresses: {
-      ...boolean_attribute_writable_false,
-      name: "hasLinkLocalAdresses"
-    },
     hasLocationRecord: {
       ...boolean_attribute_writable_true,
       name: "hasLocationRecord"
@@ -283,7 +279,6 @@ class bind_group extends Base {
   notify = true;
   hasCatalog = true;
   hasSVRRecords = true;
-  hasLinkLocalAdresses = bind_group.attributes.hasLinkLocalAdresses.default;
   recordTTL = "1W";
 
   /**
