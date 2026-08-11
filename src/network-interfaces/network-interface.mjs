@@ -1,7 +1,8 @@
 import { join } from "node:path";
 import {
   string_attribute_writable,
-  default_collection_attribute_writable
+  default_collection_attribute_writable,
+  number_attribute_writable
 } from "pacc";
 import { network_attribute } from "../common-attributes.mjs";
 import { Host, cidrAddresses, addType } from "pmcf";
@@ -52,7 +53,12 @@ export class NetworkInterface extends SkeletonNetworkInterface {
       private: true
     },
     hwaddr: { ...string_attribute_writable, name: "hwaddr" },
-    destination: { ...string_attribute_writable, name: "destination" }
+    destination: { ...string_attribute_writable, name: "destination" },
+
+/*
+    InitialCongestionWindow: { ...number_attribute_writable, name: "InitialCongestionWindow", default: 10, configurable: true },
+    InitialAdvertisedReceiveWindow: { ...number_attribute_writable, name: "InitialAdvertisedReceiveWindow", default: 10, configurable: true },
+    */
   };
 
   static {
