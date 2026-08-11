@@ -42,6 +42,11 @@ function show(value, indent = 0, options = { short: false, maxDepth: 5 }) {
     const name = (attribute, l = indent + 1) =>
       prefix(l) + attribute.name.padEnd(ml) + ": ";
 
+    if (value instanceof Set || Array.isArray(value)) {
+      console.log([...value].join(" "));
+      return;
+    }
+
     if (options.short) {
       console.log(`${prefix()}${value[type.key]}:`);
     } else {
