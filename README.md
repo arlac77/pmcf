@@ -62,6 +62,7 @@ generates config packages for:
         *   [Parameters](#parameters-8)
     *   [templateContent](#templatecontent)
         *   [Parameters](#parameters-9)
+    *   [enabled](#enabled)
     *   [isTemplate](#istemplate)
     *   [expand](#expand)
         *   [Parameters](#parameters-10)
@@ -217,6 +218,10 @@ Returns **any**&#x20;
 *   `directoryProperties` **any**&#x20;
 
 Returns **AsyncIterable\<ContentProvider>**&#x20;
+
+### enabled
+
+Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
 
 ### isTemplate
 
