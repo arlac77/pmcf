@@ -48,7 +48,7 @@ export class InitializationContext {
   }
 
   instantiateAndAssign(object, attribute, value) {
-    if (attribute.type.primitive || attribute.expression) {
+    if (attribute.type.primitive || attribute.deferredExpression) {
       return assign(attribute, object, value);
     }
     if (value !== undefined) {

@@ -205,7 +205,7 @@ class bind_group extends Base {
       ...default_collection_attribute_writable,
       type: NetworkAddress,
       name: "entries",
-      expression: true
+      deferredExpression: true
     },
     domains: {
       ...string_set_attribute,
@@ -286,20 +286,12 @@ class bind_group extends Base {
   hasLinkLocalAdresses = bind_group.attributes.hasLinkLocalAdresses.default;
   recordTTL = "1W";
 
-  set entries(value) {
-    this._entries = value;
-  }
-
-  get entries() {
-    return this._entries ? this.expression(this._entries) : [];
-  }
-
   /**
    * Type of the group.
    * @return {string} view | unknown
    */
   get type() {
-    if (this.sharedWith || this._entries) {
+    if (this.sharedWith || this.entries) {
       return "view";
     }
 
@@ -367,7 +359,8 @@ class bind_group extends Base {
   }
 
   get zones() {
-    const entries = [...this.entries];
+    const e = this.entries;
+    const entries = e === undefined ? [] : [...e];
 
     if (!this._zones && entries.length > 0) {
       this._zoneConfigs = new Map();

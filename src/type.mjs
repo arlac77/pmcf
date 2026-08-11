@@ -33,13 +33,15 @@ export function assign(attribute, object, value) {
   value ??= attribute.default;
 
   if (value !== undefined) {
-    // set backointer early so that parent properties can be found during load
+    // set backpointer early so that parent properties can be found during load
     if (attribute.backpointer) {
       assign(attribute.backpointer, value, object);
     }
 
-    if (attribute.expression) { // TODO
-      object[attribute.name] = value;
+    if (attribute.deferredExpression) {
+      Object.defineProperty(object, attribute.name, {
+        get: () => object.expression(value)
+      });
       return value;
     }
 
