@@ -2,15 +2,25 @@
 import { extendingAttributeIterator } from "pacc";
 import { prepare } from "../src/cli.mjs";
 
-const { root, args, options } = await prepare({});
+const { root, args, options } = await prepare({
+  maxDepth: {
+    type: "string",
+    short: "m"
+  }
+});
 
 for (const expression of args) {
   const result = root.expression(expression);
 
-  show(result);
+  show(result, 0, { short: false, maxDepth: options.maxDepth });
 }
 
-function show(value, indent = 0, short = false) {
+function show(value, indent = 0, options = { short: false, maxDepth: 5 }) {
+  if (indent >= options.maxDepth) {
+    console.log("...");
+    return;
+  }
+
   switch (typeof value) {
     case "string":
     case "number":
@@ -23,7 +33,7 @@ function show(value, indent = 0, short = false) {
 
   if (value instanceof Iterator || Array.isArray(value)) {
     for (const v of value) {
-      show(v, indent);
+      show(v, indent, options);
     }
   } else {
     const type = value.constructor;
@@ -32,7 +42,7 @@ function show(value, indent = 0, short = false) {
     const name = (attribute, l = indent + 1) =>
       prefix(l) + attribute.name.padEnd(ml) + ": ";
 
-    if (short) {
+    if (options.short) {
       console.log(`${prefix()}${value[type.key]}:`);
     } else {
       console.log(`${prefix()}${value.fullName}(${type.name}):`);
@@ -71,9 +81,14 @@ function show(value, indent = 0, short = false) {
       if (v !== undefined) {
         if (attribute.collection) {
           if (attribute.backpointer) {
-            console.log(name(attribute));
-            for (const o of v.values()) {
-              show(o, indent + 2, true);
+            if (indent + 2 >= options.maxDepth) {
+              console.log(name(attribute), "...");
+            } else {
+              console.log(name(attribute));
+
+              for (const o of v.values()) {
+                show(o, indent + 2, { ...options, short: true });
+              }
             }
           } else {
             const l = [...v];
