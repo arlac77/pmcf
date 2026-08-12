@@ -5,6 +5,7 @@ import {
   string_collection_attribute_writable,
   string_set_attribute_writable,
   string_attribute_writable,
+  string_attribute,
   integer_attribute_writable,
   hostname_attribute as hostname_attribute_base,
   boolean_attribute_writable
@@ -87,6 +88,8 @@ export const bridges_attribute = {
   name: "bridges",
   backpointer: { ...networks_attribute, name: "bridges" }
 };
+
+export const family_attribute = { ...string_attribute, name: "family" };
 
 export const psk_attribute = { ...string_attribute_writable, name: "psk" };
 export const ssid_attribute = { ...string_attribute_writable, name: "ssid" };
