@@ -46,6 +46,29 @@ function setup() {
   return { ic, root: rootInst, n1, l1, dns };
 }
 
+test("Service types", t => {
+  const { ic } = setup();
+
+  const s1 = new Service();
+  ic.read(s1, {
+    name: "s1",
+    type: "t1"
+  });
+
+  t.is(s1.name, "s1");
+  t.is(s1.type, "t1");
+  t.deepEqual(s1.types, new Set(["t1"]));
+
+  const s2 = new Service();
+  ic.read(s2, {
+    name: "s2"
+  });
+
+  t.is(s2.name, "s2");
+  t.is(s2.type, "s2");
+  t.deepEqual(s2.types, new Set(["s2"]));
+});
+
 test("Service basics", t => {
   const { ic, l1 } = setup();
 
