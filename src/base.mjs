@@ -430,7 +430,7 @@ export class Base {
       root: this.root,
       current: this,
       valueFor: (name, at) =>
-        at === undefined ? globals[name] : at.value(name),
+        typeof at?.value === "function" ? at.value(name) : globals[name],
       ...options
     });
   }
@@ -622,7 +622,7 @@ export class Base {
       root: this.root,
       current: this,
       valueFor: (name, at) =>
-        at === undefined ? globals[name] : at.value(name)
+        typeof at?.value === "function" ? at.value(name) : globals[name]
     });
   }
 
