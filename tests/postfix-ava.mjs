@@ -11,6 +11,9 @@ test("postfix basics", async t => {
   const postfixInst = ic.named("/L1/host1/postfix");
 
   t.true(postfixInst instanceof postfix);
+  t.true(postfixInst.types.has('smtp'));
+  t.true(postfixInst.types.has('lmtp'));
+  t.true(postfixInst.types.has('submission'));
 
   t.is(
     postfixInst.expression("join(',',subnets[family='IPv4'].prefix)"),
