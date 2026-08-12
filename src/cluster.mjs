@@ -127,7 +127,9 @@ export class Cluster extends Host {
         cfg.push("  advert_int 5");
         cfg.push("  authentication {");
         cfg.push("    auth_type PASS");
-        cfg.push("    auth_pass ${" + credential + "}");
+        cfg.push("    auth_pass pass1234");
+        cfg.push("    # auth_pass ${_ENV " + credential + "}");
+        cfg.push("    # auth_pass ${" + credential + "}");
         cfg.push("  }");
 
         cfg.push(
