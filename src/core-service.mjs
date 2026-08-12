@@ -1,5 +1,6 @@
 import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import {
+  string_attribute,
   string_attribute_writable,
   number_attribute_writable,
   string_set_attribute_writable,
@@ -44,7 +45,8 @@ export const endpointAttributes = {
     values: new Set(["tcp", "udp", "quic"])
   },
   types: { ...string_set_attribute_writable, name: "types" },
-  tls: { ...boolean_attribute_false, name: "tls" }
+  tls: { ...boolean_attribute_false, name: "tls" },
+  address: { ...string_attribute, name: "address" }
 };
 
 export class CoreService extends Base {

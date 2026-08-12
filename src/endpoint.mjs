@@ -1,16 +1,18 @@
+import { getAttribute, string_attribute } from "pacc";
 import { FAMILY_IPV6 } from "ip-utilties";
 import { addType } from "pmcf";
 import { endpointAttributes, CoreService } from "./core-service.mjs";
+import { family_attribute } from "./common-attributes.mjs";
 
 export const FAMILY_UNIX = "unix";
 export const FAMILY_DNS = "dns";
 
 class BaseEndpoint {
-  static name = "endpoint";
+  static name = "base_endpoint";
   static priority = 1.1;
   static owners = [CoreService, "network_interface"];
   static key = "type";
-  attributes = endpointAttributes;
+  static attributes = endpointAttributes;
 
   static {
     addType(this);
@@ -26,6 +28,10 @@ class BaseEndpoint {
     }
   }
 
+  get fullName() {
+    return this.service.fullName + "/" + this.type;
+  }
+
   get type() {
     return this._type?.name ?? this.service.type;
   }
@@ -37,12 +43,26 @@ class BaseEndpoint {
   toString() {
     return `${this.type}`;
   }
+
+  attribute(name) {
+    return getAttribute(this, name);
+  }
+
+  value(name) {
+    return this.attribute(name);
+  }
 }
 
 /**
  * Endpoint with an ip port
  */
 class PortEndpoint extends BaseEndpoint {
+  static name = "port_endpoint";
+
+  static {
+    addType(this);
+  }
+
   _port;
   constructor(service, data) {
     super(service, data);
@@ -78,6 +98,15 @@ class PortEndpoint extends BaseEndpoint {
 }
 
 export class Endpoint extends PortEndpoint {
+  static name = "endpoint";
+  static attributes = {
+    family: family_attribute
+  };
+
+  static {
+    addType(this);
+  }
+
   constructor(service, networkAddress, data) {
     super(service, data);
     this.networkAddress = networkAddress;
