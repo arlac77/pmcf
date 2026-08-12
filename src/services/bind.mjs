@@ -321,7 +321,7 @@ class bind_group extends Base {
   }
 
   get domains() {
-    return this.entries.reduce(
+    return this.entries?.reduce(
       (all, address) => all.union(address.domains),
       new Set()
     );
