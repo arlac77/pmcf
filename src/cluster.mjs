@@ -150,11 +150,9 @@ export class Cluster extends Host {
           cfg.push(`  protocol ${endpoint.protocol.toUpperCase()}`);
 
           for (const member of this.members) {
-            const memberService = Array.from(
-              member.expression(`services[types[${endpoint.type}]][0]`)
-            );
+            const memberService = member.expression(`services[types[${endpoint.type}]][0]`); 
 
-            console.log(member.fullName, endpoint.type, memberService);
+            console.log(member.fullName, endpoint.type, memberService?.fullName);
             cfg.push(`  real_server ${member.address} ${memberService.port} {`);
             cfg.push(`    weight ${memberService.weight}`);
 
