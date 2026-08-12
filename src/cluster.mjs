@@ -88,7 +88,7 @@ export class Cluster extends Host {
         ""
       ];
 
-      const credentials = [];
+      const credentials = new Map();
       for (const cluster of [...this.owner.clusters.values()].sort((a, b) =>
         a.name.localeCompare(b.name)
       )) {
@@ -121,7 +121,7 @@ export class Cluster extends Host {
         }
 
         const credential = name.toUpperCase() + "_PASSWORD";
-        credentials.push(credential);
+        credentials.set(credential,name);
         cfg.push(`  priority ${host.priority - reducedPrio}`);
         cfg.push("  smtp_alert");
         cfg.push("  advert_int 5");
@@ -221,9 +221,9 @@ export class Cluster extends Host {
           "credentials.conf",
           [
             "[Service]",
-            ...credentials.map(
-              c =>
-                `LoadCredentialEncrypted=${c}:/etc/credstore.encrypted/keepalived.password`
+            ...credentials.entries().map(
+              ([credName,instance]) =>
+                `LoadCredentialEncrypted=${credName}:/etc/credstore.encrypted/keepalived.${instance}.password`
             )
           ]
         );
