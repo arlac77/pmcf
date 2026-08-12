@@ -67,6 +67,16 @@ test("Service types", t => {
   t.is(s2.name, "s2");
   t.is(s2.type, "s2");
   t.deepEqual(s2.types, new Set(["s2"]));
+
+  const s3 = new Service();
+  ic.read(s3, {
+    name: "s3",
+    types: ["t1"]
+  });
+
+  t.is(s3.name, "s3");
+  t.is(s3.type, "s3");
+  t.deepEqual(s3.types, new Set(["s3", "t1"]));
 });
 
 test("Service basics", t => {
