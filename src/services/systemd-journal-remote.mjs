@@ -73,6 +73,7 @@ export class SystemdJournalRemoteService extends CoreService {
   };
   static service = {
     systemdService: "systemd-journal-remote.service",
+    //extends: ["http"],
     endpoints: [
       {
         family: FAMILY_IPV4,

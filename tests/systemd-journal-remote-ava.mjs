@@ -26,10 +26,14 @@ test("systemd-journal-remote service type", t => {
   });
   const service = new SystemdJournalRemoteService(h1);
 
-  t.deepEqual(service.types, new Set(["systemd-journal-remote"]));
+  t.is(service.type, "systemd-journal-remote");
+  t.deepEqual(service.types, new Set(["systemd-journal-remote" /*, "http"*/]));
 
   t.is(service.systemdService, "systemd-journal-remote.service");
+
   t.is(ServiceTypes[service.type].endpoints[0].port, 19532);
+
+  // TODO use port
   t.is(serviceTypeEndpoints(ServiceTypes[service.type])[0].port, 19532);
 
   //t.is(service.url.toString(), "http://10.0.0.1:19532/");
