@@ -1,4 +1,4 @@
-import { getAttribute, string_attribute } from "pacc";
+import { getAttribute, string_attribute, url_attribute } from "pacc";
 import { FAMILY_IPV6 } from "ip-utilties";
 import { addType } from "pmcf";
 import { endpointAttributes, CoreService } from "./core-service.mjs";
@@ -134,6 +134,15 @@ export class Endpoint extends PortEndpoint {
 }
 
 export class DomainNameEndpoint extends PortEndpoint {
+  static name = "domain_endpoint";
+  static attributes = {
+    domainName: { ...string_attribute, name: "domainName" }
+  };
+
+  static {
+    addType(this);
+  }
+
   constructor(service, domainName, data) {
     super(service, data);
     this.domainName = domainName;
@@ -160,6 +169,15 @@ export class DomainNameEndpoint extends PortEndpoint {
  * Endpoint based on http
  */
 export class HTTPEndpoint extends BaseEndpoint {
+  static name = "url_endpoint";
+  static attributes = {
+    url: url_attribute
+  };
+
+  static {
+    addType(this);
+  }
+
   /**
    *
    * @param {Service} service
@@ -223,6 +241,15 @@ export class HTTPEndpoint extends BaseEndpoint {
 }
 
 export class UnixEndpoint extends BaseEndpoint {
+  static name = "unix_endpoint";
+  static attributes = {
+    url: url_attribute
+  };
+
+  static {
+    addType(this);
+  }
+
   constructor(service, path, data) {
     super(service, data);
     this.path = path;
