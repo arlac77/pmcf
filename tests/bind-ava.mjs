@@ -86,14 +86,26 @@ test("BIND groups", async t => {
   t.is(protectedGroup.owner, bindInst);
   t.is(protectedGroup.order, 1);
 
- // t.is(internalGroup.entries[0].name, "n1");
+  // t.is(internalGroup.entries[0].name, "n1");
 
   //t.deepEqual(bind.groups.internal.allowedUpdates, [bind.groups.trusted]);
 
-  t.deepEqual(
-    bindInst.source.map(s => s.name),
-    ["GLOBAL", "n2"]
-  );
+  //  console.log([...bindInst.forwarders]);
+
+  const addr = [...bindInst.forwarders]
+    .map(e => e.endpoints())
+    .flat()
+    .filter(e => e.networkAddress)
+    .map(e => e.networkAddress?.address);
+
+//  console.log(addr);
+
+  t.deepEqual(addr, [
+    "8.8.8.8",
+    "2001:4860:4860::8888",
+    "1.1.1.1",
+    "2606:4700:4700::1111"
+  ]);
 
   /*t.deepEqual(
     addresses(bind.groups.trusted.access, { aggregate: true }).sort(),

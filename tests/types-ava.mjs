@@ -65,7 +65,7 @@ test("types", t => {
   t.deepEqual(types.host.owners, [types.owner, types.network, types.root]);
 
   t.is(types.bind, bind);
-  t.is(types.bind.extends, ExtraSourceService);
+  t.is(types.bind.extends, CoreService);
   t.is(types.bind.priority, 1.1);
 
   t.is(types.chrony, chrony);

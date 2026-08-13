@@ -17,7 +17,7 @@
   "services": {
     "bind": {
       "extends": "/templates/bind",
-      "source": ["/GLOBAL", "/L1/n2"],
+      "forwarders": "/GLOBAL/services[types[dns] && priority>=100 && priority<200]",
       "groups": {
         "internal": {
           "entries": "/L1/n1/networkAddresses[networkInterface/kind!='tan' && networkInterface/kind!='loopback']",

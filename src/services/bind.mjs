@@ -20,12 +20,11 @@ import {
 } from "pacc";
 import {
   Base,
-  ExtraSourceService,
-  serviceEndpoints,
+  CoreService,
+  Endpoint,
   addresses,
   networkAddressType,
-  addType,
-  FAMILY_DNS
+  addType
 } from "pmcf";
 import { yesno, writeLines, asArray } from "../utils.mjs";
 import {
@@ -572,11 +571,13 @@ function addressesStatement(prefix, objects, empty = false, indent = "") {
   return [];
 }
 
-export class bind extends ExtraSourceService {
+export class bind extends CoreService {
   static attributes = {
     forwarders: {
-      ...default_collection_attribute,
-      name: "forwarders"
+      ...default_collection_attribute_writable,
+      type: Endpoint,
+      name: "forwarders",
+      deferredExpression: true
     },
     groups: {
       ...default_collection_attribute_writable,
@@ -640,21 +641,18 @@ export class bind extends ExtraSourceService {
     return this.primaries ? "secondary" : "primary";
   }
 
-  get forwarders() {
-    const forwarders = serviceEndpoints(this.source, {
-      services: "services[types[dns] && priority>=100 && priority<200]",
-      endpoints: endpoint => endpoint.family !== FAMILY_DNS,
-      select: e => e.address,
-      limit: 5
-    });
-
-    return forwarders;
-  }
-
   async writeForwarders(outputControl) {
-    const forwarders = this.forwarders;
+    // TODO formulate everything as pacc expression
+    const forwarders = [...this.forwarders]
+      .map(e => e.endpoints())
+      .flat()
+      .filter(e => e.networkAddress)
+      .map(e => e.networkAddress?.address);
 
     if (forwarders.length) {
+      if (forwarders.length > 5) {
+        forwarders.length = 5;
+      }
       await writeLines(
         join(outputControl.dir, "etc/named/options"),
         `forwarders.conf`,
