@@ -39,9 +39,13 @@ export function assign(attribute, object, value) {
     }
 
     if (attribute.deferredExpression) {
-      Object.defineProperty(object, attribute.name, {
-        get: () => object.expression(value)
-      });
+      if (object.hasOwnProperty(attribute.name)) {
+        error(`attribute ${attribute.name} of ${object.fullName} already defined`, attribute );
+      } else {
+        Object.defineProperty(object, attribute.name, {
+          get: () => object.expression(value)
+        });
+      }
       return value;
     }
 
