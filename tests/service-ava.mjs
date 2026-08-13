@@ -295,8 +295,8 @@ test("Service without protocol", t => {
   ]);
 });
 
-test("Service load", t => {
-  const { ic, root } = setup();
+test("Service host | interface", t => {
+  const { ic } = setup();
 
   const h1 = new Host();
   ic.read(h1, {
@@ -309,6 +309,23 @@ test("Service load", t => {
 
   t.is(h1.services.get("dns").name, "dns");
   t.is(h1.named("dns"), h1.services.get("dns"));
+
+  const h2 = new Host();
+  ic.read(h2, {
+    name: "h2",
+    networkInterfaces: {
+      eth0: {
+        network: "/n1",
+        ipAddresses: "10.0.0.1",
+        services: {
+          dns: {}
+        }
+      }
+    }
+  });
+
+  t.is(h2.services.get("dns").name, "dns");
+  t.is(h2.named("dns"), h2.services.get("dns"));
 });
 
 test("Service owner", t => {

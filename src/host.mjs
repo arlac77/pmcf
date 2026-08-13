@@ -246,6 +246,13 @@ export class Host extends ServiceOwner {
     return parts[parts.length - 1].toLowerCase();
   }
 
+  get services() {
+    return new AggregatedMap([
+      this._services,
+      ...this._networkInterfaces.values().map(ni => ni._services)
+    ]);
+  }
+
   get foreignDomainNames() {
     return [...this.aliases].filter(n => n.split(".").length > 1);
   }
@@ -341,7 +348,6 @@ export class Host extends ServiceOwner {
 
     if (!this.isTemplate && networkInterface.network) {
       assign(hosts_attribute, networkInterface.network, this);
-      //networkInterface.network.hosts = this;
     }
   }
 
