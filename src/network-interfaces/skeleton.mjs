@@ -42,7 +42,7 @@ export class SkeletonNetworkInterface extends ServiceOwner {
 
   get services() {
     return this.owner
-      ? new AggregatedMap([super.services, this.owner.services])
+      ? new AggregatedMap([super.services, this.owner._services])
       : super.services;
   }
 
