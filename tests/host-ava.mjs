@@ -124,7 +124,7 @@ test("Host extends", t => {
   const h1 = new Host();
   ic.read(h1, {
     name: "h1",
-    "machine-id": "1234",
+    id: "1234",
     extends: e2,
     aliases: "h1a",
     provides: "pkgh1",

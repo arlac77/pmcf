@@ -40,7 +40,7 @@ export class Host extends ServiceOwner {
       name: "os",
       values: new Set(["osx", "windows", "linux"])
     },
-    "machine-id": { ...string_attribute_writable, name: "machine-id" },
+    id: { ...string_attribute_writable, name: "id" },
     distribution: { ...string_attribute_writable, name: "distribution" },
     deployment: {
       ...string_attribute_writable,
@@ -134,13 +134,6 @@ export class Host extends ServiceOwner {
 
   get vendor() {
     return this.attribute("_vendor");
-  }
-
-  /**
-   * @return {string}
-   */
-  get id() {
-    return this["machine-id"];
   }
 
   set keymap(value) {
