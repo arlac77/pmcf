@@ -96,16 +96,20 @@ function show(value, indent = 0, options = { short: false, maxDepth: 5 }) {
               }
             }
           } else {
-            const l = [...v];
+            try {
+              const l = [...v];
 
-            if (l.length > 1) {
-              console.log(name(attribute));
+              if (l.length > 1) {
+                console.log(name(attribute));
 
-              for (const o of l) {
-                console.log(prefix(indent + 2) + o.fullName);
+                for (const o of l) {
+                  console.log(prefix(indent + 2) + o.fullName);
+                }
+              } else if (l.length === 1) {
+                console.log(name(attribute) + l[0].fullName);
               }
-            } else if (l.length === 1) {
-              console.log(name(attribute) + l[0].fullName);
+            } catch (e) {
+              console.log(name(attribute), v);
             }
           }
         } else {
