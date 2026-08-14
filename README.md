@@ -75,34 +75,33 @@ generates config packages for:
 *   [HTTPEndpoint](#httpendpoint)
     *   [Parameters](#parameters-13)
     *   [port](#port-1)
-*   [id](#id)
 *   [domainNames](#domainnames)
 *   [InitializationContext](#initializationcontext)
     *   [Parameters](#parameters-14)
-*   [SkeletonNetworkInterface](#skeletonnetworkinterface)
-    *   [networkAddresses](#networkaddresses)
-        *   [Parameters](#parameters-15)
 *   [zones](#zones)
 *   [type](#type)
 *   [addressesStatement](#addressesstatement)
-    *   [Parameters](#parameters-16)
+    *   [Parameters](#parameters-15)
 *   [SystemdJournalRemoteService](#systemdjournalremoteservice)
     *   [Properties](#properties)
     *   [systemdConfigs](#systemdconfigs)
-        *   [Parameters](#parameters-17)
+        *   [Parameters](#parameters-16)
 *   [SystemdJournalUploadService](#systemdjournaluploadservice)
     *   [Properties](#properties-1)
     *   [systemdConfigs](#systemdconfigs-1)
-        *   [Parameters](#parameters-18)
+        *   [Parameters](#parameters-17)
 *   [NetworkAddress](#networkaddress)
-    *   [Parameters](#parameters-19)
+    *   [Parameters](#parameters-18)
     *   [subnet](#subnet)
     *   [networkInterface](#networkinterface)
     *   [address](#address)
 *   [addresses](#addresses)
-    *   [Parameters](#parameters-20)
+    *   [Parameters](#parameters-19)
 *   [cidrAddresses](#cidraddresses)
-    *   [Parameters](#parameters-21)
+    *   [Parameters](#parameters-20)
+*   [SkeletonNetworkInterface](#skeletonnetworkinterface)
+    *   [networkAddresses](#networkaddresses)
+        *   [Parameters](#parameters-21)
 *   [families](#families)
 *   [secretName](#secretname)
 *   [directHosts](#directhosts)
@@ -285,10 +284,6 @@ Endpoint based on http
 
 Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
-## id
-
-Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
-
 ## domainNames
 
 Returns **[Set](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
@@ -300,18 +295,6 @@ Keeps track of all in flight object creations and loose ends during config initi
 ### Parameters
 
 *   `directory`   (optional, default `"/"`)
-
-## SkeletonNetworkInterface
-
-**Extends ServiceOwner**
-
-### networkAddresses
-
-#### Parameters
-
-*   `filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
-
-Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
 
 ## zones
 
@@ -408,6 +391,18 @@ Returns **Iterable<[string](https://developer.mozilla.org/docs/Web/JavaScript/Re
 *   `networkAddresses` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[NetworkAddress](#networkaddress)>**&#x20;
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
+
+## SkeletonNetworkInterface
+
+**Extends ServiceOwner**
+
+### networkAddresses
+
+#### Parameters
+
+*   `filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
+
+Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
 
 ## families
 
