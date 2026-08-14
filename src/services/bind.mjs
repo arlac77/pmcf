@@ -198,7 +198,8 @@ class bind_group extends Base {
       type: bindNetworkAddressTypes,
       name: "access",
       collection: true,
-      writable: true
+      writable: true,
+      deferredExpression: true
     },
     entries: {
       ...default_collection_attribute_writable,
@@ -273,7 +274,6 @@ class bind_group extends Base {
   }
 
   foreignDomains = new Set();
-  access = [];
   allowedUpdates = [];
   notify = true;
   hasCatalog = true;
@@ -368,6 +368,10 @@ class bind_group extends Base {
       for (const na of entries) {
         const address = na.address;
         const host = na.host;
+
+        if (host === undefined) {
+          console.log("NO HOST", na);
+        }
 
         if (!addresses.has(address)) {
           addresses.add(address);

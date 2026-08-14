@@ -2,7 +2,7 @@
   "depends": ["bind"],
   "groups": {
     "trusted": {
-      "access": ["/LOCAL", "/L1/n1"]
+      "access": "/L1/n1"
     }
   }
 }
