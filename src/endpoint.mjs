@@ -1,8 +1,8 @@
 import { getAttribute, string_attribute, url_attribute } from "pacc";
 import { FAMILY_IPV6 } from "ip-utilties";
 import { addType } from "pmcf";
-import { endpointAttributes, CoreService } from "./core-service.mjs";
-import { family_attribute } from "./common-attributes.mjs";
+import { CoreService } from "./core-service.mjs";
+import { family_attribute, endpointAttributes } from "./common-attributes.mjs";
 
 export const FAMILY_UNIX = "unix";
 export const FAMILY_DNS = "dns";

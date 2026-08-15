@@ -8,7 +8,9 @@ import {
   string_attribute,
   integer_attribute_writable,
   hostname_attribute as hostname_attribute_base,
-  boolean_attribute_writable
+  boolean_attribute_writable,
+  boolean_attribute_false,
+  port_attribute_writable
 } from "pacc";
 
 export const networkAddressType = "network|host|network_interface";
@@ -142,3 +144,16 @@ export const networkAddressAttributes = {
   addresses: { ...string_collection_attribute_writable, name: "addresses" },
   address: { ...string_attribute_writable, name: "address" }
 };
+
+export const endpointAttributes = {
+  port: port_attribute_writable,
+  protocol: {
+    ...string_attribute_writable,
+    name: "protocol",
+    values: new Set(["tcp", "udp", "quic"])
+  },
+  types: { ...string_set_attribute_writable, name: "types" },
+  tls: { ...boolean_attribute_false, name: "tls" },
+  address: { ...string_attribute, name: "address" }
+};
+
