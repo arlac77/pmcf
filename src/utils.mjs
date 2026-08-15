@@ -77,7 +77,7 @@ export function sectionLines(sectionName, values) {
   return lines;
 }
 
-export function* setionLinesFromAttributeIterator(properties, separator="=") {
+export function* setionLinesFromAttributeIterator(properties, separator = "=") {
   for (const [name, value, path, attribute] of properties) {
     if (attribute.attributes) {
       yield `[${name}]`;
@@ -96,7 +96,18 @@ export function bridgeToJSON(bridge) {
  * @returns {Array<any>}
  */
 export function asArray(value) {
-  return Array.isArray(value) ? value : value === undefined ? [] : [value];
+  if (value === undefined) {
+    return [];
+  }
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  if (value instanceof Iterator) {
+    return [...value];
+  }
+
+  return [value];
 }
 
 /**
