@@ -166,7 +166,7 @@ export class Base {
       if (typeof value?.get === "function") {
         const object = value.get(first);
         if (object) {
-          return parts.length >= 1 ? object.named(parts.join("/")) : object;
+          return parts.length === 0 ? object : object.named(parts.join("/"));
         }
       }
     }
