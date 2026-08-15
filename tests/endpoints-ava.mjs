@@ -11,7 +11,7 @@ import {
   Endpoint,
   HTTPEndpoint,
   DomainNameEndpoint,
-  UnixEndpoint,
+  unix_endpoint,
   sortByFamilyAndAddress,
   assign,
   networks_attribute,
@@ -167,7 +167,7 @@ test("DomainNameEndpoint", t => {
   t.deepEqual(s1.endpoint(), new DomainNameEndpoint(s1, "h1", options));
 });
 
-test("UnixEndpoint", t => {
+test("unix_endpoint", t => {
   const ic = new InitializationContext();
   const root = ic.root;
 
@@ -193,7 +193,7 @@ test("UnixEndpoint", t => {
     tls: false
   };
 
-  const e1 = new UnixEndpoint(s1, "/run/xyz", options);
+  const e1 = new unix_endpoint(s1, "/run/xyz", options);
 
   t.deepEqual(e1.url, "ldapi:///run/xyz");
 });

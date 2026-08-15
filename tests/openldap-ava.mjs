@@ -1,6 +1,6 @@
 import test from "ava";
 import { join } from "node:path";
-import { InitializationContext, UnixEndpoint, ServiceTypes } from "pmcf";
+import { InitializationContext, unix_endpoint, ServiceTypes } from "pmcf";
 import { openldap } from "../src/services/openldap.mjs";
 
 test("OpenLDAPService basics", async t => {
@@ -17,7 +17,7 @@ test("OpenLDAPService basics", async t => {
 
   t.deepEqual(
     openldapInst.endpoint("ldapi"),
-    new UnixEndpoint(openldapInst, "/run/ldapi", {
+    new unix_endpoint(openldapInst, "/run/ldapi", {
       type: ServiceTypes.ldapi,
       scheme: "ldapi"
     })

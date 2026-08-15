@@ -240,8 +240,7 @@ export class HTTPEndpoint extends BaseEndpoint {
   }
 }
 
-export class UnixEndpoint extends BaseEndpoint {
-  static name = "unix_endpoint";
+export class unix_endpoint extends BaseEndpoint {
   static attributes = {
     url: url_attribute
   };

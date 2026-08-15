@@ -14,7 +14,7 @@ import {
   Endpoint,
   DomainNameEndpoint,
   HTTPEndpoint,
-  UnixEndpoint,
+  unix_endpoint,
   addType,
   FAMILY_UNIX,
   FAMILY_DNS
@@ -137,7 +137,7 @@ export class CoreService extends Base {
     for (const e of data) {
       switch (e.family) {
         case FAMILY_UNIX:
-          result.push(new UnixEndpoint(this, e.path, e));
+          result.push(new unix_endpoint(this, e.path, e));
           break;
 
         case undefined:
