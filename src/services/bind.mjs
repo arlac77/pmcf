@@ -650,9 +650,6 @@ export class bind extends CoreService {
       .map(e => e.networkAddress?.address);
 
     if (forwarders.length) {
-      if (forwarders.length > 5) {
-        forwarders.length = 5;
-      }
       await writeLines(
         join(outputControl.dir, "etc/named/options"),
         `forwarders.conf`,
