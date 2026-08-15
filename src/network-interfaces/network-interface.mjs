@@ -196,7 +196,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
 
     if (this.name !== "eth0" && this.hwaddr) {
       const disabled = {};
-      if (this.disabled) {
+      if (!this.enabled) {
         disabled.Unmanaged = "yes";
       }
       await writeLines(networkDir, `${this.name}.link`, [
@@ -263,7 +263,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
 
     await writeLines(
       networkDir,
-      `${this.name}.network${this.disabled ? ".disabled" : ""}`,
+      `${this.name}.network${this.enabled ? "" : ".disabled"}`,
       networkSections
     );
   }

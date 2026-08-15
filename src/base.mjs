@@ -44,7 +44,6 @@ export class Base {
     type: type_attribute_writable,
     directory: { ...string_attribute_writable, name: "directory" },
     packaging: { ...string_set_attribute_writable, name: "packaging" },
-    disabled: { ...boolean_attribute_writable, name: "disabled" },
     enabled: { ...boolean_attribute_writable, name: "enabled" },
     tags: { ...string_set_attribute_writable, name: "tags" },
     template: { ...boolean_attribute_writable, name: "template", private: true }
@@ -404,6 +403,34 @@ export class Base {
     return this.owner?.timezone;
   }
 
+  /**
+   * @return {boolean}
+   */
+  get enabled() {
+    return this.attribute("_enabled") ?? true;
+  }
+
+  set enabled(value) {
+    this._enabled = value;
+  }
+
+  get tags() {
+    return this.unionFromDirections(["this", "extends"], "_tags");
+  }
+
+  set tags(value) {
+    this._tags = union(value, this._tags);
+  }
+
+  set aliases(value) {
+    this._aliases = union(value, this._aliases);
+  }
+
+  get aliases() {
+    return this.expand(
+      this.unionFromDirections(["this", "extends"], "_aliases")
+    );
+  }
   set priority(value) {
     this._priority = value;
   }
@@ -563,37 +590,6 @@ export class Base {
         }
       }
     }
-  }
-
-  /**
-   * @return {boolean}
-   */
-  get enabled()
-  {
-    return !this.disabled;
-  }
-
-  set enabled(value)
-  {
-    this.disabled = !value;
-  }
-
-  get tags() {
-    return this.unionFromDirections(["this", "extends"], "_tags");
-  }
-
-  set tags(value) {
-    this._tags = union(value, this._tags);
-  }
-
-  set aliases(value) {
-    this._aliases = union(value, this._aliases);
-  }
-
-  get aliases() {
-    return this.expand(
-      this.unionFromDirections(["this", "extends"], "_aliases")
-    );
   }
 
   /**
