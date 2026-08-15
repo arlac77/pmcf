@@ -85,6 +85,12 @@ export const subnets_attribute = {
   backpointer: owner_attribute
 };
 
+export const subnet_attribute = {
+  ...default_attribute_writable,
+  name: "subnet",
+  type: "subnet"
+};
+
 export const bridges_attribute = {
   ...networks_attribute,
   name: "bridges",
