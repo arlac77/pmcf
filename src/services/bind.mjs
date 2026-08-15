@@ -369,11 +369,7 @@ class bind_group extends Base {
         const address = na.address;
         const host = na.host;
 
-        if (host === undefined) {
-          console.log("NO HOST", na);
-        }
-
-        if (!addresses.has(address)) {
+        if (host && !addresses.has(address)) {
           addresses.add(address);
 
           const locationName = host.owner.name;
@@ -403,7 +399,7 @@ class bind_group extends Base {
                   )
               );
 
-            if (host && !hosts.has(host)) {
+            if (!hosts.has(host)) {
               hosts.add(host);
 
               for (let foreignDomain of host.foreignDomainNames) {
