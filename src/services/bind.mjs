@@ -295,7 +295,7 @@ class bind_group extends bind_object {
       type: bind_group
     },
     notify: { ...boolean_attribute_writable_false, name: "notify" },
-    hasCatalog: { ...boolean_attribute_writable_true, name: "hasCatalog" },
+    hasCatalog: { ...boolean_attribute_writable_false, name: "hasCatalog" },
     hasReverse: { ...boolean_attribute_writable_false, name: "hasReverse" },
     hasSVRRecords: {
       ...boolean_attribute_writable_false,
