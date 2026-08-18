@@ -18,6 +18,7 @@
     "bind": {
       "extends": "/templates/bind",
       "forwarders": "/GLOBAL/services[types[dns]]",
+      "primaries": "/L1/networkAddresses[type!='ll' && type!='lb' && host/tags['dns.primary']]",
       "acls": {
         "trusted": {
           "entries": "/L1/n1"
@@ -29,9 +30,8 @@
       "groups": {
         "internal": {
           "entries": "/L1/n1/networkAddresses[networkInterface/kind!='tan' && networkInterface/kind!='loopback']",
-          "recordTTL": "1W",
-          "access": "/L1/n1",
-          "matchClients": "service/acls/trusted"
+          "matchClients": "service/acls/trusted",
+          "recordTTL": "1W"
         },
         "protected": {
           "matchClients": "service/acls/protected",

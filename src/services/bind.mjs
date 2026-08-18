@@ -156,6 +156,9 @@ class bind_zone_config extends Base {
       } else {
         content.push(`  type ${this.type};`);
         content.push(`  file \"${zone.file}\";`);
+        if(this.type === 'secondary') {
+          content.push(`#  primaries {};`);
+        }
         content.push(
           addressesStatement("allow-update", group.allowUpdate, "none;", "  ")
         );
@@ -611,6 +614,12 @@ export class bind extends CoreService {
       name: "forwarders",
       deferredExpression: true
     },
+    primaries: {
+      ...default_collection_attribute_writable,
+      name: "primaries",
+      type: networkAddressType,
+      deferredExpression: true
+    },
     acls: {
       ...default_collection_attribute_writable,
       name: "acls",
@@ -622,11 +631,6 @@ export class bind extends CoreService {
       name: "groups",
       type: bind_group,
       backpointer: owner_attribute
-    },
-    primaries: {
-      ...default_collection_attribute_writable,
-      name: "primaries",
-      type: networkAddressType
     }
   };
   static service = {
