@@ -17,16 +17,24 @@
   "services": {
     "bind": {
       "extends": "/templates/bind",
-      "forwarders": "/GLOBAL/services[types[dns] && priority>=100 && priority<200]",
+      "forwarders": "/GLOBAL/services[types[dns]]",
+      "acls": {
+        "trusted": {
+          "entries": "/L1/n1"
+        },
+        "protected": {
+          "entries": "/L1/n1"
+        }
+      },
       "groups": {
         "internal": {
           "entries": "/L1/n1/networkAddresses[networkInterface/kind!='tan' && networkInterface/kind!='loopback']",
           "recordTTL": "1W",
           "access": "/L1/n1",
-          "allowedUpdates": "trusted"
+          "matchClients": "service/acls/trusted"
         },
         "protected": {
-          "access": "/L1/n1",
+          "matchClients": "service/acls/protected",
           "sharedWith": "internal"
         }
       }

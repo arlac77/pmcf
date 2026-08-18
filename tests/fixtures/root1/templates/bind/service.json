@@ -2,7 +2,7 @@
   "depends": ["bind"],
   "groups": {
     "trusted": {
-      "access": "/L1/n1"
+      "matchClients": "/L1/n1"
     }
   }
 }

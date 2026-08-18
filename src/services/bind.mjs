@@ -15,8 +15,7 @@ import {
   boolean_attribute_writable_true,
   boolean_attribute_writable_false,
   integer_attribute_writable,
-  integer_attribute,
-  name_attribute_writable
+  integer_attribute
 } from "pacc";
 import {
   Base,
@@ -158,12 +157,7 @@ class bind_zone_config extends Base {
         content.push(`  type ${this.type};`);
         content.push(`  file \"${zone.file}\";`);
         content.push(
-          addressesStatement(
-            "allow-update",
-            group.allowedUpdates,
-            "none;",
-            "  "
-          )
+          addressesStatement("allow-update", group.allowUpdate, "none;", "  ")
         );
         content.push(`  notify ${yesno(group.notify)};`);
       }
@@ -189,23 +183,91 @@ class bind_zone_config extends Base {
   }
 }
 
-class bind_group extends Base {
+class bind_object extends Base {
   static priority = 1;
   static attributes = {
-    name: name_attribute_writable,
     order: { ...integer_attribute, name: "order" },
-    access: {
-      type: bindNetworkAddressTypes,
-      name: "access",
-      collection: true,
-      writable: true,
-      deferredExpression: true
-    },
     entries: {
       ...default_collection_attribute_writable,
       type: NetworkAddress,
       name: "entries",
       deferredExpression: true
+    }
+  };
+
+  static {
+    addType(this);
+  }
+
+  get order() {
+    return 0;
+  }
+
+  get service() {
+    return this.owner;
+  }
+}
+
+export class bind_acl extends bind_object {
+  static priority = 1;
+
+  static {
+    addType(this);
+  }
+
+  async packageContent(outputControl) {
+    const acls = addressesStatement(
+      `acl ${this.name}`,
+      addresses(this.entries, { aggregate: true })
+    );
+
+    if (acls.length) {
+      await writeLines(
+        join(outputControl.dir, "etc/named"),
+        `${this.order}-acl-${this.name}.conf`,
+        acls
+      );
+
+      return true;
+    }
+
+    return false;
+  }
+}
+
+const acl_attribute = {
+  ...default_attribute_writable,
+  type: bind_acl,
+  name: "acl",
+  default: "'any'"
+};
+
+class bind_group extends bind_object {
+  static priority = 1;
+  static attributes = {
+    matchClients: {
+      ...acl_attribute,
+      name: "matchClients"
+    },
+    allowUpdate: {
+      ...acl_attribute,
+      name: "allowUpdate"
+    },
+    allowQuery: {
+      ...acl_attribute,
+      name: "allowQuery"
+    },
+    allowQueryCache: {
+      ...acl_attribute,
+      name: "allowQueryCache"
+    },
+    allowRecursion: {
+      ...acl_attribute,
+      name: "allowRecursion"
+    },
+    allowTransfer: {
+      ...acl_attribute,
+      name: "allowTransfer"
     },
     domains: {
       ...string_set_attribute,
@@ -232,12 +294,6 @@ class bind_group extends Base {
       name: "sharedWith",
       type: bind_group
     },
-    allowedUpdates: {
-      type: bindNetworkAddressTypes,
-      name: "allowedUpdates",
-      collection: true,
-      writable: true
-    },
     notify: { ...boolean_attribute_writable_false, name: "notify" },
     hasCatalog: { ...boolean_attribute_writable_true, name: "hasCatalog" },
     hasReverse: { ...boolean_attribute_writable_false, name: "hasReverse" },
@@ -257,7 +313,7 @@ class bind_group extends Base {
     serial: {
       ...integer_attribute_writable,
       name: "serial",
-      default: Math.ceil(Date.now() / 1000)
+      default: Math.ceil(Date.now() / (1000 * 60)) * 60
     },
     refresh: {
       ...duration_attribute_writable,
@@ -274,7 +330,6 @@ class bind_group extends Base {
   }
 
   foreignDomains = new Set();
-  allowedUpdates = [];
   notify = true;
   hasCatalog = true;
   hasSVRRecords = true;
@@ -294,10 +349,6 @@ class bind_group extends Base {
 
   get order() {
     return this.sharedWith ? this.sharedWith.order + 1 : 0;
-  }
-
-  get service() {
-    return this.owner;
   }
 
   get soaUpdates() {
@@ -501,36 +552,6 @@ class bind_group extends Base {
       ))
     );
 
-    return (
-      await Promise.all([
-        this.generateACLs(outputControl),
-        this.generateZoneDefs(outputControl)
-      ])
-    ).find(r => r)
-      ? true
-      : false;
-  }
-
-  async generateACLs(outputControl) {
-    const acls = addressesStatement(
-      `acl ${this.name}`,
-      addresses(this.access, { aggregate: true })
-    );
-
-    if (acls.length) {
-      await writeLines(
-        join(outputControl.dir, "etc/named"),
-        `0-acl-${this.name}.conf`,
-        acls
-      );
-
-      return true;
-    }
-
-    return false;
-  }
-
-  async generateZoneDefs(outputControl) {
     for (const config of this.zoneConfigs.values()) {
       await config.write(outputControl);
     }
@@ -556,9 +577,20 @@ class bind_group extends Base {
  * @returns {(string|string[])[]}
  */
 function addressesStatement(prefix, objects, empty = false, indent = "") {
-  const body = asArray(objects).map(
-    value => `${indent}  ${typeof value === "string" ? value : value.name};`
-  );
+  const body = asArray(objects).map(value => {
+    if (typeof value !== "string") {
+      if (value.name) {
+        value = value.name;
+      } else {
+        value = value.address;
+
+        // console.log(value);
+        //value = [...value];
+      }
+    }
+
+    return `${indent}${value};`;
+  });
 
   if (body.length) {
     return [`${indent}${prefix} {`, body, `${indent}};`];
@@ -578,6 +610,12 @@ export class bind extends CoreService {
       type: Endpoint,
       name: "forwarders",
       deferredExpression: true
+    },
+    acls: {
+      ...default_collection_attribute_writable,
+      name: "acls",
+      type: bind_acl,
+      backpointer: owner_attribute
     },
     groups: {
       ...default_collection_attribute_writable,
@@ -635,6 +673,7 @@ export class bind extends CoreService {
     addType(this);
   }
 
+  acls = new Map();
   groups = new Map();
 
   get serverType() {
@@ -677,6 +716,11 @@ export class bind extends CoreService {
     );
 
     const outputControl = { packageData, dir, permissions };
+
+    for (const acl of this.acls.values()) {
+      const present = await acl.packageContent(outputControl);
+      hasContent ||= present;
+    }
 
     for (const group of this.groups.values()) {
       const present = await group.packageContent(outputControl);

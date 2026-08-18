@@ -1,5 +1,5 @@
 import test from "ava";
-import { InitializationContext } from "pmcf";
+import { InitializationContext, addresses } from "pmcf";
 import { bind } from "../src/services/bind.mjs";
 
 test("BIND basics", async t => {
@@ -59,13 +59,23 @@ test("BIND groups", async t => {
   t.true(bindInst instanceof bind);
   t.true(bindInst.extends.has(ic.named("/templates/bind")));
 
+  t.deepEqual([...bindInst.acls.keys()], ["trusted", "protected"]);
+
+  const trustedACL = bindInst.acls.get("trusted");
+  t.is(trustedACL.name, "trusted");
+  t.is(trustedACL.order, 0);
+
+  //console.log(addresses(trustedACL.entries, { aggregate: true }));
+
+  t.deepEqual(addresses(trustedACL.entries, { aggregate: true }), [
+    "fe80::/64",
+    "192.168.1/24"
+  ]);
+
   const internalGroup = bindInst.groups.get("internal");
   const protectedGroup = bindInst.groups.get("protected");
 
-  t.deepEqual(
-    [...bindInst.groups.keys()],
-    ["internal", "protected" /*, "trusted"*/]
-  );
+  t.deepEqual([...bindInst.groups.keys()], ["internal", "protected"]);
   t.is(internalGroup.name, "internal");
   t.is(internalGroup.type, "view");
   t.is(internalGroup.order, 0);
@@ -86,19 +96,11 @@ test("BIND groups", async t => {
   t.is(protectedGroup.owner, bindInst);
   t.is(protectedGroup.order, 1);
 
-  // t.is(internalGroup.entries[0].name, "n1");
-
-  //t.deepEqual(bind.groups.internal.allowedUpdates, [bind.groups.trusted]);
-
-  //  console.log([...bindInst.forwarders]);
-
   const addr = [...bindInst.forwarders]
     .map(e => e.endpoints())
     .flat()
     .filter(e => e.networkAddress)
     .map(e => e.networkAddress?.address);
-
-//  console.log(addr);
 
   t.deepEqual(addr, [
     "8.8.8.8",
@@ -112,7 +114,7 @@ test("BIND groups", async t => {
     ["192.168.1/24", "127.0.0.1", "::1"].sort()
   );*/
 
-  const n = Math.ceil((Date.now() - 499) / 1000);
+  const n = Math.ceil((Date.now() - 499) / (1000 * 60)) * 60;
 
   t.deepEqual(
     internalGroup.defaultRecords.map(r => r.toString()),
