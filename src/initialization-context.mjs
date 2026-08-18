@@ -33,6 +33,12 @@ export class InitializationContext {
         }
       }
 
+      const resolved = object.expression(value);
+      if (resolved) {
+        assign(attribute, object, resolved);
+        continue nextOutstanding;
+      }
+
       this.error(
         `Unknown ${attribute.name}(${attribute.type.name}): "${value}"`
       );
@@ -178,7 +184,11 @@ export class InitializationContext {
       attribute => attribute.type === type && attribute.collection
     )) {
       try {
-        return assign(attribute, owner, this.read(create(type, owner, data), data));
+        return assign(
+          attribute,
+          owner,
+          this.read(create(type, owner, data), data)
+        );
       } catch (e) {
         this.error(`Unable to assign ${type.name}.${attribute.name}`, e, data);
       }
