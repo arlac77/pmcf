@@ -100,6 +100,13 @@ export class NetworkAddress {
  * @returns {Iterable<string>} addresses
  */
 export function addresses(sources, options) {
+  if (sources === undefined) {
+    return [];
+  }
+  if(sources instanceof Owner) {
+    sources = [sources];
+  }
+
   return [
     ...new Set(
       [...sources]
