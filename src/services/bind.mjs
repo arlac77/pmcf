@@ -156,12 +156,22 @@ class bind_zone_config extends Base {
       } else {
         content.push(`  type ${this.type};`);
         content.push(`  file \"${zone.file}\";`);
-        if(this.type === 'secondary') {
-          content.push(`#  primaries {};`);
+
+        switch (this.type) {
+          case "primary":
+            content.push(
+              addressesStatement(
+                "allow-update",
+                group.allowUpdate,
+                "none;",
+                "  "
+              )
+            );
+            break;
+          case "secondary":
+            content.push(`  primaries { 192.168.1.250; };`);
+            break;
         }
-        content.push(
-          addressesStatement("allow-update", group.allowUpdate, "none;", "  ")
-        );
         content.push(`  notify ${yesno(group.notify)};`);
       }
       content.push(`};`, "");
