@@ -110,7 +110,10 @@ export class Base {
 
     for (const [path, attribute] of extendingAttributeIterator(
       this.constructor,
-      attribute => attribute.collection && !attribute.type.primitive
+      attribute =>
+        attribute.collection &&
+        !attribute.type.primitive &&
+        !attribute.deferredExpression
     )) {
       const collection = this[attribute.name];
       if (typeof collection?.get === "function") {
@@ -127,24 +130,21 @@ export class Base {
             collection.set(extending.name, extending.forOwner(this));
           }
         }
-      }
-      /*
-      else {
-        if (collection instanceof Set) {
-          for (const all of this.unionFromDirections(["extends"], attribute.name)) {
-            if (all instanceof Set) {
-              const d = collection.difference(all);
+      } /*else {
+        if (Array.isArray(collection)) {
+          // TODO
+        } else {
+          //console.log("EXTENDS", this.fullName, attribute.name);
 
-              // if (d.size) {
-              console.log("ME", this.fullName, attribute.name, d);
-              //    }
-            }
-            else {
-            //  console.error("NO SET",this.fullName, attribute.name, typeof all, all.constructor.name);
+          for (const extending of this.unionFromDirections(
+            ["extends"],
+            attribute.name
+          )) {
+            if (!collection.has(extending)) {
+              //console.log("ADD", this.fullName, extending.fullName);
+              collection.add(extending);
             }
           }
-        } else {
-          //console.log("NO MAP OR SET", this.fullName, name);
         }
       }*/
     }
@@ -195,6 +195,9 @@ export class Base {
     for (const node of this.walkDirections(directions)) {
       const value = node[property];
       if (value !== undefined) {
+        if (!(value instanceof Set)) {
+          console.log("NO SET", value, node.fullName, property);
+        }
         collected = collected.union(value);
       }
     }
