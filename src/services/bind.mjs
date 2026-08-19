@@ -21,7 +21,8 @@ import {
   boolean_attribute_writable_true,
   boolean_attribute_writable_false,
   integer_attribute_writable,
-  integer_attribute
+  integer_attribute,
+  secret_attribute_writable
 } from "pacc";
 import {
   Base,
@@ -216,6 +217,26 @@ class bind_zone_config extends Base {
     }
 
     await writeLines(join(dir, `etc/named/${group.name}`), this.name, content);
+  }
+}
+
+export class bind_key extends Base {
+  static priority = 1;
+  static attributes = {
+    algorithm: {
+      ...string_attribute_writable,
+      name: "algorithm",
+      default: "hmac-sha256"
+    },
+    secret: secret_attribute_writable
+  };
+
+  static {
+    addType(this);
+  }
+
+  get service() {
+    return this.owner;
   }
 }
 
@@ -652,6 +673,12 @@ export class bind extends CoreService {
       type: networkAddressType,
       deferredExpression: true
     },
+    keys: {
+      ...default_collection_attribute_writable,
+      name: "keys",
+      type: bind_key,
+      backpointer: owner_attribute
+    },
     acls: {
       ...default_collection_attribute_writable,
       name: "acls",
@@ -709,6 +736,7 @@ export class bind extends CoreService {
     addType(this);
   }
 
+  keys = new Map();
   acls = new Map();
   groups = new Map();
 
