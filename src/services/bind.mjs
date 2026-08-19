@@ -695,6 +695,10 @@ export class bind extends CoreService {
       type: networkAddressType,
       deferredExpression: true
     },
+    serverType: {
+      ...string_attribute_writable,
+      name: "serverType"
+    },
     keys: {
       ...default_collection_attribute_writable,
       name: "keys",
@@ -762,8 +766,19 @@ export class bind extends CoreService {
   acls = new Map();
   groups = new Map();
 
+  set serverType(value) {
+    //console.log("SET SERVERTYPE", this.fullName, value);
+    this._serverType = value;
+  }
+
   get serverType() {
-    return this.primaries ? "secondary" : "primary";
+    /*console.log(
+      "GET SERVERTYPE",
+      this.fullName,
+      this._serverType ?? (this.primaries ? "secondary" : "primary")
+    );*/
+
+    return this._serverType ?? (this.primaries ? "secondary" : "primary");
   }
 
   async writeForwarders(outputControl) {
