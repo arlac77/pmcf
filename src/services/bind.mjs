@@ -1,7 +1,13 @@
 import { join } from "node:path";
 import { createHmac } from "node:crypto";
 import { FileContentProvider } from "npm-pkgbuild";
-import { reverseArpa, FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
+import {
+  reverseArpa,
+  FAMILY_IPV4,
+  FAMILY_IPV6,
+  ADDRESS_TYPE_LOOPBACK,
+  addressType
+} from "ip-utilties";
 import {
   default_collection_attribute,
   default_collection_attribute_writable,
@@ -127,8 +133,12 @@ class bind_zone_config extends Base {
 
   /** @type {bind_zone[]} */ zones = [];
 
+  get service() {
+    return this.owner.service;
+  }
+
   get type() {
-    return this.owner.service.serverType;
+    return this.service.serverType;
   }
 
   constructor(owner, name) {
@@ -169,7 +179,20 @@ class bind_zone_config extends Base {
             );
             break;
           case "secondary":
-            content.push(`  primaries { 192.168.1.250; };`);
+            const primaries = [...this.service.primaries]
+              .map(e => e.endpoints())
+              .flat()
+              .filter(
+                e =>
+                  e.networkAddress &&
+                  addressType(e.networkAddress.address) !==
+                    ADDRESS_TYPE_LOOPBACK
+              )
+              .map(e => e.networkAddress.address);
+
+            content.push(
+              ...addressesStatement(". primaries", primaries, false, "    ")
+            );
             break;
         }
         content.push(`  notify ${yesno(group.notify)};`);
@@ -231,7 +254,9 @@ export class bind_acl extends bind_object {
   async packageContent(outputControl) {
     const acls = addressesStatement(
       `acl ${this.name}`,
-      addresses(this.entries, { aggregate: true })
+      addresses(this.entries, { aggregate: true }),
+      "any;",
+      "  "
     );
 
     if (acls.length) {
@@ -592,25 +617,22 @@ class bind_group extends bind_object {
 function addressesStatement(prefix, objects, empty = false, indent = "") {
   const body = asArray(objects).map(value => {
     if (typeof value !== "string") {
-      if (value.name) {
-        value = value.name;
-      } else {
-        value = value.address;
-
-        // console.log(value);
-        //value = [...value];
-      }
+      return value.name ?? value.address;
     }
 
-    return `${indent}${value};`;
+    return value;
   });
 
-  if (body.length) {
-    return [`${indent}${prefix} {`, body, `${indent}};`];
+  if (body.length > 0) {
+    if (body.length < 3) {
+      return [`${prefix} {${body.map(b => ` ${b};`).join("")} };`];
+    }
+
+    return [`${prefix} {`, body.map(b => `${indent}${b};`), `${indent}};`];
   }
 
   if (empty) {
-    return [`${indent}${prefix} {`, indent + "  " + empty, `${indent}};`];
+    return [`${prefix} { ${empty} };`];
   }
 
   return [];
