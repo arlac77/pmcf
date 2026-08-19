@@ -59,12 +59,11 @@ test("BIND keys acls and groups", async t => {
   t.true(bindInst instanceof bind);
   t.true(bindInst.extends.has(ic.named("/templates/bind")));
 
-  t.is(bindInst.serverType,"secondary");
+  t.is(bindInst.serverType, "secondary");
 
   const rndc = bindInst.keys.get("rndc");
   t.is(rndc.name, "rndc");
   t.is(rndc.secret, "abc");
-
 
   t.deepEqual([...bindInst.acls.keys()], ["trusted", "protected"]);
 
@@ -82,7 +81,10 @@ test("BIND keys acls and groups", async t => {
   const internalGroup = bindInst.groups.get("internal");
   const protectedGroup = bindInst.groups.get("protected");
 
-  t.deepEqual([...bindInst.groups.keys()], ["internal", "protected"]);
+  t.deepEqual(
+    [...bindInst.groups.keys()],
+    ["internal", "protected", "trusted"]
+  );
   t.is(internalGroup.name, "internal");
   t.is(internalGroup.type, "view");
   t.is(internalGroup.order, 0);

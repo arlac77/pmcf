@@ -29,6 +29,12 @@ export class InitializationContext {
         const resolved = this.named(value, node);
         if (resolved) {
           assign(attribute, object, resolved);
+
+          if (attribute.name === "extends") {
+            // TODO attribute action ?
+            object.materializeExtends();
+          }
+
           continue nextOutstanding;
         }
       }
@@ -36,6 +42,12 @@ export class InitializationContext {
       const resolved = object.expression(value);
       if (resolved) {
         assign(attribute, object, resolved);
+
+        if (attribute.name === "extends") {
+          // TODO attribute action ?
+          object.materializeExtends();
+        }
+
         continue nextOutstanding;
       }
 

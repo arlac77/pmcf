@@ -783,6 +783,12 @@ export class bind extends CoreService {
 
   async writeForwarders(outputControl) {
     // TODO formulate everything as pacc expression
+
+/*
+    console.log("F",this.extends);
+    console.log("F0",this.fullName);
+    console.log("F1",this.forwarders);
+*/
     const forwarders = [...this.forwarders]
       .map(e => e.endpoints())
       .flat()
