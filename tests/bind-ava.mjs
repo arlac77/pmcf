@@ -47,7 +47,7 @@ test("BIND basics", async t => {
   );
 });
 
-test("BIND groups", async t => {
+test("BIND keys acls and groups", async t => {
   const ic = new InitializationContext(
     new URL("fixtures/root1", import.meta.url).pathname
   );
@@ -58,6 +58,11 @@ test("BIND groups", async t => {
   t.is(bindInst.fullName, "/L1/C1/bind");
   t.true(bindInst instanceof bind);
   t.true(bindInst.extends.has(ic.named("/templates/bind")));
+
+  const rndc = bindInst.keys.get("rndc");
+  t.is(rndc.name, "rndc");
+  t.is(rndc.secret, "abc");
+
 
   t.deepEqual([...bindInst.acls.keys()], ["trusted", "protected"]);
 

@@ -18,7 +18,12 @@
     "bind": {
       "extends": "/templates/bind",
       "forwarders": "/GLOBAL/services[types[dns]]",
-      "primaries": "/L1/networkAddresses[type!='ll' && type!='lb' && host/tags['dns.primary']]",
+      "primaries": "/L1/services[types[dns] && priority > 100]",
+      "keys": {
+        "rndc": {
+          "secret": "abc"
+        }
+      },
       "acls": {
         "trusted": {
           "entries": "/L1/n1"
