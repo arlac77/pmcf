@@ -191,7 +191,7 @@ class bind_zone_config extends Base {
               .map(e => e.networkAddress.address);
 
             content.push(
-              ...addressesStatement(". primaries", primaries, false, "    ")
+              ...addressesStatement("  primaries", primaries, false, "    ")
             );
             break;
         }
