@@ -122,11 +122,23 @@ export class Base {
           attribute.name
         )) {
           const present = collection.get(extending.name);
-          //console.log("ME",this.fullName,attribute.name,extending.name);
+
           if (present) {
+            /*if (attribute.name === "services") {
+              console.log(
+                this.fullName,
+                present.fullName,
+                "<-",
+                extending.fullName
+              );
+            }*/
+
             present.extends.add(extending);
             present.materializeExtends();
           } else {
+            /*if (attribute.name === "services") {
+              console.log(this.fullName, extending.fullName);
+            }*/
             collection.set(extending.name, extending.forOwner(this));
           }
         }
@@ -180,7 +192,9 @@ export class Base {
    */
   mapFromDirections(directions, property) {
     return new AggregatedMap(
-      [...this.walkDirections(directions)].map(node => node[property])
+      [...this.walkDirections(directions)]
+        .map(node => node[property])
+        .filter(node => node !== undefined)
     );
   }
 
