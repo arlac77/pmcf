@@ -59,6 +59,8 @@ test("BIND keys acls and groups", async t => {
   t.true(bindInst instanceof bind);
   t.true(bindInst.extends.has(ic.named("/templates/bind")));
 
+  t.is(bindInst.serverType,"secondary");
+
   const rndc = bindInst.keys.get("rndc");
   t.is(rndc.name, "rndc");
   t.is(rndc.secret, "abc");
@@ -93,7 +95,7 @@ test("BIND keys acls and groups", async t => {
   const z1 = zs.get("mydomain.com");
 
   t.is(z1.id, "mydomain.com");
-  t.is(z1.file, "n1/mydomain.com.zone");
+  t.is(z1.file, "n1/mydomain.com.raw");
 
   t.is(protectedGroup.name, "protected");
   t.is(protectedGroup.type, "view");

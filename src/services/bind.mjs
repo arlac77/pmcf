@@ -43,8 +43,6 @@ import { addHook } from "../hooks.mjs";
 import { owner_attribute } from "../common-attributes.mjs";
 import { NetworkAddress } from "../network-address.mjs";
 
-const bindNetworkAddressTypes = networkAddressType + "|bind_group";
-
 class bind_zone extends Base {
   static priority = 1;
   static key = "id";
@@ -61,6 +59,14 @@ class bind_zone extends Base {
 
   static {
     addType(this);
+  }
+
+  get service() {
+    return this.owner.service;
+  }
+
+  get type() {
+    return this.service.serverType;
   }
 
   get isCatalog() {
@@ -80,6 +86,11 @@ class bind_zone extends Base {
   }
 
   get file() {
+    const fileType = this.type === "master" ? "zone" : "raw";
+    return `${this.directory}/${this.domain}.${fileType}`;
+  }
+
+  get textFile() {
     return `${this.directory}/${this.domain}.zone`;
   }
 
@@ -209,7 +220,7 @@ class bind_zone_config extends Base {
 
       await writeLines(
         join(dir, "var/lib/named"),
-        zone.file,
+        zone.textFile,
         [...zone.records]
           .sort(sortZoneRecords)
           .map(r => r.toString(maxKeyLength, group.recordTTL))
