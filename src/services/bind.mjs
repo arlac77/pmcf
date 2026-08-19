@@ -235,8 +235,19 @@ export class bind_key extends Base {
     addType(this);
   }
 
-  get service() {
-    return this.owner;
+  async packageContent(outputControl) {
+    await writeLines(
+      join(outputControl.dir, "etc/named/keys"),
+      `${this.name}.conf`,
+      [
+        `key "${this.name}" {`,
+        `  algorithm ${this.algorithm};`,
+        `  secret "${this.secret}";`,
+        "};"
+      ]
+    );
+
+    return true;
   }
 }
 
@@ -781,9 +792,14 @@ export class bind extends CoreService {
 
     const outputControl = { packageData, dir, permissions };
 
+    for (const key of this.keys.values()) {
+      await key.packageContent(outputControl);
+      hasContent = true;
+    }
+
     for (const acl of this.acls.values()) {
-      const present = await acl.packageContent(outputControl);
-      hasContent ||= present;
+      await acl.packageContent(outputControl);
+      hasContent = true;
     }
 
     for (const group of this.groups.values()) {
