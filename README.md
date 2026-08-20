@@ -82,7 +82,6 @@ generates config packages for:
     *   [networkAddresses](#networkaddresses)
         *   [Parameters](#parameters-15)
 *   [zones](#zones)
-*   [type](#type)
 *   [addressesStatement](#addressesstatement)
     *   [Parameters](#parameters-16)
 *   [SystemdJournalRemoteService](#systemdjournalremoteservice)
@@ -311,12 +310,6 @@ Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
 ## zones
 
 Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<bind\_zone>
-
-## type
-
-Type of the group.
-
-Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** view | unknown
 
 ## addressesStatement
 
