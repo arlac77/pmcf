@@ -100,22 +100,28 @@ export class Base {
   }
 
   materializeExtends() {
-    /*
-    console.log(
-      "materializeExtends",
-      this.fullName,
-      this.owner?.fullName,
-      [...this.extends].map(n => n.fullName)
-    );*/
-
     for (const [path, attribute] of extendingAttributeIterator(
       this.constructor,
-      attribute =>
-        attribute.collection &&
-        !attribute.type.primitive &&
-        !attribute.deferredExpression
+      attribute => attribute.collection && !attribute.type.primitive
     )) {
+      if (attribute.deferredExpression) {
+        const name = attribute.name;
+        if (!this.hasOwnProperty(name)) {
+          for (const e of this.walkDirections(["extends"])) {
+            if (e.hasOwnProperty(name)) {
+              Object.defineProperty(this, name, {
+                get: () => e[name]
+              });
+              break;
+            }
+          }
+        }
+
+        continue;
+      }
+
       const collection = this[attribute.name];
+
       if (typeof collection?.get === "function") {
         for (const [name, extending] of this.mapFromDirections(
           ["extends"],
