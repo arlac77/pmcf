@@ -87,9 +87,6 @@ export class Base {
   }
 
   forOwner(owner) {
-    /*if (owner === this) {
-      this.error("cant own myself");
-    }*/
     if (this.owner !== owner) {
       const newObject = Object.create(this);
       newObject.owner = owner;
@@ -130,21 +127,9 @@ export class Base {
           const present = collection.get(extending.name);
 
           if (present) {
-            /*if (attribute.name === "services") {
-              console.log(
-                this.fullName,
-                present.fullName,
-                "<-",
-                extending.fullName
-              );
-            }*/
-
             present.extends.add(extending);
             present.materializeExtends();
           } else {
-            /*if (attribute.name === "services") {
-              console.log(this.fullName, extending.fullName);
-            }*/
             collection.set(extending.name, extending.forOwner(this));
           }
         }
