@@ -645,13 +645,6 @@ function endpointAddresses(entries) {
     return [];
   }
 
-  /*
-      [...this.forwarders]
-      .map(e => e.endpoints())
-      .flat()
-      .filter(e => e.networkAddress)
-      .map(e => e.networkAddress?.address);
-*/
   return [...entries]
     .map(e => e.endpoints())
     .flat()
@@ -798,18 +791,13 @@ export class bind extends CoreService {
   async writeForwarders(outputControl) {
     // TODO formulate everything as pacc expression
 
-    /*
-    console.log("F",this.extends);
-    console.log("F0",this.fullName);
-    console.log("F1",this.forwarders);
-*/
     const forwarders = endpointAddresses(this.forwarders);
     
     if (forwarders.length) {
       await writeLines(
         join(outputControl.dir, "etc/named/options"),
         `forwarders.conf`,
-        addressesStatement("forwarders", forwarders)
+        addressesStatement("forwarders", forwarders, false, "  ")
       );
 
       return true;
