@@ -774,17 +774,10 @@ export class bind extends CoreService {
   groups = new Map();
 
   set serverType(value) {
-    //console.log("SET SERVERTYPE", this.fullName, value);
     this._serverType = value;
   }
 
   get serverType() {
-    /*console.log(
-      "GET SERVERTYPE",
-      this.fullName,
-      this._serverType ?? (this.primaries ? "secondary" : "primary")
-    );*/
-
     return this._serverType ?? (this.primaries ? "secondary" : "primary");
   }
 
@@ -792,7 +785,7 @@ export class bind extends CoreService {
     // TODO formulate everything as pacc expression
 
     const forwarders = endpointAddresses(this.forwarders);
-    
+
     if (forwarders.length) {
       await writeLines(
         join(outputControl.dir, "etc/named/options"),
