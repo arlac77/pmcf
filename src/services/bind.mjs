@@ -287,9 +287,9 @@ class bind_object extends Base {
     return this.owner;
   }
 
-  materializeExtends() {
-    console.log("SKIP ME", this.fullName);
-  }
+  /*materializeExtends() {
+   // console.log("SKIP ME", this.fullName);
+  }*/
 }
 
 export class bind_acl extends bind_object {
@@ -422,6 +422,7 @@ class bind_view extends bind_object {
   recordTTL = "1W";
 
   get type() {
+    // console.log("TYPE",this.isTemplate,this.fullName,this.owner.serverType);
     return this.owner.serverType;
   }
 
@@ -482,6 +483,10 @@ class bind_view extends bind_object {
   }
 
   get zones() {
+    if(this.isTemplate) {
+      return;
+    }
+
     const entries = asArray(this.entries);
 
     if (!this._zones && entries.length > 0) {
