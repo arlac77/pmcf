@@ -286,10 +286,6 @@ class bind_object extends Base {
   get service() {
     return this.owner;
   }
-
-  /*materializeExtends() {
-   // console.log("SKIP ME", this.fullName);
-  }*/
 }
 
 export class bind_acl extends bind_object {
