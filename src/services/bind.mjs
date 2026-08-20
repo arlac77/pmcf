@@ -43,6 +43,9 @@ import { addHook } from "../hooks.mjs";
 import { owner_attribute } from "../common-attributes.mjs";
 import { NetworkAddress } from "../network-address.mjs";
 
+const PRIMARY = "primary";
+const SECONDARY = "secondary";
+
 class bind_zone extends Base {
   static priority = 1;
   static key = "id";
@@ -61,8 +64,7 @@ class bind_zone extends Base {
     addType(this);
   }
 
-  get directory()
-  {
+  get directory() {
     return this.owner.name;
   }
 
@@ -71,7 +73,7 @@ class bind_zone extends Base {
   }
 
   get type() {
-    return this.service.serverType;
+    return this.owner.type;
   }
 
   get isCatalog() {
@@ -91,7 +93,7 @@ class bind_zone extends Base {
   }
 
   get file() {
-    const fileType = this.type === "master" ? "zone" : "raw";
+    const fileType = this.type === PRIMARY ? "zone" : "raw";
     return `${this.directory}/${this.domain}.${fileType}`;
   }
 
@@ -140,7 +142,8 @@ class catalog_zone extends bind_zone {
 class bind_zone_config extends Base {
   static priority = 1;
   static attributes = {
-    zones: { ...default_collection_attribute, type: bind_zone, name: "zones" }
+    zones: { ...default_collection_attribute, type: bind_zone, name: "zones" },
+    type: { ...string_attribute, name: "type" }
   };
 
   static {
@@ -154,7 +157,7 @@ class bind_zone_config extends Base {
   }
 
   get type() {
-    return this.service.serverType;
+    return this.owner.type;
   }
 
   constructor(owner, name) {
@@ -165,10 +168,9 @@ class bind_zone_config extends Base {
   async write(outputControl) {
     const dir = outputControl.dir;
     const view = this.owner;
+    const type = this.type;
 
-    console.log(
-      `config: ${view.name}/${this.name}${this.foreign ? " foreign" : ""}`
-    );
+    console.log(`config: ${view.name}/${this.name} ${type}`);
 
     const content = [];
 
@@ -180,11 +182,11 @@ class bind_zone_config extends Base {
       if (view.sharedWith) {
         content.push(`  in-view ${view.sharedWith.name};`);
       } else {
-        content.push(`  type ${this.type};`);
+        content.push(`  type ${type};`);
         content.push(`  file \"${zone.file}\";`);
 
-        switch (this.type) {
-          case "primary":
+        switch (type) {
+          case PRIMARY:
             content.push(
               addressesStatement(
                 "  allow-update",
@@ -194,7 +196,7 @@ class bind_zone_config extends Base {
               )
             );
             break;
-          case "secondary":
+          case SECONDARY:
             const primaries = endpointAddresses(this.service.primaries);
 
             content.push(
@@ -222,7 +224,11 @@ class bind_zone_config extends Base {
       );
     }
 
-    await writeLines(join(dir, `etc/named/views/${view.name}`), this.name, content);
+    await writeLines(
+      join(dir, `etc/named/views/${view.name}`),
+      this.name,
+      content
+    );
   }
 }
 
@@ -411,16 +417,9 @@ class bind_view extends bind_object {
   hasSVRRecords = true;
   recordTTL = "1W";
 
-  /**
-   * Type of the view.
-   * @return {string} view | unknown
-   */
-  get type() {
-    if (this.sharedWith || this.entries) {
-      return "view";
-    }
-
-    return "unknown";
+  get type()
+  {
+    return this.owner.serverType;
   }
 
   get order() {
@@ -782,7 +781,7 @@ export class bind extends CoreService {
   }
 
   get serverType() {
-    return this._serverType ?? (this.primaries ? "secondary" : "primary");
+    return this._serverType ?? (this.primaries ? SECONDARY : PRIMARY);
   }
 
   async writeForwarders(outputControl) {

@@ -78,32 +78,33 @@ test("BIND keys acls and views", async t => {
     "192.168.1/24"
   ]);
 
-  const internalGroup = bindInst.views.get("internal");
-  const protectedGroup = bindInst.views.get("protected");
+  const internalView = bindInst.views.get("internal");
+  const protectedView = bindInst.views.get("protected");
 
   t.deepEqual(
     [...bindInst.views.keys()],
     ["internal", "protected", "trusted"]
   );
-  t.is(internalGroup.name, "internal");
-  t.is(internalGroup.type, "view");
-  t.is(internalGroup.order, 0);
+  t.is(internalView.name, "internal");
+  t.is(internalView.order, 0);
+  t.is(internalView.type, "secondary");
 
-  t.deepEqual([...internalGroup.entries.map(e => e.address)], ["192.168.1.2"]);
-  t.deepEqual(internalGroup.domains, new Set(["mydomain.com"]));
+  t.deepEqual([...internalView.entries.map(e => e.address)], ["192.168.1.2"]);
+  t.deepEqual(internalView.domains, new Set(["mydomain.com"]));
 
-  const zs = internalGroup.zones;
+  const zs = internalView.zones;
 
   const z1 = zs.get("mydomain.com");
 
   t.is(z1.id, "mydomain.com");
   t.is(z1.file, "internal/mydomain.com.raw");
+  t.is(z1.type, "secondary");
 
-  t.is(protectedGroup.name, "protected");
-  t.is(protectedGroup.type, "view");
-  t.is(protectedGroup.sharedWith, internalGroup);
-  t.is(protectedGroup.owner, bindInst);
-  t.is(protectedGroup.order, 1);
+  t.is(protectedView.name, "protected");
+  t.is(protectedView.type, "secondary");
+  t.is(protectedView.sharedWith, internalView);
+  t.is(protectedView.owner, bindInst);
+  t.is(protectedView.order, 1);
 
   const addr = [...bindInst.forwarders]
     .map(e => e.endpoints())
@@ -126,7 +127,7 @@ test("BIND keys acls and views", async t => {
   const n = Math.ceil((Date.now() - 499) / (1000 * 60)) * 60;
 
   t.deepEqual(
-    internalGroup.defaultRecords.map(r => r.toString()),
+    internalView.defaultRecords.map(r => r.toString()),
     [
       `@ 1W IN SOA   c1.mydomain.com. admin.mydomain.com. (${n} 36000 72000 600000 60000)`,
       "@ 1W IN NS    c1.mydomain.com."
