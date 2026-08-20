@@ -288,9 +288,8 @@ class bind_object extends Base {
   }
 
   materializeExtends() {
-    console.log("SKIP ME",this.fullName);
+    console.log("SKIP ME", this.fullName);
   }
-
 }
 
 export class bind_acl extends bind_object {
@@ -422,8 +421,7 @@ class bind_view extends bind_object {
   hasSVRRecords = true;
   recordTTL = "1W";
 
-  get type()
-  {
+  get type() {
     return this.owner.serverType;
   }
 
@@ -484,8 +482,7 @@ class bind_view extends bind_object {
   }
 
   get zones() {
-    const e = this.entries;
-    const entries = e === undefined ? [] : [...e];
+    const entries = asArray(this.entries);
 
     if (!this._zones && entries.length > 0) {
       this._zoneConfigs = new Map();
@@ -493,8 +490,6 @@ class bind_view extends bind_object {
 
       const hosts = new Set();
       const addresses = new Set();
-
-      //console.log("ZONES for", this.owner.owner.name, this.name);
 
       for (const na of entries) {
         const address = na.address;
@@ -649,11 +644,7 @@ class bind_view extends bind_object {
 }
 
 function endpointAddresses(entries) {
-  if (entries === undefined) {
-    return [];
-  }
-
-  return [...entries]
+  return asArray(entries)
     .map(e => e.endpoints())
     .flat()
     .filter(
