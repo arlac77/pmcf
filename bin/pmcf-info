@@ -5,14 +5,18 @@ import { prepare } from "../src/cli.mjs";
 const { root, args, options } = await prepare({
   maxDepth: {
     type: "string",
-    short: "m"
+    short: "d"
+  },
+  maxEntries: {
+    type: "string",
+    short: "e"
   }
 });
 
 for (const expression of args) {
   const result = root.expression(expression);
 
-  show(result, 0, { short: false, maxDepth: options.maxDepth ?? 5 });
+  show(result, 0, { maxDepth: 9, maxEntries: 4, short: false, ...options });
 }
 
 function show(value, indent, options) {
@@ -66,6 +70,10 @@ function show(value, indent, options) {
         if (attribute.collection) {
           const l = [...v];
           if (l.length) {
+            if(l.length >= options.maxEntries) {
+              l[options.maxEntries] = '...';
+              l.length = options.maxEntries + 1;
+            }
             if (attribute.separator || l.length === 1) {
               console.log(`${name(attribute)}${l.join(attribute.separator)}`);
             } else {
@@ -94,7 +102,12 @@ function show(value, indent, options) {
             } else {
               console.log(name(attribute));
 
+              let n = 0;
               for (const o of v.values()) {
+                if(n++ > options.maxEntries) {
+                  console.log('...');
+                  break;
+                }
                 show(o, indent + 2, { ...options, short: true });
               }
             }
@@ -104,6 +117,11 @@ function show(value, indent, options) {
 
               if (l.length > 1) {
                 console.log(name(attribute));
+
+                if(l.length >= options.maxEntries) {
+                  l[options.maxEntries] = { fullName:'...'};
+                  l.length = options.maxEntries + 1;
+                }
 
                 for (const o of l) {
                   console.log(prefix(indent + 2) + o.fullName);
