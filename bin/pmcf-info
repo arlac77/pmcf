@@ -12,10 +12,10 @@ const { root, args, options } = await prepare({
 for (const expression of args) {
   const result = root.expression(expression);
 
-  show(result, 0, { short: false, maxDepth: options.maxDepth });
+  show(result, 0, { short: false, maxDepth: options.maxDepth ?? 5 });
 }
 
-function show(value, indent = 0, options = { short: false, maxDepth: 5 }) {
+function show(value, indent = 0, options) {
   if (indent >= options.maxDepth) {
     console.log("...");
     return;
