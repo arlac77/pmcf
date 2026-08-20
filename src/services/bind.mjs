@@ -61,6 +61,11 @@ class bind_zone extends Base {
     addType(this);
   }
 
+  get directory()
+  {
+    return this.owner.name;
+  }
+
   get service() {
     return this.owner.service;
   }
@@ -98,7 +103,6 @@ class bind_zone extends Base {
     super(owner);
     this.id = id;
     this.config = config;
-    this.directory = location;
     this.records = new Set(owner.defaultRecords);
 
     if (!this.isCatalog && owner.hasLocationRecord) {

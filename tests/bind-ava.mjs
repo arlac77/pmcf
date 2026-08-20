@@ -97,7 +97,7 @@ test("BIND keys acls and views", async t => {
   const z1 = zs.get("mydomain.com");
 
   t.is(z1.id, "mydomain.com");
-  t.is(z1.file, "n1/mydomain.com.raw");
+  t.is(z1.file, "internal/mydomain.com.raw");
 
   t.is(protectedGroup.name, "protected");
   t.is(protectedGroup.type, "view");
