@@ -9,7 +9,7 @@ import { Subnet } from "./subnet.mjs";
 import { Owner, addType } from "pmcf";
 import { NetworkInterface } from "./network-interfaces/network-interface.mjs";
 import { family_attribute, subnet_attribute } from "./common-attributes.mjs";
-
+import { asArray } from "./utils.mjs";
 /**
  *
  */
@@ -100,16 +100,9 @@ export class NetworkAddress {
  * @returns {Iterable<string>} addresses
  */
 export function addresses(sources, options) {
-  if (sources === undefined) {
-    return [];
-  }
-  if(sources instanceof Owner) {
-    sources = [sources];
-  }
-
   return [
     ...new Set(
-      [...sources]
+      asArray(sources)
         .map(s => {
           if (typeof s === "string") {
             return s;
