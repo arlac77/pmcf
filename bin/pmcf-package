@@ -43,12 +43,12 @@ const publishingDetails = createPublishingDetails(
 
 let suffixId = 1;
 
-for (const object of root.find(args)) {
+for (const object of [...args.map(arg => root.expression(arg))].flat()) {
   if (object.isTemplate) {
     continue;
   }
 
-  const stagingDir = join(options.output, String(suffixId++).padStart(5,'0'));
+  const stagingDir = join(options.output, String(suffixId++).padStart(5, "0"));
 
   for await (let { sources, outputs, properties } of object.preparePackages(
     stagingDir
