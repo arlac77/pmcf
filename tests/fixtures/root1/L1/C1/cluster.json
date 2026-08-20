@@ -32,7 +32,7 @@
           "entries": "/L1/n1"
         }
       },
-      "groups": {
+      "views": {
         "internal": {
           "entries": "/L1/n1/networkAddresses[networkInterface/kind!='tan' && networkInterface/kind!='loopback']",
           "matchClients": "service/acls/trusted",

@@ -47,7 +47,7 @@ test("BIND basics", async t => {
   );
 });
 
-test("BIND keys acls and groups", async t => {
+test("BIND keys acls and views", async t => {
   const ic = new InitializationContext(
     new URL("fixtures/root1", import.meta.url).pathname
   );
@@ -78,11 +78,11 @@ test("BIND keys acls and groups", async t => {
     "192.168.1/24"
   ]);
 
-  const internalGroup = bindInst.groups.get("internal");
-  const protectedGroup = bindInst.groups.get("protected");
+  const internalGroup = bindInst.views.get("internal");
+  const protectedGroup = bindInst.views.get("protected");
 
   t.deepEqual(
-    [...bindInst.groups.keys()],
+    [...bindInst.views.keys()],
     ["internal", "protected", "trusted"]
   );
   t.is(internalGroup.name, "internal");
@@ -119,7 +119,7 @@ test("BIND keys acls and groups", async t => {
   ]);
 
   /*t.deepEqual(
-    addresses(bind.groups.trusted.access, { aggregate: true }).sort(),
+    addresses(bind.views.trusted.access, { aggregate: true }).sort(),
     ["192.168.1/24", "127.0.0.1", "::1"].sort()
   );*/
 

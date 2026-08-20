@@ -160,10 +160,10 @@ class bind_zone_config extends Base {
 
   async write(outputControl) {
     const dir = outputControl.dir;
-    const group = this.owner;
+    const view = this.owner;
 
     console.log(
-      `config: ${group.name}/${this.name}${this.foreign ? " foreign" : ""}`
+      `config: ${view.name}/${this.name}${this.foreign ? " foreign" : ""}`
     );
 
     const content = [];
@@ -173,8 +173,8 @@ class bind_zone_config extends Base {
 
       content.push(`zone \"${zone.id}\" {`);
 
-      if (group.sharedWith) {
-        content.push(`  in-view ${group.sharedWith.name};`);
+      if (view.sharedWith) {
+        content.push(`  in-view ${view.sharedWith.name};`);
       } else {
         content.push(`  type ${this.type};`);
         content.push(`  file \"${zone.file}\";`);
@@ -183,10 +183,10 @@ class bind_zone_config extends Base {
           case "primary":
             content.push(
               addressesStatement(
-                "allow-update",
-                group.allowUpdate,
+                "  allow-update",
+                view.allowUpdate,
                 "none;",
-                "  "
+                "    "
               )
             );
             break;
@@ -198,7 +198,7 @@ class bind_zone_config extends Base {
             );
             break;
         }
-        content.push(`  notify ${yesno(group.notify)};`);
+        content.push(`  notify ${yesno(view.notify)};`);
       }
       content.push(`};`, "");
 
@@ -214,11 +214,11 @@ class bind_zone_config extends Base {
         zone.textFile,
         [...zone.records]
           .sort(sortZoneRecords)
-          .map(r => r.toString(maxKeyLength, group.recordTTL))
+          .map(r => r.toString(maxKeyLength, view.recordTTL))
       );
     }
 
-    await writeLines(join(dir, `etc/named/${group.name}`), this.name, content);
+    await writeLines(join(dir, `etc/named/views/${view.name}`), this.name, content);
   }
 }
 
@@ -314,7 +314,7 @@ const acl_attribute = {
   default: "'any'"
 };
 
-class bind_group extends bind_object {
+class bind_view extends bind_object {
   static priority = 1;
   static attributes = {
     matchClients: {
@@ -364,7 +364,7 @@ class bind_group extends bind_object {
     sharedWith: {
       ...default_attribute_writable,
       name: "sharedWith",
-      type: bind_group
+      type: bind_view
     },
     notify: { ...boolean_attribute_writable_false, name: "notify" },
     hasCatalog: { ...boolean_attribute_writable_false, name: "hasCatalog" },
@@ -408,7 +408,7 @@ class bind_group extends bind_object {
   recordTTL = "1W";
 
   /**
-   * Type of the group.
+   * Type of the view.
    * @return {string} view | unknown
    */
   get type() {
@@ -718,10 +718,10 @@ export class bind extends CoreService {
       type: bind_acl,
       backpointer: owner_attribute
     },
-    groups: {
+    views: {
       ...default_collection_attribute_writable,
-      name: "groups",
-      type: bind_group,
+      name: "views",
+      type: bind_view,
       backpointer: owner_attribute
     }
   };
@@ -771,7 +771,7 @@ export class bind extends CoreService {
 
   keys = new Map();
   acls = new Map();
-  groups = new Map();
+  views = new Map();
 
   set serverType(value) {
     this._serverType = value;
@@ -825,8 +825,8 @@ export class bind extends CoreService {
       hasContent = true;
     }
 
-    for (const group of this.groups.values()) {
-      const present = await group.packageContent(outputControl);
+    for (const view of this.views.values()) {
+      const present = await view.packageContent(outputControl);
       hasContent ||= present;
     }
 

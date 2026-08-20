@@ -1,6 +1,6 @@
 {
   "depends": ["bind"],
-  "groups": {
+  "views": {
     "trusted": {
       "matchClients": "/L1/n1"
     }
