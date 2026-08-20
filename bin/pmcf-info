@@ -16,7 +16,7 @@ const { root, args, options } = await prepare({
 for (const expression of args) {
   const result = root.expression(expression);
 
-  show(result, 0, { maxDepth: 9, maxEntries: 4, short: false, ...options });
+  show(result, 0, { maxDepth: 9, maxEntries: 3, short: false, ...options });
 }
 
 function show(value, indent, options) {
@@ -56,7 +56,7 @@ function show(value, indent, options) {
       console.log(`${prefix()}${value.fullName}(${type.name}):`);
     }
 
-    if(indent + 1 >= options.maxDepth) {
+    if (indent + 1 >= options.maxDepth) {
       return;
     }
 
@@ -70,8 +70,8 @@ function show(value, indent, options) {
         if (attribute.collection) {
           const l = [...v];
           if (l.length) {
-            if(l.length >= options.maxEntries) {
-              l[options.maxEntries] = '...';
+            if (l.length >= options.maxEntries) {
+              l[options.maxEntries] = "...";
               l.length = options.maxEntries + 1;
             }
             if (attribute.separator || l.length === 1) {
@@ -104,8 +104,8 @@ function show(value, indent, options) {
 
               let n = 0;
               for (const o of v.values()) {
-                if(n++ > options.maxEntries) {
-                  console.log('...');
+                if (n++ > options.maxEntries) {
+                  console.log(prefix(indent + 2) + "...");
                   break;
                 }
                 show(o, indent + 2, { ...options, short: true });
@@ -118,8 +118,8 @@ function show(value, indent, options) {
               if (l.length > 1) {
                 console.log(name(attribute));
 
-                if(l.length >= options.maxEntries) {
-                  l[options.maxEntries] = { fullName:'...'};
+                if (l.length >= options.maxEntries) {
+                  l[options.maxEntries] = { fullName: "..." };
                   l.length = options.maxEntries + 1;
                 }
 
