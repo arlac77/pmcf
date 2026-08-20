@@ -15,9 +15,8 @@ for (const expression of args) {
   show(result, 0, { short: false, maxDepth: options.maxDepth ?? 5 });
 }
 
-function show(value, indent = 0, options) {
+function show(value, indent, options) {
   if (indent >= options.maxDepth) {
-    console.log("...");
     return;
   }
 
@@ -33,7 +32,7 @@ function show(value, indent = 0, options) {
 
   if (value instanceof Iterator || Array.isArray(value)) {
     for (const v of value) {
-      show(v, indent, options);
+      show(v, indent + 1, options);
     }
   } else {
     const type = value.constructor;
@@ -51,6 +50,10 @@ function show(value, indent = 0, options) {
       console.log(`${prefix()}${value[type.key]}:`);
     } else {
       console.log(`${prefix()}${value.fullName}(${type.name}):`);
+    }
+
+    if(indent + 1 >= options.maxDepth) {
+      return;
     }
 
     for (const [path, attribute] of extendingAttributeIterator(
