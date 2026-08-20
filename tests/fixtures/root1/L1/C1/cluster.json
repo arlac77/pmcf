@@ -19,6 +19,7 @@
       "extends": "/templates/bind",
       "forwarders": "/GLOBAL/services[types[dns]]",
       "primaries": "/L1/services[types[dns] && priority > 100]",
+      "authorative": "/L1/services[types[bind]]",
       "keys": {
         "rndc": {
           "secret": "abc"

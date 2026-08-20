@@ -441,7 +441,10 @@ class bind_view extends bind_object {
         dnsFullName(this.administratorEmail.replace(/@/, ".")),
         `(${this.soaUpdates.join(" ")})`
       ),
-      DNSRecord("@", "NS", dnsFullName(service.address()))
+      ...asArray(service.authorative).map(dns =>
+        DNSRecord("@", "NS", dnsFullName(dns.address()))
+      )
+      //    DNSRecord("@", "NS", dnsFullName(service.address()))
     ];
   }
 
@@ -479,7 +482,7 @@ class bind_view extends bind_object {
   }
 
   get zones() {
-    if(this.isTemplate) {
+    if (this.isTemplate) {
       return;
     }
 
@@ -699,6 +702,12 @@ export class bind extends CoreService {
     primaries: {
       ...default_collection_attribute_writable,
       name: "primaries",
+      type: networkAddressType,
+      deferredExpression: true
+    },
+    authorative: {
+      ...default_collection_attribute_writable,
+      name: "authorative",
       type: networkAddressType,
       deferredExpression: true
     },
