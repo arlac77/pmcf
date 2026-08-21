@@ -759,7 +759,7 @@ export class bind extends CoreService {
           }
         ]
       },
-      "bind-rdnc": {
+      "bind-rndc": {
         endpoints: [
           {
             family: FAMILY_IPV4,

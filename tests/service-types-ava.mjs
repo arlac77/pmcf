@@ -49,7 +49,7 @@ test("serviceTypeEndpoints bind", t => {
       kind: "loopback"
     },
     {
-      type: ServiceTypes["bind-rdnc"],
+      type: ServiceTypes["bind-rndc"],
       family: FAMILY_IPV4,
       port: 953,
       protocol: "tcp",
