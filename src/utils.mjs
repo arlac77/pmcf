@@ -96,15 +96,17 @@ export function bridgeToJSON(bridge) {
  * @returns {Array<any>}
  */
 export function asArray(value) {
-  if (value === undefined) {
-    return [];
-  }
-  if (Array.isArray(value)) {
-    return value;
-  }
+  switch (typeof value) {
+    case "undefined":
+      return [];
+    case "object":
+      if (Array.isArray(value)) {
+        return value;
+      }
 
-  if (value instanceof Iterator) {
-    return [...value];
+      if (value instanceof Iterator || value[Symbol.iterator]) {
+        return [...value];
+      }
   }
 
   return [value];

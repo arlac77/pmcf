@@ -70,17 +70,6 @@ export class kea extends CoreService {
           }
         ]
       },
-      /*"kea-control-agent": {
-        endpoints: [
-          {
-            family: FAMILY_IPV4,
-            port: 53002,
-            pathname: "/",
-            protocol: "tcp",
-            tls: false
-          }
-        ]
-      },*/
       "kea-ha-4": {
         endpoints: [
           {

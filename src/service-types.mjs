@@ -1,5 +1,6 @@
 import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
-import { FAMILY_UNIX } from "./endpoint.mjs";
+import { FAMILY_UNIX, FAMILY_IPV4_IPV6 } from "./endpoint.mjs";
+import { asArray } from "./utils.mjs";
 
 export const ServiceTypes = {
   "alpm-repo": {
@@ -13,25 +14,13 @@ export const ServiceTypes = {
     endpoints: [
       {
         protocol: "udp",
-        family: FAMILY_IPV4,
-        port: 514,
-        tls: false
-      },
-      {
-        protocol: "udp",
-        family: FAMILY_IPV6,
+        family: FAMILY_IPV4_IPV6,
         port: 514,
         tls: false
       },
       {
         protocol: "tcp",
-        family: FAMILY_IPV4,
-        port: 514,
-        tls: false
-      },
-      {
-        protocol: "tcp",
-        family: FAMILY_IPV6,
+        family: FAMILY_IPV4_IPV6,
         port: 514,
         tls: false
       }
@@ -39,53 +28,39 @@ export const ServiceTypes = {
   },
   mqtt: {
     endpoints: [
-      { family: FAMILY_IPV4, protocol: "tcp", port: 1883, tls: false },
-      { family: FAMILY_IPV6, protocol: "tcp", port: 1883, tls: false }
+      { family: FAMILY_IPV4_IPV6, protocol: "tcp", port: 1883, tls: false }
     ]
   },
   "secure-mqtt": {
     endpoints: [
-      { family: FAMILY_IPV4, protocol: "tcp", port: 8883, tls: true },
-      { family: FAMILY_IPV6, protocol: "tcp", port: 8883, tls: true }
+      { family: FAMILY_IPV4_IPV6, protocol: "tcp", port: 8883, tls: true }
     ]
   },
   ntp: {
     endpoints: [
-      { family: FAMILY_IPV4, protocol: "udp", port: 123, tls: false },
-      { family: FAMILY_IPV6, protocol: "udp", port: 123, tls: false }
+      { family: FAMILY_IPV4_IPV6, protocol: "udp", port: 123, tls: false }
     ]
   },
   dns: {
     endpoints: [
-      { family: FAMILY_IPV4, protocol: "udp", port: 53, tls: false },
-      { family: FAMILY_IPV6, protocol: "udp", port: 53, tls: false }
+      { family: FAMILY_IPV4_IPV6, protocol: "udp", port: 53, tls: false }
     ]
   },
   mdns: {
     endpoints: [
-      { family: FAMILY_IPV4, protocol: "udp", port: 5353, tls: false },
-      { family: FAMILY_IPV6, protocol: "udp", port: 5353, tls: false }
+      { family: FAMILY_IPV4_IPV6, protocol: "udp", port: 5353, tls: false }
     ]
   },
   llmnr: {
     endpoints: [
-      { family: FAMILY_IPV4, protocol: "udp", port: 5355, tls: false },
-      { family: FAMILY_IPV4, protocol: "tcp", port: 5355, tls: false },
-      { family: FAMILY_IPV6, protocol: "udp", port: 5355, tls: false },
-      { family: FAMILY_IPV6, protocol: "tcp", port: 5355, tls: false }
+      { family: FAMILY_IPV4_IPV6, protocol: "udp", port: 5355, tls: false },
+      { family: FAMILY_IPV4_IPV6, protocol: "tcp", port: 5355, tls: false }
     ]
   },
   ldap: {
     endpoints: [
       {
-        family: FAMILY_IPV4,
-        scheme: "ldap",
-        protocol: "tcp",
-        port: 389,
-        tls: false
-      },
-      {
-        family: FAMILY_IPV6,
+        family: FAMILY_IPV4_IPV6,
         scheme: "ldap",
         protocol: "tcp",
         port: 389,
@@ -96,14 +71,7 @@ export const ServiceTypes = {
   ldaps: {
     endpoints: [
       {
-        family: FAMILY_IPV4,
-        scheme: "ldaps",
-        protocol: "tcp",
-        port: 636,
-        tls: true
-      },
-      {
-        family: FAMILY_IPV6,
+        family: FAMILY_IPV4_IPV6,
         scheme: "ldaps",
         protocol: "tcp",
         port: 636,
@@ -117,14 +85,7 @@ export const ServiceTypes = {
   http: {
     endpoints: [
       {
-        family: FAMILY_IPV4,
-        scheme: "http",
-        protocol: "tcp",
-        port: 80,
-        tls: false
-      },
-      {
-        family: FAMILY_IPV6,
+        family: FAMILY_IPV4_IPV6,
         scheme: "http",
         protocol: "tcp",
         port: 80,
@@ -135,14 +96,7 @@ export const ServiceTypes = {
   https: {
     endpoints: [
       {
-        family: FAMILY_IPV4,
-        scheme: "https",
-        protocol: "tcp",
-        port: 443,
-        tls: true
-      },
-      {
-        family: FAMILY_IPV6,
+        family: FAMILY_IPV4_IPV6,
         scheme: "https",
         protocol: "tcp",
         port: 443,
@@ -154,14 +108,7 @@ export const ServiceTypes = {
   http3: {
     endpoints: [
       {
-        family: FAMILY_IPV4,
-        scheme: "https",
-        protocol: "udp",
-        port: 443,
-        tls: true
-      },
-      {
-        family: FAMILY_IPV6,
+        family: FAMILY_IPV4_IPV6,
         scheme: "https",
         protocol: "udp",
         port: 443,
@@ -175,64 +122,54 @@ export const ServiceTypes = {
   },
   rtsp: {
     endpoints: [
-      { family: FAMILY_IPV4, protocol: "tcp", port: 554, tls: false },
-      { family: FAMILY_IPV6, protocol: "tcp", port: 554, tls: false }
+      { family: FAMILY_IPV4_IPV6, protocol: "tcp", port: 554, tls: false }
     ]
   },
   smtp: {
     endpoints: [
-      { family: FAMILY_IPV4, protocol: "tcp", port: 25, tls: false },
-      { family: FAMILY_IPV6, protocol: "tcp", port: 25, tls: false }
+      { family: FAMILY_IPV4_IPV6, protocol: "tcp", port: 25, tls: false }
     ],
     dnsRecord: { type: "MX" }
   },
   smtps: {
     endpoints: [
-      { family: FAMILY_IPV4, protocol: "tcp", port: 465, tls: true },
-      { family: FAMILY_IPV6, protocol: "tcp", port: 465, tls: true }
+      { family: FAMILY_IPV4_IPV6, protocol: "tcp", port: 465, tls: true }
     ],
     dnsRecord: { type: "MX" }
   },
   submission: {
     endpoints: [
-      { family: FAMILY_IPV4, protocol: "tcp", port: 587, tls: false },
-      { family: FAMILY_IPV6, protocol: "tcp", port: 587, tls: false }
+      { family: FAMILY_IPV4_IPV6, protocol: "tcp", port: 587, tls: false }
     ]
   },
   lmtp: {
     endpoints: [
-      { family: FAMILY_IPV4, protocol: "tcp", port: 24, tls: false },
-      { family: FAMILY_IPV6, protocol: "tcp", port: 24, tls: false }
+      { family: FAMILY_IPV4_IPV6, protocol: "tcp", port: 24, tls: false }
     ]
   },
   ssh: {
     endpoints: [
-      { family: FAMILY_IPV4, protocol: "tcp", port: 22, tls: false },
-      { family: FAMILY_IPV6, protocol: "tcp", port: 22, tls: false }
+      { family: FAMILY_IPV4_IPV6, protocol: "tcp", port: 22, tls: false }
     ]
   },
   imap: {
     endpoints: [
-      { family: FAMILY_IPV4, protocol: "tcp", port: 143, tls: false },
-      { family: FAMILY_IPV6, protocol: "tcp", port: 143, tls: false }
+      { family: FAMILY_IPV4_IPV6, protocol: "tcp", port: 143, tls: false }
     ]
   },
   imaps: {
     endpoints: [
-      { family: FAMILY_IPV4, protocol: "tcp", port: 993, tls: true },
-      { family: FAMILY_IPV6, protocol: "tcp", port: 993, tls: true }
+      { family: FAMILY_IPV4_IPV6, protocol: "tcp", port: 993, tls: true }
     ]
   },
   dhcp: {
     endpoints: [
-      { family: FAMILY_IPV4, protocol: "udp", port: 547, tls: false },
-      { family: FAMILY_IPV6, protocol: "udp", port: 547, tls: false }
+      { family: FAMILY_IPV4_IPV6, protocol: "udp", port: 547, tls: false }
     ]
   },
   "dhcpv6-client": {
     endpoints: [
-      { family: FAMILY_IPV6, protocol: "tcp", port: 546, tls: false },
-      { family: FAMILY_IPV6, protocol: "udp", port: 546, tls: false }
+      { family: FAMILY_IPV4_IPV6, protocol: "tcp", port: 546, tls: false }
     ]
   },
   "dhcpv6-server": {
@@ -240,8 +177,7 @@ export const ServiceTypes = {
   },
   smb: {
     endpoints: [
-      { family: FAMILY_IPV4, protocol: "tcp", port: 445, tls: false },
-      { family: FAMILY_IPV6, protocol: "tcp", port: 445, tls: false }
+      { family: FAMILY_IPV4_IPV6, protocol: "tcp", port: 445, tls: false }
     ]
   },
   nginx: {
@@ -262,15 +198,13 @@ export const ServiceTypes = {
   pcp: {
     // rfc6887
     endpoints: [
-      { family: FAMILY_IPV4, protocol: "udp", port: 5351, tls: false },
-      { family: FAMILY_IPV6, protocol: "udp", port: 5351, tls: false }
+      { family: FAMILY_IPV4_IPV6, protocol: "udp", port: 5351, tls: false }
     ]
   },
   "pcp-multicast": {
     // rfc6887
     endpoints: [
-      { family: FAMILY_IPV4, protocol: "udp", port: 5350, tls: false },
-      { family: FAMILY_IPV6, protocol: "udp", port: 5350, tls: false }
+      { family: FAMILY_IPV4_IPV6, protocol: "udp", port: 5350, tls: false }
     ]
   }
 };
@@ -293,11 +227,11 @@ export function addServiceType(type, name) {
     }
 
     if (type.services) {
-      Object.entries(type.services).forEach(([name, type]) =>
+      type.services = Object.entries(type.services).map(([name, type]) =>
         addServiceType(type, name)
       );
     } else {
-      type.services = {};
+      type.services = [];
     }
 
     if (type.extends) {
@@ -324,23 +258,25 @@ export function serviceTypes(type) {
   return new Set();
 }
 
-export function serviceTypeEndpoints(type) {
+export function serviceTypeEndpoints(type, bundeledToo) {
   if (type) {
-    const all = type.services
-      ? Object.values(type.services)
-          .map(type => serviceTypeEndpoints(type))
-          .flat()
-      : [];
+    const aggregator = (acc, type) => {
+      acc.push(...serviceTypeEndpoints(type, bundeledToo));
+      return acc;
+    };
 
-    if (type.extends) {
-      all.push(type.extends.reduce((a, c) => [...a, ...c?.endpoints], []));
-    }
-
-    if (type.endpoints) {
-      all.push(type.endpoints);
-    }
-
-    return all.flat();
+    return type.extends.reduce(
+      aggregator,
+      type.endpoints.reduce(
+        (acc, ep) => {
+          for (const family of asArray(ep.family)) {
+            acc.push({ ...ep, family });
+          }
+          return acc;
+        },
+        bundeledToo ? type.services.reduce(aggregator, []) : []
+      )
+    );
   }
 
   return [];

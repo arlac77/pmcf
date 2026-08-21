@@ -1,11 +1,10 @@
-import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import {
   string_attribute_writable,
   string_collection_attribute_writable,
   boolean_attribute_writable,
   integer_attribute_writable
 } from "pacc";
-import { CoreService, addType } from "pmcf";
+import { CoreService, addType, FAMILY_IPV4_IPV6 } from "pmcf";
 import { filterConfigurable, sectionLines } from "../utils.mjs";
 
 /**
@@ -76,14 +75,7 @@ export class SystemdJournalRemoteService extends CoreService {
     //extends: ["http"],
     endpoints: [
       {
-        family: FAMILY_IPV4,
-        port: 19532,
-        protocol: "tcp",
-        tls: false,
-        pathname: "/"
-      },
-      {
-        family: FAMILY_IPV6,
+        family: FAMILY_IPV4_IPV6,
         port: 19532,
         protocol: "tcp",
         tls: false,

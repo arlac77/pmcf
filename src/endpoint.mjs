@@ -1,11 +1,12 @@
 import { getAttribute, string_attribute, url_attribute } from "pacc";
-import { FAMILY_IPV6 } from "ip-utilties";
+import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import { addType } from "pmcf";
 import { CoreService } from "./core-service.mjs";
 import { family_attribute, endpointAttributes } from "./common-attributes.mjs";
 
 export const FAMILY_UNIX = "unix";
 export const FAMILY_DNS = "dns";
+export const FAMILY_IPV4_IPV6 = new Set([FAMILY_IPV4, FAMILY_IPV6]);
 
 class BaseEndpoint {
   static name = "base_endpoint";

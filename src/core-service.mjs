@@ -110,11 +110,7 @@ export class CoreService extends Base {
   }
 
   endpoints(filter) {
-    const data = serviceTypeEndpoints(ServiceTypes[this.type]);
-    if (!data) {
-      return [];
-    }
-
+    const data = serviceTypeEndpoints(ServiceTypes[this.type], true);
     const result = [];
 
     const domainNames = new Set([undefined]);

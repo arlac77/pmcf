@@ -32,7 +32,7 @@ test("BIND basics", async t => {
       }
     ]
   );
-/*
+  /*
   t.deepEqual(
     bindInst.endpoints("bind-statistics").map(e => {
       return {

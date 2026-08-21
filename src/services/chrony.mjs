@@ -1,7 +1,13 @@
 import { join } from "node:path";
-import { FAMILY_IPV4, FAMILY_IPV6, isLinkLocal } from "ip-utilties";
+import { FAMILY_IPV4, isLinkLocal } from "ip-utilties";
 import { FileContentProvider } from "npm-pkgbuild";
-import { serviceEndpoints, addType, ExtraSourceService, FAMILY_UNIX } from "pmcf";
+import {
+  serviceEndpoints,
+  addType,
+  ExtraSourceService,
+  FAMILY_UNIX,
+  FAMILY_IPV4_IPV6
+} from "pmcf";
 import { writeLines } from "../utils.mjs";
 
 export class chrony extends ExtraSourceService {
@@ -12,13 +18,7 @@ export class chrony extends ExtraSourceService {
       "chrony-cmd": {
         endpoints: [
           {
-            family: FAMILY_IPV4,
-            port: 323,
-            protocol: "tcp",
-            tls: false
-          },
-          {
-            family: FAMILY_IPV6,
+            family: FAMILY_IPV4_IPV6,
             port: 323,
             protocol: "tcp",
             tls: false

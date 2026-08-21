@@ -30,7 +30,8 @@ import {
   Endpoint,
   addresses,
   networkAddressType,
-  addType
+  addType,
+  FAMILY_IPV4_IPV6
 } from "pmcf";
 import { yesno, writeLines, asArray } from "../utils.mjs";
 import {
@@ -739,18 +740,10 @@ export class bind extends CoreService {
     systemGroupName: "named",
     services: {
       "bind-statistics": {
-//        extends: ["http"],
+        //        extends: ["http"],
         endpoints: [
           {
-            family: FAMILY_IPV4,
-            port: 19521,
-            protocol: "tcp",
-            pathname: "/",
-            tls: false,
-            kind: "loopback"
-          },
-          {
-            family: FAMILY_IPV6,
+            family: FAMILY_IPV4_IPV6,
             port: 19521,
             protocol: "tcp",
             pathname: "/",
@@ -762,7 +755,7 @@ export class bind extends CoreService {
       "bind-rndc": {
         endpoints: [
           {
-            family: FAMILY_IPV4,
+            family: FAMILY_IPV4_IPV6,
             port: 953,
             protocol: "tcp",
             tls: false,
