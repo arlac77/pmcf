@@ -1,13 +1,7 @@
 import { join } from "node:path";
 import { createHmac } from "node:crypto";
 import { FileContentProvider } from "npm-pkgbuild";
-import {
-  reverseArpa,
-  FAMILY_IPV4,
-  FAMILY_IPV6,
-  ADDRESS_TYPE_LOOPBACK,
-  addressType
-} from "ip-utilties";
+import { reverseArpa, ADDRESS_TYPE_LOOPBACK, addressType } from "ip-utilties";
 import {
   default_collection_attribute,
   default_collection_attribute_writable,
