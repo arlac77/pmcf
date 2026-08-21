@@ -790,8 +790,6 @@ export class bind extends CoreService {
   }
 
   async writeForwarders(outputControl) {
-    // TODO formulate everything as pacc expression
-
     const forwarders = endpointAddresses(this.forwarders);
 
     if (forwarders.length) {
