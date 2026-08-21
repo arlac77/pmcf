@@ -450,6 +450,8 @@ Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Gl
 
 ## asArray
 
+Convert scalar or iterable into Array.
+
 ### Parameters
 
 *   `value` **any**&#x20;
