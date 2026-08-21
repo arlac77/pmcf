@@ -92,6 +92,7 @@ export function bridgeToJSON(bridge) {
 }
 
 /**
+ * Convert scalar or iterable into Array.
  * @param {any} value
  * @returns {Array<any>}
  */
