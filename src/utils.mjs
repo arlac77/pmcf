@@ -125,7 +125,7 @@ export function asIterator(value) {
       return [value];
   }
 
-  if (typeof value[Symbol.iterator] === "function") {
+  if (value[Symbol.iterator]) {
     return value;
   }
 
