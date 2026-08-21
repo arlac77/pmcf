@@ -107,7 +107,7 @@ export function root1(root, filter) {
           //        rootdn: "cn=Manager,${base_dn}"
         }
       },
-      chrony: { extends: [], type: "chrony", aliases: new Set("ntp"), port: 323 }
+      chrony: { extends: [], type: "chrony", aliases: new Set("ntp"), port: 123 }
     }
   };
 

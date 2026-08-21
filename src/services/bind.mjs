@@ -418,7 +418,6 @@ class bind_view extends bind_object {
   recordTTL = "1W";
 
   get type() {
-    // console.log("TYPE",this.isTemplate,this.fullName,this.owner.serverType);
     return this.owner.serverType;
   }
 
@@ -444,7 +443,6 @@ class bind_view extends bind_object {
       ...asArray(service.authorative).map(dns =>
         DNSRecord("@", "NS", dnsFullName(dns.address()))
       )
-      //    DNSRecord("@", "NS", dnsFullName(service.address()))
     ];
   }
 
@@ -741,7 +739,7 @@ export class bind extends CoreService {
     systemGroupName: "named",
     services: {
       "bind-statistics": {
-        extends: ["http"],
+//        extends: ["http"],
         endpoints: [
           {
             family: FAMILY_IPV4,

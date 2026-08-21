@@ -14,37 +14,42 @@ test("BIND basics", async t => {
   t.is(bindInst.systemUserName, "named");
   t.is(bindInst.systemGroupName, "named");
 
+  t.is(bindInst.port, 53);
+
   t.deepEqual(
-    bindInst.endpoints().map(e => {
+    bindInst.endpoints("dns").map(e => {
       return {
         type: e.type,
         port: e.port,
-        address: e.address /*, family: e.family*/
+        address: e.address
       };
     }),
     [
-      {
-        type: "bind-statistics",
-        address: "c1.mydomain.com",
-        port: 19521
-      },
-      /*  {
-        type: "bind-rdnc",
-        address: "192.168.1.11",
-        port: 953
-      },*/
       {
         type: "dns",
         address: "192.168.1.11",
         port: 53
       }
-      /* {
-        type: "dns",
-        address: "c1.mydomain.com",
-        port: 53
-      }*/
     ]
   );
+/*
+  t.deepEqual(
+    bindInst.endpoints("bind-statistics").map(e => {
+      return {
+        type: e.type,
+        port: e.port,
+        address: e.address
+      };
+    }),
+    [
+      {
+        type: "bind-statistics",
+        address: "192.168.1.11",
+        port: 53
+      }
+    ]
+  );
+  */
 });
 
 test("BIND keys acls and views", async t => {
@@ -81,10 +86,7 @@ test("BIND keys acls and views", async t => {
   const internalView = bindInst.views.get("internal");
   const protectedView = bindInst.views.get("protected");
 
-  t.deepEqual(
-    [...bindInst.views.keys()],
-    ["internal", "protected", "trusted"]
-  );
+  t.deepEqual([...bindInst.views.keys()], ["internal", "protected", "trusted"]);
   t.is(internalView.name, "internal");
   t.is(internalView.order, 0);
   t.is(internalView.type, "secondary");

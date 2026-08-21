@@ -195,10 +195,25 @@ export class CoreService extends Base {
   }
 
   get port() {
-    return (
-      this.attribute("_port") ??
-      serviceTypeEndpoints(ServiceTypes[this.type])[0]?.port
-    );
+    const p = this.attribute("_port");
+    if (p !== undefined) {
+      return p;
+    }
+
+    const st = ServiceTypes[this.type];
+    const ste = serviceTypeEndpoints(st);
+
+    const e = ste.find(t => t.type.name === this.type);
+    if (e) {
+      return e.port;
+    }
+
+    for (const sst of st.extends) {
+      const e = ste.find(t => t.type.name === sst.name);
+      if (e) {
+        return e.port;
+      }
+    }
   }
 
   set priority(value) {
