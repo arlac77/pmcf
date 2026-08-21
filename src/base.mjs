@@ -421,6 +421,7 @@ export class Base {
       this.unionFromDirections(["this", "extends"], "_aliases")
     );
   }
+
   set priority(value) {
     this._priority = value;
   }
@@ -564,7 +565,6 @@ export class Base {
 
       try {
         if ((await stat(dir)).isDirectory) {
-          //console.log("TD", dir);
           yield transform(
             new FileContentProvider(
               { dir, pattern: "**/*" },
