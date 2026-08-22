@@ -71,7 +71,7 @@ export class InitializationContext {
     }
     if (value !== undefined) {
       if (typeof value === "object") {
-        if (attribute.type && value instanceof attribute.type) {
+        if (typeof attribute.type === 'function' && value instanceof attribute.type) {
           return assign(attribute, object, value);
         }
       } else {
