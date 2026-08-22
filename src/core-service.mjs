@@ -197,17 +197,20 @@ export class CoreService extends Base {
     }
 
     const st = ServiceTypes[this.type];
-    const ste = serviceTypeEndpoints(st);
 
-    const e = ste.find(t => t.type.name === this.type);
-    if (e) {
-      return e.port;
-    }
+    if (st) {
+      const ste = serviceTypeEndpoints(st);
 
-    for (const sst of st.extends) {
-      const e = ste.find(t => t.type.name === sst.name);
+      const e = ste.find(t => t.type.name === this.type);
       if (e) {
         return e.port;
+      }
+
+      for (const sst of st.extends) {
+        const e = ste.find(t => t.type.name === sst.name);
+        if (e) {
+          return e.port;
+        }
       }
     }
   }
