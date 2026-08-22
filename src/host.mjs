@@ -3,7 +3,6 @@ import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { AggregatedMap } from "aggregated-map";
 import {
-  default_collection_attribute_writable,
   string_attribute,
   string_attribute_writable,
   string_set_attribute_writable,
@@ -79,6 +78,7 @@ export class Host extends ServiceOwner {
     replaces: { ...string_set_attribute_writable, name: "replaces" },
     depends: { ...string_set_attribute_writable, name: "depends" },
     provides: { ...string_set_attribute_writable, name: "provides" },
+    optional: { ...string_set_attribute_writable, name: "optional" },
     extends: {
       ...extends_attribute,
       type: Host

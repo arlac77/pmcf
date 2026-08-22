@@ -792,6 +792,22 @@ export class bind extends CoreService {
     return false;
   }
 
+  templateContentAttributes(dir) {
+    const attr = super.templateContentAttributes(dir);
+
+    //  attr.properties = this.packageContentProperties;
+
+    attr.properties = {
+      "usr/share/libalpm/scripts/*": { mode: "0777" },
+      "etc/named/**/*": { user: "named", group: "named" },
+      "var/lib/named": { user: "named", group: "named" }
+    };
+
+    console.log("templateContentAttributes", this.fullName, attr);
+
+    return attr;
+  }
+
   async *preparePackages(dir) {
     const permissions = this.packageContentPermissions;
     const packageData = this.packageData;

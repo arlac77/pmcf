@@ -21,7 +21,8 @@ import {
   string_attribute_writable,
   string_set_attribute_writable,
   description_attribute_writable,
-  boolean_attribute_writable
+  boolean_attribute_writable,
+  object_attribute
 } from "pacc";
 import { union } from "./utils.mjs";
 import { addType } from "pmcf";
@@ -43,14 +44,18 @@ export class Base {
     description: description_attribute_writable,
     type: type_attribute_writable,
     directory: { ...string_attribute_writable, name: "directory" },
-    packaging: { ...string_set_attribute_writable, name: "packaging" },
     enabled: { ...boolean_attribute_writable, name: "enabled" },
     tags: { ...string_set_attribute_writable, name: "tags" },
-    template: { ...boolean_attribute_writable, name: "template", private: true }
+    template: {
+      ...boolean_attribute_writable,
+      name: "template",
+      private: true
+    },
+
+    packaging: { ...string_set_attribute_writable, name: "packaging" },
+ //   packageContentProperties: { ...object_attribute, writable: true, name: "packageContentProperties"}
   };
-  /*asMapEntry = (attribute, value, object) => {
-    console.log("asMapEntry",attribute?.name,value);
-    return [value.name, value]; };*/
+
   static {
     addType(this);
   }
@@ -555,6 +560,15 @@ export class Base {
 
   /**
    *
+   * @param {string} dir
+   * @returns {Object}
+   */
+  templateContentAttributes(dir) {
+    return { dir, pattern: "**/*" };
+  }
+
+  /**
+   *
    * @param {*} entryProperties
    * @param {*} directoryProperties
    * @returns {AsyncIterable<ContentProvider>}
@@ -567,7 +581,7 @@ export class Base {
         if ((await stat(dir)).isDirectory) {
           yield transform(
             new FileContentProvider(
-              { dir, pattern: "**/*" },
+              this.templateContentAttributes(dir),
               entryProperties,
               directoryProperties
             ),
