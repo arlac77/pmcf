@@ -122,6 +122,9 @@ export function asIterator(value) {
     case "undefined":
       return [];
     case "string":
+    case "number":
+    case "boolean":
+    case "bigint":
       return [value];
   }
 
