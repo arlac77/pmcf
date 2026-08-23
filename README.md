@@ -114,10 +114,6 @@ generates config packages for:
     *   [Parameters](#parameters-25)
 *   [sectionLines](#sectionlines)
     *   [Parameters](#parameters-26)
-*   [asArray](#asarray)
-    *   [Parameters](#parameters-27)
-*   [asIterator](#asiterator)
-    *   [Parameters](#parameters-28)
 
 ## Base
 
@@ -457,24 +453,6 @@ Returns **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 *   `values` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**&#x20;
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
-
-## asArray
-
-Convert scalar or iterable into Array.
-
-### Parameters
-
-*   `value` **any**&#x20;
-
-Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>**&#x20;
-
-## asIterator
-
-### Parameters
-
-*   `value` **any**&#x20;
-
-Returns **Iterable\<any>**&#x20;
 
 # install
 
