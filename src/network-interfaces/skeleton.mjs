@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import { AggregatedMap } from "aggregated-map";
-import { addType } from "pacc";
-import { writeLines, sectionLines, asArray } from "../utils.mjs";
+import { addType, asArray } from "pacc";
+import { writeLines, sectionLines } from "../utils.mjs";
 import { NetworkAddress, Host, cidrAddresses } from "pmcf";
 import { ServiceOwner } from "../service-owner.mjs";
 

@@ -1,7 +1,6 @@
-import { addType as addTypeBasic, toInternal, registerToken, DOT } from "pacc";
+import { addType as addTypeBasic, toInternal, registerToken, DOT, asArray } from "pacc";
 import { normalizeIP } from "ip-utilties";
 import { addServiceType } from "pmcf";
-import { asArray } from "./utils.mjs";
 
 const SLASH = { ...DOT, str: "/" };
 

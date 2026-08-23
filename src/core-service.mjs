@@ -2,7 +2,8 @@ import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import {
   string_attribute_writable,
   number_attribute_writable,
-  priority_attribute
+  priority_attribute,
+  asArray
 } from "pacc";
 import {
   Base,
@@ -15,7 +16,6 @@ import {
   FAMILY_UNIX,
   FAMILY_DNS
 } from "pmcf";
-import { asArray } from "./utils.mjs";
 import {
   networkAddressAttributes,
   extends_attribute,

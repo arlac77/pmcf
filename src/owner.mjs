@@ -4,9 +4,10 @@ import { AggregatedMap } from "aggregated-map";
 import {
   string_set_attribute_writable,
   string_attribute_writable,
-  email_attribute
+  email_attribute,
+  asArray
 } from "pacc";
-import { asArray, union } from "./utils.mjs";
+import { union } from "./utils.mjs";
 import { ServiceOwner } from "./service-owner.mjs";
 import { Subnet, SUBNET_GLOBAL_IPV4, SUBNET_GLOBAL_IPV6 } from "./subnet.mjs";
 import {

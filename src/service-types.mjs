@@ -1,6 +1,6 @@
-import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
+import { asArray } from "pacc";
+import { FAMILY_IPV6 } from "ip-utilties";
 import { FAMILY_UNIX, FAMILY_IPV4_IPV6 } from "./endpoint.mjs";
-import { asArray } from "./utils.mjs";
 
 export const ServiceTypes = {
   "alpm-repo": {

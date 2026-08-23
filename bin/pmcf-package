@@ -6,8 +6,8 @@ import { tmpdir } from "node:os";
 import { cwd, env } from "node:process";
 import { packageDirectory } from "package-directory";
 import { createPublishingDetails } from "npm-pkgbuild";
+import { asArray } from "pacc";
 import { prepare } from "../src/cli.mjs";
-import { asArray } from "../src/utils.mjs";
 
 const { root, args, options } = await prepare({
   publish: {

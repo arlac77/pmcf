@@ -7,7 +7,8 @@ import {
   string_attribute_writable,
   string_set_attribute_writable,
   number_attribute_writable,
-  priority_attribute
+  priority_attribute,
+  asArray
 } from "pacc";
 import { addresses, addType, assign } from "pmcf";
 import {
@@ -22,7 +23,6 @@ import {
   domainFromDominName,
   domainName,
   writeLines,
-  asArray,
   union
 } from "./utils.mjs";
 import { loadHooks } from "./hooks.mjs";

@@ -1,4 +1,5 @@
 import test from "ava";
+import { asArray } from "pacc";
 import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import {
   InitializationContext,
@@ -10,7 +11,6 @@ import {
   subnets_attribute,
   networks_attribute
 } from "pmcf";
-import { asArray } from "../src/utils.mjs";
 
 test("Subnet owner", t => {
   const ic = new InitializationContext();

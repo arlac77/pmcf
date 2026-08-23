@@ -16,7 +16,8 @@ import {
   boolean_attribute_writable_false,
   integer_attribute_writable,
   integer_attribute,
-  secret_attribute_writable
+  secret_attribute_writable,
+  asArray
 } from "pacc";
 import {
   Base,
@@ -27,7 +28,7 @@ import {
   addType,
   FAMILY_IPV4_IPV6
 } from "pmcf";
-import { yesno, writeLines, asArray } from "../utils.mjs";
+import { yesno, writeLines  } from "../utils.mjs";
 import {
   DNSRecord,
   dnsFullName,
