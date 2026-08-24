@@ -814,7 +814,7 @@ export class bind extends CoreService {
     //  attr.properties = this.packageContentProperties;
 
     attr.properties = {
-      "usr/share/libalpm/scripts/*": { mode: "0777" },
+      "usr/share/libalpm/scripts/*": { mode: 0o777 },
       "etc/named/**/*": { user: "named", group: "named" },
       "var/lib/named/**/*": { user: "named", group: "named" }
     };
