@@ -28,7 +28,7 @@ import {
   addType,
   FAMILY_IPV4_IPV6
 } from "pmcf";
-import { yesno, writeLines  } from "../utils.mjs";
+import { yesno, writeLines } from "../utils.mjs";
 import {
   DNSRecord,
   dnsFullName,
@@ -486,6 +486,7 @@ class bind_view extends bind_object {
       this._zoneConfigs = new Map();
       this._zones = new Map();
 
+      const subnets = new Set();
       const hosts = new Set();
       const addresses = new Set();
 
@@ -511,17 +512,31 @@ class bind_view extends bind_object {
               )
             );
 
-            const reverseZone =
-              this.hasReverse &&
-              na.subnet.prefix &&
-              this._zones.getOrInsertComputed(
-                reverseArpa(na.subnet.prefix),
+            let reverseZone;
+
+            if (this.hasReverse && na.subnet.prefix) {
+              let subnet;
+
+              for (const s of subnets) {
+                if (s.isIncluded(na.subnet)) {
+                  subnet = s;
+                }
+              }
+
+              if (!subnet) {
+                subnet = na.subnet;
+                subnets.add(subnet);
+              }
+
+              reverseZone = this._zones.getOrInsertComputed(
+                reverseArpa(subnet.prefix),
                 domain =>
                   this.intoCatalog(
                     new bind_zone(this, domain, config, locationName),
                     locationName
                   )
               );
+            }
 
             if (!hosts.has(host)) {
               hosts.add(host);
