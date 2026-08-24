@@ -816,7 +816,7 @@ export class bind extends CoreService {
     attr.properties = {
       "usr/share/libalpm/scripts/*": { mode: "0777" },
       "etc/named/**/*": { user: "named", group: "named" },
-      "var/lib/named": { user: "named", group: "named" }
+      "var/lib/named/**/*": { user: "named", group: "named" }
     };
 
     console.log("templateContentAttributes", this.fullName, attr);
