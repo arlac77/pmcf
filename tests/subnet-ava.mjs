@@ -54,6 +54,16 @@ test("Subnet match with prefix length", t => {
   t.true(s1.matchesAddress("192.168.1.60/30"));
 });
 
+
+test("Subnet included", t => {
+  const s1 = new Subnet(undefined, "192.168.1/24");
+  const s2 = new Subnet(undefined, "192.168.1.60/30");
+  t.true(s1.isIncluded(s2));
+
+  const s3 = new Subnet(undefined, "10.0.1/24");
+  t.false(s1.isIncluded(s3));
+});
+
 function st(t, address, expected) {
   const subnet =
     address instanceof Subnet ? address : new Subnet(undefined, address);

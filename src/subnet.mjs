@@ -77,6 +77,10 @@ export class Subnet {
     return this.address;
   }
 
+  isIncluded(subnet) {
+    return matchPrefixIP(this.address, this.prefixLength, subnet.address);
+  }
+
   matchesAddress(address) {
     return matchPrefixIP(this.address, this.prefixLength, address);
   }
