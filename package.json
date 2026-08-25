@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "aggregated-map": "^1.0.10",
-    "content-entry-transform": "^1.7.2",
+    "content-entry-transform": "^1.7.3",
     "ip-utilties": "^3.13.0",
     "npm-pkgbuild": "^20.9.5",
     "pacc": "^11.5.4",
