@@ -42,156 +42,85 @@ generates config packages for:
 ### Table of Contents
 
 *   [Base](#base)
-    *   [Parameters](#parameters)
-    *   [mapFromDirections](#mapfromdirections)
-        *   [Parameters](#parameters-1)
-    *   [unionFromDirections](#unionfromdirections)
-        *   [Parameters](#parameters-2)
-    *   [walkDirections](#walkdirections)
-        *   [Parameters](#parameters-3)
-    *   [attribute](#attribute)
-        *   [Parameters](#parameters-4)
-    *   [attributeIterator](#attributeiterator)
-        *   [Parameters](#parameters-5)
-    *   [getAttributes](#getattributes)
-        *   [Parameters](#parameters-6)
-    *   [property](#property)
-        *   [Parameters](#parameters-7)
     *   [enabled](#enabled)
     *   [priority](#priority)
-    *   [expression](#expression)
-        *   [Parameters](#parameters-8)
     *   [templateContentAttributes](#templatecontentattributes)
-        *   [Parameters](#parameters-9)
+        *   [Parameters](#parameters)
     *   [templateContent](#templatecontent)
-        *   [Parameters](#parameters-10)
+        *   [Parameters](#parameters-1)
     *   [isTemplate](#istemplate)
-    *   [expand](#expand)
-        *   [Parameters](#parameters-11)
+*   [access](#access)
 *   [serviceEndpoints](#serviceendpoints)
-    *   [Parameters](#parameters-12)
+    *   [Parameters](#parameters-2)
+*   [attributeIterator](#attributeiterator)
+    *   [Parameters](#parameters-3)
+*   [getAttributes](#getattributes)
+    *   [Parameters](#parameters-4)
+*   [property](#property)
+    *   [Parameters](#parameters-5)
+*   [attribute](#attribute)
+    *   [Parameters](#parameters-6)
+*   [walkDirections](#walkdirections)
+    *   [Parameters](#parameters-7)
+*   [mapFromDirections](#mapfromdirections)
+    *   [Parameters](#parameters-8)
+*   [unionFromDirections](#unionfromdirections)
+    *   [Parameters](#parameters-9)
+*   [expand](#expand)
+    *   [Parameters](#parameters-10)
+*   [expression](#expression)
+    *   [Parameters](#parameters-11)
 *   [PortEndpoint](#portendpoint)
-    *   [Parameters](#parameters-13)
+    *   [Parameters](#parameters-12)
     *   [port](#port)
     *   [socketAddress](#socketaddress)
 *   [HTTPEndpoint](#httpendpoint)
-    *   [Parameters](#parameters-14)
+    *   [Parameters](#parameters-13)
     *   [port](#port-1)
 *   [domainNames](#domainnames)
 *   [InitializationContext](#initializationcontext)
-    *   [Parameters](#parameters-15)
+    *   [Parameters](#parameters-14)
 *   [SkeletonNetworkInterface](#skeletonnetworkinterface)
     *   [networkAddresses](#networkaddresses)
-        *   [Parameters](#parameters-16)
+        *   [Parameters](#parameters-15)
 *   [zones](#zones)
 *   [addressesStatement](#addressesstatement)
-    *   [Parameters](#parameters-17)
+    *   [Parameters](#parameters-16)
 *   [SystemdJournalRemoteService](#systemdjournalremoteservice)
     *   [Properties](#properties)
     *   [systemdConfigs](#systemdconfigs)
-        *   [Parameters](#parameters-18)
+        *   [Parameters](#parameters-17)
 *   [SystemdJournalUploadService](#systemdjournaluploadservice)
     *   [Properties](#properties-1)
     *   [systemdConfigs](#systemdconfigs-1)
-        *   [Parameters](#parameters-19)
+        *   [Parameters](#parameters-18)
 *   [NetworkAddress](#networkaddress)
-    *   [Parameters](#parameters-20)
+    *   [Parameters](#parameters-19)
     *   [subnet](#subnet)
     *   [networkInterface](#networkinterface)
     *   [address](#address)
 *   [addresses](#addresses)
-    *   [Parameters](#parameters-21)
+    *   [Parameters](#parameters-20)
 *   [cidrAddresses](#cidraddresses)
-    *   [Parameters](#parameters-22)
+    *   [Parameters](#parameters-21)
 *   [families](#families)
 *   [secretName](#secretname)
 *   [directHosts](#directhosts)
 *   [subnetForAddress](#subnetforaddress)
-    *   [Parameters](#parameters-23)
+    *   [Parameters](#parameters-22)
 *   [domainName](#domainname)
-    *   [Parameters](#parameters-24)
+    *   [Parameters](#parameters-23)
 *   [domainFromDominName](#domainfromdominname)
-    *   [Parameters](#parameters-25)
+    *   [Parameters](#parameters-24)
 *   [sectionLines](#sectionlines)
-    *   [Parameters](#parameters-26)
+    *   [Parameters](#parameters-25)
 
 ## Base
 
+**Extends Core**
+
 attributes: as declared in the types
 properties: use defined values to support attribute value definitions
-
-### Parameters
-
-*   `owner` &#x20;
-*   `data` &#x20;
-
-### mapFromDirections
-
-Deliver AggregatedMap of all property Maps.
-
-#### Parameters
-
-*   `directions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
-*   `property` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
-
-Returns **[Map](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)\<any, any>**&#x20;
-
-### unionFromDirections
-
-Deliver union set of all property values.
-
-#### Parameters
-
-*   `directions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
-*   `property` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
-
-Returns **[Set](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set)\<any>**&#x20;
-
-### walkDirections
-
-Walk the object graph in some directions and deliver seen nodes.
-
-#### Parameters
-
-*   `directions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**  (optional, default `["this","extends","owner"]`)
-
-Returns **Iterable<[Base](#base)>**&#x20;
-
-### attribute
-
-#### Parameters
-
-*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
-
-Returns **any**&#x20;
-
-### attributeIterator
-
-Retrive attribute values from an object.
-
-#### Parameters
-
-*   `filter` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?**&#x20;
-
-Returns **Iterable<\[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any]>** values
-
-### getAttributes
-
-Retrive attribute values from an object.
-
-#### Parameters
-
-*   `filter` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?**  (optional, default `filterPublic`)
-
-Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** values
-
-### property
-
-#### Parameters
-
-*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
-
-Returns **any**&#x20;
 
 ### enabled
 
@@ -200,15 +129,6 @@ Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 ### priority
 
 Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
-
-### expression
-
-#### Parameters
-
-*   `expression` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
-*   `options` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**&#x20;
-
-Returns **any**&#x20;
 
 ### templateContentAttributes
 
@@ -231,13 +151,9 @@ Returns **AsyncIterable\<ContentProvider>**&#x20;
 
 Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
 
-### expand
+## access
 
-#### Parameters
-
-*   `object` **any**&#x20;
-
-Returns **any**&#x20;
+Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
 ## serviceEndpoints
 
@@ -253,6 +169,91 @@ Returns **any**&#x20;
     *   `options.join` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** join result(s) into a string
 
 Returns **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | any)**&#x20;
+
+## attributeIterator
+
+Retrive attribute values from an object.
+
+### Parameters
+
+*   `filter` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?**&#x20;
+
+Returns **Iterable<\[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any]>** values
+
+## getAttributes
+
+Retrive attribute values from an object.
+
+### Parameters
+
+*   `filter` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)?**  (optional, default `filterPublic`)
+
+Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** values
+
+## property
+
+### Parameters
+
+*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+
+Returns **any**&#x20;
+
+## attribute
+
+### Parameters
+
+*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+
+Returns **any**&#x20;
+
+## walkDirections
+
+Walk the object graph in some directions and deliver seen nodes.
+
+### Parameters
+
+*   `directions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**  (optional, default `["this","extends","owner"]`)
+
+Returns **Iterable\<Core>**&#x20;
+
+## mapFromDirections
+
+Deliver AggregatedMap of all property Maps.
+
+### Parameters
+
+*   `directions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
+*   `property` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+
+Returns **[Map](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)\<any, any>**&#x20;
+
+## unionFromDirections
+
+Deliver union set of all property values.
+
+### Parameters
+
+*   `directions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
+*   `property` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+
+Returns **[Set](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set)\<any>**&#x20;
+
+## expand
+
+### Parameters
+
+*   `object` **any**&#x20;
+
+Returns **any**&#x20;
+
+## expression
+
+### Parameters
+
+*   `expression` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+*   `options` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**&#x20;
+
+Returns **any**&#x20;
 
 ## PortEndpoint
 
