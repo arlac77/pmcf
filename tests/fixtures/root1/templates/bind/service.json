@@ -1,5 +1,7 @@
 {
-  "depends": ["bind"],
+  "content": {
+    "depends": ["bind"]
+  },
   "views": {
     "trusted": {
       "matchClients": "/L1/n1"

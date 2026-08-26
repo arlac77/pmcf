@@ -58,7 +58,7 @@ export class mosquitto extends CoreService {
       wd.map(n => [n.fullName, n.directory])
     );*/
 
-    const permissions = this.packageContentPermissions;
+    const permissions = this.content.permissions;
     const packageData = this.packageData;
 
     packageData.sources = await Array.fromAsync(
@@ -66,7 +66,7 @@ export class mosquitto extends CoreService {
     );
 
     packageData.sources.push(
-      new FileContentProvider(dir + "/", ...permissions)
+      new FileContentProvider(dir + "/", permissions)
     );
 
     await writeLines(

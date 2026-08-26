@@ -53,7 +53,7 @@
     "aggregated-map": "^1.0.10",
     "content-entry-transform": "^1.7.3",
     "ip-utilties": "^3.13.0",
-    "npm-pkgbuild": "^20.9.5",
+    "npm-pkgbuild": "^21.0.0",
     "pacc": "^11.6.0",
     "package-directory": "^8.2.0",
     "yaml": "^2.9.0"

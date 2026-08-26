@@ -1,5 +1,7 @@
 {
   "extends": "/templates/smb",
-  "depends": "mf-backup",
+  "content": {
+    "depends": "mf-backup"
+  },
   "path": "/backup/timemachine"
 }

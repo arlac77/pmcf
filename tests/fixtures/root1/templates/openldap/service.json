@@ -1,6 +1,10 @@
 {
   "aliases": "ldap",
   "base": "dc=mf,dc=de",
+  "content": {
+    "depends": "openldap",
+    "group": "config"
+  },
   "properties": {
     "certname": "primary",
     "configdir": "/etc/openldap/slapd.d/",

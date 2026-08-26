@@ -1,5 +1,7 @@
 {
-  "depends": "libmicrohttpd",
+  "content": {
+    "depends": ["libmicrohttpd"]
+  },
   "aliases": "journal",
   "Seal": false,
   "SplitMode": "host",

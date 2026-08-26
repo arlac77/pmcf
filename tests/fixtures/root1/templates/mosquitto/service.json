@@ -1,5 +1,7 @@
 {
-  "depends": ["mosquitto"],
+  "content": {
+    "depends": ["mosquitto"]
+  },
   "aliases": "mqtt",
   "persistence_location": "/var/lib/mosquitto",
   "password_file": "/etc/mosquitto/passwd"

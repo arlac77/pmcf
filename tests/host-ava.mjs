@@ -10,7 +10,7 @@ import {
   networks_attribute,
   hosts_attribute
 } from "pmcf";
-import { assertObject, assertObjects } from "./util.mjs";
+import { assertObject } from "./util.mjs";
 import { root1 } from "./fixtures.mjs";
 
 test("Host minimal", async t => {
@@ -32,7 +32,6 @@ test("Host load", async t => {
 
   const host2 = ic.named("/L1/n1/host2");
   const host1 = ic.named("/L1/host1");
-  t.deepEqual(host1.packaging, new Set(["arch"]));
 
   const eth0 = host1.named("eth0");
   t.is(eth0.network, ic.named("/L1/n1"));
@@ -60,6 +59,9 @@ test("Host load", async t => {
     ic.root.hosts,
     root1(ic.root, ["/L1/n1/host2", "/L1/host1"])
   );*/
+
+  const content = host1.content;
+  t.deepEqual(content.packaging, new Set(["alpm"]));
 });
 
 test("Host extends", t => {
@@ -72,6 +74,9 @@ test("Host extends", t => {
     distribution: "suse",
     networkInterfaces: {
       lo: {}
+    },
+    content: {
+      packaging: "alpm"
     }
   });
   assign(hosts_attribute, ic.root, linux);
@@ -86,13 +91,16 @@ test("Host extends", t => {
     vendor: "vendor e1",
     architecture: "aarch64",
     serial: "123",
-    provides: "pkge1",
-    depends: "dpkge1",
-    replaces: "rpkge1",
     networkInterfaces: {
       eth0: {
         kind: "ethernet"
       }
+    },
+    content: {
+      packaging: "alpm",
+      provides: "pkge1",
+      depends: "dpkge1",
+      replaces: "rpkge1"
     }
   });
   assign(hosts_attribute, ic.root, e1);
@@ -109,9 +117,11 @@ test("Host extends", t => {
     name: "e2",
     extends: e1,
     aliases: "e2a",
-    provides: "pkge2",
-    depends: "dpkge2",
-    replaces: "rpkge2"
+    content: {
+      provides: "pkge2",
+      depends: "dpkge2",
+      replaces: "rpkge2"
+    }
   });
   assign(hosts_attribute, ic.root, e2);
 
@@ -127,9 +137,11 @@ test("Host extends", t => {
     id: "1234",
     extends: e2,
     aliases: "h1a",
-    provides: "pkgh1",
-    depends: "dpkgh1",
-    replaces: "rpkgh1"
+    content: {
+      provides: "pkgh1",
+      depends: "dpkgh1",
+      replaces: "rpkgh1"
+    }
   });
   assign(hosts_attribute, ic.root, h1);
 
@@ -148,11 +160,16 @@ test("Host extends", t => {
   t.is(h1.architecture, "aarch64");
   t.is(h1.serial, "123");
   t.is(h1.id, "1234");
-  t.deepEqual([...h1.provides].sort(), ["pkge1", "pkge2", "pkgh1"].sort());
-  t.deepEqual([...h1.depends].sort(), ["dpkge1", "dpkge2", "dpkgh1"].sort());
-  t.deepEqual([...h1.replaces].sort(), ["rpkge1", "rpkge2", "rpkgh1"].sort());
-
   t.is(e1.networkInterfaces.get("eth0").kind, "ethernet");
+
+  const c = h1.content;
+
+  t.is(c.owner, h1);
+  t.is(c.typeName, "content");
+
+  t.deepEqual([...c.provides].sort(), ["pkge1", "pkge2", "pkgh1"].sort());
+  t.deepEqual([...c.depends].sort(), ["dpkge1", "dpkge2", "dpkgh1"].sort());
+  t.deepEqual([...c.replaces].sort(), ["rpkge1", "rpkge2", "rpkgh1"].sort());
 });
 
 test("Host domains & aliases", t => {

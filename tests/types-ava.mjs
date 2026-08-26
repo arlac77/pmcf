@@ -1,6 +1,7 @@
 import test from "ava";
 import { types, resolveTypeLinks } from "pacc";
 import {
+  Core,
   Base,
   Cluster,
   root,
@@ -19,8 +20,11 @@ import {
 
 test("types", t => {
   resolveTypeLinks();
+
+  t.is(types.core.extends, undefined);
+
   t.is(types.base, Base);
-  t.is(types.base.extends, undefined);
+  t.is(types.base.extends, Core);
   t.is(types.base.key, "name");
 
   t.is(types.owner, Owner);
@@ -40,13 +44,13 @@ test("types", t => {
   t.is(types.network.key, "name");
 
   t.is(types.subnet, Subnet);
-  t.is(types.subnet.extends, undefined);
+  t.is(types.subnet.extends, Core);
   t.is(types.subnet.priority, 1);
   t.is(types.subnet.key, "address");
 
   t.is(types.service, Service);
   t.is(types.service.extends, CoreService);
-  t.deepEqual(types.service.extends, types['core-service']);
+  t.deepEqual(types.service.extends, types["core-service"]);
   t.deepEqual(types.service.owners, [
     Host,
     Cluster,

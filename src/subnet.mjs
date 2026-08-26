@@ -5,16 +5,11 @@ import {
   matchPrefixIP,
   FAMILY_IPV6
 } from "ip-utilties";
-import {
-  string_attribute,
-  name_attribute,
-  integer_attribute,
-  getAttribute
-} from "pacc";
+import { string_attribute, name_attribute, integer_attribute } from "pacc";
 import { networks_attribute } from "./common-attributes.mjs";
-import { addType, Network } from "pmcf";
+import { addType, Network, Core } from "pmcf";
 
-export class Subnet {
+export class Subnet extends Core {
   static name = "subnet";
   static priority = 1;
   static owners = ["owner", "network", "network_interface", "root"];
@@ -34,6 +29,7 @@ export class Subnet {
   networks = new Set();
 
   constructor(owner, address) {
+    super();
     const { longPrefix, prefix, prefixLength, cidr, family } =
       normalizeCIDR(address);
 
@@ -44,26 +40,12 @@ export class Subnet {
     this.family = family;
   }
 
-  get owner() {
-    return this._owner;
-  }
-
   set owner(value) {
-    this._owner = value;
+    super.owner = value;
     if (value instanceof Network) {
       this.networks.add(value);
     }
   }
-
-  attribute(name) {
-    return getAttribute(this, name);
-  }
-
-  value(name) {
-    return this.attribute(name);
-  }
-
-  *_walkDirections(directions, seen) {}
 
   get cidr() {
     return this.address;

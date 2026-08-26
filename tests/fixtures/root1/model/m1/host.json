@@ -1,11 +1,13 @@
 {
   "chassis": "server",
   "architecture": "aarch64",
-  "packaging": "arch",
-  "depends": ["d1", "d3"],
-  "replaces": ["r1", "r3"],
-  "provides": ["p1", "p3-${hostName}"],
   "services": {
     "smb": { "systemd": "smb.service" }
+  },
+  "content": {
+    "packaging": "alpm",
+    "depends": ["d1", "d3"],
+    "replaces": ["r1", "r3"],
+    "provides": ["p1", "p3-${hostName}"]
   }
 }

@@ -1,20 +1,14 @@
 import { join } from "node:path";
 import { stat } from "node:fs/promises";
-import { AggregatedMap } from "aggregated-map";
-import { allOutputs } from "npm-pkgbuild";
 import {
   createExpressionTransformer,
   transform
 } from "content-entry-transform";
 import { FileContentProvider } from "npm-pkgbuild";
 import {
-  getAttribute,
   parse,
   globals,
-  expand,
   extract,
-  toExternal,
-  filterPublic,
   extendingAttributeIterator,
   name_attribute_writable,
   type_attribute_writable,
@@ -22,10 +16,10 @@ import {
   string_set_attribute_writable,
   description_attribute_writable,
   boolean_attribute_writable,
-  object_attribute
+  default_attribute_writable
 } from "pacc";
 import { union } from "./utils.mjs";
-import { addType } from "pmcf";
+import { addType, Core } from "pmcf";
 import { owner_attribute, aliases_attribute } from "./common-attributes.mjs";
 
 /**
@@ -33,7 +27,7 @@ import { owner_attribute, aliases_attribute } from "./common-attributes.mjs";
  * attributes: as declared in the types
  * properties: use defined values to support attribute value definitions
  */
-export class Base {
+export class Base extends Core {
   static name = "base";
   static key = "name";
   static priority = 0;
@@ -52,8 +46,7 @@ export class Base {
       private: true
     },
 
-    packaging: { ...string_set_attribute_writable, name: "packaging" },
- //   packageContentProperties: { ...object_attribute, writable: true, name: "packageContentProperties"}
+    content: { ...default_attribute_writable, type: "content", name: "content" }
   };
 
   static {
@@ -67,94 +60,22 @@ export class Base {
   description;
   name;
   properties = {};
-  extends = new Set();
   _aliases = new Set();
   _tags = new Set();
-  _packaging = new Set();
   _directory;
 
-  constructor(owner, data) {
-    if (owner) {
-      this.owner = owner;
-    }
-  }
-
-  set owner(value) {
-    if (this === value || this === value?.owner) {
-      this.error("Unable to own myself", value.fullName);
-    } else {
-      this._owner = value;
-    }
-  }
-
-  get owner() {
-    return this._owner;
-  }
-
-  forOwner(owner) {
-    if (this.owner !== owner) {
-      const newObject = Object.create(this);
-      newObject.owner = owner;
-      return newObject;
-    }
-
-    return this;
+  value(name) {
+    return this.attribute(name) ?? this.property(name) ?? this.named(name);
   }
 
   materializeExtends() {
-    for (const [path, attribute] of extendingAttributeIterator(
-      this.constructor,
-      attribute => attribute.collection && !attribute.type.primitive
-    )) {
-      if (attribute.deferredExpression) {
-        const name = attribute.name;
-        if (!this.hasOwnProperty(name)) {
-          for (const e of this.walkDirections(["extends"])) {
-            if (e.hasOwnProperty(name)) {
-              Object.defineProperty(this, name, {
-                get: () => e[name]
-              });
-              break;
-            }
-          }
+    super.materializeExtends();
+    if (this.content) {
+      for (const e of this.extends) {
+        if (e.content) {
+          this.content.extends.add(e.content);
         }
-
-        continue;
       }
-
-      const collection = this[attribute.name];
-
-      if (typeof collection?.get === "function") {
-        for (const [name, extending] of this.mapFromDirections(
-          ["extends"],
-          attribute.name
-        )) {
-          const present = collection.get(extending.name);
-
-          if (present) {
-            present.extends.add(extending);
-            present.materializeExtends();
-          } else {
-            collection.set(extending.name, extending.forOwner(this));
-          }
-        }
-      } /*else {
-        if (Array.isArray(collection)) {
-          // TODO
-        } else {
-          //console.log("EXTENDS", this.fullName, attribute.name);
-
-          for (const extending of this.unionFromDirections(
-            ["extends"],
-            attribute.name
-          )) {
-            if (!collection.has(extending)) {
-              //console.log("ADD", this.fullName, extending.fullName);
-              collection.add(extending);
-            }
-          }
-        }
-      }*/
     }
   }
 
@@ -176,184 +97,6 @@ export class Base {
         if (object) {
           return parts.length === 0 ? object : object.named(parts.join("/"));
         }
-      }
-    }
-  }
-
-  /**
-   * Deliver AggregatedMap of all property Maps.
-   * @param {string[]} directions
-   * @param {string} property
-   * @returns {Map<any,any>}
-   */
-  mapFromDirections(directions, property) {
-    return new AggregatedMap(
-      [...this.walkDirections(directions)]
-        .map(node => node[property])
-        .filter(node => node !== undefined)
-    );
-  }
-
-  /**
-   * Deliver union set of all property values.
-   * @param {string[]} directions
-   * @param {string} property
-   * @returns {Set<any>}
-   */
-  unionFromDirections(directions, property) {
-    let collected = new Set();
-    for (const node of this.walkDirections(directions)) {
-      const value = node[property];
-      if (value !== undefined) {
-        if (!(value instanceof Set)) {
-          console.log("NO SET", value, node.fullName, property);
-        }
-        collected = collected.union(value);
-      }
-    }
-
-    return collected;
-  }
-
-  get children() {
-    const all = [];
-
-    for (const [path, attribute] of extendingAttributeIterator(
-      this.constructor,
-      attribute => attribute.backpointer?.name === "owner"
-    )) {
-      const value = this[path];
-
-      if (value !== undefined) {
-        if (attribute.collection) {
-          if (typeof value.values === "function") {
-            all.push(...value.values());
-          } else {
-            if (value instanceof Iterator) {
-              all.push(...value);
-            } else {
-              if (value instanceof Base) {
-                this.error(
-                  `Unexpected scalar value for "${attribute.name}"`,
-                  value.fullName
-                );
-                all.push(value); // TODO should not happen
-              } else if (typeof value === "object") {
-                all.push(...Object.values(value));
-              }
-            }
-          }
-        } else {
-          all.push(value);
-        }
-      }
-    }
-
-    return all;
-  }
-
-  /**
-   * Walk the object graph in some directions and deliver seen nodes.
-   * @param {string[]} directions
-   * @return {Iterable<Base>}
-   */
-  *walkDirections(directions = ["this", "extends", "owner"]) {
-    if (directions.indexOf("this") >= 0) {
-      yield this;
-      directions = directions.filter(d => d !== "this");
-    }
-
-    yield* this._walkDirections(directions, new Set());
-  }
-
-  *_walkDirections(directions, seen) {
-    if (!seen.has(this)) {
-      seen.add(this);
-
-      for (const direction of directions) {
-        const value = this[direction];
-
-        if (value) {
-          if (value[Symbol.iterator]) {
-            for (const node of value) {
-              yield node;
-              yield* node._walkDirections(directions, seen);
-            }
-          } else {
-            yield value;
-            yield* value._walkDirections(directions, seen);
-          }
-        }
-      }
-    }
-  }
-
-  get typeName() {
-    return this.constructor.name;
-  }
-
-  /**
-   *
-   * @param {string} name
-   * @returns {any}
-   */
-  attribute(name) {
-    for (const node of this.walkDirections(["this", "extends"])) {
-      const value = getAttribute(node, name);
-      if (value !== undefined) {
-        return this.expand(value);
-      }
-    }
-  }
-
-  /**
-   * Retrive attribute values from an object.
-   * @param {Function} [filter]
-   * @return {Iterable<[string,any]>} values
-   */
-  *attributeIterator(filter) {
-    for (const [path, attribute] of extendingAttributeIterator(
-      this.constructor,
-      filter
-    )) {
-      const name = path.join(".");
-      const value = this.attribute(name);
-
-      if (value !== undefined) {
-        yield [
-          attribute.externalName ?? name,
-          toExternal(value, attribute),
-          path,
-          attribute
-        ];
-      }
-    }
-  }
-
-  /**
-   * Retrive attribute values from an object.
-   * @param {Function} [filter]
-   * @return {Object} values
-   */
-  getAttributes(filter = filterPublic) {
-    return Object.fromEntries(this.attributeIterator(filter));
-  }
-
-  value(name) {
-    return this.attribute(name) ?? this.property(name) ?? this.named(name);
-  }
-
-  /**
-   *
-   * @param {string} name
-   * @returns {any}
-   */
-  property(name) {
-    for (const node of this.walkDirections()) {
-      const value = node.properties[name];
-
-      if (value !== undefined) {
-        return this.expand(value);
       }
     }
   }
@@ -442,22 +185,6 @@ export class Base {
     return this.expression("services[types[smtp]][0]");
   }
 
-  /**
-   *
-   * @param {string} expression
-   * @param {object} options
-   * @returns {any}
-   */
-  expression(expression, options) {
-    return parse(expression, {
-      root: this.root,
-      current: this,
-      valueFor: (name, at) =>
-        typeof at?.value === "function" ? at.value(name) : globals[name],
-      ...options
-    });
-  }
-
   get services() {
     return this.owner?.services || new Map();
   }
@@ -479,28 +206,6 @@ export class Base {
     return this.owner ? join(this.owner.fullName, "/", this.name) : this.name;
   }
 
-  get derivedPackaging() {
-    return this.owner?.packaging;
-  }
-
-  set packaging(value) {
-    this._packaging = union(value, this._packaging);
-  }
-
-  get packaging() {
-    const dp = this.derivedPackaging;
-
-    if (dp) {
-      return this._packaging.union(dp);
-    }
-
-    return this._packaging;
-  }
-
-  get outputs() {
-    return new Set(allOutputs.filter(o => this.packaging.has(o.name)));
-  }
-
   get systemUserName() {
     return this.constructor.name;
   }
@@ -509,36 +214,16 @@ export class Base {
     return this.constructor.name;
   }
 
-  get packageContentPermissions() {
-    const owner = this.systemUserName;
-    const group = this.systemGroupName;
-    return [
-      {
-        mode: 0o644,
-        owner,
-        group
-      },
-      {
-        mode: 0o755,
-        owner,
-        group
-      }
-    ];
-  }
-
   get packageData() {
-    const nameParts = [this.typeName, this.owner?.name, this.name];
-    return {
-      sources: [],
-      outputs: this.outputs,
-      properties: {
-        name: nameParts.filter(n => n !== undefined && n.length > 0).join("-"),
-        description: `${this.type} definitions for ${this.fullName}`,
-        access: "private",
-        dependencies: this.depends,
-        groups: [this.typeName]
+    if (!this.content) {
+      for (const e of this.walkDirections(["extends"])) {
+        if (e.content) {
+          this.content = e.content.forOwner(this);
+          break;
+        }
       }
-    };
+    }
+    return this.content?.packageData(this);
   }
 
   async *preparePackages(stagingDir) {}
@@ -600,30 +285,10 @@ export class Base {
    * @return {boolean}
    */
   get isTemplate() {
-    //console.log("T", this.name, this.owner?.name, this.owner?.owner?.name);
     return (
       this.template ??
       (this.name?.indexOf("*") >= 0 || this.owner?.isTemplate || false)
     );
-  }
-
-  /**
-   *
-   * @param {any} object
-   * @returns {any}
-   */
-  expand(object) {
-    if (this.isTemplate || object instanceof Base) {
-      return object;
-    }
-
-    return expand(object, {
-      stopClass: Base,
-      root: this.root,
-      current: this,
-      valueFor: (name, at) =>
-        typeof at?.value === "function" ? at.value(name) : globals[name]
-    });
   }
 
   error(...args) {

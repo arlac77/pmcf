@@ -66,9 +66,11 @@ export function root1(root, filter) {
     instanceof: Host,
     owner: L1,
     os: "linux",
-    depends: ["btrfs-progs", "d1", "d2-linux", "d3"],
-    replaces: ["r1", "r2-linux", "r3"],
-    provides: ["p1", "p2-linux", "p3-host1", "p4"],
+    content: {
+      depends: ["btrfs-progs", "d1", "d2-linux", "d3"],
+      replaces: ["r1", "r2-linux", "r3"],
+   //   provides: ["p1", "p2-linux", "p3-host1", "p4"]
+    },
     networkInterfaces: {
       eth0: {
         network: L1n1,
@@ -83,9 +85,9 @@ export function root1(root, filter) {
         // extends: ["/templates/timemachine"],
         type: "timemachine"
       },
-    //  mdns: {
-        // extends: ["/templates/mdns"]
-    //  },
+      //  mdns: {
+      // extends: ["/templates/mdns"]
+      //  },
       mosquitto: {
         // extends: ["/templates/mosquitto"],
         type: "mosquitto",
@@ -107,7 +109,12 @@ export function root1(root, filter) {
           //        rootdn: "cn=Manager,${base_dn}"
         }
       },
-      chrony: { extends: [], type: "chrony", aliases: new Set("ntp"), port: 123 }
+      chrony: {
+        extends: [],
+        type: "chrony",
+        aliases: new Set("ntp"),
+        port: 123
+      }
     }
   };
 
@@ -117,7 +124,9 @@ export function root1(root, filter) {
     instanceof: Host,
     owner: L1n1,
     os: "linux",
-    packaging: new Set(["arch"]),
+    content: {
+      packaging: new Set(["alpm"])
+    },
     networkInterfaces: {
       wlan0: {
         network: L1n1,
@@ -169,7 +178,9 @@ export function root1(root, filter) {
       instanceof: Host,
       owner: model,
       isTemplate: true,
-      packaging: new Set(["arch"]),
+      content: {
+        packaging: new Set(["alpm"])
+      },
       chassis: "server",
       services: {
         smb: { type: "smb" }

@@ -825,17 +825,17 @@ export class bind extends CoreService {
   }
 
   async *preparePackages(dir) {
-    const permissions = this.packageContentPermissions;
+    const permissions = this.content.permissions;
     const packageData = this.packageData;
 
     packageData.sources = await Array.fromAsync(
-      this.templateContent(...permissions)
+      this.templateContent(permissions)
     );
 
     let hasContent = packageData.sources.length > 0;
 
     packageData.sources.push(
-      new FileContentProvider(dir + "/", ...permissions)
+      new FileContentProvider(dir + "/", permissions)
     );
 
     const outputControl = { packageData, dir, permissions };

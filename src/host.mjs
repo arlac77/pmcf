@@ -5,7 +5,6 @@ import { AggregatedMap } from "aggregated-map";
 import {
   string_attribute,
   string_attribute_writable,
-  string_set_attribute_writable,
   number_attribute_writable,
   priority_attribute,
   asArray
@@ -19,12 +18,7 @@ import {
 } from "./common-attributes.mjs";
 import { ServiceOwner } from "./service-owner.mjs";
 import { addHook } from "./hooks.mjs";
-import {
-  domainFromDominName,
-  domainName,
-  writeLines,
-  union
-} from "./utils.mjs";
+import { domainFromDominName, domainName, writeLines } from "./utils.mjs";
 import { loadHooks } from "./hooks.mjs";
 import { generateKnownHosts } from "./host-utils.mjs";
 
@@ -75,10 +69,6 @@ export class Host extends ServiceOwner {
       name: "architecture",
       values: new Set(["x86", "x86_64", "aarch64", "armv7", "riscv"])
     },
-    replaces: { ...string_set_attribute_writable, name: "replaces" },
-    depends: { ...string_set_attribute_writable, name: "depends" },
-    provides: { ...string_set_attribute_writable, name: "provides" },
-    optional: { ...string_set_attribute_writable, name: "optional" },
     extends: {
       ...extends_attribute,
       type: Host
@@ -91,10 +81,6 @@ export class Host extends ServiceOwner {
   }
 
   _networkInterfaces = new Map();
-  _provides = new Set();
-  _replaces = new Set();
-  _depends = new Set();
-  _optional = new Set();
   _os;
   _distribution;
   _deployment;
@@ -152,12 +138,6 @@ export class Host extends ServiceOwner {
     return this.attribute("_architecture");
   }
 
-  get derivedPackaging() {
-    return this.expand(
-      this.unionFromDirections(["this", "extends"], "_packaging")
-    );
-  }
-
   get isTemplate() {
     return this.isModel || super.isTemplate;
   }
@@ -172,46 +152,6 @@ export class Host extends ServiceOwner {
         return node;
       }
     }
-  }
-
-  set provides(value) {
-    this._provides = union(value, this._provides);
-  }
-
-  get provides() {
-    return this.expand(
-      this.unionFromDirections(["this", "extends"], "_provides")
-    );
-  }
-
-  set replaces(value) {
-    this._replaces = union(value, this._replaces);
-  }
-
-  get replaces() {
-    return this.expand(
-      this.unionFromDirections(["this", "extends"], "_replaces")
-    );
-  }
-
-  set depends(value) {
-    this._depends = union(value, this._depends);
-  }
-
-  get depends() {
-    return this.expand(
-      this.unionFromDirections(["this", "extends"], "_depends")
-    );
-  }
-
-  set optional(value) {
-    this._optional = union(value, this._optional);
-  }
-
-  get optional() {
-    return this.expand(
-      this.unionFromDirections(["this", "extends"], "_optional")
-    );
   }
 
   set os(value) {
@@ -365,33 +305,19 @@ export class Host extends ServiceOwner {
   }
 
   async publicKey(type = "ed25519") {
-    return readFile(join(this.directory, `ssh_host_${type}_key.pub`), "utf8");
+    return readFile(
+      join(this.directory, "content", "etc", "ssh", `ssh_host_${type}_key.pub`),
+      "utf8"
+    );
   }
 
   async *preparePackages(dir) {
     const packageData = this.packageData;
+
     packageData.sources.push(
       await Array.fromAsync(this.templateContent()),
-      new FileContentProvider(
-        { dir: this.directory, pattern: "*.pub" },
-        { destination: "/etc/ssh/", mode: 0o644 }
-      ),
-      new FileContentProvider(
-        { dir: this.directory, pattern: "*_key" },
-        { destination: "/etc/ssh/", mode: 0o600 }
-      ),
       new FileContentProvider({ dir, pattern: ["**/*", "**/.ssh/*"] })
     );
-
-    Object.assign(packageData.properties, {
-      description: `${this.typeName} definitions for ${this.fullName}`,
-      dependencies: [...this.depends],
-      provides: [...this.provides],
-      replaces: [...this.replaces],
-      depends: [...this.depends],
-      optional: [...this.optional],
-      backup: "root/.ssh/known_hosts"
-    });
 
     await loadHooks(
       packageData,
@@ -412,8 +338,6 @@ export class Host extends ServiceOwner {
         for (const { serviceName, configFileName, content } of asArray(
           service.expand(service.systemdConfigs(this.name))
         )) {
-          //console.log("SERVICE", service.fullName, configFileName);
-
           await writeLines(dir, configFileName, content);
 
           addHook(

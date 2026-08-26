@@ -1,7 +1,7 @@
 {
+  "extends": "/model/m1",
   "os": "linux",
   "priority": 12,
-  "extends": "/model/m1",
   "networkInterfaces": {
     "wlan0": {
       "kind": "wlan",
