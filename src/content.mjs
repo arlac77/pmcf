@@ -52,11 +52,11 @@ export class content extends Core {
   }
 
   _permissions = new Map();
+  _packaging = new Set();
   _provides = new Set();
   _replaces = new Set();
   _depends = new Set();
   _optional = new Set();
-  _packaging = new Set();
   _groups = new Set();
 
   get name() {
@@ -84,23 +84,11 @@ export class content extends Core {
   }
 
   get packaging() {
-    const dp = this.derivedPackaging;
-
-    if (dp) {
-      return this._packaging.union(dp);
-    }
-
-    return this._packaging;
+    return this.unionFromDirections(["this", "extends"], "_packaging")
   }
 
   get outputs() {
     return new Set(allOutputs.filter(o => this.packaging.has(o.name)));
-  }
-
-  get derivedPackaging() {
-    return this.expand(
-      this.unionFromDirections(["this", "extends"], "_packaging")
-    );
   }
 
   set provides(value) {

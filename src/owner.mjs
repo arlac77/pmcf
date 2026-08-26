@@ -163,15 +163,6 @@ export class Owner extends ServiceOwner {
     return this.subnets.values().find(subnet => subnet.matchesAddress(address));
   }
 
-  get derivedPackaging() {
-    let all = new Set();
-    for (const host of this.hosts.values()) {
-      all = all.union(host.packaging);
-    }
-
-    return all;
-  }
-
   *networkAddresses(filter) {
     for (const host of this.hosts.values()) {
       yield* host.networkAddresses(filter);
