@@ -117,7 +117,7 @@ generates config packages for:
 
 ## Base
 
-**Extends Core**
+**Extends core**
 
 attributes: as declared in the types
 properties: use defined values to support attribute value definitions
@@ -214,7 +214,7 @@ Walk the object graph in some directions and deliver seen nodes.
 
 *   `directions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**  (optional, default `["this","extends","owner"]`)
 
-Returns **Iterable\<Core>**&#x20;
+Returns **Iterable\<core>**&#x20;
 
 ## mapFromDirections
 
