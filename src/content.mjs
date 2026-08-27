@@ -4,10 +4,10 @@ import {
   default_collection_attribute_writable
 } from "pacc";
 import { allOutputs } from "npm-pkgbuild";
-import { Core, addType } from "pmcf";
+import { core, addType } from "pmcf";
 import { union } from "./utils.mjs";
 
-export class permission extends Core {
+export class permission extends core {
   static priority = 1.9;
   static attributes = {
     pattern: { ...string_attribute_writable, key: true, name: "pattern" },
@@ -25,7 +25,7 @@ export class permission extends Core {
   }
 }
 
-export class content extends Core {
+export class content extends core {
   static priority = 1.9;
   static attributes = {
     permissions: {

@@ -19,7 +19,7 @@ import {
   default_attribute_writable
 } from "pacc";
 import { union } from "./utils.mjs";
-import { addType, Core } from "pmcf";
+import { addType, core } from "pmcf";
 import { owner_attribute, aliases_attribute } from "./common-attributes.mjs";
 
 /**
@@ -27,7 +27,7 @@ import { owner_attribute, aliases_attribute } from "./common-attributes.mjs";
  * attributes: as declared in the types
  * properties: use defined values to support attribute value definitions
  */
-export class Base extends Core {
+export class Base extends core {
   static name = "base";
   static key = "name";
   static priority = 0;

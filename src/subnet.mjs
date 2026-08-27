@@ -7,9 +7,9 @@ import {
 } from "ip-utilties";
 import { string_attribute, name_attribute, integer_attribute } from "pacc";
 import { networks_attribute } from "./common-attributes.mjs";
-import { addType, Network, Core } from "pmcf";
+import { addType, Network, core } from "pmcf";
 
-export class Subnet extends Core {
+export class Subnet extends core {
   static name = "subnet";
   static priority = 1;
   static owners = ["owner", "network", "network_interface", "root"];

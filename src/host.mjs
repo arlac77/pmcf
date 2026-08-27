@@ -316,7 +316,11 @@ export class Host extends ServiceOwner {
 
     packageData.sources.push(
       await Array.fromAsync(this.templateContent()),
-      new FileContentProvider({ dir, pattern: ["**/*", "**/.ssh/*"] })
+      new FileContentProvider({
+        dir,
+        pattern: ["**/*", "**/.ssh/*"],
+        permissions: this.content.permissions
+      })
     );
 
     await loadHooks(

@@ -11,8 +11,7 @@ import {
 } from "pacc";
 import { addType } from "pmcf";
 
-export class Core {
-  static name = "core";
+export class core {
   static priority = 1;
 
   static {
@@ -179,7 +178,7 @@ export class Core {
   /**
    * Walk the object graph in some directions and deliver seen nodes.
    * @param {string[]} directions
-   * @return {Iterable<Core>}
+   * @return {Iterable<core>}
    */
   *walkDirections(directions = ["this", "extends", "owner"]) {
     if (directions.indexOf("this") >= 0) {
@@ -264,7 +263,7 @@ export class Core {
             if (value instanceof Iterator) {
               all.push(...value);
             } else {
-              if (value instanceof Core) {
+              if (value instanceof core) {
                 this.error(
                   `Unexpected scalar value for "${attribute.name}"`,
                   value.fullName
@@ -290,12 +289,12 @@ export class Core {
    * @returns {any}
    */
   expand(object) {
-    if (this.isTemplate || object instanceof Core) {
+    if (this.isTemplate || object instanceof core) {
       return object;
     }
 
     return expand(object, {
-      stopClass: Core,
+      stopClass: core,
       root: this.root,
       current: this,
       valueFor: (name, at) =>
