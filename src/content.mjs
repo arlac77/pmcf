@@ -182,9 +182,9 @@ export class content extends Core {
       outputs: this.outputs,
       properties: {
         name: nameParts.filter(n => n !== undefined && n.length > 0).join("-"),
-        description: `${node.type} definitions for ${node.fullName}`,
+        description: `${node.typeName} definitions for ${node.fullName}`,
         access: this.access,
-        groups: [node.typeName, ...this.groups],
+        groups: [...this.groups],
         depends: [...this.depends],
         provides: [...this.provides],
         replaces: [...this.replaces],
