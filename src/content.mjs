@@ -1,4 +1,5 @@
 import {
+  name_attribute_writable,
   string_attribute_writable,
   string_set_attribute_writable,
   default_collection_attribute_writable
@@ -6,6 +7,7 @@ import {
 import { allOutputs } from "npm-pkgbuild";
 import { core, addType } from "pmcf";
 import { union } from "./utils.mjs";
+import { loadHooks } from "./hooks.mjs";
 
 export class permission extends core {
   static priority = 1.9;
@@ -28,6 +30,7 @@ export class permission extends core {
 export class content extends core {
   static priority = 1.9;
   static attributes = {
+    name: name_attribute_writable,
     permissions: {
       ...default_collection_attribute_writable,
       type: permission,
@@ -38,12 +41,13 @@ export class content extends core {
       name: "access",
       default: "private"
     },
-    replaces: { ...string_set_attribute_writable, name: "replaces" },
     depends: { ...string_set_attribute_writable, name: "depends" },
     provides: { ...string_set_attribute_writable, name: "provides" },
+    replaces: { ...string_set_attribute_writable, name: "replaces" },
     optional: { ...string_set_attribute_writable, name: "optional" },
     groups: { ...string_set_attribute_writable, name: "groups" },
     backup: { ...string_set_attribute_writable, name: "backup" },
+    hooks: { ...string_set_attribute_writable, name: "hooks" },
     packaging: { ...string_set_attribute_writable, name: "packaging" }
   };
 
@@ -58,14 +62,26 @@ export class content extends core {
   _depends = new Set();
   _optional = new Set();
   _groups = new Set();
-
-  get name() {
-    return "content";
-  }
+  _hooks = new Set();
 
   value(name) {
-  //  console.log("CONTENT VALUE", this.name, this.owner.fullName, name, this.owner.name);
+    //  console.log("CONTENT VALUE", this.name, this.owner.fullName, name, this.owner.name);
     return this.owner.value(name) ?? super.value(name);
+  }
+
+  get name() {
+    let name = this.attribute("_name");
+    if (name !== undefined) {
+      return name;
+    }
+
+    const node = this.owner;
+    const nameParts = [node.typeName, node.owner?.name, node.name];
+    return nameParts.filter(n => n !== undefined && n.length > 0).join("-");
+  }
+
+  set name(value) {
+    this._name = value;
   }
 
   /**
@@ -84,7 +100,7 @@ export class content extends core {
   }
 
   get packaging() {
-    return this.unionFromDirections(["this", "extends"], "_packaging")
+    return this.unionFromDirections(["this", "extends"], "_packaging");
   }
 
   get outputs() {
@@ -151,6 +167,14 @@ export class content extends core {
     );
   }
 
+  set hooks(value) {
+    this._hooks = union(value, this._hooks);
+  }
+
+  get hooks() {
+    return this.expand(this.unionFromDirections(["this", "extends"], "_hooks"));
+  }
+
   get permissions() {
     const p = this.mapFromDirections(["this", "extends"], "_permissions");
 
@@ -174,14 +198,12 @@ export class content extends core {
 */
   }
 
-  packageData(node) {
-    const nameParts = [node.typeName, node.owner?.name, node.name];
-
-    return {
+  async packageData(node) {
+    const packageData = {
       sources: [],
       outputs: this.outputs,
       properties: {
-        name: nameParts.filter(n => n !== undefined && n.length > 0).join("-"),
+        name: this.name,
         description: `${node.typeName} definitions for ${node.fullName}`,
         access: this.access,
         groups: [...this.groups],
@@ -192,5 +214,14 @@ export class content extends core {
         backup: [...this.backup]
       }
     };
+
+    for (const hook of this.hooks) {
+      await loadHooks(
+        packageData,
+        new URL("host.install", import.meta.url).pathname
+      );
+    }
+
+    return packageData;
   }
 }

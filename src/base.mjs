@@ -45,7 +45,6 @@ export class Base extends core {
       name: "template",
       private: true
     },
-
     content: { ...default_attribute_writable, type: "content", name: "content" }
   };
 

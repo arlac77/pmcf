@@ -270,16 +270,8 @@ export class CoreService extends Base {
     );
   }
 
-  get packageData() {
-    const packageData = super.packageData;
-    const name = `${this.owner.owner.name}-${this.owner.name}`;
-    packageData.properties.name = `${this.name}-${name}`;
-    packageData.properties.groups.push("config", name);
-    return packageData;
-  }
-
   async *preparePackages(dir) {
-    const pd = this.packageData;
+    const pd = await this.packageData;
 
     pd.sources = await Array.fromAsync(
       this.templateContent(this.content.permissions)

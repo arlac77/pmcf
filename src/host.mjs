@@ -19,7 +19,6 @@ import {
 import { ServiceOwner } from "./service-owner.mjs";
 import { addHook } from "./hooks.mjs";
 import { domainFromDominName, domainName, writeLines } from "./utils.mjs";
-import { loadHooks } from "./hooks.mjs";
 import { generateKnownHosts } from "./host-utils.mjs";
 
 export class Host extends ServiceOwner {
@@ -312,7 +311,7 @@ export class Host extends ServiceOwner {
   }
 
   async *preparePackages(dir) {
-    const packageData = this.packageData;
+    const packageData = await this.packageData;
 
     packageData.sources.push(
       await Array.fromAsync(this.templateContent()),
@@ -321,11 +320,6 @@ export class Host extends ServiceOwner {
         pattern: ["**/*", "**/.ssh/*"],
         permissions: this.content.permissions
       })
-    );
-
-    await loadHooks(
-      packageData,
-      new URL("host.install", import.meta.url).pathname
     );
 
     for (const ni of this.networkInterfaces.values()) {
