@@ -100,10 +100,6 @@ export class Base extends core {
     }
   }
 
-  get root() {
-    return this.owner?.root;
-  }
-
   get host() {
     return this.owner?.host;
   }

@@ -321,4 +321,8 @@ export class core {
   get isTemplate() {
     return false;
   }
+
+  get root() {
+    return this.owner?.root;
+  }
 }
