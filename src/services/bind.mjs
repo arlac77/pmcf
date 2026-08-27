@@ -43,7 +43,6 @@ const PRIMARY = "primary";
 const SECONDARY = "secondary";
 
 class bind_zone extends base {
-  static priority = 1;
   static key = "id";
   static attributes = {
     id: { ...name_attribute, name: "id" },
@@ -136,7 +135,6 @@ class catalog_zone extends bind_zone {
 }
 
 class bind_zone_config extends base {
-  static priority = 1;
   static attributes = {
     zones: { ...default_collection_attribute, type: bind_zone, name: "zones" },
     type: { ...string_attribute, name: "type" }
@@ -229,7 +227,6 @@ class bind_zone_config extends base {
 }
 
 export class bind_key extends base {
-  static priority = 1;
   static attributes = {
     algorithm: {
       ...string_attribute_writable,
@@ -260,7 +257,6 @@ export class bind_key extends base {
 }
 
 class bind_object extends base {
-  static priority = 1;
   static attributes = {
     order: { ...integer_attribute, name: "order" },
     entries: {
@@ -285,7 +281,6 @@ class bind_object extends base {
 }
 
 export class bind_acl extends bind_object {
-  static priority = 1;
 
   static {
     addType(this);
