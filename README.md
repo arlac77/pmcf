@@ -41,7 +41,7 @@ generates config packages for:
 
 ### Table of Contents
 
-*   [Base](#base)
+*   [base](#base)
     *   [enabled](#enabled)
     *   [priority](#priority)
     *   [templateContentAttributes](#templatecontentattributes)
@@ -117,7 +117,7 @@ generates config packages for:
 *   [sectionLines](#sectionlines)
     *   [Parameters](#parameters-26)
 
-## Base
+## base
 
 **Extends core**
 
