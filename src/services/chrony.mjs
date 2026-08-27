@@ -37,7 +37,7 @@ export class chrony extends ExtraSourceService {
   }
 
   async *preparePackages(dir) {
-    const packageData = this.packageData;
+    const packageData = await this.packageData;
     packageData.sources.push(new FileContentProvider(dir + "/"));
 
     const subnets = [...new Map(this.subnets).values()]; // TODO should be normal

@@ -31,7 +31,7 @@ export class influxdb extends CoreService {
   }
 
   async *preparePackages(dir) {
-    const packageData = this.packageData;
+    const packageData = await this.packageData;
 
     packageData.sources.push(new FileContentProvider(dir + "/"));
 

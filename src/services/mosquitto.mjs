@@ -58,8 +58,8 @@ export class mosquitto extends CoreService {
       wd.map(n => [n.fullName, n.directory])
     );*/
 
+    const packageData = await this.packageData;
     const permissions = this.content.permissions;
-    const packageData = this.packageData;
 
     packageData.sources = await Array.fromAsync(
       this.templateContent(...permissions)

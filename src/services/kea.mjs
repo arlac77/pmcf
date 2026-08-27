@@ -151,7 +151,7 @@ export class kea extends CoreService {
       endpoints: endpoint => endpoint.networkInterface?.kind !== "loopback"
     });
 
-    const packageData = this.packageData;
+    const packageData = await this.packageData;
 
     packageData.sources.push(new FileContentProvider(dir + "/"));
 

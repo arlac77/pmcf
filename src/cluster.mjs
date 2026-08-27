@@ -58,7 +58,7 @@ export class Cluster extends Host {
       const packageStagingDir = join(stagingDir, host.name);
       const name = `${this.owner.name}-${host.name}`;
 
-      const packageData = host.packageData;
+      const packageData = await host.packageData;
       packageData.sources.push(
         new FileContentProvider(packageStagingDir + "/")
       );
