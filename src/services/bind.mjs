@@ -7,7 +7,7 @@ import {
   default_collection_attribute_writable,
   default_attribute_writable,
   duration_attribute_writable,
-  name_attribute,
+  id_attribute,
   string_attribute,
   string_set_attribute,
   string_attribute_writable,
@@ -45,7 +45,7 @@ const SECONDARY = "secondary";
 class bind_zone extends base {
   static key = "id";
   static attributes = {
-    id: { ...name_attribute, name: "id" },
+    id: id_attribute,
     file: { ...string_attribute, name: "file" },
     records: {
       ...string_attribute_writable,
