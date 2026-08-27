@@ -1,4 +1,4 @@
-import { Owner, Network, Subnet, Host, Cluster, mosquitto } from "pmcf";
+import { Owner, Network, Subnet, Host, Cluster, mosquitto, content } from "pmcf";
 
 /**
  *
@@ -69,7 +69,11 @@ export function root1(root, filter) {
     content: {
       depends: ["btrfs-progs", "d1", "d2-linux", "d3"],
       replaces: ["r1", "r2-linux", "r3"],
-   //   provides: ["p1", "p2-linux", "p3-host1", "p4"]
+      //   provides: ["p1", "p2-linux", "p3-host1", "p4"],
+      permissions: new Map([
+        ["etc/ssh/*.pub", { mode: 0o664 }],
+        ["etc/ssh/*_key", { mode: 0o600 }]
+      ])
     },
     networkInterfaces: {
       eth0: {
@@ -178,12 +182,17 @@ export function root1(root, filter) {
       instanceof: Host,
       owner: model,
       isTemplate: true,
-      content: {
-        packaging: new Set(["alpm"])
-      },
       chassis: "server",
       services: {
         smb: { type: "smb" }
+      },
+      content: {
+        instanceof: content,
+        packaging: new Set(["alpm"]),
+        permissions: new Map([
+          ["etc/ssh/*.pub", { mode: 0o664 }],
+          ["etc/ssh/*_key", { mode: 0o600 }]
+        ])
       }
     }
   };

@@ -8,6 +8,10 @@
     "packaging": "alpm",
     "depends": ["d1", "d3"],
     "replaces": ["r1", "r3"],
-    "provides": ["p1", "p3-${hostName}"]
+    "provides": ["p1", "p3-${hostName}"],
+    "permissions": {
+      "etc/ssh/*.pub": { "mode": "0644" },
+      "etc/ssh/*_key": { "mode": "0600" }
+    }
   }
 }
