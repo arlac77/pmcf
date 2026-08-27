@@ -1,8 +1,10 @@
+import { join } from "node:path";
 import {
   name_attribute_writable,
   string_attribute_writable,
   string_set_attribute_writable,
-  default_collection_attribute_writable
+  default_collection_attribute_writable,
+  description_attribute_writable
 } from "pacc";
 import { allOutputs } from "npm-pkgbuild";
 import { core, addType } from "pmcf";
@@ -32,6 +34,7 @@ export class content extends core {
   static priority = 1.9;
   static attributes = {
     name: name_attribute_writable,
+    description: description_attribute_writable,
     permissions: {
       ...default_collection_attribute_writable,
       type: permission,
@@ -87,6 +90,20 @@ export class content extends core {
 
   get fullName() {
     return this.name;
+  }
+
+  get description() {
+    let description = this.attribute("_description");
+    if (description !== undefined) {
+      return description;
+    }
+
+    const node = this.owner;
+    return `${node.typeName} definitions for ${node.fullName}`;
+  }
+
+  set description(value) {
+    this._description = value;
   }
 
   /**
@@ -203,13 +220,25 @@ export class content extends core {
 */
   }
 
+  /**
+   * 
+   * @param {object} packageData 
+   */
+  async loadHooks(packageData) {
+    for (const node of this.walkDirections(["this", "extends"])) {
+      for (const hook of node._hooks) {
+        await loadHooks(packageData, join(node.owner.directory, hook));
+      }
+    }
+  }
+
   async packageData(node) {
     const packageData = {
       sources: [],
       outputs: this.outputs,
       properties: {
         name: this.name,
-        description: `${node.typeName} definitions for ${node.fullName}`,
+        description: this.description,
         access: this.access,
         groups: [...this.groups],
         depends: [...this.depends],
@@ -220,12 +249,7 @@ export class content extends core {
       }
     };
 
-    for (const hook of this.hooks) {
-      await loadHooks(
-        packageData,
-        new URL("host.install", import.meta.url).pathname
-      );
-    }
+    await this.loadHooks(packageData);
 
     return packageData;
   }
