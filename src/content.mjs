@@ -11,6 +11,7 @@ import { loadHooks } from "./hooks.mjs";
 
 export class permission extends core {
   static priority = 1.9;
+  static key = "pattern";
   static attributes = {
     pattern: { ...string_attribute_writable, key: true, name: "pattern" },
     user: { ...string_attribute_writable, name: "user" },
@@ -22,7 +23,7 @@ export class permission extends core {
     addType(this);
   }
 
-  get name() {
+  get fullName() {
     return this.pattern;
   }
 }
@@ -82,6 +83,10 @@ export class content extends core {
 
   set name(value) {
     this._name = value;
+  }
+
+  get fullName() {
+    return this.name;
   }
 
   /**

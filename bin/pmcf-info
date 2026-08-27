@@ -112,25 +112,32 @@ function show(value, indent, options) {
               }
             }
           } else {
-            try {
-              const l = [...v];
-
-              if (l.length > 1) {
-                console.log(name(attribute));
-
-                if (l.length >= options.maxEntries) {
-                  l[options.maxEntries] = { fullName: "..." };
-                  l.length = options.maxEntries + 1;
-                }
-
-                for (const o of l) {
-                  console.log(prefix(indent + 2) + o.fullName);
-                }
-              } else if (l.length === 1) {
-                console.log(name(attribute) + l[0].fullName);
+            if (typeof v.get === "function") {
+              console.log(name(attribute));
+              for(const [k,o] of v) {
+                show(o,indent + 2, options);
               }
-            } catch (e) {
-              console.log(name(attribute), v);
+            } else {
+              try {
+                const l = [...v];
+
+                if (l.length > 1) {
+                  console.log(name(attribute));
+
+                  if (l.length >= options.maxEntries) {
+                    l[options.maxEntries] = { fullName: "..." };
+                    l.length = options.maxEntries + 1;
+                  }
+
+                  for (const o of l) {
+                    console.log(prefix(indent + 2) + o.fullName);
+                  }
+                } else if (l.length === 1) {
+                  console.log(name(attribute) + l[0].fullName);
+                }
+              } catch (e) {
+                console.log(name(attribute), v);
+              }
             }
           }
         } else {
