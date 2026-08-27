@@ -6,7 +6,7 @@ import {
   resolveTypeLinks,
   create
 } from "pacc";
-import { Base, root, assign } from "pmcf";
+import { core, root, assign } from "pmcf";
 
 /**
  * Keeps track of all in flight object creations and loose ends during config initialization.
@@ -122,7 +122,7 @@ export class InitializationContext {
               this.instantiateAndAssign(object, attribute, v);
             }
           } else {
-            if (value instanceof Base) {
+            if (value instanceof core) {
               assign(attribute, object, value);
             } else {
               for (const [objectName, objectData] of Object.entries(value)) {
