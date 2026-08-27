@@ -125,9 +125,9 @@ export class InitializationContext {
             if (value instanceof core) {
               assign(attribute, object, value);
             } else {
-              for (const [objectName, objectData] of Object.entries(value)) {
+              for (const [objectIdentifier, objectData] of Object.entries(value)) {
                 if (typeof objectData === "object") {
-                  objectData[attribute.type.key] = objectName;
+                  objectData[attribute.type.key] = objectIdentifier;
                 }
                 this.instantiateAndAssign(object, attribute, objectData);
               }

@@ -12,7 +12,6 @@ import { union } from "./utils.mjs";
 import { loadHooks } from "./hooks.mjs";
 
 export class permission extends core {
-  static priority = 1.9;
   static key = "pattern";
   static attributes = {
     pattern: { ...string_attribute_writable, key: true, name: "pattern" },
@@ -31,7 +30,6 @@ export class permission extends core {
 }
 
 export class content extends core {
-  static priority = 1.9;
   static attributes = {
     name: name_attribute_writable,
     description: description_attribute_writable,
