@@ -1,8 +1,8 @@
 import { default_collection_attribute_writable } from "pacc";
-import { Base, addType } from "pmcf";
+import { base, addType } from "pmcf";
 import { owner_attribute } from "./common-attributes.mjs";
 
-export class ServiceOwner extends Base {
+export class ServiceOwner extends base {
   static name = "service-owner";
   static priority = 1.9;
   static owners = ["owner", "network", "root"];

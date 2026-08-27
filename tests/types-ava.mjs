@@ -2,7 +2,7 @@ import test from "ava";
 import { types, resolveTypeLinks } from "pacc";
 import {
   core,
-  Base,
+  base,
   Cluster,
   root,
   Host,
@@ -23,7 +23,7 @@ test("types", t => {
 
   t.is(types.core.extends, undefined);
 
-  t.is(types.base, Base);
+  t.is(types.base, base);
   t.is(types.base.extends, core);
   t.is(types.base.key, "name");
 

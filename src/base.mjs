@@ -27,8 +27,7 @@ import { owner_attribute, aliases_attribute } from "./common-attributes.mjs";
  * attributes: as declared in the types
  * properties: use defined values to support attribute value definitions
  */
-export class Base extends core {
-  static name = "base";
+export class base extends core {
   static key = "name";
   static priority = 0;
   static attributes = {

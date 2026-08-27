@@ -6,7 +6,7 @@ import {
   asArray
 } from "pacc";
 import {
-  Base,
+  base,
   Host,
   Endpoint,
   DomainNameEndpoint,
@@ -34,7 +34,7 @@ import {
   dnsPriority
 } from "./dns-utils.mjs";
 
-export class CoreService extends Base {
+export class CoreService extends base {
   static name = "core-service";
   static priority = 1.1;
   static owners = [Host, "cluster", "network_interface"];

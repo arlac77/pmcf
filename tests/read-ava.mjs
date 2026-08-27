@@ -5,10 +5,10 @@ import {
   string_set_attribute_writable,
   default_attribute_writable
 } from "pacc";
-import { Base, addType } from "pmcf";
+import { base, addType } from "pmcf";
 import { InitializationContext } from "../src/initialization-context.mjs";
 
-export class MyType extends Base {
+export class MyType extends base {
   static attributes = {
     undefStrings: {
       ...string_collection_attribute_writable,
@@ -31,7 +31,7 @@ export class MyType extends Base {
       ...default_attribute_writable,
       name: "objects",
       collection: true,
-      type: Base
+      type: base
     }
   };
 

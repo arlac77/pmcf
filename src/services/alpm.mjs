@@ -4,10 +4,10 @@ import {
   string_attribute_writable,
   string_set_attribute_writable
 } from "pacc";
-import { addType, CoreService, Base } from "pmcf";
+import { addType, CoreService, base } from "pmcf";
 import { owner_attribute } from "../common-attributes.mjs";
 
-class alpm_repository extends Base {
+class alpm_repository extends base {
   static attributes = {
     name: name_attribute_writable,
     base: { ...string_attribute_writable, name: "base" },

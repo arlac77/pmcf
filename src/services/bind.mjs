@@ -20,7 +20,7 @@ import {
   asArray
 } from "pacc";
 import {
-  Base,
+  base,
   CoreService,
   Endpoint,
   addresses,
@@ -42,7 +42,7 @@ import { NetworkAddress } from "../network-address.mjs";
 const PRIMARY = "primary";
 const SECONDARY = "secondary";
 
-class bind_zone extends Base {
+class bind_zone extends base {
   static priority = 1;
   static key = "id";
   static attributes = {
@@ -135,7 +135,7 @@ class catalog_zone extends bind_zone {
   }
 }
 
-class bind_zone_config extends Base {
+class bind_zone_config extends base {
   static priority = 1;
   static attributes = {
     zones: { ...default_collection_attribute, type: bind_zone, name: "zones" },
@@ -228,7 +228,7 @@ class bind_zone_config extends Base {
   }
 }
 
-export class bind_key extends Base {
+export class bind_key extends base {
   static priority = 1;
   static attributes = {
     algorithm: {
@@ -259,7 +259,7 @@ export class bind_key extends Base {
   }
 }
 
-class bind_object extends Base {
+class bind_object extends base {
   static priority = 1;
   static attributes = {
     order: { ...integer_attribute, name: "order" },
