@@ -31,6 +31,11 @@ export class base extends core {
   static key = "name";
   static priority = 0;
   static attributes = {
+    template: {
+      ...boolean_attribute_writable,
+      name: "template",
+      private: true
+    },
     owner: owner_attribute,
     name: name_attribute_writable,
     aliases: aliases_attribute,
@@ -39,11 +44,6 @@ export class base extends core {
     directory: { ...string_attribute_writable, name: "directory" },
     enabled: { ...boolean_attribute_writable, name: "enabled" },
     tags: { ...string_set_attribute_writable, name: "tags" },
-    template: {
-      ...boolean_attribute_writable,
-      name: "template",
-      private: true
-    },
     content: { ...default_attribute_writable, type: "content", name: "content" }
   };
 

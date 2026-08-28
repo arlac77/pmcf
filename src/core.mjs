@@ -317,8 +317,11 @@ export class core {
     });
   }
 
+  /**
+   * @return {boolean}
+   */
   get isTemplate() {
-    return false;
+    return this.owner?.isTemplate || false;
   }
 
   get root() {

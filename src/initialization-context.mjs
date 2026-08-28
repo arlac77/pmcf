@@ -113,7 +113,7 @@ export class InitializationContext {
       attribute => attribute.writable
     )) {
       const name = path.join(".");
-      const value = object.expand(data[name]);
+      const value = object.isTemplate ? data[name] : object.expand(data[name]);
 
       if (attribute.collection) {
         if (typeof value === "object") {
