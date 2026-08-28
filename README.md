@@ -72,6 +72,7 @@ generates config packages for:
     *   [Parameters](#parameters-11)
 *   [expression](#expression)
     *   [Parameters](#parameters-12)
+*   [isTemplate](#istemplate-1)
 *   [PortEndpoint](#portendpoint)
     *   [Parameters](#parameters-13)
     *   [port](#port)
@@ -262,6 +263,10 @@ Returns **any**&#x20;
 *   `options` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**&#x20;
 
 Returns **any**&#x20;
+
+## isTemplate
+
+Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
 
 ## PortEndpoint
 
