@@ -1,10 +1,11 @@
-import { join } from "node:path";
+import path, { join } from "node:path";
 import {
   name_attribute_writable,
   string_attribute_writable,
   string_set_attribute_writable,
   default_collection_attribute_writable,
-  description_attribute_writable
+  description_attribute_writable,
+  extendingAttributeIterator
 } from "pacc";
 import { allOutputs } from "npm-pkgbuild";
 import { core, addType } from "pmcf";
@@ -31,8 +32,8 @@ export class permission extends core {
 
 export class content extends core {
   static attributes = {
-    name: name_attribute_writable,
-    description: description_attribute_writable,
+    name: { ...name_attribute_writable, packagingProperty: true },
+    description: { ...description_attribute_writable, packagingProperty: true },
     permissions: {
       ...default_collection_attribute_writable,
       type: permission,
@@ -43,13 +44,41 @@ export class content extends core {
       name: "access",
       default: "private"
     },
-    depends: { ...string_set_attribute_writable, name: "depends" },
-    provides: { ...string_set_attribute_writable, name: "provides" },
-    replaces: { ...string_set_attribute_writable, name: "replaces" },
-    optional: { ...string_set_attribute_writable, name: "optional" },
-    groups: { ...string_set_attribute_writable, name: "groups" },
-    backup: { ...string_set_attribute_writable, name: "backup" },
-    hooks: { ...string_set_attribute_writable, name: "hooks" },
+    depends: {
+      ...string_set_attribute_writable,
+      name: "depends",
+      packagingProperty: true
+    },
+    provides: {
+      ...string_set_attribute_writable,
+      name: "provides",
+      packagingProperty: true
+    },
+    replaces: {
+      ...string_set_attribute_writable,
+      name: "replaces",
+      packagingProperty: true
+    },
+    optional: {
+      ...string_set_attribute_writable,
+      name: "optional",
+      packagingProperty: true
+    },
+    groups: {
+      ...string_set_attribute_writable,
+      name: "groups",
+      packagingProperty: true
+    },
+    backup: {
+      ...string_set_attribute_writable,
+      name: "backup",
+      packagingProperty: true
+    },
+    hooks: {
+      ...string_set_attribute_writable,
+      name: "hooks",
+      packagingProperty: true
+    },
     packaging: { ...string_set_attribute_writable, name: "packaging" }
   };
 
@@ -219,8 +248,8 @@ export class content extends core {
   }
 
   /**
-   * 
-   * @param {object} packageData 
+   *
+   * @param {object} packageData
    */
   async loadHooks(packageData) {
     for (const node of this.walkDirections(["this", "extends"])) {
@@ -234,17 +263,12 @@ export class content extends core {
     const packageData = {
       sources: [],
       outputs: this.outputs,
-      properties: {
-        name: this.name,
-        description: this.description,
-        access: this.access,
-        groups: [...this.groups],
-        depends: [...this.depends],
-        provides: [...this.provides],
-        replaces: [...this.replaces],
-        optional: [...this.optional],
-        backup: [...this.backup]
-      }
+      properties: Object.fromEntries(
+        extendingAttributeIterator(
+          this.constructor,
+          attribute => attribute.packagingProperty
+        ).map(([path, attribute]) => [path[0], this[path[0]]])
+      )
     };
 
     await this.loadHooks(packageData);
