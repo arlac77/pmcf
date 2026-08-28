@@ -1,5 +1,4 @@
 import { AggregatedMap } from "aggregated-map";
-
 import {
   toExternal,
   filterPublic,
