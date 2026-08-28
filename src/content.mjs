@@ -42,7 +42,8 @@ export class content extends core {
     access: {
       ...string_attribute_writable,
       name: "access",
-      default: "private"
+      default: "private",
+      packagingProperty: true
     },
     depends: {
       ...string_set_attribute_writable,
