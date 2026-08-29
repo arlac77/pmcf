@@ -279,10 +279,7 @@ export class base extends core {
    * @return {boolean}
    */
   get isTemplate() {
-    return (
-      this.template ??
-      (this.name?.indexOf("*") >= 0 || this.owner?.isTemplate || false)
-    );
+    return this.template ?? (super.isTemplate || this.name?.indexOf("*") >= 0);
   }
 
   error(...args) {
