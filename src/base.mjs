@@ -217,7 +217,7 @@ export class base extends core {
         }
       }
     }
-    return this.content?.packageData(this);
+    return this.content?.packageData();
   }
 
   async *preparePackages(stagingDir) {}

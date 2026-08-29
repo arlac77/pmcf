@@ -97,8 +97,7 @@ export class content extends core {
   _hooks = new Set();
 
   value(name) {
-    //  console.log("CONTENT VALUE", this.name, this.owner.fullName, name, this.owner.name);
-    return this.owner.value(name) ?? super.value(name);
+    return super.value(name) ?? this.owner.value(name);
   }
 
   get name() {
@@ -226,26 +225,7 @@ export class content extends core {
   }
 
   get permissions() {
-    const p = this.mapFromDirections(["this", "extends"], "_permissions");
-
-    return p;
-
-    /*
-    const owner = this.systemUserName;
-    const group = this.systemGroupName;
-    return [
-      {
-        mode: 0o644,
-        owner,
-        group
-      },
-      {
-        mode: 0o755,
-        owner,
-        group
-      }
-    ];
-*/
+    return this.mapFromDirections(["this", "extends"], "_permissions");
   }
 
   /**
