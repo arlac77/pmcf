@@ -59,15 +59,10 @@ export class mosquitto extends CoreService {
     );*/
 
     const packageData = await this.packageData;
-    const permissions = this.content.permissions;
 
-    packageData.sources = await Array.fromAsync(
-      this.templateContent(...permissions)
-    );
+    packageData.sources = await Array.fromAsync(this.templateContent());
 
-    packageData.sources.push(
-      new FileContentProvider(dir + "/", permissions)
-    );
+    packageData.sources.push(new FileContentProvider({ dir: dir + "/" }));
 
     await writeLines(
       join(dir, "etc", "mosquitto"),

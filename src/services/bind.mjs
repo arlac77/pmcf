@@ -281,7 +281,6 @@ class bind_object extends base {
 }
 
 export class bind_acl extends bind_object {
-
   static {
     addType(this);
   }
@@ -630,9 +629,7 @@ class bind_view extends bind_object {
 
   async packageContent(outputControl) {
     outputControl.packageData.sources.push(
-      ...(await Array.fromAsync(
-        this.templateContent(...outputControl.permissions)
-      ))
+      ...(await Array.fromAsync(this.templateContent()))
     );
 
     for (const config of this.zoneConfigs.values()) {
@@ -803,36 +800,14 @@ export class bind extends CoreService {
     return false;
   }
 
-  templateContentAttributes(dir) {
-    const attr = super.templateContentAttributes(dir);
-
-    //  attr.properties = this.packageContentProperties;
-
-    attr.properties = {
-      "usr/share/libalpm/scripts/*": { mode: 0o777 },
-      "etc/named/**/*": { user: "named", group: "named" },
-      "var/lib/named/**/*": { user: "named", group: "named" }
-    };
-
-    console.log("templateContentAttributes", this.fullName, attr);
-
-    return attr;
-  }
-
   async *preparePackages(dir) {
     const packageData = await this.packageData;
 
-    const permissions = this.content.permissions;
-
-    packageData.sources = await Array.fromAsync(
-      this.templateContent(permissions)
-    );
+    packageData.sources = await Array.fromAsync(this.templateContent());
 
     let hasContent = packageData.sources.length > 0;
 
-    packageData.sources.push(
-      new FileContentProvider(dir + "/", permissions)
-    );
+    packageData.sources.push(new FileContentProvider({ dir: dir + "/" }));
 
     const outputControl = { packageData, dir, permissions };
 

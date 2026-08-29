@@ -248,22 +248,16 @@ export class base extends core {
 
   /**
    *
-   * @param {*} entryProperties
-   * @param {*} directoryProperties
    * @returns {AsyncIterable<ContentProvider>}
    */
-  async *templateContent(entryProperties, directoryProperties) {
+  async *templateContent() {
     for (const node of this.walkDirections(["this", "extends"])) {
       const dir = join(node.directory, "content");
 
       try {
         if ((await stat(dir)).isDirectory) {
           yield transform(
-            new FileContentProvider(
-              this.templateContentAttributes(dir),
-              entryProperties,
-              directoryProperties
-            ),
+            new FileContentProvider(this.templateContentAttributes(dir)),
             this.templateTransformers
           );
         }
