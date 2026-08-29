@@ -809,7 +809,7 @@ export class bind extends CoreService {
 
     packageData.sources.push(new FileContentProvider({ dir: dir + "/" }));
 
-    const outputControl = { packageData, dir, permissions };
+    const outputControl = { packageData, dir };
 
     for (const key of this.keys.values()) {
       await key.packageContent(outputControl);

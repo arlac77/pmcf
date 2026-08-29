@@ -270,18 +270,6 @@ export class CoreService extends base {
     );
   }
 
-  async *preparePackages(dir) {
-    const pd = await this.packageData;
-
-    pd.sources = await Array.fromAsync(
-      this.templateContent()
-    );
-
-    if (pd.sources.length) {
-      yield pd;
-    }
-  }
-
   dnsRecordsForDomainName(domainName, hasSVRRecords) {
     const records = [];
 

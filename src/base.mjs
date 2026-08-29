@@ -220,7 +220,15 @@ export class base extends core {
     return this.content?.packageData();
   }
 
-  async *preparePackages(stagingDir) {}
+  async *preparePackages(stagingDir) {
+    const pd = await this.packageData;
+
+    pd.sources.push(...(await Array.fromAsync(this.templateContent())));
+
+    if (pd.sources.length) {
+      yield pd;
+    }
+  }
 
   get templateTransformers() {
     return [
