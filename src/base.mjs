@@ -251,7 +251,7 @@ export class base extends core {
    * @returns {Object}
    */
   templateContentAttributes(dir) {
-    return { dir, pattern: "**/*" };
+    return { dir, pattern: "**/*", permissions: this.content?.permissions };
   }
 
   /**
