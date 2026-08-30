@@ -4,7 +4,7 @@ import { prepare } from "../src/cli.mjs";
 
 const { root, args } = await prepare();
 
-const location = await root.load(args[0]);
+const location = root.expression(args[0]);
 
 function q(str) {
   return str.match(/^\w+$/) ? str : `"${str}"`;
@@ -12,7 +12,7 @@ function q(str) {
 
 console.log("graph G {");
 console.log("  node [shape=record];");
-for await (const host of location.hosts()) {
+for await (const host of location.hosts.values()) {
   if (host.clusters.size === 0) {
     console.log(
       `  ${q(host.name)} [label="${host.name}|{${[
@@ -25,7 +25,7 @@ for await (const host of location.hosts()) {
   }
 }
 
-for await (const network of location.networks) {
+for await (const network of location.networks.values()) {
   console.log(
     `  ${q(network.name)} [label="${network.name}\\n${[...network.subnets.keys()]
       .map(s => s.address)
@@ -46,7 +46,7 @@ for await (const network of location.networks) {
   }
 }
 
-for await (const cluster of location.clusters) {
+for await (const cluster of location.clusters.values()) {
   console.log(`  subgraph cluster_${cluster.name} {`);
 
   for (const ni of cluster.members) {
@@ -72,8 +72,10 @@ for await (const cluster of location.clusters) {
   console.log(`  } [label="${cluster.name}"];`);
 }
 
+/*
 for (const bridge of location.bridges) {
   console.log(` ${[...bridge].map(b => q(b.name)).join(" -- ")};`);
 }
+*/
 
 console.log("}");
