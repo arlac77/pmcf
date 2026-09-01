@@ -374,7 +374,7 @@ class bind_view extends bind_object {
       name: "hasSVRRecords"
     },
     hasLocationRecord: {
-      ...boolean_attribute_writable_true,
+      ...boolean_attribute_writable_false,
       name: "hasLocationRecord"
     },
     recordTTL: {
