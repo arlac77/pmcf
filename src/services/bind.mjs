@@ -12,7 +12,6 @@ import {
   string_set_attribute,
   string_attribute_writable,
   boolean_attribute,
-  boolean_attribute_writable_true,
   boolean_attribute_writable_false,
   integer_attribute_writable,
   integer_attribute,
@@ -807,7 +806,12 @@ export class bind extends CoreService {
 
     let hasContent = packageData.sources.length > 0;
 
-    packageData.sources.push(new FileContentProvider({ dir: dir + "/", permissions: this.content?.permissions }));
+    packageData.sources.push(
+      new FileContentProvider({
+        dir: dir + "/",
+        permissions: this.content?.permissions
+      })
+    );
 
     const outputControl = { packageData, dir };
 
