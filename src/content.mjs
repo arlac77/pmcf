@@ -96,6 +96,10 @@ export class content extends core {
   _groups = new Set();
   _hooks = new Set();
 
+  get host() {
+    return this.owner.host;
+  }
+
   value(name) {
     return super.value(name) ?? this.owner.value(name);
   }
