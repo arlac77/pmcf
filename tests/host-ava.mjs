@@ -138,6 +138,7 @@ test("Host extends", t => {
     extends: e2,
     aliases: "h1a",
     content: {
+      packaging: "alpm",
       provides: "pkgh1",
       depends: "dpkgh1",
       replaces: "rpkgh1"
@@ -166,6 +167,7 @@ test("Host extends", t => {
 
   t.is(c.owner, h1);
   t.is(c.typeName, "content");
+  t.deepEqual(c.packaging, new Set(["alpm"]));
 
   t.deepEqual([...c.provides].sort(), ["pkge1", "pkge2", "pkgh1"].sort());
   t.deepEqual([...c.depends].sort(), ["dpkge1", "dpkge2", "dpkgh1"].sort());

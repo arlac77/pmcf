@@ -153,7 +153,14 @@ export class content extends core {
   }
 
   get packaging() {
-    return this.unionFromDirections(["this", "extends"], "_packaging");
+    const all = this.unionFromDirections(["this", "extends"], "_packaging");
+    if(all.size) {
+      return all;
+    }
+    const content = this.host.content;
+    if(content && content !== this) {
+      return content.packaging;
+    }
   }
 
   get outputs() {
