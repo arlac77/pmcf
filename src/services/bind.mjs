@@ -807,7 +807,7 @@ export class bind extends CoreService {
 
     let hasContent = packageData.sources.length > 0;
 
-    packageData.sources.push(new FileContentProvider({ dir: dir + "/" }));
+    packageData.sources.push(new FileContentProvider({ dir: dir + "/", permissions: this.content?.permissions }));
 
     const outputControl = { packageData, dir };
 
