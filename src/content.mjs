@@ -157,7 +157,8 @@ export class content extends core {
     if(all.size) {
       return all;
     }
-    const content = this.host.content;
+
+    const content = this.host?.content;
     if(content && content !== this) {
       return content.packaging;
     }
