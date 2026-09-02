@@ -208,15 +208,24 @@ export class base extends core {
     return this.constructor.name;
   }
 
-  get packageData() {
-    if (!this.content) {
+  set content(value) {
+    this._content = value;
+  }
+
+  get content() {
+    if (!this._content) {
       for (const e of this.walkDirections(["extends"])) {
-        if (e.content) {
-          this.content = e.content.forOwner(this);
+        if (e._content) {
+          this._content = e._content.forOwner(this);
           break;
         }
       }
     }
+
+    return this._content;
+  }
+
+  get packageData() {
     return this.content?.packageData();
   }
 

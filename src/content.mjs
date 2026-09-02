@@ -154,14 +154,13 @@ export class content extends core {
 
   get packaging() {
     const all = this.unionFromDirections(["this", "extends"], "_packaging");
-    if(all.size) {
-      return all;
+    if (all.size === 0) {
+      const content = this.host.content;
+      if (content && content !== this) {
+        return content.packaging;
+      }
     }
-
-    const content = this.host?.content;
-    if(content && content !== this) {
-      return content.packaging;
-    }
+    return all;
   }
 
   get outputs() {
