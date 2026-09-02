@@ -43,6 +43,9 @@
           "matchClients": "service/acls/protected",
           "sharedWith": "internal"
         }
+      },
+      "content": {
+        "name": "bind-${host.name}"
       }
     },
     "ntp": {

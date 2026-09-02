@@ -50,6 +50,10 @@ test("BIND basics", async t => {
     ]
   );
   */
+
+  const content = bindInst.content;
+  t.is(content.name, "bind-C1");
+  t.deepEqual(content.packaging, new Set(["alpm"]));
 });
 
 test("BIND keys acls and views", async t => {

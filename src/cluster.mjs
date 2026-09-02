@@ -45,6 +45,11 @@ export class Cluster extends Host {
   routerId = 100;
   checkInterval = 60;
 
+  get content()
+  {
+    return this.masters.map(m=>m.host)[0]?.content;
+  }
+
   get members() {
     return new Set(this.masters).union(new Set(this.backups));
   }
