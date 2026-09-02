@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { FAMILY_IPV4 } from "ip-utilties";
-import { number_attribute_writable, duration_attribute_writable } from "pacc";
+import { duration_attribute_writable } from "pacc";
 import { Host } from "./host.mjs";
 import { addType, serviceEndpoints } from "pmcf";
 import {
@@ -14,7 +14,6 @@ export class Cluster extends Host {
   static name = "cluster";
   static priority = 1.5;
   static attributes = {
-    routerId: { ...number_attribute_writable, name: "routerId", default: 100 },
     masters: {
       ...networkInterfaces_attribute,
       name: "masters",
@@ -45,9 +44,8 @@ export class Cluster extends Host {
   routerId = 100;
   checkInterval = 60;
 
-  get content()
-  {
-    return this.masters.map(m=>m.host)[0]?.content;
+  get content() {
+    return this.masters.map(m => m.host)[0]?.content;
   }
 
   get members() {
@@ -60,16 +58,18 @@ export class Cluster extends Host {
       new Set()
     )) {
       const host = ni.host;
-      const packageStagingDir = join(stagingDir, host.name);
-      const name = `${this.owner.name}-${host.name}`;
 
+      const packageStagingDir = join(stagingDir, host.name);
       const packageData = await host.packageData;
+
       packageData.sources.push(
-        new FileContentProvider(packageStagingDir + "/")
+        await Array.fromAsync(this.templateContent()),
+        new FileContentProvider({
+          dir: packageStagingDir,
+          pattern: "**/*",
+          permissions: this.content.permissions
+        })
       );
-      packageData.properties.name = `keepalived-${name}`;
-      packageData.properties.description = `${this.typeName} definitions for ${this.fullName}`;
-      packageData.properties.groups.push("config", name, "keepalived");
 
       const extra = [];
 
@@ -118,7 +118,7 @@ export class Cluster extends Host {
           cfg.push("  }");
         }
 
-        cfg.push(`  virtual_router_id ${cluster.routerId}`);
+        cfg.push(`  virtual_router_id ${cluster.id}`);
 
         let reducedPrio = cluster.masters.indexOf(ni);
         if (reducedPrio < 0) {
@@ -126,7 +126,7 @@ export class Cluster extends Host {
         }
 
         const credential = name.toUpperCase() + "_PASSWORD";
-        credentials.set(credential,name);
+        credentials.set(credential, name);
         cfg.push(`  priority ${host.priority - reducedPrio}`);
         cfg.push("  smtp_alert");
         cfg.push("  advert_int 5");
@@ -157,9 +157,15 @@ export class Cluster extends Host {
           cfg.push(`  protocol ${endpoint.protocol.toUpperCase()}`);
 
           for (const member of this.members) {
-            const memberService = member.expression(`services[types[${endpoint.type}]][0]`); 
+            const memberService = member.expression(
+              `services[types[${endpoint.type}]][0]`
+            );
 
-            console.log(member.fullName, endpoint.type, memberService?.fullName);
+            console.log(
+              member.fullName,
+              endpoint.type,
+              memberService?.fullName
+            );
             cfg.push(`  real_server ${member.address} ${memberService.port} {`);
             cfg.push(`    weight ${memberService.weight}`);
 
@@ -228,10 +234,12 @@ export class Cluster extends Host {
           "credentials.conf",
           [
             "[Service]",
-            ...credentials.entries().map(
-              ([credName,instance]) =>
-                `LoadCredentialEncrypted=${credName}:/etc/credstore.encrypted/keepalived.${instance}.password`
-            )
+            ...credentials
+              .entries()
+              .map(
+                ([credName, instance]) =>
+                  `LoadCredentialEncrypted=${credName}:/etc/credstore.encrypted/keepalived.${instance}.password`
+              )
           ]
         );
       }
