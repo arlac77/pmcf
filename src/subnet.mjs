@@ -77,7 +77,7 @@ export class Subnet extends core {
     return [
       this.family === FAMILY_IPV6
         ? this.cidr
-        : rangeIP(this.prefix, this.prefixLength, 51, 6).map(a => decodeIP(a))
+        : rangeIP(this.prefix, this.prefixLength, 51, 20).map(a => decodeIP(a))
     ];
   }
 
