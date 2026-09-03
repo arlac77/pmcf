@@ -288,7 +288,7 @@ export class core {
    * @returns {any}
    */
   expand(object) {
-    if (this.isTemplate || object instanceof core) {
+    if (this.isTemplate) {
       return object;
     }
 
