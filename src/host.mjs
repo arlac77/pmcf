@@ -314,7 +314,7 @@ export class Host extends ServiceOwner {
     const packageData = await this.packageData;
 
     packageData.sources.push(
-      await Array.fromAsync(this.templateContent()),
+      ...await Array.fromAsync(this.templateContent()),
       new FileContentProvider({
         dir,
         pattern: ["**/*", "**/.ssh/*"],
