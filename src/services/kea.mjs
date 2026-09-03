@@ -10,13 +10,16 @@ import {
   string_attribute_writable,
   number_attribute_writable,
   boolean_attribute_writable_true,
+  default_collection_attribute_writable,
   extendingAttributeIterator
 } from "pacc";
 import {
   addType,
   CoreService,
+  Endpoint,
+  endpointAddresses,
   sortDescendingByPriority,
-  serviceEndpoints,
+  endpoints,
   SUBNET_LOCALHOST_IPV4,
   SUBNET_LOCALHOST_IPV6,
   FAMILY_UNIX
@@ -25,6 +28,12 @@ import { writeLines } from "../utils.mjs";
 
 export class kea extends CoreService {
   static attributes = {
+    dnsServers: {
+      ...default_collection_attribute_writable,
+      type: Endpoint,
+      name: "dnsServers",
+      deferredExpression: true
+    },
     "ddns-send-updates": {
       ...boolean_attribute_writable_true,
       name: "ddns-send-updates",
@@ -146,14 +155,22 @@ export class kea extends CoreService {
 
     //console.log(source.fullName, [...source.hosts.keys()]);
 
-    const dnsServerEndpoints = serviceEndpoints(source, {
-      services: "services[types[dns] && priority>=300]",
-      endpoints: endpoint => endpoint.networkInterface?.kind !== "loopback"
-    });
+    const dnsServerEndpoints = endpoints(this.dnsServers).filter(
+      e => e.networkInterface?.kind !== "loopback"
+    );
 
     const packageData = await this.packageData;
 
-    packageData.sources.push(new FileContentProvider(dir + "/"));
+    packageData.sources.push(
+      ...(await Array.fromAsync(this.templateContent()))
+    );
+
+    packageData.sources.push(
+      new FileContentProvider({
+        dir: dir + "/",
+        permissions: this.content?.permissions
+      })
+    );
 
     const peers = async family =>
       Array.from(
