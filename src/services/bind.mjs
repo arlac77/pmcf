@@ -188,6 +188,8 @@ class bind_zone_config extends base {
                 "    "
               )
             );
+
+           // content.push(`update-policy { grant updates zonesub ANY; };`);
             break;
           case SECONDARY:
             const primaries = endpointAddresses(this.service.primaries);
