@@ -1,4 +1,9 @@
-import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
+import {
+  FAMILY_IPV4,
+  FAMILY_IPV6,
+  ADDRESS_TYPE_LOOPBACK,
+  addressType
+} from "ip-utilties";
 import {
   string_attribute_writable,
   number_attribute_writable,
@@ -381,10 +386,14 @@ export function serviceEndpoints(sources, options = {}) {
   return options.join ? res.join(options.join) : res;
 }
 
-export function endpointAddresses(entries) {
+export function endpoints(entries) {
   return asArray(entries)
     .map(e => e.endpoints())
-    .flat()
+    .flat();
+}
+
+export function endpointAddresses(entries) {
+  return endpoints(entries)
     .filter(
       e =>
         e.networkAddress &&
@@ -392,4 +401,3 @@ export function endpointAddresses(entries) {
     )
     .map(e => e.networkAddress.address);
 }
-
