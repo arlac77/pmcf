@@ -43,7 +43,9 @@ const publishingDetails = createPublishingDetails(
 
 let suffixId = 1;
 
-for (const object of [...args.map(arg => root.expression(arg))].flat()) {
+for (const object of [
+  ...args.map(arg => asArray(root.expression(arg)))
+].flat()) {
   if (object.isTemplate) {
     continue;
   }
