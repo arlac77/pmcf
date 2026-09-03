@@ -380,3 +380,16 @@ export function serviceEndpoints(sources, options = {}) {
 
   return options.join ? res.join(options.join) : res;
 }
+
+export function endpointAddresses(entries) {
+  return asArray(entries)
+    .map(e => e.endpoints())
+    .flat()
+    .filter(
+      e =>
+        e.networkAddress &&
+        addressType(e.networkAddress.address) !== ADDRESS_TYPE_LOOPBACK
+    )
+    .map(e => e.networkAddress.address);
+}
+

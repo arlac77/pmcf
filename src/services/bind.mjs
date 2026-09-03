@@ -22,6 +22,7 @@ import {
   base,
   CoreService,
   Endpoint,
+  endpointAddresses,
   addresses,
   networkAddressType,
   addType,
@@ -649,18 +650,6 @@ class bind_view extends bind_object {
   }
 }
 
-function endpointAddresses(entries) {
-  return asArray(entries)
-    .map(e => e.endpoints())
-    .flat()
-    .filter(
-      e =>
-        e.networkAddress &&
-        addressType(e.networkAddress.address) !== ADDRESS_TYPE_LOOPBACK
-    )
-    .map(e => e.networkAddress.address);
-}
-
 /**
  *
  * @param {string} prefix
@@ -804,7 +793,9 @@ export class bind extends CoreService {
   async *preparePackages(dir) {
     const packageData = await this.packageData;
 
-    packageData.sources = await Array.fromAsync(this.templateContent());
+    packageData.sources.push(
+      ...(await Array.fromAsync(this.templateContent()))
+    );
 
     let hasContent = packageData.sources.length > 0;
 
