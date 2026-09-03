@@ -236,7 +236,7 @@ export class content extends core {
   }
 
   get permissions() {
-    return this.mapFromDirections(["this", "extends"], "_permissions");
+    return this.expand(this.mapFromDirections(["this", "extends"], "_permissions"));
   }
 
   /**
