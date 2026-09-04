@@ -304,16 +304,14 @@ export class core {
   /**
    *
    * @param {string} expression
-   * @param {object} options
    * @returns {any}
    */
-  expression(expression, options) {
+  expression(expression) {
     return parse(expression, {
       root: this.root,
       current: this,
       valueFor: (name, at) =>
-        typeof at?.value === "function" ? at.value(name) : globals[name],
-      ...options
+        typeof at?.value === "function" ? at.value(name) : globals[name]
     });
   }
 
