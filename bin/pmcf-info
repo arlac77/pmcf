@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 import { extendingAttributeIterator } from "pacc";
+import { AggregatedMap } from "aggregated-map";
+
 import { prepare } from "../src/cli.mjs";
 
 const { root, args, options } = await prepare({
@@ -32,6 +34,13 @@ function show(value, indent, options) {
 
     case "undefined":
       return;
+  }
+
+  if (value instanceof AggregatedMap || value instanceof Map) {
+    for (const v of value.values()) {
+      show(v, indent + 1, options);
+    }
+    return;
   }
 
   if (value instanceof Iterator || Array.isArray(value)) {
@@ -114,8 +123,8 @@ function show(value, indent, options) {
           } else {
             if (typeof v.get === "function") {
               console.log(name(attribute));
-              for(const [k,o] of v) {
-                show(o,indent + 2, options);
+              for (const [k, o] of v) {
+                show(o, indent + 2, options);
               }
             } else {
               try {
