@@ -158,7 +158,7 @@ export const endpointAttributes = {
     name: "protocol",
     values: new Set(["tcp", "udp", "quic"])
   },
-  types: { ...string_set_attribute_writable, name: "types" },
+  type: { ...string_attribute, name: "type" },
   tls: { ...boolean_attribute_false, name: "tls" },
   address: { ...string_attribute, name: "address" }
 };

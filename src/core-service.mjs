@@ -6,6 +6,7 @@ import {
 } from "ip-utilties";
 import {
   string_attribute_writable,
+  string_set_attribute_writable,
   number_attribute_writable,
   priority_attribute,
   asArray
@@ -65,6 +66,7 @@ export class CoreService extends base {
     },
     priority: priority_attribute,
     weight: { ...number_attribute_writable, name: "weight" /*default: 1*/ },
+    types: { ...string_set_attribute_writable, name: "types"},
     systemdService: { ...string_attribute_writable, name: "systemdService" },
     systemUserName: { ...string_attribute_writable, name: "systemUserName" },
     systemGroupName: { ...string_attribute_writable, name: "systemGroupName" }
