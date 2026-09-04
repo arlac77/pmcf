@@ -3,8 +3,10 @@ import { FileContentProvider } from "npm-pkgbuild";
 import {
   reverseArpa,
   isLinkLocal,
+  addressType,
   FAMILY_IPV4,
-  FAMILY_IPV6
+  FAMILY_IPV6,
+  ADDRESS_TYPE_LOOPBACK
 } from "ip-utilties";
 import {
   string_attribute_writable,
@@ -17,9 +19,7 @@ import {
   addType,
   CoreService,
   Endpoint,
-  endpointAddresses,
   sortDescendingByPriority,
-  endpoints,
   SUBNET_LOCALHOST_IPV4,
   SUBNET_LOCALHOST_IPV6,
   FAMILY_UNIX
@@ -28,10 +28,10 @@ import { writeLines } from "../utils.mjs";
 
 export class kea extends CoreService {
   static attributes = {
-    dnsServers: {
+    dnsServerEndpoints: {
       ...default_collection_attribute_writable,
       type: Endpoint,
-      name: "dnsServers",
+      name: "dnsServerEndpoints",
       deferredExpression: true
     },
     "ddns-send-updates": {
@@ -156,12 +156,7 @@ export class kea extends CoreService {
       subnets.map(s => s.fullName)
     );*/
 
-    //console.log(source.fullName, [...source.hosts.keys()]);
-
-    const dnsServerEndpoints = endpoints(this.dnsServers).filter(
-      e => e.networkInterface?.kind !== "loopback"
-    );
-
+    const dnsServerEndpoints = this.dnsServerEndpoints;
     const packageData = await this.packageData;
 
     packageData.sources.push(
@@ -270,7 +265,8 @@ export class kea extends CoreService {
             data: dnsServerEndpoints
               .filter(
                 endpoint =>
-                  endpoint.family === `IPv${family}` && endpoint.type === "dns"
+                  endpoint.family === `IPv${family}` &&
+                  addressType(endpoint.address) !== ADDRESS_TYPE_LOOPBACK
               )
               .map(endpoint => endpoint.address)
               .join(",")
@@ -322,7 +318,8 @@ export class kea extends CoreService {
           "dns-servers": dnsServerEndpoints
             .filter(
               endpoint =>
-                endpoint.family === FAMILY_IPV4 && endpoint.type === "dns"
+                endpoint.family === FAMILY_IPV4 &&
+                addressType(endpoint.address) !== ADDRESS_TYPE_LOOPBACK
             )
             .map(endpoint => {
               return { "ip-address": endpoint.address };
