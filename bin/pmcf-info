@@ -36,14 +36,12 @@ function show(value, indent, options) {
       return;
   }
 
-  if (value instanceof AggregatedMap || value instanceof Map) {
-    for (const v of value.values()) {
-      show(v, indent + 1, options);
-    }
-    return;
-  }
-
-  if (value instanceof Iterator || Array.isArray(value)) {
+  if (
+    value instanceof Iterator ||
+    value instanceof AggregatedMap ||
+    value instanceof Map ||
+    Array.isArray(value)
+  ) {
     for (const v of value) {
       show(v, indent + 1, options);
     }
