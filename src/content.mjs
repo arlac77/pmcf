@@ -1,4 +1,4 @@
-import path, { join } from "node:path";
+import { join } from "node:path";
 import {
   name_attribute_writable,
   string_attribute_writable,
@@ -8,7 +8,8 @@ import {
   extendingAttributeIterator
 } from "pacc";
 import { allOutputs } from "npm-pkgbuild";
-import { core, addType } from "pmcf";
+import { core } from "./core.mjs";
+import { addType } from "./type.mjs";
 import { union } from "./utils.mjs";
 import { loadHooks } from "./hooks.mjs";
 
@@ -236,7 +237,9 @@ export class content extends core {
   }
 
   get permissions() {
-    return this.expand(this.mapFromDirections(["this", "extends"], "_permissions"));
+    return this.expand(
+      this.mapFromDirections(["this", "extends"], "_permissions")
+    );
   }
 
   /**
