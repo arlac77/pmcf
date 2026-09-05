@@ -63,7 +63,7 @@ export class Cluster extends Host {
       const packageData = await host.packageData;
 
       packageData.sources.push(
-        await Array.fromAsync(this.templateContent()),
+        ...(await Array.fromAsync(this.templateContent())),
         new FileContentProvider({
           dir: packageStagingDir,
           pattern: "**/*",
