@@ -45,6 +45,12 @@ test("kea basics", t => {
   const keaInst = new kea();
   ic.read(keaInst, {
     name: "kea",
+
+    subnets: {
+      "1.2.3.0/24": {
+        pool: ["1.2.3.10", "1.2.3.20"]
+      }
+    },
     subsystems: {
       "kea-control-agent": {
         port: 8000
@@ -102,4 +108,11 @@ test("kea basics", t => {
 
   t.deepEqual(result, expected);
   */
+
+  //console.log([...keaInst.subnets.keys()]);
+
+  const s1 = keaInst.subnets.get("1.2.3/24");
+
+  t.is(s1.name, "1.2.3/24");
+  t.deepEqual(s1.pool, ["1.2.3.10", "1.2.3.20"]);
 });

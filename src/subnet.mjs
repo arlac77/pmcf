@@ -3,7 +3,6 @@ import {
   rangeIP,
   decodeIP,
   matchPrefixIP,
-  FAMILY_IPV6
 } from "ip-utilties";
 import { string_attribute, name_attribute, integer_attribute } from "pacc";
 import { networks_attribute } from "./common-attributes.mjs";
@@ -30,6 +29,12 @@ export class Subnet extends core {
 
   constructor(owner, address) {
     super();
+
+    switch(typeof address) {
+      case "object":
+        address = address.address;
+    }
+
     const { longPrefix, prefix, prefixLength, cidr, family } =
       normalizeCIDR(address);
 
@@ -69,16 +74,6 @@ export class Subnet extends core {
 
   get addressRange() {
     return rangeIP(this.prefix, this.prefixLength, 1, 1).map(a => decodeIP(a));
-  }
-
-  get dhcpPools() {
-    /* TODO where to take values from ? */
-
-    return [
-      this.family === FAMILY_IPV6
-        ? this.cidr
-        : rangeIP(this.prefix, this.prefixLength, 51, 20).map(a => decodeIP(a))
-    ];
   }
 
   get longAddress() {

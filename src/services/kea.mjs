@@ -2,14 +2,15 @@ import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import {
   reverseArpa,
-  isLinkLocal,
   addressType,
   FAMILY_IPV4,
   FAMILY_IPV6,
   ADDRESS_TYPE_LOOPBACK
 } from "ip-utilties";
 import {
+  name_attribute,
   string_attribute_writable,
+  string_collection_attribute_writable,
   number_attribute_writable,
   boolean_attribute_writable_true,
   default_collection_attribute_writable,
@@ -17,17 +18,36 @@ import {
 } from "pacc";
 import {
   addType,
+  Subnet,
   CoreService,
   Endpoint,
   sortDescendingByPriority,
-  SUBNET_LOCALHOST_IPV4,
-  SUBNET_LOCALHOST_IPV6,
   FAMILY_UNIX
 } from "pmcf";
 import { writeLines } from "../utils.mjs";
 
+class kea_subnet extends Subnet {
+  static attributes = {
+    pool: {
+      ...string_collection_attribute_writable,
+      name: "pool"
+    }
+  };
+
+  static {
+    addType(this);
+  }
+
+  pool = [];
+}
+
 export class kea extends CoreService {
   static attributes = {
+    subnets: {
+      ...default_collection_attribute_writable,
+      type: kea_subnet,
+      name: "subnets"
+    },
     dnsServerEndpoints: {
       ...default_collection_attribute_writable,
       type: Endpoint,
@@ -135,6 +155,8 @@ export class kea extends CoreService {
     addType(this);
   }
 
+  subnets = new Map();
+
   async *preparePackages(dir) {
     const ctrlAgentEndpoint = this.endpoint("kea-ha-4");
 
@@ -144,18 +166,9 @@ export class kea extends CoreService {
 
     const network = this.network;
     const host = this.host;
-
     const source = host.owner;
     const name = host.name;
-
-    const subnets = [...new Map(this.subnets).values()].filter(
-      s => s !== SUBNET_LOCALHOST_IPV4 && s !== SUBNET_LOCALHOST_IPV6
-    ); // TODO should be normal
-    /*console.log(
-      "SUBNETS",
-      subnets.map(s => s.fullName)
-    );*/
-
+    const subnets = [...this.subnets.values()];
     const dnsServerEndpoints = this.dnsServerEndpoints;
     const packageData = await this.packageData;
 
@@ -399,29 +412,18 @@ export class kea extends CoreService {
           endpoint.type === "dhcp" &&
           endpoint.family === family &&
           endpoint.networkInterface.kind !== "loopback" &&
-          endpoint.networkInterface.kind !== "wlan" &&
           endpoint.networkInterface.kind !== "tun"
       ).map(
         endpoint => `${endpoint.networkInterface.name}/${endpoint.address}`
       );
 
-    const pools = subnet => {
-      return subnet.dhcpPools.map(pool => {
-        return { pool: Array.isArray(pool) ? pool.join(" - ") : pool };
-      });
-    };
+    const pools = subnet => [{ pool: subnet.pool.join(" - ") }];
 
     const dhcp4 = {
       Dhcp4: {
         ...(await commonConfig("4")),
         subnet4: subnets
-          .filter(
-            s =>
-              s.family === FAMILY_IPV4 &&
-              // TODO keep out tailscale
-              s.cidr !== "100.64.0.2/32" &&
-              s.cidr !== "100.64.0.3/32"
-          )
+          .filter(s => s.family === FAMILY_IPV4)
           .map((subnet, index) => {
             return {
               id: index + 1,
@@ -442,13 +444,7 @@ export class kea extends CoreService {
       Dhcp6: {
         ...(await commonConfig("6")),
         subnet6: subnets
-          .filter(
-            s =>
-              s.family === FAMILY_IPV6 &&
-              !isLinkLocal(s.address) &&
-              // TODO keep out tailscale
-              s.cidr !== "fd7a:115c:a1e0::/64"
-          )
+          .filter(s => s.family === FAMILY_IPV6)
           .map((subnet, index) => {
             return {
               id: index + 1,
