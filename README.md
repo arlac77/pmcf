@@ -110,12 +110,16 @@ generates config packages for:
 *   [directHosts](#directhosts)
 *   [subnetForAddress](#subnetforaddress)
     *   [Parameters](#parameters-22)
-*   [domainName](#domainname)
+*   [ServiceType](#servicetype)
+    *   [Properties](#properties-2)
+*   [serviceTypeEndpoints](#servicetypeendpoints)
     *   [Parameters](#parameters-23)
-*   [domainFromDominName](#domainfromdominname)
+*   [domainName](#domainname)
     *   [Parameters](#parameters-24)
-*   [sectionLines](#sectionlines)
+*   [domainFromDominName](#domainfromdominname)
     *   [Parameters](#parameters-25)
+*   [sectionLines](#sectionlines)
+    *   [Parameters](#parameters-26)
 
 ## base
 
@@ -429,6 +433,26 @@ hosts we own direcly.
 *   `address` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
 Returns **Subnet?**&#x20;
+
+## ServiceType
+
+Type: [object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+
+### Properties
+
+*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+*   `services` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)>**&#x20;
+*   `extends` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[ServiceType](#servicetype)>**&#x20;
+*   `endpoints` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)>**&#x20;
+
+## serviceTypeEndpoints
+
+### Parameters
+
+*   `type` **[ServiceType](#servicetype)**&#x20;
+*   `bundeledToo` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
+
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)>**&#x20;
 
 ## domainName
 
