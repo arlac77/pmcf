@@ -15,6 +15,7 @@ export class mosquitto extends CoreService {
       name: "listener",
       writable: true,
       configurable: true
+      // endpoints[type='mqtt']/port
     },
     persistence_location: {
       ...string_attribute_writable,

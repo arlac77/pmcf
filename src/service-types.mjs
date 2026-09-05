@@ -2,6 +2,14 @@ import { asArray } from "pacc";
 import { FAMILY_IPV6 } from "ip-utilties";
 import { FAMILY_UNIX, FAMILY_IPV4_IPV6 } from "./endpoint.mjs";
 
+/**
+ * @typedef {object} ServiceType
+ * @property {string} name
+ * @property {Array<Object>} services
+ * @property {Array<ServiceType>} extends
+ * @property {Array<object>} endpoints
+ * 
+ */
 export const ServiceTypes = {
   "alpm-repo": {
     extends: ["https"]
@@ -258,6 +266,12 @@ export function serviceTypes(type) {
   return new Set();
 }
 
+/**
+ * 
+ * @param {ServiceType} type 
+ * @param {boolean} bundeledToo 
+ * @returns {Array<Object>}
+ */
 export function serviceTypeEndpoints(type, bundeledToo) {
   if (type) {
     const aggregator = (acc, type) => {
