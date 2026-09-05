@@ -40,29 +40,25 @@ export class mosquitto extends CoreService {
     addType(this);
   }
 
+  set listener(value) {
+    this._listener = value;
+  }
+
   get listener() {
-    return this.endpoint("mqtt").port;
+    return this._listener ?? this.endpoint("mqtt").port;
   }
 
   async *preparePackages(dir) {
-    /*
-    const pm = this.root.named("/services/primary-SW/mosquitto");
-    const wd = [...this.walkDirections(["this", "extends"])];
-
-    console.log(
-      "MOSQUITTO",
-      this.fullName,
-      [...this.extends].map(n => n.fullName),
-      pm.fullName,
-      [...pm.extends].map(n => n.fullName),
-      wd.map(n => [n.fullName, n.directory])
-    );*/
-
     const packageData = await this.packageData;
 
-    packageData.sources = await Array.fromAsync(this.templateContent());
-
-    packageData.sources.push(new FileContentProvider({ dir: dir + "/" }));
+    packageData.sources.push(
+      ...(await Array.fromAsync(this.templateContent())),
+      new FileContentProvider({
+        dir,
+        pattern: ["**/*"],
+        permissions: this.content.permissions
+      })
+    );
 
     await writeLines(
       join(dir, "etc", "mosquitto"),
