@@ -8,7 +8,6 @@ import {
   ADDRESS_TYPE_LOOPBACK
 } from "ip-utilties";
 import {
-  name_attribute,
   string_attribute_writable,
   string_collection_attribute_writable,
   number_attribute_writable,
@@ -47,6 +46,12 @@ export class kea extends CoreService {
       ...default_collection_attribute_writable,
       type: kea_subnet,
       name: "subnets"
+    },
+    peers: {
+      ...default_collection_attribute_writable,
+      type: CoreService,
+      name: "peers",
+      deferredExpression: true
     },
     dnsServerEndpoints: {
       ...default_collection_attribute_writable,
@@ -183,27 +188,6 @@ export class kea extends CoreService {
       })
     );
 
-    const peers = async family =>
-      Array.from(
-        source.expression(
-          `services[types[kea] && priority>=${Math.min(this.priority, 100)}]`
-        )
-      )
-        .sort(sortDescendingByPriority)
-        .map((dhcp, i) => {
-          const ctrlAgentEndpoint = dhcp.endpoint(`kea-ha-${family}`);
-
-          if (ctrlAgentEndpoint) {
-            return {
-              name: dhcp.host.name,
-              role: i === 0 ? "primary" : i > 1 ? "backup" : "standby",
-              url: ctrlAgentEndpoint.url,
-              "auto-failover": i <= 1
-            };
-          }
-        })
-        .filter(p => p != null);
-
     const loggers = [
       {
         "output-options": [
@@ -216,7 +200,9 @@ export class kea extends CoreService {
       }
     ];
 
-    const commonConfig = async family => {
+    const peers = this.peers;
+
+    const commonConfig = family => {
       const cfg = {
         "interfaces-config": {
           interfaces: listenInterfaces(`IPv${family}`)
@@ -263,7 +249,24 @@ export class kea extends CoreService {
                     "http-listener-threads": 2,
                     "http-client-threads": 2
                   },*/
-                  peers: await peers(family)
+                  peers: peers
+                    .sort(sortDescendingByPriority)
+                    .reduce((a, kea) => {
+                      const ctrlAgentEndpoint = kea.endpoint(
+                        `kea-ha-${family}`
+                      );
+                      if (ctrlAgentEndpoint) {
+                        const i = a.length;
+                        a.push({
+                          name: kea.host.name,
+                          role:
+                            i === 0 ? "primary" : i > 1 ? "backup" : "standby",
+                          url: ctrlAgentEndpoint.url,
+                          "auto-failover": i <= 1
+                        });
+                      }
+                      return a;
+                    }, [])
                 }
               ]
             }
@@ -417,18 +420,16 @@ export class kea extends CoreService {
         endpoint => `${endpoint.networkInterface.name}/${endpoint.address}`
       );
 
-    const pools = subnet => [{ pool: subnet.pool.join(" - ") }];
-
     const dhcp4 = {
       Dhcp4: {
-        ...(await commonConfig("4")),
+        ...commonConfig("4"),
         subnet4: subnets
           .filter(s => s.family === FAMILY_IPV4)
           .map((subnet, index) => {
             return {
               id: index + 1,
               subnet: subnet.longAddress,
-              pools: pools(subnet),
+              pools: [{ pool: subnet.pool.join(" - ") }],
               reservations: reservations(subnet, "4"),
               "option-data": [
                 {
@@ -442,14 +443,14 @@ export class kea extends CoreService {
     };
     const dhcp6 = {
       Dhcp6: {
-        ...(await commonConfig("6")),
+        ...commonConfig("6"),
         subnet6: subnets
           .filter(s => s.family === FAMILY_IPV6)
           .map((subnet, index) => {
             return {
               id: index + 1,
               subnet: subnet.longAddress,
-              pools: pools(subnet),
+              pools: [{ pool: subnet.pool.join(" - ") }],
               reservations: reservations(subnet, "6")
             };
           })
