@@ -8,7 +8,7 @@ import {
   expand,
   globals
 } from "pacc";
-import { addType } from "pmcf";
+import { addType } from "./type.mjs";
 
 export class core {
   static priority = 1;
