@@ -1,5 +1,6 @@
 import test from "ava";
-import { InitializationContext, addresses } from "pmcf";
+import { FAMILY_IPV4 } from "ip-utilties";
+import { InitializationContext, addresses, FAMILY_DNS } from "pmcf";
 import { bind } from "../src/services/bind.mjs";
 
 test("BIND basics", async t => {
@@ -19,6 +20,7 @@ test("BIND basics", async t => {
   t.deepEqual(
     bindInst.endpoints("dns").map(e => {
       return {
+        family: e.family,
         type: e.type,
         port: e.port,
         address: e.address
@@ -27,12 +29,19 @@ test("BIND basics", async t => {
     [
       {
         type: "dns",
+        family: FAMILY_IPV4,
         address: "192.168.1.11",
+        port: 53
+      },
+      {
+        type: "dns",
+        family: FAMILY_DNS,
+        address: "c1.mydomain.com",
         port: 53
       }
     ]
   );
-  /*
+
   t.deepEqual(
     bindInst.endpoints("bind-statistics").map(e => {
       return {
@@ -44,12 +53,11 @@ test("BIND basics", async t => {
     [
       {
         type: "bind-statistics",
-        address: "192.168.1.11",
-        port: 53
+        address: "c1.mydomain.com",
+        port: 19521
       }
     ]
   );
-  */
 
   const content = bindInst.content;
   t.is(content.name, "bind-C1");

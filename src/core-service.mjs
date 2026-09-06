@@ -66,7 +66,7 @@ export class CoreService extends base {
     },
     priority: priority_attribute,
     weight: { ...number_attribute_writable, name: "weight" /*default: 1*/ },
-    types: { ...string_set_attribute_writable, name: "types"},
+    types: { ...string_set_attribute_writable, name: "types" },
     systemdService: { ...string_attribute_writable, name: "systemdService" },
     systemUserName: { ...string_attribute_writable, name: "systemUserName" },
     systemGroupName: { ...string_attribute_writable, name: "systemGroupName" }
@@ -119,10 +119,19 @@ export class CoreService extends base {
   endpoints(filter) {
     const data = serviceTypeEndpoints(ServiceTypes[this.type], true);
     const result = [];
+    const domainNames = new Set();
 
-    const domainNames = new Set([undefined]);
+    let type;
+    if (typeof filter === "string") {
+      type = filter;
+      filter = undefined;
+    }
 
     for (const e of data) {
+      if (type && e.type.name !== type) {
+        continue;
+      }
+
       switch (e.family) {
         case FAMILY_UNIX:
           result.push(new unix_endpoint(this, e.path, e));
@@ -158,16 +167,7 @@ export class CoreService extends base {
       }
     }
 
-    switch (typeof filter) {
-      case "string":
-        return result.filter(endpoint => endpoint.type === filter);
-
-      case "undefined":
-        return result;
-
-      default:
-        return result.filter(filter);
-    }
+    return filter ? result.filter(filter) : result;
   }
 
   endpoint(filter) {
