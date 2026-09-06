@@ -33,7 +33,14 @@ export class influxdb extends CoreService {
   async *preparePackages(dir) {
     const packageData = await this.packageData;
 
-    packageData.sources.push(new FileContentProvider(dir + "/"));
+    packageData.sources.push(
+      ...(await Array.fromAsync(this.templateContent())),
+      new FileContentProvider({
+        dir,
+        pattern: ["**/*"],
+        permissions: this.content.permissions
+      })
+    );
 
     await writeLines(
       join(dir, "etc", "influxdb"),
