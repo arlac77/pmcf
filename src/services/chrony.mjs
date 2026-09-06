@@ -3,8 +3,7 @@ import { FAMILY_IPV4, isLinkLocal } from "ip-utilties";
 import { FileContentProvider } from "npm-pkgbuild";
 import {
   serviceEndpoints,
-  addType,
-  ExtraSourceService,
+  addType,ExtraSourceService,
   FAMILY_UNIX,
   FAMILY_IPV4_IPV6
 } from "pmcf";
@@ -38,7 +37,17 @@ export class chrony extends ExtraSourceService {
 
   async *preparePackages(dir) {
     const packageData = await this.packageData;
-    packageData.sources.push(new FileContentProvider(dir + "/"));
+
+    packageData.sources.push(
+      ...(await Array.fromAsync(this.templateContent()))
+    );
+
+    packageData.sources.push(
+      new FileContentProvider({
+        dir: dir + "/",
+        permissions: this.content?.permissions
+      })
+    );
 
     const subnets = [...new Map(this.subnets).values()]; // TODO should be normal
     const host = this.host;
