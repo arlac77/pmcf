@@ -15,6 +15,7 @@ export class mosquitto extends CoreService {
       name: "listener",
       writable: true,
       configurable: true
+      // alias port
       // endpoints[type='mqtt']/port
     },
     persistence_location: {
@@ -42,11 +43,11 @@ export class mosquitto extends CoreService {
   }
 
   set listener(value) {
-    this._listener = value;
+    this.port = value;
   }
 
   get listener() {
-    return this._listener ?? this.endpoint("mqtt").port;
+    return this.port;
   }
 
   async *preparePackages(dir) {
