@@ -182,7 +182,7 @@ export class HTTPEndpoint extends BaseEndpoint {
   /**
    *
    * @param {Service} service
-   * @param {*} address
+   * @param {string|URL} address
    * @param {object} data
    * @param {number} data.port
    * @param {string} data.pathname

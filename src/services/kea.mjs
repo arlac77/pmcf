@@ -134,7 +134,12 @@ export class kea extends CoreService {
           {
             family: FAMILY_UNIX,
             path: "/run/kea/ctrl-4"
-          }
+          },
+          /*{
+            family: FAMILY_IPV4,
+            port: 53005,
+            pathname: "/"
+          }*/
         ]
       },
       "kea-control-dhcp6": {
@@ -142,7 +147,12 @@ export class kea extends CoreService {
           {
             family: FAMILY_UNIX,
             path: "/run/kea/ctrl-6"
-          }
+          },
+          /*{
+            family: FAMILY_IPV6,
+            port: 53005,
+            pathname: "/"
+          }*/
         ]
       },
       "kea-control-ddns": {
@@ -207,7 +217,9 @@ export class kea extends CoreService {
         "interfaces-config": {
           interfaces: listenInterfaces(`IPv${family}`)
         },
-        "control-sockets": [toUnix(this.endpoint(`kea-control-dhcp${family}`))],
+        "control-sockets": this.endpoints(`kea-control-dhcp${family}`).map(e =>
+          toSocket(e)
+        ),
         "lease-database": {
           type: "memfile",
           "lfc-interval": 3600
@@ -307,11 +319,32 @@ export class kea extends CoreService {
       return cfg;
     };
 
-    const toUnix = endpoint => {
-      return {
-        "socket-type": FAMILY_UNIX,
-        "socket-name": endpoint?.path
-      };
+    const toSocket = endpoint => {
+      switch (endpoint.family) {
+        case FAMILY_IPV4:
+        case FAMILY_IPV6:
+          return {
+            "socket-type": "http",
+            "socket-address": endpoint.address.hostname,
+            "socket-port": endpoint.port,
+            authentication: {
+              type: "basic",
+              realm: "Kea Control Agent",
+              directory: "/etc/kea",
+              clients: [
+                {
+                  "user-file": "kea-api-user",
+                  "password-file": "kea-api-password"
+                }
+              ]
+            }
+          };
+        case FAMILY_UNIX:
+          return {
+            "socket-type": FAMILY_UNIX,
+            "socket-name": endpoint?.path
+          };
+      }
     };
 
     /*const ctrlAgent = {
@@ -319,9 +352,9 @@ export class kea extends CoreService {
         "http-host": ctrlAgentEndpoint.hostname,
         "http-port": ctrlAgentEndpoint.port,
         "control-sockets": {
-          dhcp4: toUnix(this.endpoint("kea-control-dhcp4")),
-          dhcp6: toUnix(this.endpoint("kea-control-dhcp6")),
-          d2: toUnix(this.endpoint("kea-control-ddns"))
+          dhcp4: toSocket(this.endpoint("kea-control-dhcp4")),
+          dhcp6: toSocket(this.endpoint("kea-control-dhcp6")),
+          d2: toSocket(this.endpoint("kea-control-ddns"))
         },
         loggers
       }
@@ -349,9 +382,7 @@ export class kea extends CoreService {
       DhcpDdns: {
         "ip-address": ddnsEndpoint.address,
         port: ddnsEndpoint.port,
-        "control-socket": toUnix(
-          this.endpoint(e => e.type === "kea-control-ddns")
-        ),
+        "control-socket": toSocket(this.endpoint("kea-control-ddns")),
         "tsig-keys": [],
         "forward-ddns": {
           "ddns-domains": dnsServersSlot([...this.domains])
