@@ -337,12 +337,12 @@ test("Host addresses", t => {
       name: "n1",
       type: "network"
     },
-    /*ipAddresses: [
-          "10.0.0.2", 
-          n1.subnets.get("10.0/16"),
-      "fe80::1e57:3eff:fe22:9a8f", 
-      n1.subnets.get("fe80::/64")
-    ],*/
+    cidrAddress: "10.0.0.2/16",
+    cidrAddresses: [
+      "10.0.0.2/16",
+      "fe80::1e57:3eff:fe22:9a8f/64",
+      "169.254.1.2/16"
+    ],
     address: "10.0.0.2",
     addresses: ["10.0.0.2", "fe80::1e57:3eff:fe22:9a8f", "169.254.1.2"]
   });

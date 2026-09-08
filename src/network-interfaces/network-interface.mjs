@@ -53,9 +53,9 @@ export class NetworkInterface extends SkeletonNetworkInterface {
       private: true
     },
     hwaddr: { ...string_attribute_writable, name: "hwaddr" },
-    destination: { ...string_attribute_writable, name: "destination" },
+    destination: { ...string_attribute_writable, name: "destination" }
 
-/*
+    /*
     InitialCongestionWindow: { ...number_attribute_writable, name: "InitialCongestionWindow", default: 10, configurable: true },
     InitialAdvertisedReceiveWindow: { ...number_attribute_writable, name: "InitialAdvertisedReceiveWindow", default: 10, configurable: true },
     */
@@ -72,6 +72,14 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   _hostName;
   _hwaddr;
   _class;
+
+  get cidrAddresses() {
+    return cidrAddresses(this.networkAddresses());
+  }
+  
+  get cidrAddress() {
+    return cidrAddresses(this.networkAddresses())[0];
+  }
 
   addSubnet(address) {
     if (this.network) {
@@ -113,7 +121,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   set hostName(value) {
     this._hostName = value;
   }
-  
+
   get domains() {
     if (!this.host) {
       return new Set();
