@@ -1,8 +1,7 @@
 import { join } from "node:path";
 import {
   string_attribute_writable,
-  default_collection_attribute_writable,
-  number_attribute_writable
+  default_collection_attribute_writable
 } from "pacc";
 import { network_attribute } from "../common-attributes.mjs";
 import { Host, cidrAddresses, addType } from "pmcf";
@@ -75,10 +74,6 @@ export class NetworkInterface extends SkeletonNetworkInterface {
 
   get cidrAddresses() {
     return cidrAddresses(this.networkAddresses());
-  }
-  
-  get cidrAddress() {
-    return cidrAddresses(this.networkAddresses())[0];
   }
 
   addSubnet(address) {

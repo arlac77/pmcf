@@ -155,11 +155,9 @@ export const networkAttributes = {
   multicastDNS: { ...boolean_attribute_writable, name: "multicastDNS" }
 };
 
-
 export const networkAddressAttributes = {
   hostName: hostname_attribute,
   cidrAddresses: cidr_addresses_attribute,
-  cidrAddress: cidr_address_attribute,
   addresses: { ...string_collection_attribute_writable, name: "addresses" },
   address: address_attribute
 };

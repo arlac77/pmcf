@@ -337,7 +337,6 @@ test("Host addresses", t => {
       name: "n1",
       type: "network"
     },
-    cidrAddress: "10.0.0.2/16",
     cidrAddresses: [
       "10.0.0.2/16",
       "fe80::1e57:3eff:fe22:9a8f/64",
@@ -367,7 +366,7 @@ test("Host addresses", t => {
     "fe80::1e57:3eff:fe22:9a8f",
     "169.254.1.2"
   ]);
-  t.deepEqual(cidrAddresses(h1.networkAddresses()), [
+  t.deepEqual(h1.cidrAddresses, [
     "127.0.0.1/8",
     "::1/128",
     "10.0.0.2/16",

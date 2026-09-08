@@ -9,7 +9,7 @@ import {
   priority_attribute,
   asArray
 } from "pacc";
-import { addresses, addType, assign } from "pmcf";
+import { cidrAddresses, addresses, addType, assign } from "pmcf";
 import {
   networkAddressAttributes,
   networkInterfaces_attribute,
@@ -295,6 +295,10 @@ export class Host extends ServiceOwner {
 
   get addresses() {
     return addresses(this.networkAddresses());
+  }
+
+  get cidrAddresses() {
+    return cidrAddresses(this.networkAddresses());
   }
 
   get subnets() {
