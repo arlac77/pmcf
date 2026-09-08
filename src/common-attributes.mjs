@@ -15,7 +15,7 @@ import {
 
 export const networkAddressType = "network|host|network_interface";
 
-export const extends_attribute = {  
+export const extends_attribute = {
   ...default_collection_attribute_writable,
   name: "extends"
 };
@@ -76,6 +76,21 @@ export const clusters_attribute = {
   name: "clusters",
   type: "cluster",
   backpointer: owner_attribute
+};
+
+export const address_attribute = {
+  ...string_attribute_writable,
+  name: "address"
+};
+
+export const cidr_address_attribute = {
+  ...string_attribute_writable,
+  name: "cidrAddress"
+};
+
+export const cidr_addresses_attribute = {
+  ...string_collection_attribute_writable,
+  name: "cidrAddresses"
 };
 
 export const subnets_attribute = {
@@ -140,15 +155,13 @@ export const networkAttributes = {
   multicastDNS: { ...boolean_attribute_writable, name: "multicastDNS" }
 };
 
+
 export const networkAddressAttributes = {
   hostName: hostname_attribute,
-  cidrAddresses: {
-    ...string_collection_attribute_writable,
-    name: "cidrAddresses"
-  },
-  cidrAddress: { ...string_attribute_writable, name: "cidrAddress" },
+  cidrAddresses: cidr_addresses_attribute,
+  cidrAddress: cidr_address_attribute,
   addresses: { ...string_collection_attribute_writable, name: "addresses" },
-  address: { ...string_attribute_writable, name: "address" }
+  address: address_attribute
 };
 
 export const endpointAttributes = {
@@ -162,4 +175,3 @@ export const endpointAttributes = {
   tls: { ...boolean_attribute_false, name: "tls" },
   address: { ...string_attribute, name: "address" }
 };
-

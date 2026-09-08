@@ -9,7 +9,7 @@ import { familyIP, formatCIDR, decodeIP, addressType } from "ip-utilties";
 import { Subnet } from "./subnet.mjs";
 import { Owner, addType } from "pmcf";
 import { NetworkInterface } from "./network-interfaces/network-interface.mjs";
-import { family_attribute, subnet_attribute } from "./common-attributes.mjs";
+import { family_attribute, subnet_attribute, address_attribute, cidr_address_attribute } from "./common-attributes.mjs";
 /**
  *
  */
@@ -18,9 +18,9 @@ export class NetworkAddress {
   static priority = 1;
   static key = "address";
   static attributes = {
-    address: { ...string_attribute, name: "address" },
+    address: address_attribute,
     type: type_attribute,
-    cidrAddress: { ...string_attribute, name: "cidrAddress" },
+    cidrAddress: cidr_address_attribute,
     networkInterface: {
       ...default_attribute,
       name: "networkInterface",
