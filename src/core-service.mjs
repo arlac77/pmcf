@@ -9,6 +9,7 @@ import {
   string_set_attribute_writable,
   number_attribute_writable,
   priority_attribute,
+  default_collection_attribute_writable,
   asArray
 } from "pacc";
 import {
@@ -40,6 +41,12 @@ import {
   dnsPriority
 } from "./dns-utils.mjs";
 
+export class credential extends base {
+  static {
+    addType(this);
+  }
+}
+
 export class CoreService extends base {
   static name = "core-service";
   static priority = 1.1;
@@ -69,7 +76,8 @@ export class CoreService extends base {
     types: { ...string_set_attribute_writable, name: "types" },
     systemdService: { ...string_attribute_writable, name: "systemdService" },
     systemUserName: { ...string_attribute_writable, name: "systemUserName" },
-    systemGroupName: { ...string_attribute_writable, name: "systemGroupName" }
+    systemGroupName: { ...string_attribute_writable, name: "systemGroupName" },
+    credentials: { ...default_collection_attribute_writable, type: credential, name: "credentials" }
   };
 
   static {
@@ -79,6 +87,7 @@ export class CoreService extends base {
   _weight;
   _port;
   _systemdService;
+  credentials = new Map();
 
   toString() {
     return `${this.fullName}(${this.type})`;
