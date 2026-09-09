@@ -217,6 +217,12 @@ export const ServiceTypes = {
     endpoints: [
       { family: FAMILY_IPV4_IPV6, protocol: UDP, port: 5350, tls: false }
     ]
+  },
+  "mbap": {
+    // Modbus TCP
+    endpoints: [
+      { family: FAMILY_IPV4_IPV6, protocol: TCP, port: 502, tls: false }
+    ]
   }
 };
 
