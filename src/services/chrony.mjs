@@ -1,12 +1,7 @@
 import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { default_collection_attribute_writable } from "pacc";
-import {
-  addType,
-  FAMILY_UNIX,
-  FAMILY_IPV4_IPV6,
-  CoreService
-} from "pmcf";
+import { addType, FAMILY_UNIX, FAMILY_IPV4_IPV6, CoreService } from "pmcf";
 import { writeLines } from "../utils.mjs";
 
 export class chrony extends CoreService {
@@ -83,6 +78,7 @@ export class chrony extends CoreService {
 
       return values.join(" ");
     }
+
     const lines = [
       this.servers.flat().map(chronyServer),
       this.peers
