@@ -73,7 +73,7 @@ test("types", t => {
   t.is(types.bind.priority, 1.1);
 
   t.is(types.chrony, chrony);
-  t.is(types.chrony.extends, ExtraSourceService);
+  t.is(types.chrony.extends, CoreService);
   t.is(types.chrony.priority, 1.1);
 
   t.is(types.alpm, alpm);

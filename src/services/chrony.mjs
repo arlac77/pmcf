@@ -1,15 +1,30 @@
 import { join } from "node:path";
-import { FAMILY_IPV4, isLinkLocal } from "ip-utilties";
 import { FileContentProvider } from "npm-pkgbuild";
+import { default_collection_attribute_writable } from "pacc";
 import {
-  serviceEndpoints,
-  addType,ExtraSourceService,
+  addType,
   FAMILY_UNIX,
-  FAMILY_IPV4_IPV6
+  FAMILY_IPV4_IPV6,
+  CoreService
 } from "pmcf";
 import { writeLines } from "../utils.mjs";
 
-export class chrony extends ExtraSourceService {
+export class chrony extends CoreService {
+  static attributes = {
+    servers: {
+      ...default_collection_attribute_writable,
+      type: chrony,
+      name: "servers",
+      deferredExpression: true
+    },
+    peers: {
+      ...default_collection_attribute_writable,
+      type: chrony,
+      name: "peers",
+      deferredExpression: true
+    }
+  };
+
   static service = {
     systemdService: "chronyd.service",
     extends: ["ntp"],
@@ -52,30 +67,28 @@ export class chrony extends ExtraSourceService {
     const subnets = [...new Map(this.subnets).values()]; // TODO should be normal
     const host = this.host;
 
+    function chronyServer(endpoint) {
+      const values = [
+        endpoint.isPool ? "pool" : "server",
+        endpoint.address,
+        "iburst"
+      ];
+
+      if (endpoint.isPool) {
+        values.push("maxsources 2");
+      }
+      if (endpoint.priority > 300) {
+        values.push("prefer");
+      }
+
+      return values.join(" ");
+    }
     const lines = [
-      ...serviceEndpoints(this, {
-        services: "services[types[ntp] && priority>=100]",
-        endpoints: e =>
-          e.type === "ntp" &&
-          !isLinkLocal(e.address) &&
-          e.service.host !== host &&
-          e.networkInterface &&
-          e.networkInterface.kind !== "loopback",
-        select: endpoint => {
-          const options = [
-            endpoint.isPool ? "pool" : "server",
-            endpoint.address,
-            "iburst"
-          ];
-          if (endpoint.isPool) {
-            options.push("maxsources 2");
-          }
-          if (endpoint.priority > 300 && endpoint.family === FAMILY_IPV4) {
-            options.push("prefer");
-          }
-          return options.join(" ");
-        }
-      }),
+      this.servers.flat().map(chronyServer),
+      this.peers
+        .flat()
+        .filter(endpoint => endpoint.host !== host)
+        .map(chronyServer),
       `mailonchange ${this.administratorEmail} 0.5`,
       "local stratum 10 orphan",
       "leapsectz right/UTC",
