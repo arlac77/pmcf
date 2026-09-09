@@ -178,6 +178,10 @@ export class Host extends ServiceOwner {
     return parts[parts.length - 1].toLowerCase();
   }
 
+  isMember(host) {
+    return this === host;
+  }
+
   get services() {
     return new AggregatedMap([
       this._services,
@@ -318,7 +322,7 @@ export class Host extends ServiceOwner {
     const packageData = await this.packageData;
 
     packageData.sources.push(
-      ...await Array.fromAsync(this.templateContent()),
+      ...(await Array.fromAsync(this.templateContent())),
       new FileContentProvider({
         dir,
         pattern: ["**/*", "**/.ssh/*"],

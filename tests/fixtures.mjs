@@ -1,4 +1,12 @@
-import { Owner, Network, Subnet, Host, cluster, mosquitto, content } from "pmcf";
+import {
+  Owner,
+  Network,
+  Subnet,
+  Host,
+  cluster,
+  mosquitto,
+  content
+} from "pmcf";
 
 /**
  *
@@ -151,7 +159,11 @@ export function root1(root, filter) {
     instanceof: cluster,
     id: 77,
     masters: [host1.networkInterfaces.eth0],
-    backups: [host2.networkInterfaces.wlan0]
+    backups: [host2.networkInterfaces.wlan0],
+    hosts: new Map([
+      [host1.name, host1],
+      [host2.name, host2]
+    ])
   };
 
   const model = {

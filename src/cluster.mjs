@@ -40,15 +40,22 @@ export class cluster extends Host {
 
   masters = [];
   backups = [];
-  routerId = 100;
   checkInterval = 60;
-
-  get content() {
-    return this.masters.map(m => m.host)[0]?.content;
-  }
 
   get members() {
     return new Set(this.masters).union(new Set(this.backups));
+  }
+
+  isMember(host) {
+    return super.isMember(host) || this.hosts.get(host.name) === host;
+  }
+
+  get hosts() {
+    return new Map([...this.members].map(m => [m.host.name, m.host]));
+  }
+
+  get content() {
+    return [...this.hosts.values()][0]?.content;
   }
 
   async *preparePackages(stagingDir) {

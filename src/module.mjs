@@ -2,6 +2,8 @@ export * from "./type.mjs";
 export * from "./core.mjs";
 export * from "./base.mjs";
 export * from "./cluster.mjs";
+export * from "./keepalived.mjs";
+
 export * from "./owner.mjs";
 export * from "./root.mjs";
 export * from "./subnet.mjs";

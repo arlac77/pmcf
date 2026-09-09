@@ -64,9 +64,16 @@ test("Host load", async t => {
   t.deepEqual(content.packaging, new Set(["alpm"]));
 });
 
+test("Host isMember", t => {
+  const h1 = new Host();
+  const h2 = new Host();
+
+  t.true(h1.isMember(h1));
+  t.false(h1.isMember(h2));
+});
+
 test("Host extends", t => {
   const ic = new InitializationContext();
-
   const linux = new Host();
   ic.read(linux, {
     name: "linux",

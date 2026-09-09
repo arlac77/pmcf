@@ -219,7 +219,7 @@ export class core {
   mapFromDirections(directions, property) {
     return new AggregatedMap(
       [...this.walkDirections(directions)]
-        .filter(node => node !== undefined)
+        .filter(node => node?.[property])
         .map(node => node[property])
     );
   }

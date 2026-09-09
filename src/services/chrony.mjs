@@ -83,7 +83,7 @@ export class chrony extends CoreService {
       this.servers.flat().map(chronyServer),
       this.peers
         .flat()
-        .filter(endpoint => endpoint.host !== host)
+        .filter(endpoint => !endpoint.service.host.isMember(host))
         .map(chronyServer),
       `mailonchange ${this.administratorEmail} 0.5`,
       "local stratum 10 orphan",
