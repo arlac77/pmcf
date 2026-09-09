@@ -13,13 +13,13 @@ export class chrony extends CoreService {
   static attributes = {
     servers: {
       ...default_collection_attribute_writable,
-      type: chrony,
+      type: "endpoint",
       name: "servers",
       deferredExpression: true
     },
     peers: {
       ...default_collection_attribute_writable,
-      type: chrony,
+      type: "endpoint",
       name: "peers",
       deferredExpression: true
     }
