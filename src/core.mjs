@@ -219,8 +219,8 @@ export class core {
   mapFromDirections(directions, property) {
     return new AggregatedMap(
       [...this.walkDirections(directions)]
-        .map(node => node[property])
         .filter(node => node !== undefined)
+        .map(node => node[property])
     );
   }
 
@@ -235,9 +235,6 @@ export class core {
     for (const node of this.walkDirections(directions)) {
       const value = node[property];
       if (value !== undefined) {
-        if (!(value instanceof Set)) {
-          console.log("NO SET", value, node.fullName, property);
-        }
         collected = collected.union(value);
       }
     }
