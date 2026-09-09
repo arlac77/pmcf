@@ -134,7 +134,7 @@ export class kea extends CoreService {
           {
             family: FAMILY_UNIX,
             path: "/run/kea/ctrl-4"
-          },
+          }
           /*{
             family: FAMILY_IPV4,
             port: 53005,
@@ -147,7 +147,7 @@ export class kea extends CoreService {
           {
             family: FAMILY_UNIX,
             path: "/run/kea/ctrl-6"
-          },
+          }
           /*{
             family: FAMILY_IPV6,
             port: 53005,
@@ -264,18 +264,24 @@ export class kea extends CoreService {
                   peers: peers
                     .sort(sortDescendingByPriority)
                     .reduce((a, kea) => {
-                      const ctrlAgentEndpoint = kea.endpoint(
-                        `kea-ha-${family}`
-                      );
-                      if (ctrlAgentEndpoint) {
-                        const i = a.length;
-                        a.push({
-                          name: kea.host.name,
-                          role:
-                            i === 0 ? "primary" : i > 1 ? "backup" : "standby",
-                          url: ctrlAgentEndpoint.url,
-                          "auto-failover": i <= 1
-                        });
+                      if (!kea.host.isCluster) {
+                        const ctrlAgentEndpoint = kea.endpoint(
+                          `kea-ha-${family}`
+                        );
+                        if (ctrlAgentEndpoint) {
+                          const i = a.length;
+                          a.push({
+                            name: kea.host.name,
+                            role:
+                              i === 0
+                                ? "primary"
+                                : i > 1
+                                  ? "backup"
+                                  : "standby",
+                            url: ctrlAgentEndpoint.url,
+                            "auto-failover": i <= 1
+                          });
+                        }
                       }
                       return a;
                     }, [])

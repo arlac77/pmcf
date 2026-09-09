@@ -178,6 +178,11 @@ export class Host extends ServiceOwner {
     return parts[parts.length - 1].toLowerCase();
   }
 
+  get isCluster()
+  {
+    return false;
+  }
+  
   isMember(host) {
     return this === host;
   }

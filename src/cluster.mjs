@@ -46,6 +46,11 @@ export class cluster extends Host {
     return new Set(this.masters).union(new Set(this.backups));
   }
 
+  get isCluster()
+  {
+    return true;
+  }
+  
   isMember(host) {
     return super.isMember(host) || this.hosts.get(host.name) === host;
   }

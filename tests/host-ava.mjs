@@ -64,10 +64,11 @@ test("Host load", async t => {
   t.deepEqual(content.packaging, new Set(["alpm"]));
 });
 
-test("Host isMember", t => {
+test("Host isMember / isCluster", t => {
   const h1 = new Host();
   const h2 = new Host();
 
+  t.false(h1.isCluster);
   t.true(h1.isMember(h1));
   t.false(h1.isMember(h2));
 });
