@@ -3,7 +3,7 @@ import { InitializationContext } from "pmcf";
 import { assertObject } from "./util.mjs";
 import { root1 } from "./fixtures.mjs";
 
-test("Cluster basics", async t => {
+test("cluster basics", async t => {
   const ic = new InitializationContext(
     new URL("fixtures/root1", import.meta.url).pathname
   );

@@ -10,8 +10,7 @@ import {
 } from "./common-attributes.mjs";
 import { writeLines } from "./utils.mjs";
 
-export class Cluster extends Host {
-  static name = "cluster";
+export class cluster extends Host {
   static priority = 1.5;
   static attributes = {
     masters: {

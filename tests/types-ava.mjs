@@ -3,14 +3,13 @@ import { types, resolveTypeLinks } from "pacc";
 import {
   core,
   base,
-  Cluster,
+  cluster,
   root,
   Host,
   Network,
   ServiceOwner,
   CoreService,
   Service,
-  ExtraSourceService,
   Subnet,
   Owner,
   bind,
@@ -53,7 +52,7 @@ test("types", t => {
   t.deepEqual(types.service.extends, types["core-service"]);
   t.deepEqual(types.service.owners, [
     Host,
-    Cluster,
+    cluster,
     types["network_interface"]
   ]);
   t.is(types.service.priority, 1.1);
@@ -80,7 +79,7 @@ test("types", t => {
   t.is(types.alpm.extends, CoreService);
   t.is(types.alpm.priority, 1.1);
 
-  t.is(types.cluster, Cluster);
+  t.is(types.cluster, cluster);
   t.is(types.cluster.extends, Host);
   t.is(types.cluster.priority, 1.5);
 
