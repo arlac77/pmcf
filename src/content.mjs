@@ -17,7 +17,7 @@ export class permission extends core {
   static key = "pattern";
   static attributes = {
     pattern: { ...string_attribute_writable, key: true, name: "pattern" },
-    user: { ...string_attribute_writable, name: "user" },
+    owner: { ...string_attribute_writable, name: "owner" },
     group: { ...string_attribute_writable, name: "group" },
     mode: { ...string_attribute_writable, name: "mode" }
   };
