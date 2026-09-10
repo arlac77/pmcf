@@ -21,8 +21,7 @@ import { addHook } from "./hooks.mjs";
 import { domainFromDominName, domainName, writeLines } from "./utils.mjs";
 import { generateKnownHosts } from "./host-utils.mjs";
 
-export class Host extends ServiceOwner {
-  static name = "host";
+export class host extends ServiceOwner {
   static priority = 1.9;
   static attributes = {
     ...networkAddressAttributes,
@@ -70,7 +69,7 @@ export class Host extends ServiceOwner {
     },
     extends: {
       ...extends_attribute,
-      type: Host
+      type: host
     },
     model: { ...string_attribute, name: "model" }
   };

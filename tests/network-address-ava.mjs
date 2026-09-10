@@ -1,7 +1,7 @@
 import test from "ava";
 import { FAMILY_IPV4, FAMILY_IPV6, ADDRESS_TYPE_LINK_LOCAL } from "ip-utilties";
 import {
-  Host,
+  host,
   Network,
   NetworkAddress,
   assign,
@@ -23,7 +23,7 @@ test("NetworkAddress filter", t => {
 
   const [s1, s2] = [...n1.subnets.values()];
 
-  const h2 = new Host();
+  const h2 = new host();
   ic.read(h2, {
     name: "h2",
     networkInterfaces: {

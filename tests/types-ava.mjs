@@ -5,7 +5,7 @@ import {
   base,
   cluster,
   root,
-  Host,
+  host,
   Network,
   ServiceOwner,
   CoreService,
@@ -51,7 +51,7 @@ test("types", t => {
   t.is(types.service.extends, CoreService);
   t.deepEqual(types.service.extends, types["core-service"]);
   t.deepEqual(types.service.owners, [
-    Host,
+    host,
     cluster,
     types["network_interface"]
   ]);
@@ -64,7 +64,7 @@ test("types", t => {
     types.network_interface
   ]);
   */
-  t.is(types.host, Host);
+  t.is(types.host, host);
   t.deepEqual(types.host.owners, [types.owner, types.network, types.root]);
 
   t.is(types.bind, bind);
@@ -80,7 +80,7 @@ test("types", t => {
   t.is(types.alpm.priority, 1.1);
 
   t.is(types.cluster, cluster);
-  t.is(types.cluster.extends, Host);
+  t.is(types.cluster.extends, host);
   t.is(types.cluster.priority, 1.5);
 
   t.deepEqual(types.owner.attributes.hosts.type, types.host);

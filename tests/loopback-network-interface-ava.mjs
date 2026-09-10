@@ -1,7 +1,7 @@
 import test from "ava";
 import {
   InitializationContext,
-  Host,
+  host,
   hosts_attribute,
   loopback,
   assign
@@ -17,7 +17,7 @@ test("loopback common names", t => {
 test("loopback basics", t => {
   const ic = new InitializationContext();
 
-  const h1 = new Host();
+  const h1 = new host();
   ic.read(h1, {
     name: "h1",
     networkInterfaces: {

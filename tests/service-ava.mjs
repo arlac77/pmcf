@@ -4,7 +4,7 @@ import {
   root,
   Owner,
   Network,
-  Host,
+  host,
   Service,
   Endpoint,
   DomainNameEndpoint,
@@ -82,7 +82,7 @@ test("Service types", t => {
 test("Service basics", t => {
   const { ic, l1 } = setup();
 
-  const h1 = new Host();
+  const h1 = new host();
   ic.read(h1, {
     name: "h1",
     networkInterfaces: {
@@ -171,7 +171,7 @@ test("Service basics", t => {
     s1
   );
 
-  const h2 = new Host();
+  const h2 = new host();
   ic.read(h2, {
     name: "h2",
     priority: 3,
@@ -264,7 +264,7 @@ test("Service basics", t => {
 test("Service without protocol", t => {
   const { ic } = setup();
 
-  const h1 = new Host();
+  const h1 = new host();
   ic.read(h1, {
     name: "h1",
     networkInterfaces: { eth0: { network: "/n1", ipAddresses: "10.0.0.1" } }
@@ -298,7 +298,7 @@ test("Service without protocol", t => {
 test("Service host | interface", t => {
   const { ic } = setup();
 
-  const h1 = new Host();
+  const h1 = new host();
   ic.read(h1, {
     name: "h1",
     networkInterfaces: { eth0: { network: "/n1", ipAddresses: "10.0.0.1" } },
@@ -310,7 +310,7 @@ test("Service host | interface", t => {
   t.is(h1.services.get("dns").name, "dns");
   t.is(h1.named("dns"), h1.services.get("dns"));
 
-  const h2 = new Host();
+  const h2 = new host();
   ic.read(h2, {
     name: "h2",
     networkInterfaces: {
@@ -331,7 +331,7 @@ test("Service host | interface", t => {
 test("Service owner", t => {
   const { ic, root } = setup();
 
-  const h1 = new Host();
+  const h1 = new host();
   ic.read(h1, {
     name: "h1",
     priority: 3,
@@ -339,7 +339,7 @@ test("Service owner", t => {
   });
   assign(hosts_attribute, root, h1);
 
-  const h2 = new Host();
+  const h2 = new host();
   ic.read(h2, {
     name: "h2",
     priority: 8,
@@ -379,7 +379,7 @@ test("Service owner", t => {
 test("Service type extension", t => {
   const { ic, root } = setup();
 
-  const h1 = new Host();
+  const h1 = new host();
   ic.read(h1, {
     name: "h1",
     networkInterfaces: { eth0: { network: "/n1", ipAddresses: "10.0.0.1" } },

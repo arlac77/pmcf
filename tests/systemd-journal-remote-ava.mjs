@@ -2,7 +2,7 @@ import test from "ava";
 import {
   InitializationContext,
   Network,
-  Host,
+  host,
   SystemdJournalRemoteService,
   ServiceTypes,
   serviceTypeEndpoints
@@ -17,7 +17,7 @@ test("systemd-journal-remote service type", t => {
     subnets: "10.0/16"
   });
 
-  const h1 = new Host(root);
+  const h1 = new host(root);
   ic.read(h1, {
     name: "h1",
     networkInterfaces: {

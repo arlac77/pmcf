@@ -2,7 +2,7 @@ import test from "ava";
 import { FAMILY_IPV4 } from "ip-utilties";
 import {
   InitializationContext,
-  Host,
+  host,
   Network,
   Service,
   ServiceOwner,
@@ -32,7 +32,7 @@ function prepare() {
 
   addServiceType({}, "http-control");
 
-  const h1 = new Host();
+  const h1 = new host();
   ic.read(h1, {
     name: "h1",
     networkInterfaces: {
@@ -141,7 +141,7 @@ test("DomainNameEndpoint", t => {
   const ic = new InitializationContext();
   const root = ic.root;
 
-  const h1 = new Host();
+  const h1 = new host();
   ic.read(h1, {
     name: "h1"
     /* networkInterfaces: {
@@ -171,7 +171,7 @@ test("unix_endpoint", t => {
   const ic = new InitializationContext();
   const root = ic.root;
 
-  const h1 = new Host();
+  const h1 = new host();
   ic.read(h1, {
     name: "h1"
   });

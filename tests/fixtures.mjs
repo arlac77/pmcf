@@ -2,7 +2,7 @@ import {
   Owner,
   Network,
   Subnet,
-  Host,
+  host,
   cluster,
   mosquitto,
   content
@@ -71,7 +71,7 @@ export function root1(root, filter) {
 */
   const host1 = {
     name: "host1",
-    instanceof: Host,
+    instanceof: host,
     owner: L1,
     os: "linux",
     content: {
@@ -133,7 +133,7 @@ export function root1(root, filter) {
   const host2 = {
     name: "host2",
     domain: "mydomain.com",
-    instanceof: Host,
+    instanceof: host,
     owner: L1n1,
     os: "linux",
     content: {
@@ -191,7 +191,7 @@ export function root1(root, filter) {
     "/model": model,
     "/model/m1": {
       name: "m1",
-      instanceof: Host,
+      instanceof: host,
       owner: model,
       isTemplate: true,
       chassis: "server",

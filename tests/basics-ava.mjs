@@ -2,7 +2,7 @@ import test from "ava";
 import {
   InitializationContext,
   Network,
-  Host,
+  host,
   Owner,
   assign,
   hosts_attribute,
@@ -14,11 +14,11 @@ function setup() {
   const ic = new InitializationContext("/somewhere");
   const root = ic.root;
 
-  const ht1 = new Host();
+  const ht1 = new host();
   ic.read(ht1, { name: "ht1", properties: { p1: "ht1" } });
   assign(hosts_attribute, root, ht1);
 
-  const ht2 = new Host();
+  const ht2 = new host();
   ic.read(ht2, { name: "ht2", extends: "/ht1" });
   assign(hosts_attribute, root, ht2);
 
@@ -36,7 +36,7 @@ function setup() {
   });
   assign(owners_attribute, root, l1);
 
-  const h1 = new Host();
+  const h1 = new host();
   ic.read(h1, {
     name: "h1",
     extends: "/ht2",
@@ -154,7 +154,7 @@ test("expand", t => {
   });
   assign(owners_attribute, ic.root, l1);
 
-  const h1 = new Host();
+  const h1 = new host();
   ic.read(h1, { name: "h1" });
   assign(hosts_attribute, l1, h1);
 
@@ -224,7 +224,7 @@ test("directory & name & owner", t => {
   t.is(ic.root.named("l1"), l1);
   t.is(ic.root.named("/l1"), l1);
 
-  const h1 = new Host();
+  const h1 = new host();
   ic.read(h1, { name: "h1" });
   assign(hosts_attribute, l1, h1);
 

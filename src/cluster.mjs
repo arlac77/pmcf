@@ -2,7 +2,7 @@ import { join } from "node:path";
 import { FileContentProvider } from "npm-pkgbuild";
 import { FAMILY_IPV4 } from "ip-utilties";
 import { duration_attribute_writable } from "pacc";
-import { Host } from "./host.mjs";
+import { host } from "./host.mjs";
 import { addType, serviceEndpoints } from "pmcf";
 import {
   networkInterfaces_attribute,
@@ -10,7 +10,7 @@ import {
 } from "./common-attributes.mjs";
 import { writeLines } from "./utils.mjs";
 
-export class cluster extends Host {
+export class cluster extends host {
   static priority = 1.5;
   static attributes = {
     masters: {

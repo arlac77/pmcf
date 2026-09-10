@@ -2,14 +2,14 @@ import test from "ava";
 
 import {
   InitializationContext,
-  Host,
+  host,
   SystemdTimesyncdService,
   assign,
   ServiceOwner
 } from "pmcf";
 
 test("systemd-timesyncd service type", t => {
-  const h1 = new Host();
+  const h1 = new host();
   const service = new SystemdTimesyncdService();
   assign(ServiceOwner.attributes.services, h1, service);
 

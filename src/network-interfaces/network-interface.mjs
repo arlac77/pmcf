@@ -4,7 +4,7 @@ import {
   default_collection_attribute_writable
 } from "pacc";
 import { network_attribute } from "../common-attributes.mjs";
-import { Host, cidrAddresses, addType } from "pmcf";
+import { host, cidrAddresses, addType } from "pmcf";
 import {
   networkAttributes,
   networkAddressAttributes,
@@ -17,7 +17,7 @@ import { yesno } from "../utils.mjs";
 
 export class NetworkInterface extends SkeletonNetworkInterface {
   static name = "network_interface";
-  static owners = [Host];
+  static owners = [host];
   static specializationOf = NetworkInterface;
   static specializations = {};
   static factoryFor(owner, value) {

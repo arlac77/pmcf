@@ -14,7 +14,7 @@ import {
 } from "pacc";
 import {
   base,
-  Host,
+  host,
   Endpoint,
   DomainNameEndpoint,
   HTTPEndpoint,
@@ -50,7 +50,7 @@ export class credential extends base {
 export class CoreService extends base {
   static name = "core-service";
   static priority = 1.1;
-  static owners = [Host, "cluster", "network_interface"];
+  static owners = [host, "cluster", "network_interface"];
   static specializationOf = CoreService;
   static specializations = {};
   static factoryFor(owner, value) {

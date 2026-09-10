@@ -2,7 +2,7 @@ import { join } from "node:path";
 import { AggregatedMap } from "aggregated-map";
 import { addType, asArray } from "pacc";
 import { writeLines, sectionLines } from "../utils.mjs";
-import { NetworkAddress, Host, cidrAddresses } from "pmcf";
+import { NetworkAddress, host, cidrAddresses } from "pmcf";
 import { ServiceOwner } from "../service-owner.mjs";
 
 /**
@@ -35,7 +35,7 @@ export class SkeletonNetworkInterface extends ServiceOwner {
   }
 
   get host() {
-    if (this.owner instanceof Host) {
+    if (this.owner instanceof host) {
       return this.owner;
     }
   }

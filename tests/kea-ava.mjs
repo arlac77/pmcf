@@ -2,7 +2,7 @@ import test from "ava";
 import { FAMILY_IPV4 } from "ip-utilties";
 import {
   InitializationContext,
-  Host,
+  host,
   kea,
   ServiceOwner,
   Endpoint,
@@ -16,7 +16,7 @@ test("kea basics", t => {
   const ic = new InitializationContext();
   const owner = ic.root;
 
-  const linux = new Host();
+  const linux = new host();
   ic.read(linux, {
     name: "linux",
     os: "linux",
@@ -26,7 +26,7 @@ test("kea basics", t => {
   });
   assign(hosts_attribute, owner, linux);
 
-  const h1 = new Host();
+  const h1 = new host();
   ic.read(h1, {
     extends: [linux],
     name: "h1",

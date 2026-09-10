@@ -1,7 +1,7 @@
 import test from "ava";
 import {
   InitializationContext,
-  Host,
+  host,
   Network,
   ethernet,
   networks_attribute,
@@ -27,7 +27,7 @@ test("ethernet basics", t => {
   t.deepEqual([...n1.subnets.keys()], ["fe80::/64", "10.0/16"]);
 
   assign(networks_attribute, ic.root, n1);
-  const h1 = new Host();
+  const h1 = new host();
   ic.read(h1, {
     name: "h1",
     networkInterfaces: {
