@@ -185,7 +185,7 @@ class bind_zone_config extends base {
               addressesStatement(
                 "  allow-update",
                 view.allowUpdate,
-                "none;",
+                "any;",
                 "    "
               )
             );
@@ -311,9 +311,9 @@ export class bind_acl extends bind_object {
 
 const acl_attribute = {
   ...default_attribute_writable,
-  type: bind_acl,
+  type: bind_object,
   name: "acl",
-  default: "'any'"
+//  default: "'any'"
 };
 
 class bind_view extends bind_object {
@@ -661,6 +661,9 @@ class bind_view extends bind_object {
 function addressesStatement(prefix, objects, empty = false, indent = "") {
   const body = asArray(objects).map(value => {
     if (typeof value !== "string") {
+      if(value instanceof bind_key) {
+        return `key ${value.name}`;
+      }
       return value.name ?? value.address;
     }
 
