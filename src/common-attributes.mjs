@@ -113,7 +113,6 @@ export const bridges_attribute = {
 };
 
 export const family_attribute = { ...string_attribute, name: "family" };
-
 export const psk_attribute = { ...string_attribute_writable, name: "psk" };
 export const ssid_attribute = { ...string_attribute_writable, name: "ssid" };
 export const hostname_attribute = {
