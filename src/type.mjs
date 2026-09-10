@@ -1,4 +1,10 @@
-import { addType as addTypeBasic, toInternal, registerToken, DOT, asArray } from "pacc";
+import {
+  addType as addTypeBasic,
+  toInternal,
+  registerToken,
+  DOT,
+  asArray
+} from "pacc";
 import { normalizeIP } from "ip-utilties";
 import { addServiceType } from "pmcf";
 
@@ -39,7 +45,10 @@ export function assign(attribute, object, value) {
 
     if (attribute.deferredExpression) {
       if (object.hasOwnProperty(attribute.name)) {
-        error(`attribute ${attribute.name} of ${object.fullName} already defined`, attribute );
+        error(
+          `attribute ${attribute.name} of ${object.fullName} already defined`,
+          attribute
+        );
       } else {
         Object.defineProperty(object, attribute.name, {
           get: () => object.expression(value)
