@@ -1,6 +1,5 @@
 import { join } from "node:path";
 import { createHmac } from "node:crypto";
-import { FileContentProvider } from "npm-pkgbuild";
 import { reverseArpa } from "ip-utilties";
 import {
   default_collection_attribute,
@@ -159,8 +158,7 @@ class bind_zone_config extends base {
     this.name = name;
   }
 
-  async write(outputControl) {
-    const dir = outputControl.dir;
+  async write(dir) {
     const view = this.owner;
     const type = this.type;
 
@@ -631,11 +629,11 @@ class bind_view extends bind_object {
 
   async packageContent(outputControl) {
     outputControl.packageData.sources.push(
-      ...(await Array.fromAsync(this.templateContent()))
+      ...(await Array.fromAsync(this.templateContent(this.service.content)))
     );
 
     for (const config of this.zoneConfigs.values()) {
-      await config.write(outputControl);
+      await config.write(outputControl.dir);
     }
 
     if (this.foreignDomains.size) {
@@ -794,20 +792,13 @@ export class bind extends CoreService {
   }
 
   async *preparePackages(dir) {
-    const packageData = await this.packageData;
+    const packageData = await this.preparePackage(dir);
 
-    packageData.sources.push(
-      ...(await Array.fromAsync(this.templateContent()))
-    );
+    if(!packageData) {
+      return;
+    }
 
     let hasContent = packageData.sources.length > 0;
-
-    packageData.sources.push(
-      new FileContentProvider({
-        dir: dir + "/",
-        permissions: this.content.permissions
-      })
-    );
 
     const outputControl = { packageData, dir };
 

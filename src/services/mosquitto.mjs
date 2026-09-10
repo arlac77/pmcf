@@ -1,5 +1,4 @@
 import { join } from "node:path";
-import { FileContentProvider } from "npm-pkgbuild";
 import { port_attribute, string_attribute_writable } from "pacc";
 import { CoreService, addType } from "pmcf";
 import {
@@ -51,16 +50,7 @@ export class mosquitto extends CoreService {
   }
 
   async *preparePackages(dir) {
-    const packageData = await this.packageData;
-
-    packageData.sources.push(
-      ...(await Array.fromAsync(this.templateContent())),
-      new FileContentProvider({
-        dir,
-        pattern: ["**/*"],
-        permissions: this.content.permissions
-      })
-    );
+    const packageData = await this.preparePackage(dir);
 
     await writeLines(
       join(dir, "etc", "mosquitto"),

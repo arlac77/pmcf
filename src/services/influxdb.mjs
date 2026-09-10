@@ -1,6 +1,5 @@
 import { join } from "node:path";
 import { stringify } from "yaml";
-import { FileContentProvider } from "npm-pkgbuild";
 import { boolean_attribute_writable_true } from "pacc";
 import { CoreService, addType, FAMILY_IPV4_IPV6 } from "pmcf";
 import { writeLines, filterConfigurable } from "../utils.mjs";
@@ -31,16 +30,7 @@ export class influxdb extends CoreService {
   }
 
   async *preparePackages(dir) {
-    const packageData = await this.packageData;
-
-    packageData.sources.push(
-      ...(await Array.fromAsync(this.templateContent())),
-      new FileContentProvider({
-        dir,
-        pattern: ["**/*"],
-        permissions: this.content.permissions
-      })
-    );
+    const packageData = await this.preparePackage(dir);
 
     await writeLines(
       join(dir, "etc", "influxdb"),

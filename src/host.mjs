@@ -1,6 +1,5 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { FileContentProvider } from "npm-pkgbuild";
 import { AggregatedMap } from "aggregated-map";
 import {
   string_attribute,
@@ -323,16 +322,7 @@ export class host extends ServiceOwner {
   }
 
   async *preparePackages(dir) {
-    const packageData = await this.packageData;
-
-    packageData.sources.push(
-      ...(await Array.fromAsync(this.templateContent())),
-      new FileContentProvider({
-        dir,
-        pattern: ["**/*", "**/.ssh/*"],
-        permissions: this.content.permissions
-      })
-    );
+    const packageData = await this.preparePackage({ dir,  pattern: ["**/*", "**/.ssh/*"]});
 
     for (const ni of this.networkInterfaces.values()) {
       await ni.systemdDefinitions(dir, packageData);

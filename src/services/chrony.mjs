@@ -46,19 +46,7 @@ export class chrony extends CoreService {
   }
 
   async *preparePackages(dir) {
-    const packageData = await this.packageData;
-
-    packageData.sources.push(
-      ...(await Array.fromAsync(this.templateContent()))
-    );
-
-    packageData.sources.push(
-      new FileContentProvider({
-        dir: dir + "/",
-        permissions: this.content.permissions
-      })
-    );
-
+    const packageData = await this.preparePackage(dir);
     const subnets = [...new Map(this.subnets).values()]; // TODO should be normal
     const host = this.host;
 

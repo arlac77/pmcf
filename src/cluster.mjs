@@ -1,5 +1,4 @@
 import { join } from "node:path";
-import { FileContentProvider } from "npm-pkgbuild";
 import { FAMILY_IPV4 } from "ip-utilties";
 import { duration_attribute_writable } from "pacc";
 import { host } from "./host.mjs";
@@ -46,11 +45,10 @@ export class cluster extends host {
     return new Set(this.masters).union(new Set(this.backups));
   }
 
-  get isCluster()
-  {
+  get isCluster() {
     return true;
   }
-  
+
   isMember(host) {
     return super.isMember(host) || this.hosts.get(host.name) === host;
   }
@@ -71,16 +69,7 @@ export class cluster extends host {
       const host = ni.host;
 
       const packageStagingDir = join(stagingDir, host.name);
-      const packageData = await host.packageData;
-
-      packageData.sources.push(
-        ...(await Array.fromAsync(this.templateContent())),
-        new FileContentProvider({
-          dir: packageStagingDir,
-          pattern: "**/*",
-          permissions: this.content.permissions
-        })
-      );
+      const packageData = await host.preparePackage({ dir: packageStagingDir });
 
       const extra = [];
 

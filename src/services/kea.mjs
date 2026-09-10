@@ -1,5 +1,4 @@
 import { join } from "node:path";
-import { FileContentProvider } from "npm-pkgbuild";
 import {
   reverseArpa,
   addressType,
@@ -185,18 +184,7 @@ export class kea extends CoreService {
     const name = host.name;
     const subnets = [...this.subnets.values()];
     const dnsServerEndpoints = this.dnsServerEndpoints;
-    const packageData = await this.packageData;
-
-    packageData.sources.push(
-      ...(await Array.fromAsync(this.templateContent()))
-    );
-
-    packageData.sources.push(
-      new FileContentProvider({
-        dir: dir + "/",
-        permissions: this.content.permissions
-      })
-    );
+    const packageData = await this.preparePackage(dir);
 
     const loggers = [
       {

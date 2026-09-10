@@ -254,7 +254,7 @@ export class content extends core {
     }
   }
 
-  async packageData(node) {
+  async preparePackage() {
     const packageData = {
       sources: [],
       outputs: this.outputs,

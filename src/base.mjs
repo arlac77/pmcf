@@ -225,17 +225,36 @@ export class base extends core {
     return this._content;
   }
 
-  get packageData() {
-    return this.content?.packageData();
+  async preparePackage(options) {
+    const content = this.content;
+    if (content) {
+      const pd = await content.preparePackage();
+
+      pd.sources.push(
+        ...(await Array.fromAsync(this.templateContent(content)))
+      );
+
+      switch (typeof options) {
+        case "string":
+          options = { dir: options };
+        case "object":
+          pd.sources.push(
+            new FileContentProvider({
+              pattern: ["**/*"],
+              permissions: content.permissions,
+              ...options
+            })
+          );
+      }
+
+      return pd;
+    }
   }
 
-  async *preparePackages(stagingDir) {
-    const pd = await this.packageData;
-
-    pd.sources.push(...(await Array.fromAsync(this.templateContent())));
-
-    if (pd.sources.length) {
-      yield pd;
+  async *preparePackages(dir) {
+    const packageData = await this.preparePackage(dir);
+    if (packageData) {
+      yield packageData;
     }
   }
 
@@ -258,7 +277,7 @@ export class base extends core {
    *
    * @returns {AsyncIterable<ContentProvider>}
    */
-  async *templateContent() {
+  async *templateContent(content) {
     for (const node of this.walkDirections(["this", "extends"])) {
       const dir = join(node.directory, "content");
 
@@ -268,7 +287,7 @@ export class base extends core {
             new FileContentProvider({
               dir,
               pattern: "**/*",
-              permissions: this.content.permissions
+              permissions: content.permissions
             }),
             this.templateTransformers
           );
