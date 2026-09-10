@@ -1,6 +1,5 @@
 import { duration_attribute_writable } from "pacc";
 import { addType } from "pmcf";
-
 import { cluster } from "./cluster.mjs";
 
 export class keepalived extends cluster {

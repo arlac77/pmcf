@@ -194,7 +194,7 @@ export class kea extends CoreService {
     packageData.sources.push(
       new FileContentProvider({
         dir: dir + "/",
-        permissions: this.content?.permissions
+        permissions: this.content.permissions
       })
     );
 

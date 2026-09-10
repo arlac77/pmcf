@@ -256,15 +256,6 @@ export class base extends core {
 
   /**
    *
-   * @param {string} dir
-   * @returns {Object}
-   */
-  templateContentAttributes(dir) {
-    return { dir, pattern: "**/*", permissions: this.content?.permissions };
-  }
-
-  /**
-   *
    * @returns {AsyncIterable<ContentProvider>}
    */
   async *templateContent() {
@@ -274,7 +265,11 @@ export class base extends core {
       try {
         if ((await stat(dir)).isDirectory) {
           yield transform(
-            new FileContentProvider(this.templateContentAttributes(dir)),
+            new FileContentProvider({
+              dir,
+              pattern: "**/*",
+              permissions: this.content.permissions
+            }),
             this.templateTransformers
           );
         }
