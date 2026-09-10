@@ -1,7 +1,7 @@
 import test from "ava";
 import {
   InitializationContext,
-  Network,
+  network,
   host,
   Owner,
   assign,
@@ -22,7 +22,7 @@ function setup() {
   ic.read(ht2, { name: "ht2", extends: "/ht1" });
   assign(hosts_attribute, root, ht2);
 
-  const n1 = new Network();
+  const n1 = new network();
   ic.read(n1, {
     name: "n1",
     subnets: ["10.0/16", "10.1/16"]

@@ -3,7 +3,7 @@ import { FAMILY_IPV4 } from "ip-utilties";
 import {
   root,
   Owner,
-  Network,
+  network,
   host,
   Service,
   Endpoint,
@@ -21,7 +21,7 @@ function setup() {
   const ic = new InitializationContext();
   const rootInst = new root("/somwhere");
 
-  const n1 = new Network();
+  const n1 = new network();
   ic.read(n1, {
     name: "n1",
     subnets: "10.0/16"

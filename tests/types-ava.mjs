@@ -6,7 +6,7 @@ import {
   cluster,
   root,
   host,
-  Network,
+  network,
   ServiceOwner,
   CoreService,
   Service,
@@ -37,7 +37,7 @@ test("types", t => {
   t.is(types.root.extends, Owner);
   t.is(types.root.priority, 3);
 
-  t.is(types.network, Network);
+  t.is(types.network, network);
   t.is(types.network.extends, Owner);
   t.is(types.network.priority, 2);
   t.is(types.network.key, "name");

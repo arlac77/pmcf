@@ -4,8 +4,7 @@ import { Owner } from "./owner.mjs";
 import { networkAttributes, bridges_attribute } from "./common-attributes.mjs";
 import { Subnet } from "./subnet.mjs";
 
-export class Network extends Owner {
-  static name = "network";
+export class network extends Owner {
   static owners = [Owner, "root"];
   static attributes = {
     ...networkAttributes,

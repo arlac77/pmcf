@@ -1,6 +1,6 @@
 import {
   Owner,
-  Network,
+  network,
   Subnet,
   host,
   cluster,
@@ -45,7 +45,7 @@ export function root1(root, filter) {
 
   const L1n1 = {
     name: "n1",
-    instanceof: Network,
+    instanceof: network,
     owner: L1,
     scope: "global",
     kind: "wlan",
@@ -56,7 +56,7 @@ export function root1(root, filter) {
   };
   const L1n2 = {
     name: "n2",
-    instanceof: Network,
+    instanceof: network,
     owner: L1,
     scope: "site",
     kind: "ethernet",

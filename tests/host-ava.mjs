@@ -2,7 +2,7 @@ import test from "ava";
 import {
   InitializationContext,
   host,
-  Network,
+  network,
   assign,
   cidrAddresses,
   SUBNET_LOCALHOST_IPV4,
@@ -184,7 +184,7 @@ test("host extends", t => {
 
 test("host domains & aliases", t => {
   const ic = new InitializationContext();
-  const n1 = new Network();
+  const n1 = new network();
   ic.read(n1, {
     name: "n1",
     domain: "example.com"
@@ -258,7 +258,7 @@ test("host domains & aliases", t => {
 test("host addresses", t => {
   const ic = new InitializationContext();
   const owner = ic.root;
-  const n1 = new Network();
+  const n1 = new network();
   ic.read(n1, {
     name: "n1",
     properties: { ipv4_prefix: "10.0" }
@@ -387,7 +387,7 @@ test("host addresses with network", t => {
   const ic = new InitializationContext();
   const owner = ic.root;
 
-  const n1 = new Network();
+  const n1 = new network();
   ic.read(n1, {
     name: "n1",
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]
@@ -422,10 +422,10 @@ test("host addresses with network", t => {
   ]);
 });
 
-test("clone NetworkInterface", t => {
+test("clone networkInterface", t => {
   const ic = new InitializationContext();
 
-  const n1 = new Network();
+  const n1 = new network();
   ic.read(n1, {
     name: "n1",
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f/64"]

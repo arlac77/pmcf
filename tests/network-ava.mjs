@@ -2,14 +2,14 @@ import test from "ava";
 import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import {
   InitializationContext,
-  Network,
+  network,
   assign,
   networks_attribute
 } from "pmcf";
 import { assertObject } from "./util.mjs";
 import { root1 } from "./fixtures.mjs";
 
-test("Network load", async t => {
+test("network load", async t => {
   const ic = new InitializationContext(
     new URL("fixtures/root1", import.meta.url).pathname
   );
@@ -27,9 +27,9 @@ test("Network load", async t => {
   await assertObject(t, n1, root1(ic.root, "/L1/n1"));
 });
 
-test("Network addresses subnets", t => {
+test("network addresses subnets", t => {
   const ic = new InitializationContext();
-  const n1 = new Network();
+  const n1 = new network();
   ic.read(n1, {
     name: "n1",
     subnets: ["10.0.0.2/16", "fe80::1e57:3eff:fe22:9a8f", "169.254.1.2"],
@@ -59,9 +59,9 @@ test("Network addresses subnets", t => {
   t.is(s3.prefixLength, 16);
 });
 
-test("Network bridges", t => {
+test("network bridges", t => {
   const ic = new InitializationContext();
-  const n1 = new Network();
+  const n1 = new network();
   ic.read(n1, {
     name: "n1",
     bridges: "/n2",
@@ -77,7 +77,7 @@ test("Network bridges", t => {
   t.is(n1.gateway, n1h1);
   const n1c1 = n1.named("n1c1");
 
-  const n2 = new Network();
+  const n2 = new network();
   ic.read(n2, { name: "n2", hosts: { n2h1: {} } });
   assign(networks_attribute, ic.root, n2);
   const n2h1 = n2.named("n2h1");

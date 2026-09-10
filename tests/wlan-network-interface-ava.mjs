@@ -2,7 +2,7 @@ import test from "ava";
 import {
   InitializationContext,
   host,
-  Network,
+  network,
   wlan,
   networks_attribute,
   hosts_attribute,
@@ -17,7 +17,7 @@ test("WLAN common names", t => {
 
 test("WLAN basics", t => {
   const ic = new InitializationContext();
-  const n1 = new Network();
+  const n1 = new network();
   ic.read(n1, {
     name: "W1000000",
     subnets: ["10.0.0.2/16"]

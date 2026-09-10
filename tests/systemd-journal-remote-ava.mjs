@@ -1,7 +1,7 @@
 import test from "ava";
 import {
   InitializationContext,
-  Network,
+  network,
   host,
   SystemdJournalRemoteService,
   ServiceTypes,
@@ -11,7 +11,7 @@ import {
 test("systemd-journal-remote service type", t => {
   const ic = new InitializationContext();
   const root = ic.root;
-  const n1 = new Network(root);
+  const n1 = new network(root);
   ic.read(n1, {
     name: "n1",
     subnets: "10.0/16"

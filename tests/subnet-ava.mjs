@@ -3,7 +3,7 @@ import { asArray } from "pacc";
 import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import {
   InitializationContext,
-  Network,
+  network,
   Subnet,
   assign,
   SUBNET_LOCALHOST_IPV4,
@@ -19,11 +19,11 @@ test("Subnet owner", t => {
   assign(subnets_attribute, ic.root, s1);
   t.is(ic.root.subnets.get("10.0/16"), s1);
 
-  const n1 = new Network();
+  const n1 = new network();
   ic.read(n1, { name: "n1" });
   assign(networks_attribute, ic.root, n1);
 
-  const n2 = new Network();
+  const n2 = new network();
   ic.read(n2, { name: "n2" });
   assign(networks_attribute, ic.root, n2);
 

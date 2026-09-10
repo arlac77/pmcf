@@ -2,7 +2,7 @@ import test from "ava";
 import { FAMILY_IPV4, FAMILY_IPV6, ADDRESS_TYPE_LINK_LOCAL } from "ip-utilties";
 import {
   host,
-  Network,
+  network,
   NetworkAddress,
   assign,
   networks_attribute,
@@ -13,7 +13,7 @@ import { InitializationContext } from "../src/initialization-context.mjs";
 test("NetworkAddress filter", t => {
   const ic = new InitializationContext();
 
-  const n1 = new Network();
+  const n1 = new network();
   ic.read(n1, {
     name: "n1",
     subnets: ["10.0.0.2/16"]
