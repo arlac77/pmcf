@@ -45,6 +45,7 @@ generates config packages for:
     *   [enabled](#enabled)
     *   [priority](#priority)
     *   [templateContent](#templatecontent)
+        *   [Parameters](#parameters)
     *   [isTemplate](#istemplate)
 *   [access](#access)
 *   [loadHooks](#loadhooks)
@@ -135,6 +136,10 @@ Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
 ### templateContent
+
+#### Parameters
+
+*   `content` &#x20;
 
 Returns **AsyncIterable\<ContentProvider>**&#x20;
 
