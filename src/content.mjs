@@ -26,6 +26,8 @@ export class permission extends core {
     addType(this);
   }
 
+  owner; // enforce local
+
   get fullName() {
     return this.pattern;
   }
