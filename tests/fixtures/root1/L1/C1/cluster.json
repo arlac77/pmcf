@@ -20,6 +20,7 @@
       "forwarders": "/GLOBAL/services[types[dns]]",
       "primaries": "/L1/services[types[dns] && priority > 100]",
       "authorative": "/L1/services[types[bind]]",
+      "hasForeignDomains": true,
       "keys": {
         "rndc": {
           "secret": "abc"

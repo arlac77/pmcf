@@ -12,6 +12,7 @@ import {
   string_attribute_writable,
   boolean_attribute,
   boolean_attribute_writable_false,
+  boolean_attribute_writable_true,
   integer_attribute_writable,
   integer_attribute,
   secret_attribute_writable,
@@ -188,7 +189,7 @@ class bind_zone_config extends base {
               )
             );
 
-           // content.push(`update-policy { grant updates zonesub ANY; };`);
+            // content.push(`update-policy { grant updates zonesub ANY; };`);
             break;
           case SECONDARY:
             const primaries = endpointAddresses(this.service.primaries);
@@ -310,8 +311,8 @@ export class bind_acl extends bind_object {
 const acl_attribute = {
   ...default_attribute_writable,
   type: bind_object,
-  name: "acl",
-//  default: "'any'"
+  name: "acl"
+  //  default: "'any'"
 };
 
 class bind_view extends bind_object {
@@ -367,6 +368,14 @@ class bind_view extends bind_object {
       type: bind_view
     },
     notify: { ...boolean_attribute_writable_false, name: "notify" },
+    hasForeignDomains: {
+      ...boolean_attribute_writable_false,
+      name: "hasForeignDomains"
+    },
+    hasBaseRecords: {
+      ...boolean_attribute_writable_true,
+      name: "hasBaseRecords"
+    },
     hasCatalog: { ...boolean_attribute_writable_false, name: "hasCatalog" },
     hasReverse: { ...boolean_attribute_writable_false, name: "hasReverse" },
     hasSVRRecords: {
@@ -506,117 +515,125 @@ class bind_view extends bind_object {
               )
             );
 
-            let reverseZone;
+            if (this.hasBaseRecords) {
+              let reverseZone;
 
-            if (this.hasReverse && na.subnet.prefix) {
-              let subnet;
+              if (this.hasReverse && na.subnet.prefix) {
+                let subnet;
 
-              for (const s of subnets) {
-                if (s.isIncluded(na.subnet)) {
-                  subnet = s;
-                }
-              }
-
-              if (!subnet) {
-                subnet = na.subnet;
-                subnets.add(subnet);
-              }
-
-              reverseZone = this._zones.getOrInsertComputed(
-                reverseArpa(subnet.prefix),
-                domain =>
-                  this.intoCatalog(
-                    new bind_zone(this, domain, config, locationName),
-                    locationName
-                  )
-              );
-            }
-
-            if (!hosts.has(host)) {
-              hosts.add(host);
-
-              for (let foreignDomain of host.foreignDomainNames) {
-                const wildcard = foreignDomain.startsWith("*.");
-                if (wildcard) {
-                  foreignDomain = foreignDomain.substring(2);
+                for (const s of subnets) {
+                  if (s.isIncluded(na.subnet)) {
+                    subnet = s;
+                  }
                 }
 
-                this.foreignDomains.add(foreignDomain);
+                if (!subnet) {
+                  subnet = na.subnet;
+                  subnets.add(subnet);
+                }
 
-                const config = this.zoneConfigs.getOrInsertComputed(
-                  foreignDomain,
-                  domain => new bind_zone_config(this, `${domain}.zone.conf`)
-                );
-
-                config.foreign = true;
-                const zone = this._zones.getOrInsertComputed(
-                  foreignDomain,
+                reverseZone = this._zones.getOrInsertComputed(
+                  reverseArpa(subnet.prefix),
                   domain =>
                     this.intoCatalog(
                       new bind_zone(this, domain, config, locationName),
                       locationName
                     )
                 );
+              }
+            }
 
-                zone.foreign = true;
+            if (!hosts.has(host)) {
+              hosts.add(host);
 
-                for (const na of host.networkAddresses(
-                  na => na.networkInterface.kind !== "loopback"
-                )) {
-                  zone.records.add(
-                    DNSRecord(
-                      "@",
-                      dnsRecordTypeForAddressFamily(na.family),
-                      na.address
-                    )
+              if (this.hasForeignDomains) {
+                for (let foreignDomain of host.foreignDomainNames) {
+                  const wildcard = foreignDomain.startsWith("*.");
+                  if (wildcard) {
+                    foreignDomain = foreignDomain.substring(2);
+                  }
+
+                  this.foreignDomains.add(foreignDomain);
+
+                  const config = this.zoneConfigs.getOrInsertComputed(
+                    foreignDomain,
+                    domain => new bind_zone_config(this, `${domain}.zone.conf`)
                   );
 
-                  if (wildcard) {
+                  config.foreign = true;
+                  const zone = this._zones.getOrInsertComputed(
+                    foreignDomain,
+                    domain =>
+                      this.intoCatalog(
+                        new bind_zone(this, domain, config, locationName),
+                        locationName
+                      )
+                  );
+
+                  zone.foreign = true;
+
+                  for (const na of host.networkAddresses(
+                    na => na.networkInterface.kind !== "loopback"
+                  )) {
                     zone.records.add(
                       DNSRecord(
-                        "*",
+                        "@",
                         dnsRecordTypeForAddressFamily(na.family),
                         na.address
                       )
                     );
+
+                    if (wildcard) {
+                      zone.records.add(
+                        DNSRecord(
+                          "*",
+                          dnsRecordTypeForAddressFamily(na.family),
+                          na.address
+                        )
+                      );
+                    }
                   }
                 }
               }
 
-              const sm = new Map();
+              if (this.hasBaseRecords) {
+                const sm = new Map();
 
-              for (const service of host.services.values()) {
-                for (const record of service.dnsRecordsForDomainName(
-                  host.domainName,
-                  this.hasSVRRecords
-                )) {
-                  sm.set(record.toString(), record);
+                for (const service of host.services.values()) {
+                  for (const record of service.dnsRecordsForDomainName(
+                    host.domainName,
+                    this.hasSVRRecords
+                  )) {
+                    sm.set(record.toString(), record);
+                  }
                 }
-              }
 
-              for (const r of sm.values()) {
-                zone.records.add(r);
+                for (const r of sm.values()) {
+                  zone.records.add(r);
+                }
               }
             }
 
-            for (const domainName of na.domainNames) {
-              if (domainName.endsWith(domain) && domainName[0] !== "*") {
-                zone.records.add(
-                  DNSRecord(
-                    dnsFullName(domainName),
-                    dnsRecordTypeForAddressFamily(na.family),
-                    address
-                  )
-                );
-
-                if (reverseZone) {
-                  reverseZone.records.add(
+            if (this.hasBaseRecords) {
+              for (const domainName of na.domainNames) {
+                if (domainName.endsWith(domain) && domainName[0] !== "*") {
+                  zone.records.add(
                     DNSRecord(
-                      dnsFullName(reverseArpa(address)),
-                      "PTR",
-                      dnsFullName(domainName)
+                      dnsFullName(domainName),
+                      dnsRecordTypeForAddressFamily(na.family),
+                      address
                     )
                   );
+
+                  if (reverseZone) {
+                    reverseZone.records.add(
+                      DNSRecord(
+                        dnsFullName(reverseArpa(address)),
+                        "PTR",
+                        dnsFullName(domainName)
+                      )
+                    );
+                  }
                 }
               }
             }
@@ -659,7 +676,7 @@ class bind_view extends bind_object {
 function addressesStatement(prefix, objects, empty = false, indent = "") {
   const body = asArray(objects).map(value => {
     if (typeof value !== "string") {
-      if(value instanceof bind_key) {
+      if (value instanceof bind_key) {
         return `key ${value.name}`;
       }
       return value.name ?? value.address;
@@ -794,7 +811,7 @@ export class bind extends CoreService {
   async *preparePackages(dir) {
     const packageData = await this.preparePackage(dir);
 
-    if(!packageData) {
+    if (!packageData) {
       return;
     }
 
