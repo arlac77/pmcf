@@ -4,7 +4,8 @@ import {
   default_collection_attribute_writable
 } from "pacc";
 import { network_attribute } from "../common-attributes.mjs";
-import { host, cidrAddresses, addType } from "pmcf";
+import { host, cidrAddresses } from "pmcf";
+import { addType } from "../type.mjs";
 import {
   networkAttributes,
   networkAddressAttributes,

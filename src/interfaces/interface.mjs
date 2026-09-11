@@ -1,6 +1,7 @@
 import { AggregatedMap } from "aggregated-map";
-import { addType, asArray } from "pacc";
-import { host } from "pmcf";
+import { asArray } from "pacc";
+import { host } from "../host.mjs";
+import { addType } from "../type.mjs";
 import { ServiceOwner } from "../service-owner.mjs";
 
 /**

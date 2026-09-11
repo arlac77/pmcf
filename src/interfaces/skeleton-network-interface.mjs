@@ -1,6 +1,6 @@
 import { join } from "node:path";
-import { addType } from "pacc";
 import { writeLines, sectionLines } from "../utils.mjs";
+import { addType } from "../type.mjs";
 import { NetworkAddress, cidrAddresses } from "pmcf";
 import { Interface } from "./interface.mjs";
 

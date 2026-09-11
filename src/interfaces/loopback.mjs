@@ -1,5 +1,5 @@
-import { addType } from "pacc";
 import { SUBNET_LOCALHOST_IPV4, SUBNET_LOCALHOST_IPV6 } from "pmcf";
+import { addType } from "../type.mjs";
 import { SkeletonNetworkInterface } from "./skeleton-network-interface.mjs";
 import { NetworkInterface } from "./network-interface.mjs";
 
