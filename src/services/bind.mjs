@@ -318,6 +318,52 @@ const acl_attribute = {
 class bind_view extends bind_object {
   static priority = 1;
   static attributes = {
+        notify: { ...boolean_attribute_writable_false, name: "notify" },
+    hasCatalog: { ...boolean_attribute_writable_false, name: "hasCatalog" },
+    hasForeignDomainRecords: {
+      ...boolean_attribute_writable_false,
+      name: "hasForeignDomainRecords"
+    },
+    hasBaseRecords: {
+      ...boolean_attribute_writable_true,
+      name: "hasBaseRecords"
+    },
+    hasReverseRecords: {
+      ...boolean_attribute_writable_false,
+      name: "hasReverseRecords"
+    },
+    hasSVRRecords: {
+      ...boolean_attribute_writable_false,
+      name: "hasSVRRecords"
+    },
+    hasLocationRecord: {
+      ...boolean_attribute_writable_false,
+      name: "hasLocationRecord"
+    },
+    recordTTL: {
+      ...duration_attribute_writable,
+      name: "recordTTL",
+      default: "1W"
+    },
+    serial: {
+      ...integer_attribute_writable,
+      name: "serial",
+      default: Math.ceil(Date.now() / (1000 * 60)) * 60
+    },
+    refresh: {
+      ...duration_attribute_writable,
+      name: "refresh",
+      default: 36000
+    },
+    retry: { ...duration_attribute_writable, name: "retry", default: 72000 },
+    expire: { ...duration_attribute_writable, name: "expire", default: 600000 },
+    minimum: { ...duration_attribute_writable, name: "minimum", default: 60000 },
+    sharedWith: {
+      ...default_attribute_writable,
+      name: "sharedWith",
+      type: bind_view
+    },
+
     matchClients: {
       ...acl_attribute,
       name: "matchClients"
@@ -362,48 +408,6 @@ class bind_view extends bind_object {
       backpointer: owner_attribute,
       name: "zoneConfigs"
     },
-    sharedWith: {
-      ...default_attribute_writable,
-      name: "sharedWith",
-      type: bind_view
-    },
-    notify: { ...boolean_attribute_writable_false, name: "notify" },
-    hasCatalog: { ...boolean_attribute_writable_false, name: "hasCatalog" },
-    hasForeignDomainRecords: {
-      ...boolean_attribute_writable_false,
-      name: "hasForeignDomainRecords"
-    },
-    hasBaseRecords: {
-      ...boolean_attribute_writable_true,
-      name: "hasBaseRecords"
-    },
-    hasReverseRecords: { ...boolean_attribute_writable_false, name: "hasReverseRecords" },
-    hasSVRRecords: {
-      ...boolean_attribute_writable_false,
-      name: "hasSVRRecords"
-    },
-    hasLocationRecord: {
-      ...boolean_attribute_writable_false,
-      name: "hasLocationRecord"
-    },
-    recordTTL: {
-      ...duration_attribute_writable,
-      name: "recordTTL",
-      default: "1W"
-    },
-    serial: {
-      ...integer_attribute_writable,
-      name: "serial",
-      default: Math.ceil(Date.now() / (1000 * 60)) * 60
-    },
-    refresh: {
-      ...duration_attribute_writable,
-      name: "refresh",
-      default: 36000
-    },
-    retry: { ...duration_attribute_writable, name: "retry", default: 72000 },
-    expire: { ...duration_attribute_writable, name: "expire", default: 600000 },
-    minimum: { ...duration_attribute_writable, name: "minimum", default: 60000 }
   };
 
   static {
@@ -412,9 +416,15 @@ class bind_view extends bind_object {
 
   foreignDomains = new Set();
   notify = true;
-  hasCatalog = true;
-  hasSVRRecords = true;
   recordTTL = "1W";
+
+  set hasCatalog(value) {
+    this._hasCatalog = value;
+  }
+
+  get hasCatalog() {
+    return this.attribute("_hasCatalog");
+  }
 
   set hasForeignDomainRecords(value) {
     this._hasForeignDomainRecords = value;
@@ -438,14 +448,6 @@ class bind_view extends bind_object {
 
   get hasReverseRecords() {
     return this.attribute("_hasReverseRecords");
-  }
-
-  set hasCatalog(value) {
-    this._hasCatalog = value;
-  }
-
-  get hasCatalog() {
-    return this.attribute("_hasCatalog");
   }
 
   set hasSVRRecords(value) {
@@ -543,21 +545,21 @@ class bind_view extends bind_object {
           const locationName = host.owner.name;
 
           for (const domain of na.domains) {
-            let reverseZone;
-
-            const config = this.zoneConfigs.getOrInsertComputed(
-              domain,
-              domain => new bind_zone_config(this, `${domain}.zone.conf`)
-            );
-
-            const zone = this._zones.getOrInsertComputed(domain, domain =>
-              this.intoCatalog(
-                new bind_zone(this, domain, config, locationName),
-                locationName
-              )
-            );
+            let config, zone, reverseZone;
 
             if (this.hasBaseRecords) {
+              config = this.zoneConfigs.getOrInsertComputed(
+                domain,
+                domain => new bind_zone_config(this, `${domain}.zone.conf`)
+              );
+
+              zone = this._zones.getOrInsertComputed(domain, domain =>
+                this.intoCatalog(
+                  new bind_zone(this, domain, config, locationName),
+                  locationName
+                )
+              );
+
               if (this.hasReverseRecords && na.subnet.prefix) {
                 let subnet;
 

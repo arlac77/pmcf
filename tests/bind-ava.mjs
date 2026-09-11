@@ -108,6 +108,7 @@ test("BIND keys acls and views", async t => {
 
   const zs = internalView.zones;
 
+  console.log([...zs.keys()]);
   const z1 = zs.get("mydomain.com");
 
   t.is(z1.id, "mydomain.com");
