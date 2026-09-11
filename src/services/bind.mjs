@@ -543,6 +543,8 @@ class bind_view extends bind_object {
           const locationName = host.owner.name;
 
           for (const domain of na.domains) {
+            let reverseZone;
+
             const config = this.zoneConfigs.getOrInsertComputed(
               domain,
               domain => new bind_zone_config(this, `${domain}.zone.conf`)
@@ -556,8 +558,6 @@ class bind_view extends bind_object {
             );
 
             if (this.hasBaseRecords) {
-              let reverseZone;
-
               if (this.hasReverse && na.subnet.prefix) {
                 let subnet;
 
