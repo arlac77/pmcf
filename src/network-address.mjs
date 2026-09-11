@@ -1,15 +1,14 @@
-import {
-  default_attribute,
-  string_attribute,
-  type_attribute,
-  getAttribute,
-  asArray
-} from "pacc";
+import { default_attribute, type_attribute, getAttribute, asArray } from "pacc";
 import { familyIP, formatCIDR, decodeIP, addressType } from "ip-utilties";
 import { Subnet } from "./subnet.mjs";
 import { Owner, addType } from "pmcf";
-import { NetworkInterface } from "./network-interfaces/network-interface.mjs";
-import { family_attribute, subnet_attribute, address_attribute, cidr_address_attribute } from "./common-attributes.mjs";
+import { NetworkInterface } from "./interfaces/network-interface.mjs";
+import {
+  family_attribute,
+  subnet_attribute,
+  address_attribute,
+  cidr_address_attribute
+} from "./common-attributes.mjs";
 /**
  *
  */

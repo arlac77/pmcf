@@ -1,22 +1,15 @@
 import { join } from "node:path";
-import { AggregatedMap } from "aggregated-map";
-import { addType, asArray } from "pacc";
+import { addType } from "pacc";
 import { writeLines, sectionLines } from "../utils.mjs";
-import { NetworkAddress, host, cidrAddresses } from "pmcf";
-import { ServiceOwner } from "../service-owner.mjs";
+import { NetworkAddress, cidrAddresses } from "pmcf";
+import { Interface } from "./interface.mjs";
 
 /**
  *
  */
-export class SkeletonNetworkInterface extends ServiceOwner {
+export class SkeletonNetworkInterface extends Interface {
   static get typeName() {
     return "network_interface";
-  }
-
-  static commonNamePattern = new RegExp(`^${this.name}\d+$`);
-
-  static isCommonName(name) {
-    return this.commonNamePattern.test(name);
   }
 
   static {
@@ -24,48 +17,6 @@ export class SkeletonNetworkInterface extends ServiceOwner {
   }
 
   _network;
-
-  get typeName() {
-    const type = this.constructor;
-    return type.specializationOf?.name || type.name;
-  }
-
-  get kind() {
-    return this.constructor.name;
-  }
-
-  get host() {
-    if (this.owner instanceof host) {
-      return this.owner;
-    }
-  }
-
-  get services() {
-    return this.owner
-      ? new AggregatedMap([super.services, this.owner._services])
-      : super.services;
-  }
-
-  get hosts() {
-    return asArray(this.host);
-  }
-
-  get domainName() {
-    return this.host?.domainName;
-  }
-
-  get domainNames() {
-    return new Set();
-  }
-
-  matches(other) {
-    if (this.isTemplate) {
-      const name = this.name.replaceAll("*", "");
-      return name.length === 0 || other.name.indexOf(name) >= 0;
-    }
-
-    return false;
-  }
 
   get network() {
     return this.attribute("_network") ?? this.host?.network;

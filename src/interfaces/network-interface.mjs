@@ -12,7 +12,7 @@ import {
   cluster_attribute
 } from "../common-attributes.mjs";
 import { writeLines, sectionLines } from "../utils.mjs";
-import { SkeletonNetworkInterface } from "./skeleton.mjs";
+import { SkeletonNetworkInterface } from "./skeleton-network-interface.mjs";
 import { yesno } from "../utils.mjs";
 
 export class NetworkInterface extends SkeletonNetworkInterface {
