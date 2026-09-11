@@ -368,16 +368,16 @@ class bind_view extends bind_object {
       type: bind_view
     },
     notify: { ...boolean_attribute_writable_false, name: "notify" },
-    hasForeignDomains: {
+    hasCatalog: { ...boolean_attribute_writable_false, name: "hasCatalog" },
+    hasForeignDomainRecords: {
       ...boolean_attribute_writable_false,
-      name: "hasForeignDomains"
+      name: "hasForeignDomainRecords"
     },
     hasBaseRecords: {
       ...boolean_attribute_writable_true,
       name: "hasBaseRecords"
     },
-    hasCatalog: { ...boolean_attribute_writable_false, name: "hasCatalog" },
-    hasReverse: { ...boolean_attribute_writable_false, name: "hasReverse" },
+    hasReverseRecords: { ...boolean_attribute_writable_false, name: "hasReverseRecords" },
     hasSVRRecords: {
       ...boolean_attribute_writable_false,
       name: "hasSVRRecords"
@@ -416,12 +416,12 @@ class bind_view extends bind_object {
   hasSVRRecords = true;
   recordTTL = "1W";
 
-  set hasForeignDomains(value) {
-    this._hasForeignDomains = value;
+  set hasForeignDomainRecords(value) {
+    this._hasForeignDomainRecords = value;
   }
 
-  get hasForeignDomains() {
-    return this.attribute("_hasForeignDomains");
+  get hasForeignDomainRecords() {
+    return this.attribute("_hasForeignDomainRecords");
   }
 
   set hasBaseRecords(value) {
@@ -432,12 +432,12 @@ class bind_view extends bind_object {
     return this.attribute("_hasBaseRecords");
   }
 
-  set hasReverse(value) {
-    this._hasReverse = value;
+  set hasReverseRecords(value) {
+    this._hasReverseRecords = value;
   }
 
-  get hasReverse() {
-    return this.attribute("_hasReverse");
+  get hasReverseRecords() {
+    return this.attribute("_hasReverseRecords");
   }
 
   set hasCatalog(value) {
@@ -558,7 +558,7 @@ class bind_view extends bind_object {
             );
 
             if (this.hasBaseRecords) {
-              if (this.hasReverse && na.subnet.prefix) {
+              if (this.hasReverseRecords && na.subnet.prefix) {
                 let subnet;
 
                 for (const s of subnets) {
@@ -586,7 +586,7 @@ class bind_view extends bind_object {
             if (!hosts.has(host)) {
               hosts.add(host);
 
-              if (this.hasForeignDomains) {
+              if (this.hasForeignDomainRecords) {
                 for (let foreignDomain of host.foreignDomainNames) {
                   const wildcard = foreignDomain.startsWith("*.");
                   if (wildcard) {
