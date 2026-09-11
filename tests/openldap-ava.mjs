@@ -36,6 +36,8 @@ test("OpenLDAPService basics", async t => {
 
   const sources = await Array.fromAsync(packageDef.sources);
 
+  t.is(sources.length, 2, "# of sources");
+
   const files = Object.fromEntries(
     (await Array.fromAsync(sources[0])).map(entry => [entry.name, entry])
   );
