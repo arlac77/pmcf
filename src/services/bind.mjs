@@ -416,6 +416,46 @@ class bind_view extends bind_object {
   hasSVRRecords = true;
   recordTTL = "1W";
 
+  set hasForeignDomains(value) {
+    this._hasForeignDomains = value;
+  }
+
+  get hasForeignDomains() {
+    return this.attribute("_hasForeignDomains");
+  }
+
+  set hasBaseRecords(value) {
+    this._hasBaseRecords = value;
+  }
+
+  get hasBaseRecords() {
+    return this.attribute("_hasBaseRecords");
+  }
+
+  set hasReverse(value) {
+    this._hasReverse = value;
+  }
+
+  get hasReverse() {
+    return this.attribute("_hasReverse");
+  }
+
+  set hasCatalog(value) {
+    this._hasCatalog = value;
+  }
+
+  get hasCatalog() {
+    return this.attribute("_hasCatalog");
+  }
+
+  set hasSVRRecords(value) {
+    this._hasSVRRecords = value;
+  }
+
+  get hasSVRRecords() {
+    return this.attribute("_hasSVRRecords");
+  }
+
   get type() {
     return this.owner.serverType;
   }
