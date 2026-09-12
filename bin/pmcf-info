@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import { extendingAttributeIterator } from "pacc";
 import { AggregatedMap } from "aggregated-map";
-
 import { prepare } from "../src/cli.mjs";
 
 const { root, args, options } = await prepare({
