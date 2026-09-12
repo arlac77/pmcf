@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { cwd, env } from "node:process";
 import { packageDirectory } from "package-directory";
 import { createPublishingDetails } from "npm-pkgbuild";
-import { asArray } from "pacc";
+import { asArray, asValueIterator } from "pacc";
 import { prepare } from "../src/cli.mjs";
 
 const { root, args, options } = await prepare({
@@ -44,7 +44,7 @@ const publishingDetails = createPublishingDetails(
 let suffixId = 1;
 
 for (const object of [
-  ...args.map(arg => asArray(root.expression(arg)))
+  ...args.map(arg => asValueIterator(root.expression(arg)))
 ].flat()) {
   if (object.isTemplate) {
     continue;
@@ -58,6 +58,7 @@ for (const object of [
     console.log(
       (object.fullName + "                ").substring(0, 20),
       properties.name
+      //  sources.map(s=>`${s}`)
     );
 
     for (const outputFactory of outputs) {
