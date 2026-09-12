@@ -43,13 +43,10 @@ const publishingDetails = createPublishingDetails(
 
 let suffixId = 1;
 
-for (const object of [
-  ...args.map(arg => leafValues(root.expression(arg)))
-].flat()) {
+for (const object of leafValues(args.map(arg => root.expression(arg)))) {
   if (object.isTemplate) {
     continue;
   }
-  
   const stagingDir = join(options.output, String(suffixId++).padStart(5, "0"));
 
   for await (let { sources, outputs, properties } of object.preparePackages(
@@ -57,8 +54,8 @@ for (const object of [
   )) {
     console.log(
       (object.fullName + "                ").substring(0, 20),
-      properties.name
-      //  sources.map(s=>`${s}`)
+      properties.name,
+   //   sources.map(s => `${s}`)
     );
 
     for (const outputFactory of outputs) {
