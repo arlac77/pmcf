@@ -81,30 +81,30 @@ generates config packages for:
 *   [domainNames](#domainnames)
 *   [InitializationContext](#initializationcontext)
     *   [Parameters](#parameters-14)
+*   [SkeletonNetworkInterface](#skeletonnetworkinterface)
+    *   [networkAddresses](#networkaddresses)
+        *   [Parameters](#parameters-15)
 *   [Interface](#interface)
 *   [zones](#zones)
 *   [addressesStatement](#addressesstatement)
-    *   [Parameters](#parameters-15)
+    *   [Parameters](#parameters-16)
 *   [SystemdJournalRemoteService](#systemdjournalremoteservice)
     *   [Properties](#properties)
     *   [systemdConfigs](#systemdconfigs)
-        *   [Parameters](#parameters-16)
+        *   [Parameters](#parameters-17)
 *   [SystemdJournalUploadService](#systemdjournaluploadservice)
     *   [Properties](#properties-1)
     *   [systemdConfigs](#systemdconfigs-1)
-        *   [Parameters](#parameters-17)
+        *   [Parameters](#parameters-18)
 *   [NetworkAddress](#networkaddress)
-    *   [Parameters](#parameters-18)
+    *   [Parameters](#parameters-19)
     *   [subnet](#subnet)
     *   [networkInterface](#networkinterface)
     *   [address](#address)
 *   [addresses](#addresses)
-    *   [Parameters](#parameters-19)
-*   [cidrAddresses](#cidraddresses)
     *   [Parameters](#parameters-20)
-*   [SkeletonNetworkInterface](#skeletonnetworkinterface)
-    *   [networkAddresses](#networkaddresses)
-        *   [Parameters](#parameters-21)
+*   [cidrAddresses](#cidraddresses)
+    *   [Parameters](#parameters-21)
 *   [families](#families)
 *   [secretName](#secretname)
 *   [directHosts](#directhosts)
@@ -308,6 +308,18 @@ Keeps track of all in flight object creations and loose ends during config initi
 
 *   `directory`   (optional, default `"/"`)
 
+## SkeletonNetworkInterface
+
+**Extends Interface**
+
+### networkAddresses
+
+#### Parameters
+
+*   `filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
+
+Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
+
 ## Interface
 
 **Extends ServiceOwner**
@@ -386,7 +398,7 @@ Type: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Glob
 
 ### Parameters
 
-*   `sources` **Iterable<(Owner | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))>**&#x20;
+*   `sources` **Iterable<(owner | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))>**&#x20;
 *   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**&#x20;
 
     *   `options.aggregate` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
@@ -401,18 +413,6 @@ Returns **Iterable<[string](https://developer.mozilla.org/docs/Web/JavaScript/Re
 *   `networkAddresses` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[NetworkAddress](#networkaddress)>**&#x20;
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
-
-## SkeletonNetworkInterface
-
-**Extends Interface**
-
-### networkAddresses
-
-#### Parameters
-
-*   `filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
-
-Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
 
 ## families
 
