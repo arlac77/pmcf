@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { cwd, env } from "node:process";
 import { packageDirectory } from "package-directory";
 import { createPublishingDetails } from "npm-pkgbuild";
-import { asArray, asValueIterator } from "pacc";
+import { asArray, leafValues } from "pacc";
 import { prepare } from "../src/cli.mjs";
 
 const { root, args, options } = await prepare({
@@ -44,12 +44,12 @@ const publishingDetails = createPublishingDetails(
 let suffixId = 1;
 
 for (const object of [
-  ...args.map(arg => asValueIterator(root.expression(arg)))
+  ...args.map(arg => leafValues(root.expression(arg)))
 ].flat()) {
   if (object.isTemplate) {
     continue;
   }
-
+  
   const stagingDir = join(options.output, String(suffixId++).padStart(5, "0"));
 
   for await (let { sources, outputs, properties } of object.preparePackages(
