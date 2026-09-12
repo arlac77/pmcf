@@ -21,10 +21,9 @@ import {
 import { addType, assign } from "pmcf";
 import { loadHooks } from "./hooks.mjs";
 
-export class Owner extends ServiceOwner {
-  static name = "owner";
+export class owner extends ServiceOwner {
   static priority = 2;
-  static owners = [Owner, "root"];
+  static owners = [owner, "root"];
   static attributes = {
     networks: networks_attribute,
     hosts: hosts_attribute,

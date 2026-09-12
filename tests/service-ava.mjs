@@ -2,7 +2,7 @@ import test from "ava";
 import { FAMILY_IPV4 } from "ip-utilties";
 import {
   root,
-  Owner,
+  owner,
   network,
   host,
   Service,
@@ -28,7 +28,7 @@ function setup() {
   });
   assign(networks_attribute, rootInst, n1);
 
-  const l1 = new Owner();
+  const l1 = new owner();
   ic.read(l1, {
     name: "l1"
   });

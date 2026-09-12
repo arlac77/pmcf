@@ -1,5 +1,5 @@
 import {
-  Owner,
+  owner,
   network,
   Subnet,
   host,
@@ -23,7 +23,7 @@ export function root1(root, filter) {
   };
 
   const L1 = {
-    instanceof: Owner,
+    instanceof: owner,
     owner: root,
     description: "somewhere",
     domain: "mydomain.com",
@@ -33,7 +33,7 @@ export function root1(root, filter) {
     administratorEmail: "admin@mydomain.com"
   };
   const L2 = {
-    instanceof: Owner,
+    instanceof: owner,
     owner: root,
     description: "somewhere else"
   };
@@ -168,13 +168,13 @@ export function root1(root, filter) {
 
   const model = {
     name: "model",
-    instanceof: Owner,
+    instanceof: owner,
     isTemplate: true
   };
 
   const templates = {
     name: "templates",
-    instanceof: Owner,
+    instanceof: owner,
     isTemplate: true
   };
 

@@ -3,7 +3,7 @@ import {
   InitializationContext,
   network,
   host,
-  Owner,
+  owner,
   assign,
   hosts_attribute,
   networks_attribute,
@@ -29,7 +29,7 @@ function setup() {
   });
   assign(networks_attribute, root, n1);
 
-  const l1 = new Owner();
+  const l1 = new owner();
   ic.read(l1, {
     name: "l1",
     properties: { p1: "v1", n1: 7 }
@@ -74,7 +74,7 @@ test("Root basics", async t => {
 
 test("template from name '*'", t => {
   const ic = new InitializationContext("/somewhere");
-  const l1 = new Owner();
+  const l1 = new owner();
   ic.read(l1, { name: "l*" });
   assign(owners_attribute, ic.root, l1);
   t.true(l1.isTemplate);
@@ -147,7 +147,7 @@ test("expression", t => {
 
 test("expand", t => {
   const ic = new InitializationContext("/somewhere");
-  const l1 = new Owner();
+  const l1 = new owner();
   ic.read(l1, {
     name: "l1",
     properties: { p1: "v1", n1: 7, deep: { d2: 8 } }
@@ -185,7 +185,7 @@ test("expand", t => {
 test("tags", t => {
   const ic = new InitializationContext("/somewhere");
 
-  const l1 = new Owner();
+  const l1 = new owner();
   ic.read(l1, { name: "l1", tags: "t1" });
   assign(owners_attribute, ic.root, l1);
 
@@ -196,7 +196,7 @@ test("tags", t => {
 
 test("extract", t => {
   const ic = new InitializationContext("/somewhere");
-  const l1 = new Owner();
+  const l1 = new owner();
   ic.read(l1, { name: "l1", tags: "tag1" });
   assign(owners_attribute, ic.root, l1);
 
@@ -212,7 +212,7 @@ test("extract", t => {
 
 test("directory & name & owner", t => {
   const ic = new InitializationContext("/somewhere");
-  const l1 = new Owner();
+  const l1 = new owner();
   ic.read(l1, { name: "l1" });
   assign(owners_attribute, ic.root, l1);
 

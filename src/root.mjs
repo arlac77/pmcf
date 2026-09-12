@@ -1,6 +1,6 @@
-import { Owner, addType } from "pmcf";
+import { owner, addType } from "pmcf";
 
-export class root extends Owner {
+export class root extends owner {
   static priority = 3;
   static {
     addType(this);

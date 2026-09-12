@@ -1,7 +1,7 @@
 import { default_attribute, type_attribute, getAttribute, asArray } from "pacc";
 import { familyIP, formatCIDR, decodeIP, addressType } from "ip-utilties";
 import { Subnet } from "./subnet.mjs";
-import { Owner, addType } from "pmcf";
+import { owner, addType } from "pmcf";
 import { NetworkInterface } from "./interfaces/network-interface.mjs";
 import {
   family_attribute,
@@ -92,7 +92,7 @@ export class NetworkAddress {
 
 /**
  *
- * @param {Iterable<Owner|string>} sources
+ * @param {Iterable<owner|string>} sources
  * @param {Object} options
  * @param {boolean} options.aggregate
  * @param {Object} options.filter
@@ -106,7 +106,7 @@ export function addresses(sources, options) {
           if (typeof s === "string") {
             return s;
           }
-          if (options?.aggregate && s instanceof Owner && s.subnets.size > 0) {
+          if (options?.aggregate && s instanceof owner && s.subnets.size > 0) {
             return [...s.subnets.keys()];
           }
 

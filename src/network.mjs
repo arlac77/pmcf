@@ -1,11 +1,11 @@
 import { AggregatedMap } from "aggregated-map";
 import { addType } from "pmcf";
-import { Owner } from "./owner.mjs";
+import { owner } from "./owner.mjs";
 import { networkAttributes, bridges_attribute } from "./common-attributes.mjs";
 import { Subnet } from "./subnet.mjs";
 
-export class network extends Owner {
-  static owners = [Owner, "root"];
+export class network extends owner {
+  static owners = [owner, "root"];
   static attributes = {
     ...networkAttributes,
     bridges: bridges_attribute

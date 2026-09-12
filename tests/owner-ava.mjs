@@ -1,14 +1,14 @@
 import test from "ava";
 import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
-import { Owner, assign, owners_attribute } from "pmcf";
+import { owner, assign, owners_attribute } from "pmcf";
 import { InitializationContext } from "../src/initialization-context.mjs";
 
-test("Owner read write", t => {
+test("owner read write", t => {
   const ic = new InitializationContext();
 
   t.is(ic.root.directory, "/");
 
-  const o1 = new Owner();
+  const o1 = new owner();
 
   assign(owners_attribute, ic.root, o1);
 

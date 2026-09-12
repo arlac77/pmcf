@@ -11,7 +11,7 @@ import {
   CoreService,
   Service,
   Subnet,
-  Owner,
+  owner,
   bind,
   chrony,
   alpm
@@ -26,7 +26,7 @@ test("types", t => {
   t.is(types.base.extends, core);
   t.is(types.base.key, "name");
 
-  t.is(types.owner, Owner);
+  t.is(types.owner, owner);
   t.is(types.owner.extends, ServiceOwner);
   t.is(types.owner.priority, 2);
   t.is(types.owner.key, "name");
@@ -34,11 +34,11 @@ test("types", t => {
   t.deepEqual(types.owner.extends, types["service-owner"]);
 
   t.is(types.root, root);
-  t.is(types.root.extends, Owner);
+  t.is(types.root.extends, owner);
   t.is(types.root.priority, 3);
 
   t.is(types.network, network);
-  t.is(types.network.extends, Owner);
+  t.is(types.network.extends, owner);
   t.is(types.network.priority, 2);
   t.is(types.network.key, "name");
 
