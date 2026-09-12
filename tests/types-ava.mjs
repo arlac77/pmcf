@@ -1,21 +1,19 @@
 import test from "ava";
 import { types, resolveTypeLinks } from "pacc";
-import {
-  core,
-  base,
-  cluster,
-  root,
-  host,
-  network,
-  ServiceOwner,
-  CoreService,
-  Service,
-  Subnet,
-  owner,
-  bind,
-  chrony,
-  alpm
-} from "pmcf";
+import { network } from "../src/network.mjs";
+import { host } from "../src/host.mjs";
+import { root } from "../src/root.mjs";
+import { cluster } from "../src/cluster.mjs";
+import { base } from "../src/base.mjs";
+import { core } from "../src/core.mjs";
+import { Subnet } from "../src/subnet.mjs";
+import { bind } from "../src/services/bind.mjs";
+import { alpm } from "../src/services/alpm.mjs";
+import { chrony } from "../src/services/chrony.mjs";
+import { owner } from "../src/owner.mjs";
+import { ServiceOwner } from "../src/service-owner.mjs";
+import { Service } from "../src/service.mjs";
+import { CoreService } from "../src/core-service.mjs";
 
 test("types", t => {
   resolveTypeLinks();

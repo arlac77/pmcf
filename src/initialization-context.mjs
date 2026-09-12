@@ -6,7 +6,9 @@ import {
   resolveTypeLinks,
   create
 } from "pacc";
-import { core, root, assign } from "pmcf";
+import { core } from "./core.mjs";
+import { root } from "./root.mjs";
+import { assign } from "./type.mjs";
 
 /**
  * Keeps track of all in flight object creations and loose ends during config initialization.
@@ -71,7 +73,10 @@ export class InitializationContext {
     }
     if (value !== undefined) {
       if (typeof value === "object") {
-        if (typeof attribute.type === 'function' && value instanceof attribute.type) {
+        if (
+          typeof attribute.type === "function" &&
+          value instanceof attribute.type
+        ) {
           return assign(attribute, object, value);
         }
       } else {
@@ -125,7 +130,9 @@ export class InitializationContext {
             if (value instanceof core) {
               assign(attribute, object, value);
             } else {
-              for (const [objectIdentifier, objectData] of Object.entries(value)) {
+              for (const [objectIdentifier, objectData] of Object.entries(
+                value
+              )) {
                 if (typeof objectData === "object") {
                   objectData[attribute.type.key] = objectIdentifier;
                 }

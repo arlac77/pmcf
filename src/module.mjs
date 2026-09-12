@@ -1,5 +1,7 @@
 export * from "./type.mjs";
 export * from "./core.mjs";
+export * from "./content.mjs";
+export * from "./common-attributes.mjs";
 export * from "./base.mjs";
 export * from "./cluster.mjs";
 export * from "./keepalived.mjs";
@@ -10,8 +12,6 @@ export * from "./subnet.mjs";
 export * from "./service-owner.mjs";
 export * from "./network.mjs";
 export * from "./network-address.mjs";
-export * from "./common-attributes.mjs";
-export * from "./content.mjs";
 export * from "./host.mjs";
 export * from "./interfaces/network-interface.mjs";
 export * from "./interfaces/loopback.mjs";
