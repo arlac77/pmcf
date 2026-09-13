@@ -5,7 +5,7 @@ import {
   owner,
   network,
   host,
-  Service,
+  service,
   Endpoint,
   DomainNameEndpoint,
   ServiceTypes,
@@ -35,7 +35,7 @@ function setup() {
   });
   assign(owners_attribute, rootInst, l1);
 
-  const dns = new Service();
+  const dns = new service();
   ic.read(dns, {
     name: "dns",
     weight: 5,
@@ -47,10 +47,10 @@ function setup() {
   return { ic, root: rootInst, n1, l1, dns };
 }
 
-test("Service types", t => {
+test("service types", t => {
   const { ic } = setup();
 
-  const s1 = new Service();
+  const s1 = new service();
   ic.read(s1, {
     name: "s1",
     type: "t1"
@@ -60,7 +60,7 @@ test("Service types", t => {
   t.is(s1.type, "t1");
   t.deepEqual(s1.types, new Set(["t1"]));
 
-  const s2 = new Service();
+  const s2 = new service();
   ic.read(s2, {
     name: "s2"
   });
@@ -69,7 +69,7 @@ test("Service types", t => {
   t.is(s2.type, "s2");
   t.deepEqual(s2.types, new Set(["s2"]));
 
-  const s3 = new Service();
+  const s3 = new service();
   ic.read(s3, {
     name: "s3",
     types: ["t1"]
@@ -80,7 +80,7 @@ test("Service types", t => {
   t.deepEqual(s3.types, new Set(["s3", "t1"]));
 });
 
-test("Service basics", t => {
+test("service basics", t => {
   const { ic, l1 } = setup();
 
   const h1 = new host();
@@ -101,7 +101,7 @@ test("Service basics", t => {
     na => na.networkInterface.kind !== "loopback"
   );
 
-  const s1 = new Service();
+  const s1 = new service();
   ic.read(s1, {
     extends: ["/dns"],
     name: "dns",
@@ -241,7 +241,7 @@ test("Service basics", t => {
 
   t.is(s1, l1.expression("services[types[dns]][0]"));
 
-  const s3 = new Service();
+  const s3 = new service();
   ic.read(s3, {
     name: "http3",
     weight: 0,
@@ -262,7 +262,7 @@ test("Service basics", t => {
   );
 });
 
-test("Service without protocol", t => {
+test("service without protocol", t => {
   const { ic } = setup();
 
   const h1 = new host();
@@ -273,7 +273,7 @@ test("Service without protocol", t => {
 
   const na = h1.networkAddresses();
 
-  const s1 = new Service(h1);
+  const s1 = new service(h1);
   ic.read(s1, {
     name: "abc",
     port: 555,
@@ -296,7 +296,7 @@ test("Service without protocol", t => {
   ]);
 });
 
-test("Service host | interface", t => {
+test("service host | interface", t => {
   const { ic } = setup();
 
   const h1 = new host();
@@ -329,7 +329,7 @@ test("Service host | interface", t => {
   t.is(h2.named("dns"), h2.services.get("dns"));
 });
 
-test("Service owner", t => {
+test("service owner", t => {
   const { ic, root } = setup();
 
   const h1 = new host();
@@ -352,7 +352,7 @@ test("Service owner", t => {
   assign(hosts_attribute, root, h2);
 
   t.is(h2.weight, 7);
-  const s1 = new Service();
+  const s1 = new service();
   ic.read(s1, {
     name: "dns",
     aliases: "primary-dns"
@@ -377,7 +377,7 @@ test("Service owner", t => {
   ]);
 });
 
-test("Service type extension", t => {
+test("service type extension", t => {
   const { ic, root } = setup();
 
   const h1 = new host();

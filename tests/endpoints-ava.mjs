@@ -4,7 +4,7 @@ import {
   InitializationContext,
   host,
   network,
-  Service,
+  service,
   ServiceOwner,
   ServiceTypes,
   addServiceType,
@@ -44,7 +44,7 @@ function prepare() {
   });
   assign(hosts_attribute, ic.root, h1);
 
-  const s1 = new Service();
+  const s1 = new service();
   ic.read(s1, {
     name: "dns",
     weight: 5,
@@ -153,7 +153,7 @@ test("DomainNameEndpoint", t => {
 
   assign(hosts_attribute, root, h1);
 
-  const s1 = new Service();
+  const s1 = new service();
   ic.read(s1, {
     name: "ntp"
   });
@@ -179,7 +179,7 @@ test("unix_endpoint", t => {
   });
   assign(hosts_attribute, root, h1);
 
-  const s1 = new Service();
+  const s1 = new service();
 
   ic.read(s1, {
     name: "ntp"

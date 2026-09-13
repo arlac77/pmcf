@@ -12,7 +12,7 @@ import { alpm } from "../src/services/alpm.mjs";
 import { chrony } from "../src/services/chrony.mjs";
 import { owner } from "../src/owner.mjs";
 import { ServiceOwner } from "../src/service-owner.mjs";
-import { Service } from "../src/service.mjs";
+import { service } from "../src/service.mjs";
 import { CoreService } from "../src/core-service.mjs";
 
 test("types", t => {
@@ -45,7 +45,7 @@ test("types", t => {
   t.is(types.subnet.priority, 1);
   t.is(types.subnet.key, "address");
 
-  t.is(types.service, Service);
+  t.is(types.service, service);
   t.is(types.service.extends, CoreService);
   t.deepEqual(types.service.extends, types["core-service"]);
   t.deepEqual(types.service.owners, [

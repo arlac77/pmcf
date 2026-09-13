@@ -1,8 +1,8 @@
 import { setBaseService, CoreService, addType } from "pmcf";
 import { serviceTypes, ServiceTypes } from "./service-types.mjs";
 
-export class Service extends CoreService {
-  static name = "service";
+export class service extends CoreService {
+
   static {
     addType(this);
     setBaseService(this);
