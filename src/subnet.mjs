@@ -4,8 +4,8 @@ import {
   decodeIP,
   matchPrefixIP,
 } from "ip-utilties";
-import { string_attribute, name_attribute, integer_attribute } from "pacc";
-import { networks_attribute } from "./common-attributes.mjs";
+import { name_attribute, integer_attribute } from "pacc";
+import { networks_attribute, family_attribute } from "./common-attributes.mjs";
 import { addType, network, core } from "pmcf";
 
 export class Subnet extends core {
@@ -18,7 +18,7 @@ export class Subnet extends core {
     address: { ...name_attribute, name: "address", private: true },
     networks: networks_attribute,
     prefixLength: { ...integer_attribute, name: "prefixLength" },
-    family: { ...string_attribute, name: "family" }
+    family: family_attribute    
   };
 
   static {
