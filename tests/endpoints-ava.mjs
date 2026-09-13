@@ -102,7 +102,6 @@ test("HTTPEndpoint basics", t => {
     pathname: "/p1"
   });
 
-  console.log(ep);
   t.is(ep.type, "http-control");
   t.is(ep.family, FAMILY_IPV4);
   t.is(ep.port, 80);
