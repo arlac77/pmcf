@@ -54,7 +54,7 @@
     "content-entry-transform": "^1.7.6",
     "ip-utilties": "^3.13.1",
     "npm-pkgbuild": "^22.1.13",
-    "pacc": "^11.11.1",
+    "pacc": "^11.11.2",
     "package-directory": "^8.2.0",
     "yaml": "^2.9.1"
   },
