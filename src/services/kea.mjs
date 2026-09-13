@@ -12,7 +12,8 @@ import {
   number_attribute_writable,
   boolean_attribute_writable_true,
   default_collection_attribute_writable,
-  extendingAttributeIterator
+  extendingAttributeIterator,
+  asArray
 } from "pacc";
 import {
   addType,
@@ -249,7 +250,7 @@ export class kea extends CoreService {
                     "http-listener-threads": 2,
                     "http-client-threads": 2
                   },*/
-                  peers: peers
+                  peers: asArray(peers)
                     .sort(sortDescendingByPriority)
                     .reduce((a, kea) => {
                       if (!kea.host.isCluster) {
@@ -284,14 +285,15 @@ export class kea extends CoreService {
         "option-data": [
           {
             name: family == 4 ? "domain-name-servers" : "dns-servers",
-            data: dnsServerEndpoints
-              .filter(
-                endpoint =>
-                  endpoint.family === `IPv${family}` &&
-                  addressType(endpoint.address) !== ADDRESS_TYPE_LOOPBACK
-              )
-              .map(endpoint => endpoint.address)
-              .join(",")
+            data: asArray(
+              dnsServerEndpoints
+                .filter(
+                  endpoint =>
+                    endpoint.family === `IPv${family}` &&
+                    addressType(endpoint.address) !== ADDRESS_TYPE_LOOPBACK
+                )
+                .map(endpoint => endpoint.address)
+            ).join(",")
           },
           {
             name: "domain-search",
