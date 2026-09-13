@@ -183,6 +183,7 @@ export class HTTPEndpoint extends BaseEndpoint {
    * @param {object} data
    * @param {number} data.port
    * @param {string} data.pathname
+   * @param {string} data.family
    */
   constructor(service, address, data) {
     super(service, data);
@@ -192,15 +193,16 @@ export class HTTPEndpoint extends BaseEndpoint {
     } else if (address instanceof URL) {
       this.url = address;
     } else {
-      this.family = address.family;
+      this.family = data.family ?? address.family;
+
       this.url = new URL(
         (data.tls ? "https://" : "http://") +
-          (address.family === FAMILY_IPV6
+          (data.family === FAMILY_IPV6
             ? "[" + address.address + "]"
             : address.address) +
           ":" +
           data.port +
-          (data.pathname || "/")
+          (data.pathname ?? "/")
       );
       this.hostname = address.address;
     }

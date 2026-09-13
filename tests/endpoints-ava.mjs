@@ -95,12 +95,14 @@ test("HTTPEndpoint basics", t => {
   const { h1, s1 } = prepare();
   const nas = h1.networkAddresses();
 
-  const ep = new HTTPEndpoint(s1, [...nas][0], {
+  const addr = [...nas][0]
+  const ep = new HTTPEndpoint(s1, addr, {
     type: ServiceTypes["http-control"],
     port: 80,
     pathname: "/p1"
   });
 
+  console.log(ep);
   t.is(ep.type, "http-control");
   t.is(ep.family, FAMILY_IPV4);
   t.is(ep.port, 80);

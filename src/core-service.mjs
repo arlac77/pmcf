@@ -158,16 +158,17 @@ export class CoreService extends base {
           delete options.kind;
 
           for (const na of this.host.networkAddresses()) {
-            if (e.kind && e.kind !== na.networkInterface.kind) {
+            if (
+              (e.family && e.family !== na.family) ||
+              (e.kind && e.kind !== na.networkInterface.kind)
+            ) {
               continue;
             }
-
+            
             if (e.pathname) {
               result.push(new HTTPEndpoint(this, na, options));
             } else {
-              if (e.family === na.family) {
-                result.push(new Endpoint(this, na, options));
-              }
+              result.push(new Endpoint(this, na, options));
             }
           }
 
