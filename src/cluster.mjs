@@ -183,7 +183,7 @@ export class cluster extends host {
 
               default:
                 switch (endpoint.protocol) {
-                  case "tcp":
+                  case PROTOCOL_TCP:
                     cfg.push(`    TCP_CHECK {`);
                     cfg.push("      connect_timeout 10");
                     cfg.push("    }");

@@ -26,7 +26,8 @@ import {
   addresses,
   networkAddressType,
   addType,
-  FAMILY_IPV4_IPV6
+  FAMILY_IPV4_IPV6,
+  PROTOCOL_TCP
 } from "pmcf";
 import { yesno, writeLines } from "../utils.mjs";
 import {
@@ -797,7 +798,7 @@ export class bind extends CoreService {
           {
             family: FAMILY_IPV4_IPV6,
             port: 19521,
-            protocol: "tcp",
+            protocol: PROTOCOL_TCP,
             pathname: "/",
             tls: false,
             kind: "loopback"
@@ -809,7 +810,7 @@ export class bind extends CoreService {
           {
             family: FAMILY_IPV4_IPV6,
             port: 953,
-            protocol: "tcp",
+            protocol: PROTOCOL_TCP,
             tls: false,
             kind: "loopback"
           }

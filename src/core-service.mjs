@@ -19,10 +19,9 @@ import {
   DomainNameEndpoint,
   HTTPEndpoint,
   unix_endpoint,
-  addType,
-  FAMILY_UNIX,
-  FAMILY_DNS
+  addType
 } from "pmcf";
+import { FAMILY_UNIX, FAMILY_DNS } from "./constants.mjs";
 import {
   networkAddressAttributes,
   extends_attribute,
@@ -77,7 +76,11 @@ export class CoreService extends base {
     systemdService: { ...string_attribute_writable, name: "systemdService" },
     systemUserName: { ...string_attribute_writable, name: "systemUserName" },
     systemGroupName: { ...string_attribute_writable, name: "systemGroupName" },
-    credentials: { ...default_collection_attribute_writable, type: credential, name: "credentials" }
+    credentials: {
+      ...default_collection_attribute_writable,
+      type: credential,
+      name: "credentials"
+    }
   };
 
   static {

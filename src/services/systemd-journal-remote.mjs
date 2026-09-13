@@ -4,8 +4,9 @@ import {
   boolean_attribute_writable,
   integer_attribute_writable
 } from "pacc";
-import { CoreService, addType, FAMILY_IPV4_IPV6 } from "pmcf";
+import { CoreService, addType } from "pmcf";
 import { filterConfigurable, sectionLines } from "../utils.mjs";
+import { FAMILY_IPV4_IPV6, PROTOCOL_TCP } from "../constants.mjs";
 
 /**
  * @property {string} ServerCertificateFile
@@ -77,7 +78,7 @@ export class SystemdJournalRemoteService extends CoreService {
       {
         family: FAMILY_IPV4_IPV6,
         port: 19532,
-        protocol: "tcp",
+        protocol: PROTOCOL_TCP,
         tls: false,
         pathname: "/"
       }

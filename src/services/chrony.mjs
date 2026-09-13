@@ -1,7 +1,8 @@
 import { join } from "node:path";
 import { default_collection_attribute_writable, asArray } from "pacc";
-import { addType, FAMILY_UNIX, FAMILY_IPV4_IPV6, CoreService } from "pmcf";
+import { addType, CoreService } from "pmcf";
 import { writeLines } from "../utils.mjs";
+import { FAMILY_UNIX, FAMILY_IPV4_IPV6, PROTOCOL_TCP } from "../constants.mjs";
 
 export class chrony extends CoreService {
   static attributes = {
@@ -22,7 +23,7 @@ export class chrony extends CoreService {
           {
             family: FAMILY_IPV4_IPV6,
             port: 323,
-            protocol: "tcp",
+            protocol: PROTOCOL_TCP,
             tls: false
           },
           {

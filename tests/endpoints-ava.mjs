@@ -16,7 +16,8 @@ import {
   assign,
   networks_attribute,
   hosts_attribute,
-  FAMILY_UNIX
+  FAMILY_UNIX,
+  PROTOCOL_UDP
 } from "pmcf";
 
 function prepare() {
@@ -64,7 +65,7 @@ test("Endpoint from Service basics", t => {
 
   const options = {
     type: ServiceTypes.dns,
-    protocol: "udp",
+    protocol: PROTOCOL_UDP,
     port: 53,
     tls: false
   };
@@ -83,7 +84,7 @@ test("Endpoint from Service basics", t => {
   )[0];
   t.is(e1.hostName, "h1");
   t.is(e1.type, "dns");
-  t.is(e1.protocol, "udp");
+  t.is(e1.protocol, PROTOCOL_UDP);
   t.is(e1.port, 53);
   t.is(e1.family, FAMILY_IPV4);
   t.is(e1.priority, 3);
@@ -160,7 +161,7 @@ test("DomainNameEndpoint", t => {
   const options = {
     port: 123,
     type: ServiceTypes.ntp,
-    protocol: "udp",
+    protocol: PROTOCOL_UDP,
     tls: false
   };
 

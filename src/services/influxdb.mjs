@@ -1,8 +1,9 @@
 import { join } from "node:path";
 import { stringify } from "yaml";
 import { boolean_attribute_writable_true } from "pacc";
-import { CoreService, addType, FAMILY_IPV4_IPV6 } from "pmcf";
+import { CoreService, addType } from "pmcf";
 import { writeLines, filterConfigurable } from "../utils.mjs";
+import { FAMILY_IPV4_IPV6, PROTOCOL_TCP } from "../constants.mjs";
 
 export class influxdb extends CoreService {
   static attributes = {
@@ -18,7 +19,7 @@ export class influxdb extends CoreService {
       {
         family: FAMILY_IPV4_IPV6,
         port: 8086,
-        protocol: "tcp",
+        protocol: PROTOCOL_TCP,
         tls: false,
         pathname: "/"
       }

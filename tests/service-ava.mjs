@@ -13,7 +13,8 @@ import {
   assign,
   networks_attribute,
   owners_attribute,
-  hosts_attribute
+  hosts_attribute,
+  PROTOCOL_UDP
 } from "pmcf";
 import { InitializationContext } from "../src/initialization-context.mjs";
 
@@ -117,7 +118,7 @@ test("Service basics", t => {
         a =>
           new Endpoint(s1, a, {
             type: ServiceTypes.dns,
-            protocol: "udp",
+            protocol: PROTOCOL_UDP,
             port: 53,
             tls: false
           })
@@ -126,7 +127,7 @@ test("Service basics", t => {
         a =>
           new Endpoint(s1, a, {
             type: ServiceTypes.dns,
-            protocol: "udp",
+            protocol: PROTOCOL_UDP,
             port: 53,
             tls: false
           })
@@ -366,7 +367,7 @@ test("Service owner", t => {
   const options = {
     type: ServiceTypes.dns,
     port: 53,
-    protocol: "udp",
+    protocol: PROTOCOL_UDP,
     tls: false
   };
 

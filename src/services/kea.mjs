@@ -20,9 +20,9 @@ import {
   Subnet,
   CoreService,
   Endpoint,
-  sortDescendingByPriority,
-  FAMILY_UNIX
+  sortDescendingByPriority
 } from "pmcf";
+import { FAMILY_UNIX, PROTOCOL_TCP } from "../constants.mjs";
 import { writeLines } from "../utils.mjs";
 
 class kea_subnet extends Subnet {
@@ -102,7 +102,7 @@ export class kea extends CoreService {
             family: FAMILY_IPV4,
             kind: "loopback",
             port: 53001,
-            protocol: "tcp",
+            protocol: PROTOCOL_TCP,
             tls: false
           }
         ]
@@ -113,7 +113,7 @@ export class kea extends CoreService {
             family: FAMILY_IPV4,
             port: 53003,
             pathname: "/",
-            protocol: "tcp",
+            protocol: PROTOCOL_TCP,
             tls: false
           }
         ]
@@ -124,7 +124,7 @@ export class kea extends CoreService {
             family: FAMILY_IPV6,
             port: 53004,
             pathname: "/",
-            protocol: "tcp",
+            protocol: PROTOCOL_TCP,
             tls: false
           }
         ]
@@ -280,7 +280,6 @@ export class kea extends CoreService {
           }
         ],
         "dhcp-ddns": dhcpServerDdns,
-
         loggers,
         "option-data": [
           {
@@ -308,7 +307,6 @@ export class kea extends CoreService {
           attribute.configurable && this[attribute.name] !== undefined
       )) {
         const name = path.join(".");
-
         cfg[name] = this[name];
       }
 
@@ -388,7 +386,6 @@ export class kea extends CoreService {
             subnets.map(s => s.prefix).map(prefix => reverseArpa(prefix))
           )
         },
-
         loggers
       }
     };

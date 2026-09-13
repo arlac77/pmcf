@@ -10,6 +10,7 @@ import {
   sortByFamilyAndAddress,
   assign,
   hosts_attribute
+  
 } from "pmcf";
 
 test("kea basics", t => {
@@ -92,7 +93,7 @@ test("kea basics", t => {
     }),
     new Endpoint(keaInst, a1, {
       type: "dhcp",
-      protocol: "udp",
+      protocol: PROTOCOL_UDP,
       port: 547,
       tls: false
     }),

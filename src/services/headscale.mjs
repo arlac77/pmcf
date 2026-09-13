@@ -1,5 +1,6 @@
 import { FAMILY_IPV4 } from "ip-utilties";
-import { CoreService, addType, FAMILY_UNIX } from "pmcf";
+import { CoreService, addType } from "pmcf";
+import { FAMILY_UNIX, PROTOCOL_TCP } from "../constants.mjs";
 
 export class headscale extends CoreService {
   static service = {
@@ -11,21 +12,21 @@ export class headscale extends CoreService {
       {
         family: FAMILY_IPV4,
         port: 8080,
-        protocol: "tcp",
+        protocol: PROTOCOL_TCP,
         tls: false
       },
       {
         description: "grpc",
         family: FAMILY_IPV4,
         port: 50443,
-        protocol: "tcp",
+        protocol: PROTOCOL_TCP,
         tls: false
       },
       {
         description: "metrics debug",
         family: FAMILY_IPV4,
         port: 9090,
-        protocol: "tcp",
+        protocol: PROTOCOL_TCP,
         tls: false
       }
     ]

@@ -1,6 +1,7 @@
 import test from "ava";
 import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import { ServiceTypes, serviceTypeEndpoints } from "pmcf";
+import { PROTOCOL_UDP, PROTOCOL_TCP } from "../src/constants.mjs";
 
 test("ServiceTypes registered", t => {
   t.truthy(ServiceTypes.dns);
@@ -14,14 +15,14 @@ const dnsEndpoints = [
     type: ServiceTypes.dns,
     family: FAMILY_IPV4,
     port: 53,
-    protocol: "udp",
+    protocol: PROTOCOL_UDP,
     tls: false
   },
   {
     type: ServiceTypes.dns,
     family: FAMILY_IPV6,
     port: 53,
-    protocol: "udp",
+    protocol: PROTOCOL_UDP,
     tls: false
   }
 ];
@@ -31,7 +32,7 @@ const bindStatisticsEndpoints = [
     type: ServiceTypes["bind-statistics"],
     family: FAMILY_IPV4,
     port: 19521,
-    protocol: "tcp",
+    protocol: PROTOCOL_TCP,
     pathname: "/",
     tls: false,
     kind: "loopback"
@@ -40,7 +41,7 @@ const bindStatisticsEndpoints = [
     type: ServiceTypes["bind-statistics"],
     family: FAMILY_IPV6,
     port: 19521,
-    protocol: "tcp",
+    protocol: PROTOCOL_TCP,
     pathname: "/",
     tls: false,
     kind: "loopback"
@@ -52,7 +53,7 @@ const bindRndcEndpoints = [
     type: ServiceTypes["bind-rndc"],
     family: FAMILY_IPV4,
     port: 953,
-    protocol: "tcp",
+    protocol: PROTOCOL_TCP,
     tls: false,
     kind: "loopback"
   },
@@ -60,7 +61,7 @@ const bindRndcEndpoints = [
     type: ServiceTypes["bind-rndc"],
     family: FAMILY_IPV6,
     port: 953,
-    protocol: "tcp",
+    protocol: PROTOCOL_TCP,
     tls: false,
     kind: "loopback"
   }

@@ -1,12 +1,9 @@
 import { getAttribute, string_attribute, url_attribute } from "pacc";
-import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
-import { addType } from "pmcf";
+import { FAMILY_IPV6 } from "ip-utilties";
+import { addType } from "./type.mjs";
 import { CoreService } from "./core-service.mjs";
 import { family_attribute, endpointAttributes } from "./common-attributes.mjs";
-
-export const FAMILY_UNIX = "unix";
-export const FAMILY_DNS = "dns";
-export const FAMILY_IPV4_IPV6 = new Set([FAMILY_IPV4, FAMILY_IPV6]);
+import { FAMILY_DNS, FAMILY_UNIX } from "./constants.mjs";
 
 class BaseEndpoint {
   static name = "base_endpoint";
@@ -229,7 +226,7 @@ export class HTTPEndpoint extends BaseEndpoint {
   }
 
   get protocol() {
-    return "tcp";
+    return PROTOCOL_TCP;
   }
 
   get tls() {

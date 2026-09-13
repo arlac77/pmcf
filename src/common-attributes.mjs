@@ -12,6 +12,7 @@ import {
   boolean_attribute_false,
   port_attribute_writable
 } from "pacc";
+import { PROTOCOL_TCP, PROTOCOL_UDP, PROTOCOL_QUIC } from "./constants.mjs";
 
 export const networkAddressType = "network|host|network_interface";
 
@@ -166,7 +167,7 @@ export const endpointAttributes = {
   protocol: {
     ...string_attribute_writable,
     name: "protocol",
-    values: new Set(["tcp", "udp", "quic"])
+    values: new Set([PROTOCOL_TCP, PROTOCOL_UDP, PROTOCOL_QUIC])
   },
   type: { ...string_attribute, name: "type" },
   tls: { ...boolean_attribute_false, name: "tls" },
