@@ -172,6 +172,122 @@ export class kea extends CoreService {
 
   subnets = new Map();
 
+  listenInterfaces(family) {
+    return this.endpoints(
+      endpoint =>
+        endpoint.type === "dhcp" &&
+        endpoint.family === family &&
+        endpoint.networkInterface.kind !== "loopback" &&
+        endpoint.networkInterface.kind !== "tun"
+    ).map(endpoint => `${endpoint.networkInterface.name}/${endpoint.address}`);
+  }
+
+  commonConfig(family) {
+    const cfg = {
+      "interfaces-config": {
+        interfaces: this.listenInterfaces(`IPv${family}`)
+      },
+      "control-sockets": this.endpoints(`kea-control-dhcp${family}`).map(e =>
+        toSocket(e)
+      ),
+      "lease-database": {
+        type: "memfile",
+        "lfc-interval": 3600
+      },
+      "multi-threading": {
+        "enable-multi-threading": true,
+        "thread-pool-size": 2,
+        "packet-queue-size": 4
+      },
+      "expired-leases-processing": {
+        "reclaim-timer-wait-time": 10,
+        "flush-reclaimed-timer-wait-time": 25,
+        "hold-reclaimed-time": 3600,
+        "max-reclaim-leases": 100,
+        "max-reclaim-time": 250,
+        "unwarned-reclaim-cycles": 5
+      },
+      "hooks-libraries": [
+        /*{
+            library: "/usr/lib/kea/hooks/libdhcp_ddns_tuning.so"
+          },*/
+        {
+          library: "/usr/lib/kea/hooks/libdhcp_lease_cmds.so"
+        },
+        {
+          library: "/usr/lib/kea/hooks/libdhcp_ha.so",
+          parameters: {
+            "high-availability": [
+              {
+                "this-server-name": this.host.name,
+                mode: "hot-standby",
+                "heartbeat-delay": 60000,
+                "max-response-delay": 60000,
+                "max-ack-delay": 10000,
+                /*
+                  "multi-threading": {
+                    "enable-multi-threading": true,
+                    "http-dedicated-listener": true,
+                    "http-listener-threads": 2,
+                    "http-client-threads": 2
+                  },*/
+                peers: asArray(this.peers)
+                  .sort(sortDescendingByPriority)
+                  .reduce((a, kea) => {
+                    if (!kea.host.isCluster) {
+                      const ctrlAgentEndpoint = kea.endpoint(
+                        `kea-ha-${family}`
+                      );
+
+                      if (ctrlAgentEndpoint) {
+                        const i = a.length;
+                        a.push({
+                          name: kea.host.name,
+                          role:
+                            i === 0 ? "primary" : i > 1 ? "backup" : "standby",
+                          url: ctrlAgentEndpoint.url,
+                          "auto-failover": i <= 1
+                        });
+                      }
+                    }
+                    return a;
+                  }, [])
+              }
+            ]
+          }
+        }
+      ],
+      "option-data": [
+        {
+          name: family == 4 ? "domain-name-servers" : "dns-servers",
+          data: asArray(
+            this.dnsServerEndpoints
+              .filter(
+                endpoint =>
+                  endpoint.family === `IPv${family}` &&
+                  addressType(endpoint.address) !== ADDRESS_TYPE_LOOPBACK
+              )
+              .map(endpoint => endpoint.address)
+          ).join(",")
+        },
+        {
+          name: "domain-search",
+          data: [...this.domains].join(",")
+        }
+      ]
+    };
+
+    for (const [path, attribute] of extendingAttributeIterator(
+      this.constructor,
+      attribute => attribute.configurable && this[attribute.name] !== undefined
+    )) {
+      const name = path.join(".");
+      cfg[name] = this[name];
+    }
+
+    return cfg;
+  }
+
   async *preparePackages(dir) {
     const ctrlAgentEndpoint = this.endpoint("kea-ha-4");
 
@@ -179,13 +295,9 @@ export class kea extends CoreService {
       return;
     }
 
-    const network = this.network;
     const host = this.host;
     const source = host.owner;
-    const name = host.name;
     const subnets = [...this.subnets.values()];
-    const dnsServerEndpoints = this.dnsServerEndpoints;
-    const packageData = await this.preparePackage(dir);
 
     const loggers = [
       {
@@ -198,148 +310,6 @@ export class kea extends CoreService {
         debuglevel: 0
       }
     ];
-
-    const peers = this.peers;
-
-    const commonConfig = family => {
-      const cfg = {
-        "interfaces-config": {
-          interfaces: listenInterfaces(`IPv${family}`)
-        },
-        "control-sockets": this.endpoints(`kea-control-dhcp${family}`).map(e =>
-          toSocket(e)
-        ),
-        "lease-database": {
-          type: "memfile",
-          "lfc-interval": 3600
-        },
-        "multi-threading": {
-          "enable-multi-threading": true,
-          "thread-pool-size": 2,
-          "packet-queue-size": 4
-        },
-        "expired-leases-processing": {
-          "reclaim-timer-wait-time": 10,
-          "flush-reclaimed-timer-wait-time": 25,
-          "hold-reclaimed-time": 3600,
-          "max-reclaim-leases": 100,
-          "max-reclaim-time": 250,
-          "unwarned-reclaim-cycles": 5
-        },
-        "hooks-libraries": [
-          /*{
-            library: "/usr/lib/kea/hooks/libdhcp_ddns_tuning.so"
-          },*/
-          {
-            library: "/usr/lib/kea/hooks/libdhcp_lease_cmds.so"
-          },
-          {
-            library: "/usr/lib/kea/hooks/libdhcp_ha.so",
-            parameters: {
-              "high-availability": [
-                {
-                  "this-server-name": name,
-                  mode: "hot-standby",
-                  "heartbeat-delay": 60000,
-                  "max-response-delay": 60000,
-                  "max-ack-delay": 10000,
-                  /*
-                  "multi-threading": {
-                    "enable-multi-threading": true,
-                    "http-dedicated-listener": true,
-                    "http-listener-threads": 2,
-                    "http-client-threads": 2
-                  },*/
-                  peers: asArray(peers)
-                    .sort(sortDescendingByPriority)
-                    .reduce((a, kea) => {
-                      if (!kea.host.isCluster) {
-                        const ctrlAgentEndpoint = kea.endpoint(
-                          `kea-ha-${family}`
-                        );
-                        if (ctrlAgentEndpoint) {
-                          const i = a.length;
-                          a.push({
-                            name: kea.host.name,
-                            role:
-                              i === 0
-                                ? "primary"
-                                : i > 1
-                                  ? "backup"
-                                  : "standby",
-                            url: ctrlAgentEndpoint.url,
-                            "auto-failover": i <= 1
-                          });
-                        }
-                      }
-                      return a;
-                    }, [])
-                }
-              ]
-            }
-          }
-        ],
-        "dhcp-ddns": dhcpServerDdns,
-        loggers,
-        "option-data": [
-          {
-            name: family == 4 ? "domain-name-servers" : "dns-servers",
-            data: asArray(
-              dnsServerEndpoints
-                .filter(
-                  endpoint =>
-                    endpoint.family === `IPv${family}` &&
-                    addressType(endpoint.address) !== ADDRESS_TYPE_LOOPBACK
-                )
-                .map(endpoint => endpoint.address)
-            ).join(",")
-          },
-          {
-            name: "domain-search",
-            data: [...this.domains].join(",")
-          }
-        ]
-      };
-
-      for (const [path, attribute] of extendingAttributeIterator(
-        this.constructor,
-        attribute =>
-          attribute.configurable && this[attribute.name] !== undefined
-      )) {
-        const name = path.join(".");
-        cfg[name] = this[name];
-      }
-
-      return cfg;
-    };
-
-    const toSocket = endpoint => {
-      switch (endpoint.family) {
-        case FAMILY_IPV4:
-        case FAMILY_IPV6:
-          return {
-            "socket-type": "http",
-            "socket-address": endpoint.address.hostname,
-            "socket-port": endpoint.port,
-            authentication: {
-              type: "basic",
-              realm: "Kea Control Agent",
-              directory: "/etc/kea",
-              clients: [
-                {
-                  "user-file": "kea-api-user",
-                  "password-file": "kea-api-password"
-                }
-              ]
-            }
-          };
-        case FAMILY_UNIX:
-          return {
-            "socket-type": FAMILY_UNIX,
-            "socket-name": endpoint?.path
-          };
-      }
-    };
 
     /*const ctrlAgent = {
       "Control-agent": {
@@ -358,7 +328,7 @@ export class kea extends CoreService {
       names.map(name => {
         return {
           name,
-          "dns-servers": dnsServerEndpoints
+          "dns-servers": asArray(this.dnsServerEndpoints)
             .filter(
               endpoint =>
                 endpoint.family === FAMILY_IPV4 &&
@@ -433,20 +403,9 @@ export class kea extends CoreService {
         })
         .sort((a, b) => a.hostname?.localeCompare(b.hostname));
 
-    const listenInterfaces = family =>
-      this.endpoints(
-        endpoint =>
-          endpoint.type === "dhcp" &&
-          endpoint.family === family &&
-          endpoint.networkInterface.kind !== "loopback" &&
-          endpoint.networkInterface.kind !== "tun"
-      ).map(
-        endpoint => `${endpoint.networkInterface.name}/${endpoint.address}`
-      );
-
     const dhcp4 = {
       Dhcp4: {
-        ...commonConfig("4"),
+        ...this.commonConfig("4"),
         subnet4: subnets
           .filter(s => s.family === FAMILY_IPV4)
           .map((subnet, index) => {
@@ -458,16 +417,18 @@ export class kea extends CoreService {
               "option-data": [
                 {
                   name: "routers",
-                  data: network.gateway.address
+                  data: this.network.gateway.address
                 }
               ]
             };
-          })
+          }),
+        "dhcp-ddns": dhcpServerDdns,
+        loggers
       }
     };
     const dhcp6 = {
       Dhcp6: {
-        ...commonConfig("6"),
+        ...this.commonConfig("6"),
         subnet6: subnets
           .filter(s => s.family === FAMILY_IPV6)
           .map((subnet, index) => {
@@ -477,9 +438,13 @@ export class kea extends CoreService {
               pools: [{ pool: subnet.pool.join(" - ") }],
               reservations: reservations(subnet, "6")
             };
-          })
+          }),
+        "dhcp-ddns": dhcpServerDdns,
+        loggers
       }
     };
+
+    const packageData = await this.preparePackage(dir);
 
     for (const [name, data] of Object.entries({
       "kea-dhcp-ddns": ddns,
@@ -495,5 +460,33 @@ export class kea extends CoreService {
     }
 
     yield packageData;
+  }
+}
+
+function toSocket(endpoint) {
+  switch (endpoint.family) {
+    case FAMILY_IPV4:
+    case FAMILY_IPV6:
+      return {
+        "socket-type": "http",
+        "socket-address": endpoint.address.hostname,
+        "socket-port": endpoint.port,
+        authentication: {
+          type: "basic",
+          realm: "Kea Control Agent",
+          directory: "/etc/kea",
+          clients: [
+            {
+              "user-file": "kea-api-user",
+              "password-file": "kea-api-password"
+            }
+          ]
+        }
+      };
+    case FAMILY_UNIX:
+      return {
+        "socket-type": FAMILY_UNIX,
+        "socket-name": endpoint?.path
+      };
   }
 }
