@@ -1,6 +1,5 @@
 import { join } from "node:path";
-import { FileContentProvider } from "npm-pkgbuild";
-import { default_collection_attribute_writable } from "pacc";
+import { default_collection_attribute_writable, asArray } from "pacc";
 import { addType, FAMILY_UNIX, FAMILY_IPV4_IPV6, CoreService } from "pmcf";
 import { writeLines } from "../utils.mjs";
 
@@ -10,12 +9,6 @@ export class chrony extends CoreService {
       ...default_collection_attribute_writable,
       type: "endpoint",
       name: "servers",
-      deferredExpression: true
-    },
-    peers: {
-      ...default_collection_attribute_writable,
-      type: "endpoint",
-      name: "peers",
       deferredExpression: true
     }
   };
@@ -68,9 +61,7 @@ export class chrony extends CoreService {
     }
 
     const lines = [
-      this.servers.flat().map(chronyServer),
-      this.peers
-        .flat()
+      asArray(this.servers)
         .filter(endpoint => !endpoint.service.host.isMember(host))
         .map(chronyServer),
       `mailonchange ${this.administratorEmail} 0.5`,
