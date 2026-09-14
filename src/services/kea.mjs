@@ -20,7 +20,8 @@ import {
   Subnet,
   CoreService,
   Endpoint,
-  sortDescendingByPriority
+  sortDescendingByPriority,
+  bind_key
 } from "pmcf";
 import { FAMILY_UNIX, PROTOCOL_TCP } from "../constants.mjs";
 import { writeLines } from "../utils.mjs";
@@ -51,6 +52,12 @@ export class kea extends CoreService {
       ...default_collection_attribute_writable,
       type: CoreService,
       name: "peers",
+      deferredExpression: true
+    },
+    keys: {
+      ...default_collection_attribute_writable,
+      name: "keys",
+      type: bind_key,
       deferredExpression: true
     },
     dnsServerEndpoints: {
@@ -347,7 +354,15 @@ export class kea extends CoreService {
         "ip-address": ddnsEndpoint.address,
         port: ddnsEndpoint.port,
         "control-socket": toSocket(this.endpoint("kea-control-ddns")),
-        "tsig-keys": [],
+        "tsig-keys": [
+          asArray(this.keys).map(key => {
+            return {
+              name: key.name,
+              algorithm: key.algorithm,
+              secret: key.secret
+            };
+          })
+        ],
         "forward-ddns": {
           "ddns-domains": dnsServersSlot([...this.domains])
         },
