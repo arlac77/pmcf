@@ -37,6 +37,10 @@ export class content extends core {
   static attributes = {
     name: { ...name_attribute_writable, packagingProperty: true },
     description: { ...description_attribute_writable, packagingProperty: true },
+    fragments: {
+      ...string_set_attribute_writable,
+      name: "fragments"
+    },
     permissions: {
       ...default_collection_attribute_writable,
       type: permission,
@@ -90,6 +94,7 @@ export class content extends core {
     addType(this);
   }
 
+  _fragments = new Set();
   _permissions = new Map();
   _packaging = new Set();
   _provides = new Set();
@@ -256,8 +261,19 @@ export class content extends core {
     }
   }
 
+  set fragments(value) {
+    this._fragments = union(value, this._fragments);
+  }
+
+  get fragments() {
+    return this.expand(
+      this.unionFromDirections(["this", "extends"], "_fragments")
+    );
+  }
+
   async preparePackage() {
     const packageData = {
+      fragments: this.fragments,
       sources: [],
       outputs: this.outputs,
       properties: Object.fromEntries(
@@ -265,7 +281,8 @@ export class content extends core {
           this.constructor,
           attribute => attribute.packagingProperty
         ).map(([path, attribute]) => [path[0], this[path[0]]])
-      )
+      ),
+      dir: () => this.sources?.[0].dir
     };
 
     await this.loadHooks(packageData);

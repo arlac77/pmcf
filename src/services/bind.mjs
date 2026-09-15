@@ -248,7 +248,7 @@ export class bind_key extends base {
       `${this.name}.conf`,
       [
         `key "${this.name}" {`,
-        `  # ` + asArray(this.tags).join(','),
+        `  # ` + asArray(this.tags).join(","),
         `  algorithm ${this.algorithm};`,
         `  secret "${this.secret}";`,
         "};"
@@ -369,7 +369,6 @@ class bind_view extends bind_object {
       name: "sharedWith",
       type: bind_view
     },
-
     matchClients: {
       ...acl_attribute,
       name: "matchClients"
@@ -697,19 +696,21 @@ class bind_view extends bind_object {
       ...(await Array.fromAsync(this.templateContent(this.service.content)))
     );
 
-    for (const config of this.zoneConfigs.values()) {
-      await config.write(outputControl.dir);
-    }
+    if (outputControl.packageData.fragments.has("zones")) {
+      for (const config of this.zoneConfigs.values()) {
+        await config.write(outputControl.dir);
+      }
 
-    if (this.foreignDomains.size) {
-      addHook(
-        outputControl.packageData,
-        "post_upgrade",
-        `/usr/bin/named-hostname-update ${[...this.foreignDomains].join(" ")}`
-      );
-    }
+      if (this.foreignDomains.size) {
+        addHook(
+          outputControl.packageData,
+          "post_upgrade",
+          `/usr/bin/named-hostname-update ${[...this.foreignDomains].join(" ")}`
+        );
+      }
 
-    return outputControl.packageData;
+      return outputControl.packageData;
+    }
   }
 }
 
@@ -865,6 +866,7 @@ export class bind extends CoreService {
           `server ${service.address()} {`,
           "    keys {" +
             asArray(service.keys.values())
+            .filter(key=>key.tags.has('server'))
               .map(key => ` ${key.name};`)
               .join("") +
             " };",
@@ -872,6 +874,7 @@ export class bind extends CoreService {
         ];
       })
     );
+    return true;
   }
 
   async *preparePackages(dir) {
@@ -885,27 +888,30 @@ export class bind extends CoreService {
 
     const outputControl = { packageData, dir };
 
-    for (const key of this.keys.values()) {
-      await key.packageContent(outputControl);
-      hasContent = true;
-    }
-
-    for (const acl of this.acls.values()) {
-      await acl.packageContent(outputControl);
-      hasContent = true;
-    }
-
     for (const view of this.views.values()) {
       const present = await view.packageContent(outputControl);
       hasContent ||= present;
     }
 
-    let present;
-    present = await this.writeServers(outputControl);
+    if (packageData.fragments.has("base")) {
+      for (const key of this.keys.values()) {
+        await key.packageContent(outputControl);
+        hasContent = true;
+      }
 
-    present = await this.writeForwarders(outputControl);
+      for (const acl of this.acls.values()) {
+        await acl.packageContent(outputControl);
+        hasContent = true;
+      }
 
-    if (hasContent || present) {
+      let present;
+      present = await this.writeForwarders(outputControl);
+      hasContent ||= present;
+      present = await this.writeServers(outputControl);
+      hasContent ||= present;
+    }
+
+    if (hasContent) {
       yield packageData;
     }
   }
