@@ -104,6 +104,7 @@ export class kea extends CoreService {
     systemGroupName: "kea",
     services: {
       "kea-ddns": {
+        systemdService: "kea-dhcp-ddns.service",
         endpoints: [
           {
             family: FAMILY_IPV4,
@@ -358,7 +359,7 @@ export class kea extends CoreService {
           return {
             name: key.name,
             algorithm: key.algorithm,
-            secret: key.secret
+            "secret-file": `/run/credentials/kea-dhcp-ddns.service/kea.${key.name}.tsig`
           };
         }),
         "forward-ddns": {
