@@ -248,6 +248,7 @@ export class bind_key extends base {
       `${this.name}.conf`,
       [
         `key "${this.name}" {`,
+        `  # ` + asArray(this.tags).join(','),
         `  algorithm ${this.algorithm};`,
         `  secret "${this.secret}";`,
         "};"
@@ -319,7 +320,7 @@ const acl_attribute = {
 class bind_view extends bind_object {
   static priority = 1;
   static attributes = {
-        notify: { ...boolean_attribute_writable_false, name: "notify" },
+    notify: { ...boolean_attribute_writable_false, name: "notify" },
     hasCatalog: { ...boolean_attribute_writable_false, name: "hasCatalog" },
     hasForeignDomainRecords: {
       ...boolean_attribute_writable_false,
@@ -358,7 +359,11 @@ class bind_view extends bind_object {
     },
     retry: { ...duration_attribute_writable, name: "retry", default: 72000 },
     expire: { ...duration_attribute_writable, name: "expire", default: 600000 },
-    minimum: { ...duration_attribute_writable, name: "minimum", default: 60000 },
+    minimum: {
+      ...duration_attribute_writable,
+      name: "minimum",
+      default: 60000
+    },
     sharedWith: {
       ...default_attribute_writable,
       name: "sharedWith",
@@ -408,7 +413,7 @@ class bind_view extends bind_object {
       type: bind_zone_config,
       backpointer: owner_attribute,
       name: "zoneConfigs"
-    },
+    }
   };
 
   static {
@@ -851,6 +856,24 @@ export class bind extends CoreService {
     return false;
   }
 
+  async writeServers(outputControl) {
+    await writeLines(
+      join(outputControl.dir, "etc/named"),
+      `servers.conf`,
+      asArray(this.primaries).map(service => {
+        return [
+          `server ${service.address()} {`,
+          "    keys {" +
+            asArray(service.keys.values())
+              .map(key => ` ${key.name};`)
+              .join("") +
+            " };",
+          "};"
+        ];
+      })
+    );
+  }
+
   async *preparePackages(dir) {
     const packageData = await this.preparePackage(dir);
 
@@ -877,7 +900,10 @@ export class bind extends CoreService {
       hasContent ||= present;
     }
 
-    const present = await this.writeForwarders(outputControl);
+    let present;
+    present = await this.writeServers(outputControl);
+
+    present = await this.writeForwarders(outputControl);
 
     if (hasContent || present) {
       yield packageData;

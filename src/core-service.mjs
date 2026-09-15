@@ -401,9 +401,9 @@ export function serviceEndpoints(sources, options = {}) {
   return options.join ? res.join(options.join) : res;
 }
 
-export function endpoints(entries) {
+export function endpoints(entries,filter) {
   return asArray(entries)
-    .map(e => e.endpoints())
+    .map(e => e.endpoints(filter))
     .flat();
 }
 
