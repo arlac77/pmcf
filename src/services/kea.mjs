@@ -354,15 +354,13 @@ export class kea extends CoreService {
         "ip-address": ddnsEndpoint.address,
         port: ddnsEndpoint.port,
         "control-socket": toSocket(this.endpoint("kea-control-ddns")),
-        "tsig-keys": [
-          asArray(this.keys).map(key => {
-            return {
-              name: key.name,
-              algorithm: key.algorithm,
-              secret: key.secret
-            };
-          })
-        ],
+        "tsig-keys": asArray(this.keys).map(key => {
+          return {
+            name: key.name,
+            algorithm: key.algorithm,
+            secret: key.secret
+          };
+        }),
         "forward-ddns": {
           "ddns-domains": dnsServersSlot([...this.domains])
         },
