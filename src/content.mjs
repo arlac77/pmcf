@@ -67,6 +67,11 @@ export class content extends core {
       name: "replaces",
       packagingProperty: true
     },
+    conflicts: {
+      ...string_set_attribute_writable,
+      name: "conflicts",
+      packagingProperty: true
+    },
     optional: {
       ...string_set_attribute_writable,
       name: "optional",
@@ -103,6 +108,7 @@ export class content extends core {
   _optional = new Set();
   _groups = new Set();
   _hooks = new Set();
+  _conflicts = new Set();
 
   get host() {
     return this.owner.host;
@@ -202,6 +208,16 @@ export class content extends core {
   get depends() {
     return this.expand(
       this.unionFromDirections(["this", "extends"], "_depends")
+    );
+  }
+
+  set conflicts(value) {
+    this._conflicts = union(value, this._conflicts);
+  }
+
+  get conflicts() {
+    return this.expand(
+      this.unionFromDirections(["this", "extends"], "_conflicts")
     );
   }
 
