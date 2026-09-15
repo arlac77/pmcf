@@ -16,7 +16,8 @@ import {
   integer_attribute_writable,
   integer_attribute,
   secret_attribute_writable,
-  asArray
+  asArray,
+  leafValues
 } from "pacc";
 import {
   base,
@@ -858,15 +859,25 @@ export class bind extends CoreService {
   }
 
   async writeServers(outputControl) {
+
+    // TODO 
+    const all = new Map();
+    for (const service of this.primaries) {
+      for (const subnet of service.host.network.subnets.values()) {
+        //console.log("SA", subnet.fullName);
+        all.set(subnet.address, service);
+      }
+    }
+
     await writeLines(
       join(outputControl.dir, "etc/named"),
       `servers.conf`,
-      asArray(this.primaries).map(service => {
+      all.entries().map(([subnet, service]) => {
         return [
-          `server ${service.address()} {`,
+          `server ${subnet} {`,
           "    keys {" +
             asArray(service.keys.values())
-            .filter(key=>key.tags.has('server'))
+              .filter(key => key.tags.has("server"))
               .map(key => ` ${key.name};`)
               .join("") +
             " };",
