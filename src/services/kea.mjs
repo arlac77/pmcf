@@ -185,6 +185,7 @@ export class kea extends CoreService {
       endpoint =>
         endpoint.type === "dhcp" &&
         endpoint.family === family &&
+        endpoint.networkInterface.enabled &&
         endpoint.networkInterface.kind !== "loopback" &&
         endpoint.networkInterface.kind !== "tun"
     ).map(endpoint => `${endpoint.networkInterface.name}/${endpoint.address}`);
