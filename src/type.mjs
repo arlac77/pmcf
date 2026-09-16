@@ -6,7 +6,7 @@ import {
   asArray
 } from "pacc";
 import { normalizeIP } from "ip-utilties";
-import { addServiceType } from "pmcf";
+import { addServiceType } from "./service-types.mjs";
 
 const SLASH = { ...DOT, str: "/" };
 
