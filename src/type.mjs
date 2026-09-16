@@ -84,7 +84,7 @@ export function assign(attribute, object, value) {
               }
             }
           } else {
-            current.set(value[attribute.type.key || "name"], value);
+            current.set(value[attribute.type.key ?? "name"], value);
           }
         } else {
           if (typeof current.add === "function") {
