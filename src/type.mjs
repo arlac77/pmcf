@@ -3,7 +3,8 @@ import {
   toInternal,
   registerToken,
   DOT,
-  asArray
+  asArray,
+  primitive_type
 } from "pacc";
 import { normalizeIP } from "ip-utilties";
 import { addServiceType } from "./service-types.mjs";
@@ -13,8 +14,8 @@ const SLASH = { ...DOT, str: "/" };
 registerToken(SLASH);
 
 addTypeBasic({
+  ...primitive_type,
   name: "ip",
-  primitive: true,
   asMapEntry: (attribute, value, object) => [
     normalizeIP(value),
     object.addSubnet(value)
