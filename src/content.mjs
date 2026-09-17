@@ -289,9 +289,9 @@ export class content extends core {
 
   async preparePackage() {
     const packageData = {
-      fragments: this.fragments,
       sources: [],
       outputs: this.outputs,
+      fragments: this.fragments,
       properties: Object.fromEntries(
         extendingAttributeIterator(
           this.constructor,
