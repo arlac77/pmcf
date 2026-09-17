@@ -97,7 +97,11 @@ export class CoreService extends base {
   }
 
   get network() {
-    return this.host.network;
+    return this.owner.network;
+  }
+
+  get networks() {
+    return this.owner.networks;
   }
 
   get host() {
@@ -112,12 +116,13 @@ export class CoreService extends base {
     return this.host?.domainName;
   }
 
-  get networks() {
-    return this.host.networks;
+  networkAddresses(filter)
+  {
+    return this.owner.networkAddresses(filter);
   }
 
   get subnets() {
-    return this.host.subnets;
+    return this.owner.subnets;
   }
 
   get url() {

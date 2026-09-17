@@ -41,6 +41,8 @@ test("ethernet basics", t => {
 
   const eth0 = h1.networkInterfaces.get("eth0");
 
+  t.is(eth0.network, n1);
+  t.deepEqual(eth0.networks, new Set([n1]));
   t.is(eth0.address, "10.0.0.2");
 
   t.deepEqual([...eth0.subnets.keys()], ["10.0/16"]);
