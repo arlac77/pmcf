@@ -16,8 +16,7 @@ import {
   integer_attribute_writable,
   integer_attribute,
   secret_attribute_writable,
-  asArray,
-  leafValues
+  asArray
 } from "pacc";
 import {
   base,
@@ -859,8 +858,7 @@ export class bind extends CoreService {
   }
 
   async writeServers(outputControl) {
-
-    // TODO 
+    // TODO
     const all = new Map();
     for (const service of this.primaries) {
       for (const subnet of service.host.network.subnets.values()) {
