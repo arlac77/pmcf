@@ -99,7 +99,6 @@ export class kea extends CoreService {
   };
   static service = {
     extends: ["dhcp"],
-    systemdService: "kea.service",
     systemUserName: "kea",
     systemGroupName: "kea",
     services: {
