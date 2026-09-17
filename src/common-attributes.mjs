@@ -138,7 +138,8 @@ export const networkAttributes = {
       "1000BASE-T",
       "100BASE-T",
       "10BASE-T",
-      "802.11AX"
+      "802.11AX",
+      "802.11BE" // WiFi 7
     ])
   },
   kind: {
