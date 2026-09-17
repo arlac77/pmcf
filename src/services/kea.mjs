@@ -408,8 +408,17 @@ export class kea extends CoreService {
               family == 6 ? { "ip-addresses": [addr] } : { "ip-address": addr };
           }
 
+          let ids = { "hw-address": k };
+
+          if (family == 4) {
+            const dhcpClientId = networkInterface.dhcpClientId;
+            if (dhcpClientId) {
+              ids = { "client-id": dhcpClientId };
+            }
+          }
+          
           return {
-            "hw-address": k,
+            ...ids,
             ...ip,
             hostname: networkInterface.domainName,
             "client-classes": ["SKIP_DDNS"]

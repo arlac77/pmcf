@@ -53,6 +53,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
       private: true
     },
     hwaddr: { ...string_attribute_writable, name: "hwaddr" },
+    dhcpClientId: { ...string_attribute_writable, name: "dhcpClientId" },
     destination: { ...string_attribute_writable, name: "destination" }
 
     /*
@@ -147,6 +148,14 @@ export class NetworkInterface extends SkeletonNetworkInterface {
       this.network?.scope ??
       networkAttributes.scope.default
     );
+  }
+
+  set dhcpClientId(value) {
+    this._dhcpClientId = value;
+  }
+
+  get dhcpClientId() {
+    return this.attribute("_dhcpClientId");
   }
 
   set hwaddr(value) {
