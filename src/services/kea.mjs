@@ -102,7 +102,7 @@ export class kea extends CoreService {
     systemUserName: "kea",
     systemGroupName: "kea",
     services: {
-      "kea-ddns": {
+      "kea-dhcp-ddns": {
         systemdService: "kea-dhcp-ddns.service",
         endpoints: [
           {
@@ -112,24 +112,23 @@ export class kea extends CoreService {
             protocol: PROTOCOL_TCP,
             tls: false
           }
-        ]
+        ],
+        services: {
+          "kea-control-ddns": {
+            endpoints: [
+              {
+                family: FAMILY_UNIX,
+                path: "/run/kea/ctrl-ddns"
+              }
+            ]
+          }
+        }
       },
       "kea-ha-4": {
         endpoints: [
           {
             family: FAMILY_IPV4,
             port: 53003,
-            pathname: "/",
-            protocol: PROTOCOL_TCP,
-            tls: false
-          }
-        ]
-      },
-      "kea-ha-6": {
-        endpoints: [
-          {
-            family: FAMILY_IPV6,
-            port: 53004,
             pathname: "/",
             protocol: PROTOCOL_TCP,
             tls: false
@@ -149,6 +148,17 @@ export class kea extends CoreService {
           }*/
         ]
       },
+      "kea-ha-6": {
+        endpoints: [
+          {
+            family: FAMILY_IPV6,
+            port: 53004,
+            pathname: "/",
+            protocol: PROTOCOL_TCP,
+            tls: false
+          }
+        ]
+      },
       "kea-control-dhcp6": {
         endpoints: [
           {
@@ -160,14 +170,6 @@ export class kea extends CoreService {
             port: 53005,
             pathname: "/"
           }*/
-        ]
-      },
-      "kea-control-ddns": {
-        endpoints: [
-          {
-            family: FAMILY_UNIX,
-            path: "/run/kea/ctrl-ddns"
-          }
         ]
       }
     }
@@ -319,19 +321,6 @@ export class kea extends CoreService {
       }
     ];
 
-    /*const ctrlAgent = {
-      "Control-agent": {
-        "http-host": ctrlAgentEndpoint.hostname,
-        "http-port": ctrlAgentEndpoint.port,
-        "control-sockets": {
-          dhcp4: toSocket(this.endpoint("kea-control-dhcp4")),
-          dhcp6: toSocket(this.endpoint("kea-control-dhcp6")),
-          d2: toSocket(this.endpoint("kea-control-ddns"))
-        },
-        loggers
-      }
-    };*/
-
     const dnsServersSlot = names =>
       names.map(name => {
         return {
@@ -348,7 +337,7 @@ export class kea extends CoreService {
         };
       });
 
-    const ddnsEndpoint = this.endpoint("kea-ddns");
+    const ddnsEndpoint = this.endpoint("kea-dhcp-ddns");
 
     const ddns = {
       DhcpDdns: {
@@ -416,7 +405,7 @@ export class kea extends CoreService {
               ids = { "client-id": dhcpClientId };
             }
           }
-          
+
           return {
             ...ids,
             ...ip,

@@ -66,8 +66,8 @@ test("kea basics", t => {
 
   t.is(keaInst.endpoint("dhcp").toString(), "dhcp:IPv4/10.0.0.1[547]");
   t.is(
-    keaInst.endpoint("kea-ddns").toString(),
-    "kea-ddns:IPv4/127.0.0.1[53001]"
+    keaInst.endpoint("kea-dhcp-ddns").toString(),
+    "kea-dhcp-ddns:IPv4/127.0.0.1[53001]"
   );
   t.is(
     keaInst.endpoint("kea-control-dhcp4").toString(),
