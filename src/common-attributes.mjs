@@ -132,7 +132,14 @@ export const networkAttributes = {
   class: {
     ...string_attribute_writable,
     name: "class",
-    values: new Set(["10GBASE-T", "1000BASE-T", "100BASE-T", "10BASE-T"])
+    values: new Set([
+      "10GBASE-T",
+      "2500BASE-T",
+      "1000BASE-T",
+      "100BASE-T",
+      "10BASE-T",
+      "802.11AX"
+    ])
   },
   kind: {
     ...string_attribute_writable,
