@@ -124,53 +124,63 @@ export class kea extends CoreService {
           }
         }
       },
-      "kea-ha-4": {
-        endpoints: [
-          {
-            family: FAMILY_IPV4,
-            port: 53003,
-            pathname: "/",
-            protocol: PROTOCOL_TCP,
-            tls: false
-          }
-        ]
-      },
-      "kea-control-dhcp4": {
-        endpoints: [
-          {
-            family: FAMILY_UNIX,
-            path: "/run/kea/ctrl-4"
-          }
-          /*{
+      "kea-dhcp4": {
+        systemdService: "kea-dhcp4.service",
+        services: {
+          "kea-ha-4": {
+            endpoints: [
+              {
+                family: FAMILY_IPV4,
+                port: 53003,
+                pathname: "/",
+                protocol: PROTOCOL_TCP,
+                tls: false
+              }
+            ]
+          },
+          "kea-control-dhcp4": {
+            endpoints: [
+              {
+                family: FAMILY_UNIX,
+                path: "/run/kea/ctrl-4"
+              }
+              /*{
             family: FAMILY_IPV4,
             port: 53005,
             pathname: "/"
           }*/
-        ]
-      },
-      "kea-ha-6": {
-        endpoints: [
-          {
-            family: FAMILY_IPV6,
-            port: 53004,
-            pathname: "/",
-            protocol: PROTOCOL_TCP,
-            tls: false
+            ]
           }
-        ]
+        }
       },
-      "kea-control-dhcp6": {
-        endpoints: [
-          {
-            family: FAMILY_UNIX,
-            path: "/run/kea/ctrl-6"
-          }
-          /*{
+      "kea-dhcp6": {
+        systemdService: "kea-dhcp6.service",
+        services: {
+          "kea-ha-6": {
+            endpoints: [
+              {
+                family: FAMILY_IPV6,
+                port: 53004,
+                pathname: "/",
+                protocol: PROTOCOL_TCP,
+                tls: false
+              }
+            ]
+          },
+          "kea-control-dhcp6": {
+            endpoints: [
+              {
+                family: FAMILY_UNIX,
+                path: "/run/kea/ctrl-6"
+              }
+              /*{
             family: FAMILY_IPV6,
             port: 53005,
             pathname: "/"
           }*/
-        ]
+            ]
+          }
+        }
       }
     }
   };
@@ -394,12 +404,12 @@ export class kea extends CoreService {
 
           if (addr && subnet.matchesAddress(addr)) {
             ip =
-              family == 6 ? { "ip-addresses": [addr] } : { "ip-address": addr };
+              family === "6" ? { "ip-addresses": [addr] } : { "ip-address": addr };
           }
 
           let ids = { "hw-address": k };
 
-          if (family == 4) {
+          if (family === "4") {
             const dhcpClientId = networkInterface.dhcpClientId;
             if (dhcpClientId) {
               ids = { "client-id": dhcpClientId };
