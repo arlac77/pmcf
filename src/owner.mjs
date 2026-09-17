@@ -18,7 +18,7 @@ import {
   subnets_attribute,
   networkInterfaces_attribute
 } from "./common-attributes.mjs";
-import { addType, assign } from "pmcf";
+import { addType, assign } from "./type.mjs";
 import { loadHooks } from "./hooks.mjs";
 
 export class owner extends ServiceOwner {
@@ -149,7 +149,7 @@ export class owner extends ServiceOwner {
       );
     }
 
-    this._subnets.set(subnet.name, subnet);
+    this._subnets.set(subnet.address, subnet);
     return subnet;
   }
 
