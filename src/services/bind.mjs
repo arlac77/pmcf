@@ -799,7 +799,7 @@ export class bind extends CoreService {
     systemGroupName: "named",
     services: {
       "bind-statistics": {
-        //        extends: ["http"],
+        extends: ["http"],
         endpoints: [
           {
             family: FAMILY_IPV4_IPV6,
@@ -811,7 +811,7 @@ export class bind extends CoreService {
           }
         ]
       },
-      "bind-rndc": {
+      "bind-control": {
         endpoints: [
           {
             family: FAMILY_IPV4_IPV6,
