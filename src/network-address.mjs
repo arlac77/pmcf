@@ -1,4 +1,10 @@
-import { default_attribute, type_attribute, getAttribute, asArray } from "pacc";
+import {
+  default_attribute,
+  type_attribute,
+  getAttribute,
+  asArray,
+  leafValues
+} from "pacc";
 import { familyIP, formatCIDR, decodeIP, addressType } from "ip-utilties";
 import { Subnet } from "./subnet.mjs";
 import { owner } from "./owner.mjs";
@@ -10,6 +16,7 @@ import {
   address_attribute,
   cidr_address_attribute
 } from "./common-attributes.mjs";
+
 /**
  *
  */
@@ -96,31 +103,30 @@ export class NetworkAddress {
  * @param {Iterable<owner|string>} sources
  * @param {Object} options
  * @param {boolean} options.aggregate
- * @param {Object} options.filter
  * @returns {Iterable<string>} addresses
  */
 export function addresses(sources, options) {
   return [
     ...new Set(
-      asArray(sources)
+      [...leafValues(sources)]
         .map(s => {
+          console.log("S",s.constructor.name);
           if (typeof s === "string") {
             return s;
           }
-          if (options?.aggregate && s instanceof owner && s.subnets.size > 0) {
+          if (options?.aggregate && s.subnets?.size > 0) {
             return [...s.subnets.keys()];
           }
 
-          return s.networkAddresses
-            ? [...s.networkAddresses(options?.filter)]
-            : s;
+          if (s.networkAddresses) {
+            return [...s.networkAddresses()].map(na => decodeIP(na.address));
+          }
+
+          return decodeIP(s.address);
         })
         .flat()
-        .map(object =>
-          typeof object === "string" ? object : decodeIP(object.address)
-        )
     )
-  ].filter(e => e !== "");
+  ];
 }
 
 /**

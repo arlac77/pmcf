@@ -1,6 +1,11 @@
 import test from "ava";
 import { FAMILY_IPV4 } from "ip-utilties";
-import { InitializationContext, addresses, FAMILY_DNS } from "pmcf";
+import {
+  InitializationContext,
+  addresses,
+  FAMILY_DNS,
+  NetworkAddress
+} from "pmcf";
 import { bind } from "../src/services/bind.mjs";
 
 test("BIND basics", async t => {
@@ -16,6 +21,19 @@ test("BIND basics", async t => {
   t.is(bindInst.systemGroupName, "named");
 
   t.is(bindInst.port, 53);
+
+  t.deepEqual(
+    [...bindInst.networkAddresses()],
+    [
+      new NetworkAddress(
+        bindInst.owner.networkInterfaces.get("eth0"),
+        "192.168.1.11",
+        bindInst.owner.networkInterfaces
+          .get("eth0")
+          .network.subnets.get("192.168.1/24")
+      )
+    ]
+  );
 
   t.deepEqual(
     bindInst.endpoints("dns").map(e => {
@@ -108,7 +126,6 @@ test("BIND keys acls and views", async t => {
 
   const zs = internalView.zones;
 
-  console.log([...zs.keys()]);
   const z1 = zs.get("mydomain.com");
 
   t.is(z1.id, "mydomain.com");
