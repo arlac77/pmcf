@@ -50,7 +50,7 @@ const bindStatisticsEndpoints = [
 
 const bindRndcEndpoints = [
   {
-    type: ServiceTypes["bind-rndc"],
+    type: ServiceTypes["bind-control"],
     family: FAMILY_IPV4,
     port: 953,
     protocol: PROTOCOL_TCP,
@@ -58,7 +58,7 @@ const bindRndcEndpoints = [
     kind: "loopback"
   },
   {
-    type: ServiceTypes["bind-rndc"],
+    type: ServiceTypes["bind-control"],
     family: FAMILY_IPV6,
     port: 953,
     protocol: PROTOCOL_TCP,
@@ -77,7 +77,7 @@ test("serviceTypeEndpoints bind", t => {
     bindStatisticsEndpoints
   );
   t.deepEqual(
-    serviceTypeEndpoints(ServiceTypes["bind-rndc"]),
+    serviceTypeEndpoints(ServiceTypes["bind-control"]),
     bindRndcEndpoints
   );
 });
