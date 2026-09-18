@@ -107,25 +107,25 @@ export class NetworkAddress {
  */
 export function addresses(sources, options) {
   return [
-    ...new Set(
-      [...leafValues(sources)]
-        .map(s => {
-          console.log("S",s.constructor.name);
-          if (typeof s === "string") {
-            return s;
+    ...[...leafValues(sources)].reduce((all, source) => {
+      if (typeof source === "string") {
+        all.add(source);
+      } else {
+        if (source.subnets?.size && options?.aggregate) {
+          for (const address of source.subnets.keys()) {
+            all.add(address);
           }
-          if (options?.aggregate && s.subnets?.size > 0) {
-            return [...s.subnets.keys()];
+        } else if (source.networkAddresses) {
+          for (const na of source.networkAddresses()) {
+            all.add(decodeIP(na.address));
           }
+        } else {
+          all.add(decodeIP(source.address));
+        }
+      }
 
-          if (s.networkAddresses) {
-            return [...s.networkAddresses()].map(na => decodeIP(na.address));
-          }
-
-          return decodeIP(s.address);
-        })
-        .flat()
-    )
+      return all;
+    }, new Set())
   ];
 }
 
