@@ -18,9 +18,9 @@ import {
   Endpoint,
   DomainNameEndpoint,
   HTTPEndpoint,
-  unix_endpoint,
-  addType
+  unix_endpoint
 } from "pmcf";
+import { addType } from "./type.mjs";
 import { FAMILY_UNIX, FAMILY_DNS } from "./constants.mjs";
 import {
   networkAddressAttributes,
@@ -116,8 +116,7 @@ export class CoreService extends base {
     return this.host?.domainName;
   }
 
-  networkAddresses(filter)
-  {
+  networkAddresses(filter) {
     return this.owner.networkAddresses(filter);
   }
 
@@ -169,7 +168,7 @@ export class CoreService extends base {
             ) {
               continue;
             }
-            
+
             if (e.pathname) {
               result.push(new HTTPEndpoint(this, na, options));
             } else {
@@ -406,7 +405,7 @@ export function serviceEndpoints(sources, options = {}) {
   return options.join ? res.join(options.join) : res;
 }
 
-export function endpoints(entries,filter) {
+export function endpoints(entries, filter) {
   return asArray(entries)
     .map(e => e.endpoints(filter))
     .flat();
