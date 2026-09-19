@@ -3,7 +3,7 @@ import { FAMILY_IPV6 } from "ip-utilties";
 import { addType } from "./type.mjs";
 import { CoreService } from "./core-service.mjs";
 import { family_attribute, endpointAttributes } from "./common-attributes.mjs";
-import { FAMILY_DNS, FAMILY_UNIX } from "./constants.mjs";
+import { FAMILY_DNS, FAMILY_UNIX, PROTOCOL_TCP } from "./constants.mjs";
 
 class BaseEndpoint {
   static name = "base_endpoint";

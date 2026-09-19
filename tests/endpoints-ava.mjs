@@ -17,7 +17,8 @@ import {
   networks_attribute,
   hosts_attribute,
   FAMILY_UNIX,
-  PROTOCOL_UDP
+  PROTOCOL_UDP,
+  PROTOCOL_TCP
 } from "pmcf";
 
 function prepare() {
@@ -104,6 +105,8 @@ test("HTTPEndpoint basics", t => {
 
   t.is(ep.type, "http-control");
   t.is(ep.family, FAMILY_IPV4);
+  t.is(ep.protocol, PROTOCOL_TCP);
+  
   t.is(ep.port, 80);
   t.is(ep.pathname, "/p1");
   t.is(ep.tls, false);
