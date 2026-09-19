@@ -6,6 +6,7 @@ import {
 } from "content-entry-transform";
 import { FileContentProvider } from "npm-pkgbuild";
 import {
+  asArray,
   parse,
   globals,
   extract,
@@ -19,7 +20,8 @@ import {
   default_attribute_writable
 } from "pacc";
 import { union } from "./utils.mjs";
-import { addType, core } from "pmcf";
+import { addType } from "./type.mjs";
+import { core } from "./core.mjs";
 import { owner_attribute, aliases_attribute } from "./common-attributes.mjs";
 
 /**
@@ -262,13 +264,16 @@ export class base extends core {
     return [
       createExpressionTransformer(
         e => e.isBlob,
-        expression =>
-          parse(expression, {
+        expression => {
+          const result = parse(expression, {
             root: this.root,
             current: this,
             valueFor: (name, at) =>
               typeof at?.value === "function" ? at.value(name) : globals[name]
-          })
+          });
+
+          return typeof result === "string" ? result : asArray(result).join("");
+        }
       )
     ];
   }
