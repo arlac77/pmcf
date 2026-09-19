@@ -14,6 +14,8 @@ import {
 } from "pacc";
 import { PROTOCOL_TCP, PROTOCOL_UDP, PROTOCOL_QUIC } from "./constants.mjs";
 
+export const SCOPE_SYSTEMD_NETWORKD = "systemd-networkd";
+
 export const networkAddressType = "network|host|network_interface";
 
 export const extends_attribute = {
@@ -160,7 +162,19 @@ export const networkAttributes = {
   metric: { ...integer_attribute_writable, name: "metric" /*default: 1004*/ },
   mtu: { ...integer_attribute_writable, name: "mtu", default: 1500 },
   gateway: { ...default_attribute_writable, name: "gateway", type: "host" },
-  multicastDNS: { ...boolean_attribute_writable, name: "multicastDNS" }
+  multicastDNS: {
+    ...boolean_attribute_writable,
+    name: "multicastDNS",
+    scope: SCOPE_SYSTEMD_NETWORKD
+  },
+  linkLocalAddressing: {
+    ...boolean_attribute_writable,
+    name: "linkLocalAddressing",
+    values: new Set(["ipv4", "ipv6", "ipv4-fallback", "fallback"]),
+    default: false,
+    externalName: "LinkLocalAddressing",
+    scope: SCOPE_SYSTEMD_NETWORKD
+  }
 };
 
 export const networkAddressAttributes = {
