@@ -98,7 +98,8 @@ class PortEndpoint extends BaseEndpoint {
 export class Endpoint extends PortEndpoint {
   static name = "endpoint";
   static attributes = {
-    family: family_attribute
+    family: family_attribute,
+    addressType: { ...string_attribute, name: "addressType" }
   };
 
   static {
@@ -124,6 +125,10 @@ export class Endpoint extends PortEndpoint {
 
   get family() {
     return this.networkAddress.family;
+  }
+
+  get addressType() {
+    return this.networkAddress.type;
   }
 
   get networkInterface() {
