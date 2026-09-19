@@ -57,11 +57,15 @@ export class network extends owner {
       //assign(subnets_attribute, this, linkLocal);
     }
 
-    return this.bridges.size > 0
-      ? new AggregatedMap(
-          [this, ...this.bridges].map(network => network._subnets)
-        )
-      : super.subnets;
+    for (const other of this.bridges) {
+      for (const a of other._subnets.keys()) {
+        if (!this._subnets.get(a)) {
+          this._subnets.set(a, other._subnets.get(a));
+        }
+      }
+    }
+
+    return super.subnets;
   }
 
   /**
