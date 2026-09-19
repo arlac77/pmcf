@@ -336,6 +336,7 @@ test("host addresses", t => {
     mtu: 1500,
     kind: "ethernet",
     scope: "global",
+    linkLocalAddressing: false,
     owner: {
       name: "h1",
       type: "host"

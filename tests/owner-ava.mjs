@@ -49,6 +49,7 @@ test("owner read write", t => {
         administratorEmail: "master@somewhere",
         directory: "/o1/n1",
         kind: "ethernet",
+        linkLocalAddressing: false,
         mtu: 1500,
         secretName: "n1.password",
         owner: {

@@ -54,12 +54,12 @@
     "content-entry-transform": "^1.7.7",
     "ip-utilties": "^3.13.1",
     "npm-pkgbuild": "^22.2.5",
-    "pacc": "^11.13.2",
+    "pacc": "^11.15.0",
     "package-directory": "^8.2.0",
     "yaml": "^2.9.1"
   },
   "devDependencies": {
-    "@types/node": "^26.6.1",
+    "@types/node": "^26.6.2",
     "ava": "^8.0.1",
     "c8": "^12.0.0",
     "documentation": "^14.0.3",

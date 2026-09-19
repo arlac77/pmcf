@@ -6,6 +6,7 @@ import {
   string_set_attribute_writable,
   string_attribute_writable,
   string_attribute,
+  enum_string_attribute_writable,
   integer_attribute_writable,
   hostname_attribute as hostname_attribute_base,
   boolean_attribute_writable,
@@ -126,13 +127,13 @@ export const hostname_attribute = {
 
 export const networkAttributes = {
   scope: {
-    ...string_attribute_writable,
+    ...enum_string_attribute_writable,
     name: "scope",
     values: new Set(["global", "site", "link", "host"])
     //  default: "global"
   },
   class: {
-    ...string_attribute_writable,
+    ...enum_string_attribute_writable,
     name: "class",
     values: new Set([
       "10GBASE-T",
@@ -145,7 +146,7 @@ export const networkAttributes = {
     ])
   },
   kind: {
-    ...string_attribute_writable,
+    ...enum_string_attribute_writable,
     name: "kind",
     values: new Set([
       "loopback",
@@ -168,9 +169,20 @@ export const networkAttributes = {
     scope: SCOPE_SYSTEMD_NETWORKD
   },
   linkLocalAddressing: {
-    ...boolean_attribute_writable,
+    ...enum_string_attribute_writable,
     name: "linkLocalAddressing",
-    values: new Set(["ipv4", "ipv6", "ipv4-fallback", "fallback"]),
+    values: new Set([
+      "ipv4",
+      "ipv6",
+      "ipv4-fallback",
+      "fallback",
+      "true",
+      "false",
+      "yes",
+      "no",
+      false,
+      true
+    ]),
     default: false,
     externalName: "LinkLocalAddressing",
     scope: SCOPE_SYSTEMD_NETWORKD
@@ -187,7 +199,7 @@ export const networkAddressAttributes = {
 export const endpointAttributes = {
   port: port_attribute_writable,
   protocol: {
-    ...string_attribute_writable,
+    ...enum_string_attribute_writable,
     name: "protocol",
     values: new Set([PROTOCOL_TCP, PROTOCOL_UDP, PROTOCOL_QUIC])
   },
