@@ -3,8 +3,9 @@ import {
   rangeIP,
   decodeIP,
   matchPrefixIP,
+  addressType
 } from "ip-utilties";
-import { name_attribute, integer_attribute } from "pacc";
+import { name_attribute, integer_attribute, string_attribute } from "pacc";
 import { networks_attribute, family_attribute } from "./common-attributes.mjs";
 import { addType, network, core } from "pmcf";
 
@@ -18,7 +19,8 @@ export class Subnet extends core {
     address: { ...name_attribute, name: "address", private: true },
     networks: networks_attribute,
     prefixLength: { ...integer_attribute, name: "prefixLength" },
-    family: family_attribute    
+    family: family_attribute,
+    addressType: { ...string_attribute, name: "addressType" }
   };
 
   static {
@@ -30,7 +32,7 @@ export class Subnet extends core {
   constructor(owner, address) {
     super();
 
-    switch(typeof address) {
+    switch (typeof address) {
       case "object":
         address = address.address;
     }
@@ -78,6 +80,10 @@ export class Subnet extends core {
 
   get longAddress() {
     return `${this.longPrefix}/${this.prefixLength}`;
+  }
+
+  get addressType() {
+    return addressType(this.address);
   }
 }
 

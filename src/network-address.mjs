@@ -2,7 +2,6 @@ import {
   default_attribute,
   type_attribute,
   getAttribute,
-  asArray,
   leafValues
 } from "pacc";
 import { familyIP, formatCIDR, decodeIP, addressType } from "ip-utilties";

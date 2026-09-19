@@ -1,6 +1,6 @@
 import test from "ava";
 import { asArray } from "pacc";
-import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
+import { FAMILY_IPV4, FAMILY_IPV6, ADDRESS_TYPE_LINK_LOCAL } from "ip-utilties";
 import {
   InitializationContext,
   network,
@@ -41,6 +41,7 @@ test("Subnet ipv6", t => {
   t.is(s1.name, "fe80::/64");
   t.is(s1.prefixLength, 64);
   t.is(s1.family, FAMILY_IPV6);
+  t.is(s1.addressType, ADDRESS_TYPE_LINK_LOCAL);
 
   t.true(s1.matchesAddress("fe80::1e57:3eff:fe22:9a8f"));
   t.true(s1.matchesAddress("fe80:0000:0000:0000:1e57:3eff:fe22:9a8e"));

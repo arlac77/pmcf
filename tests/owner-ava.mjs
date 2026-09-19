@@ -1,5 +1,10 @@
 import test from "ava";
-import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
+import {
+  FAMILY_IPV4,
+  FAMILY_IPV6,
+  ADDRESS_TYPE_LINK_LOCAL,
+  ADDRESS_TYPE_GENERAL
+} from "ip-utilties";
 import { owner, assign, owners_attribute } from "pmcf";
 import { InitializationContext } from "../src/initialization-context.mjs";
 
@@ -59,7 +64,8 @@ test("owner read write", t => {
         subnets: {
           "fe80::/64": {
             family: FAMILY_IPV6,
-            prefixLength: 64
+            prefixLength: 64,
+            addressType: ADDRESS_TYPE_LINK_LOCAL
           }
         }
       }
@@ -67,7 +73,8 @@ test("owner read write", t => {
     subnets: {
       "10.0/16": {
         family: FAMILY_IPV4,
-        prefixLength: 16
+        prefixLength: 16,
+        addressType: ADDRESS_TYPE_GENERAL
       }
     }
   });
