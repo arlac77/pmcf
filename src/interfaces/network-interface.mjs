@@ -100,6 +100,10 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     return new Set([this.network]);
   }
 
+  get networkInterfaces() {
+    return new Map([this.name, this]);
+  }
+
   get gateway() {
     return this.network?.gateway;
   }

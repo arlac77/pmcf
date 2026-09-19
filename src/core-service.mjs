@@ -25,6 +25,7 @@ import { FAMILY_UNIX, FAMILY_DNS } from "./constants.mjs";
 import {
   networkAddressAttributes,
   extends_attribute,
+  networkInterfaces_attribute,
   endpointAttributes
 } from "./common-attributes.mjs";
 import {
@@ -65,6 +66,8 @@ export class CoreService extends base {
   }
   static attributes = {
     ...networkAddressAttributes,
+  //  networkInterfaces: networkInterfaces_attribute,
+
     ...endpointAttributes,
     extends: {
       ...extends_attribute,
@@ -118,6 +121,10 @@ export class CoreService extends base {
 
   networkAddresses(filter) {
     return this.owner.networkAddresses(filter);
+  }
+
+  get networkInterfaces() {
+    return this.owner?.networkInterfaces;
   }
 
   get subnets() {
