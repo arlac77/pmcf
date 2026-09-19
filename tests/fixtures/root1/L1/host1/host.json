@@ -46,7 +46,7 @@
     }
   },
   "content": {
-    "depends": ["d1", "d2-${os}"],
+    "dependencies": ["d1", "d2-${os}"],
     "replaces": ["r1", "r2-${os}"],
     "provides": ["p1", "p2-${os}"]
   }

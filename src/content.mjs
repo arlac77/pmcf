@@ -52,9 +52,9 @@ export class content extends core {
       default: "private",
       packagingProperty: true
     },
-    depends: {
+    dependencies: {
       ...string_set_attribute_writable,
-      name: "depends",
+      name: "dependencies",
       packagingProperty: true
     },
     provides: {
@@ -104,7 +104,7 @@ export class content extends core {
   _packaging = new Set();
   _provides = new Set();
   _replaces = new Set();
-  _depends = new Set();
+  _dependencies = new Set();
   _optional = new Set();
   _groups = new Set();
   _hooks = new Set();
@@ -201,13 +201,13 @@ export class content extends core {
     );
   }
 
-  set depends(value) {
-    this._depends = union(value, this._depends);
+  set dependencies(value) {
+    this._dependencies = union(value, this._dependencies);
   }
 
-  get depends() {
+  get dependencies() {
     return this.expand(
-      this.unionFromDirections(["this", "extends"], "_depends")
+      this.unionFromDirections(["this", "extends"], "_dependencies")
     );
   }
 

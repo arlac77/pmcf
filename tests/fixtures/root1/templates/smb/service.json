@@ -1,6 +1,6 @@
 {
   "content": {
-    "depends": ["samba"]
+    "dependencies": ["samba"]
   },
 
   "systemd": "smb.service"

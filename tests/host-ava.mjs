@@ -107,7 +107,7 @@ test("host extends", t => {
     content: {
       packaging: "alpm",
       provides: "pkge1",
-      depends: "dpkge1",
+      dependencies: "dpkge1",
       replaces: "rpkge1"
     }
   });
@@ -127,7 +127,7 @@ test("host extends", t => {
     aliases: "e2a",
     content: {
       provides: "pkge2",
-      depends: "dpkge2",
+      dependencies: "dpkge2",
       replaces: "rpkge2"
     }
   });
@@ -148,7 +148,7 @@ test("host extends", t => {
     content: {
       packaging: "alpm",
       provides: "pkgh1",
-      depends: "dpkgh1",
+      dependencies: "dpkgh1",
       replaces: "rpkgh1"
     }
   });
@@ -178,7 +178,7 @@ test("host extends", t => {
   t.deepEqual(c.packaging, new Set(["alpm"]));
 
   t.deepEqual([...c.provides].sort(), ["pkge1", "pkge2", "pkgh1"].sort());
-  t.deepEqual([...c.depends].sort(), ["dpkge1", "dpkge2", "dpkgh1"].sort());
+  t.deepEqual([...c.dependencies].sort(), ["dpkge1", "dpkge2", "dpkgh1"].sort());
   t.deepEqual([...c.replaces].sort(), ["rpkge1", "rpkge2", "rpkgh1"].sort());
 });
 

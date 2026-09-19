@@ -2,7 +2,7 @@
   "distribution": "arch-linux",
   "content": {
     "packaging": "alpm",
-    "depends": "btrfs-progs"
+    "dependencies": "btrfs-progs"
   },
   "properties": {
     "trustdir": "/etc/ca-certificates/trust-source",

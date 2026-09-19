@@ -1,6 +1,6 @@
 {
   "content": {
-    "depends": ["bind"]
+    "dependencies": ["bind"]
   },
   "views": {
     "trusted": {

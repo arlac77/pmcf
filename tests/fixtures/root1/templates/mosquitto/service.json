@@ -1,6 +1,6 @@
 {
   "content": {
-    "depends": ["mosquitto"]
+    "dependencies": ["mosquitto"]
   },
   "aliases": "mqtt",
   "persistence_location": "/var/lib/mosquitto",

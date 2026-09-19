@@ -1,6 +1,6 @@
 {
   "content": {
-    "depends": ["libmicrohttpd"]
+    "dependencies": ["libmicrohttpd"]
   },
   "aliases": "journal",
   "Seal": false,

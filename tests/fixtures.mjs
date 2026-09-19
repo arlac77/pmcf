@@ -75,7 +75,7 @@ export function root1(root, filter) {
     owner: L1,
     os: "linux",
     content: {
-      depends: ["btrfs-progs", "d1", "d2-linux", "d3"],
+      dependencies: ["btrfs-progs", "d1", "d2-linux", "d3"],
       replaces: ["r1", "r2-linux", "r3"],
       //   provides: ["p1", "p2-linux", "p3-host1", "p4"],
       permissions: new Map([

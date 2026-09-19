@@ -6,7 +6,7 @@
   },
   "content": {
     "packaging": "alpm",
-    "depends": ["d1", "d3"],
+    "dependencies": ["d1", "d3"],
     "replaces": ["r1", "r3"],
     "provides": ["p1", "p3-${hostName}"],
     "permissions": {
