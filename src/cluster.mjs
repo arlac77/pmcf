@@ -2,7 +2,8 @@ import { join } from "node:path";
 import { FAMILY_IPV4 } from "ip-utilties";
 import { duration_attribute_writable } from "pacc";
 import { host } from "./host.mjs";
-import { addType, serviceEndpoints } from "pmcf";
+import { serviceEndpoints } from "./core-service.mjs";
+import { addType } from "./type.mjs";
 import {
   networkInterfaces_attribute,
   cluster_attribute
