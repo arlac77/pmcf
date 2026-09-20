@@ -1,40 +1,46 @@
 import { string_attribute_writable, duration_attribute_writable } from "pacc";
-import { ExtraSourceService, serviceEndpoints, addType } from "pmcf";
-import { filterConfigurable, sectionLines } from "../utils.mjs";
+import { ExtraSourceService, serviceEndpoints } from "pmcf";
+import { sectionLines } from "../utils.mjs";
+import { SCOPE_SYSTEMD_TIMESYNCD } from "../common-attributes.mjs";
+import { addType } from "../type.mjs";
 
 export class SystemdTimesyncdService extends ExtraSourceService {
   static name = "systemd-timesyncd";
   static attributes = {
-    NTP: { ...string_attribute_writable, name: "NTP", configurable: true },
+    NTP: {
+      ...string_attribute_writable,
+      name: "NTP",
+      scope: SCOPE_SYSTEMD_TIMESYNCD
+    },
     FallbackNTP: {
       ...string_attribute_writable,
       name: "FallbackNTP",
-      configurable: true
+      scope: SCOPE_SYSTEMD_TIMESYNCD
     },
     RootDistanceMaxSec: {
       ...duration_attribute_writable,
       name: "RootDistanceMaxSec",
-      configurable: true
+      scope: SCOPE_SYSTEMD_TIMESYNCD
     },
     PollIntervalMinSec: {
       ...duration_attribute_writable,
       name: "PollIntervalMinSec",
-      configurable: true
+      scope: SCOPE_SYSTEMD_TIMESYNCD
     },
     PollIntervalMaxSec: {
       ...duration_attribute_writable,
       name: "PollIntervalMaxSec",
-      configurable: true
+      scope: SCOPE_SYSTEMD_TIMESYNCD
     },
     ConnectionRetrySec: {
       ...duration_attribute_writable,
       name: "ConnectionRetrySec",
-      configurable: true
+      scope: SCOPE_SYSTEMD_TIMESYNCD
     },
     SaveIntervalSec: {
       ...duration_attribute_writable,
       name: "SaveIntervalSec",
-      configurable: true
+      scope: SCOPE_SYSTEMD_TIMESYNCD
     }
   };
   static service = {
@@ -63,7 +69,9 @@ export class SystemdTimesyncdService extends ExtraSourceService {
       content: sectionLines("Time", {
         NTP: serviceEndpoints(this, options(300, 399)),
         FallbackNTP: serviceEndpoints(this, options(100, 199)),
-        ...this.getAttributes(filterConfigurable)
+        ...this.getAttributes(
+          attribute => attribute.scope === SCOPE_SYSTEMD_TIMESYNCD
+        )
       })
     };
   }

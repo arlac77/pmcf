@@ -16,6 +16,7 @@ import {
 import { PROTOCOL_TCP, PROTOCOL_UDP, PROTOCOL_QUIC } from "./constants.mjs";
 
 export const SCOPE_SYSTEMD_NETWORKD = "systemd-networkd";
+export const SCOPE_SYSTEMD_TIMESYNCD = "systemd-timesyncd";
 
 export const networkAddressType = "network|host|network_interface";
 
