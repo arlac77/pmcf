@@ -404,7 +404,9 @@ export class kea extends CoreService {
 
           if (addr && subnet.matchesAddress(addr)) {
             ip =
-              family === "6" ? { "ip-addresses": [addr] } : { "ip-address": addr };
+              family === "6"
+                ? { "ip-addresses": [addr] }
+                : { "ip-address": addr };
           }
 
           let ids = { "hw-address": k };
@@ -467,6 +469,9 @@ export class kea extends CoreService {
     };
 
     const packageData = await this.preparePackage(dir);
+
+    await this.writeSystemdCredentialConfig(dir, "kea-dhcp4");
+    await this.writeSystemdCredentialConfig(dir, "kea-dhcp6");
 
     for (const [name, data] of Object.entries({
       "kea-dhcp-ddns": ddns,

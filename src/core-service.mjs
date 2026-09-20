@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import {
   FAMILY_IPV4,
   FAMILY_IPV6,
@@ -10,7 +11,8 @@ import {
   number_attribute_writable,
   priority_attribute,
   default_collection_attribute_writable,
-  asArray
+  asArray,
+  boolean_attribute_writable_false
 } from "pacc";
 import {
   base,
@@ -42,6 +44,12 @@ import {
 } from "./dns-utils.mjs";
 
 export class credential extends base {
+  static attributes = {
+    systemdCredential: {
+      ...boolean_attribute_writable_false,
+      name: "systemdCredential"
+    }
+  };
   static {
     addType(this);
   }
@@ -66,7 +74,7 @@ export class CoreService extends base {
   }
   static attributes = {
     ...networkAddressAttributes,
-  //  networkInterfaces: networkInterfaces_attribute,
+    //  networkInterfaces: networkInterfaces_attribute,
 
     ...endpointAttributes,
     extends: {
@@ -268,6 +276,25 @@ export class CoreService extends base {
 
   get types() {
     return serviceTypes(ServiceTypes[this.type]);
+  }
+
+  async writeSystemdCredentialConfig(dir, name) {
+    let lines = [];
+    for (const [name, cred] of this.credentials) {
+      if (cred.systemdCredential) {
+        lines.push(
+          `LoadCredentialEncrypted=${name}:/etc/credstore.encrypted/${name}`
+        );
+      }
+    }
+
+    if (lines.length) {
+      await writeLines(
+        join(dir, `etc/systemd/system/${name}.service.d`),
+        `credentials.conf`,
+        lines
+      );
+    }
   }
 
   get systemdService() {
