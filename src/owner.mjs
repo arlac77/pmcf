@@ -26,8 +26,8 @@ export class owner extends ServiceOwner {
   static owners = [owner, "site", "root"];
   static attributes = {
     networks: networks_attribute,
-    hosts: hosts_attribute,
     clusters: clusters_attribute,
+    hosts: hosts_attribute,
     subnets: subnets_attribute,
     networkInterfaces: networkInterfaces_attribute,
     owners: owners_attribute,
