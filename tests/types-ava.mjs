@@ -28,7 +28,7 @@ test("types", t => {
   t.is(types.owner.extends, ServiceOwner);
   t.is(types.owner.priority, 2);
   t.is(types.owner.key, "name");
-  t.deepEqual(types.owner.owners, [types.owner, types.root]);
+  t.deepEqual(types.owner.owners, [types.owner, types.site, types.root]);
   t.deepEqual(types.owner.extends, types["service-owner"]);
 
   t.is(types.root, root);
@@ -63,7 +63,7 @@ test("types", t => {
   ]);
   */
   t.is(types.host, host);
-  t.deepEqual(types.host.owners, [types.owner, types.network, types.root]);
+  t.deepEqual(types.host.owners, [types.owner, types.site, types.network, types.root]);
 
   t.is(types.bind, bind);
   t.is(types.bind.extends, CoreService);

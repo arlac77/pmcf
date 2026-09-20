@@ -322,4 +322,8 @@ export class core {
   get root() {
     return this.owner?.root;
   }
+
+  get site() {
+    return this.owner?.site;
+  }
 }

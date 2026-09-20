@@ -1,7 +1,7 @@
 import { owner, addType } from "pmcf";
 
 export class root extends owner {
-  static priority = 3;
+  static priority = 100;
   static {
     addType(this);
   }

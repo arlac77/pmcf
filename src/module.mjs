@@ -8,6 +8,7 @@ export * from "./cluster.mjs";
 export * from "./keepalived.mjs";
 
 export * from "./owner.mjs";
+export * from "./site.mjs";
 export * from "./root.mjs";
 export * from "./subnet.mjs";
 export * from "./service-owner.mjs";

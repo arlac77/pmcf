@@ -5,7 +5,7 @@ import { owner_attribute } from "./common-attributes.mjs";
 export class ServiceOwner extends base {
   static name = "service-owner";
   static priority = 1.9;
-  static owners = ["owner", "network", "root"];
+  static owners = ["owner", "site", "network", "root"];
   static attributes = {
     services: {
       ...default_collection_attribute_writable,

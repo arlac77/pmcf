@@ -74,7 +74,7 @@ export class CoreService extends base {
       type: CoreService
     },
     priority: priority_attribute,
-    weight: { ...number_attribute_writable, name: "weight" /*default: 1*/ },
+    weight: { ...number_attribute_writable, name: "weight" },
     types: { ...string_set_attribute_writable, name: "types" },
     systemdService: { ...string_attribute_writable, name: "systemdService" },
     systemUserName: { ...string_attribute_writable, name: "systemUserName" },

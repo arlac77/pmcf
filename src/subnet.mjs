@@ -12,7 +12,7 @@ import { addType, network, core } from "pmcf";
 export class Subnet extends core {
   static name = "subnet";
   static priority = 1;
-  static owners = ["owner", "network", "network_interface", "root"];
+  static owners = ["owner", "site", "network", "network_interface", "root"];
   static constructWithIdentifierOnly = true;
   static key = "address";
   static attributes = {

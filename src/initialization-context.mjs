@@ -4,7 +4,8 @@ import {
   extendingAttributeIterator,
   types,
   resolveTypeLinks,
-  create
+  create,
+  isExtendingType
 } from "pacc";
 import { core } from "./core.mjs";
 import { root } from "./root.mjs";
@@ -200,7 +201,7 @@ export class InitializationContext {
 
     for (const [path, attribute] of extendingAttributeIterator(
       owner.constructor,
-      attribute => attribute.type === type && attribute.collection
+      attribute => isExtendingType(type, attribute.type) && attribute.collection
     )) {
       try {
         return assign(

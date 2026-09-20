@@ -23,14 +23,14 @@ import { loadHooks } from "./hooks.mjs";
 
 export class owner extends ServiceOwner {
   static priority = 2;
-  static owners = [owner, "root"];
+  static owners = [owner, "site", "root"];
   static attributes = {
     networks: networks_attribute,
     hosts: hosts_attribute,
     clusters: clusters_attribute,
-    owners: owners_attribute,
     subnets: subnets_attribute,
     networkInterfaces: networkInterfaces_attribute,
+    owners: owners_attribute,
     country: { ...string_attribute_writable, name: "country" },
     domain: { ...string_attribute_writable, name: "domain" },
     domains: { ...string_set_attribute_writable, name: "domains" },
