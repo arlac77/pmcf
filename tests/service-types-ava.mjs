@@ -66,6 +66,7 @@ const bindRndcEndpoints = [
     kind: "loopback"
   }
 ];
+
 test("serviceTypeEndpoints dns", t => {
   t.deepEqual(serviceTypeEndpoints(ServiceTypes.dns), dnsEndpoints);
 });
