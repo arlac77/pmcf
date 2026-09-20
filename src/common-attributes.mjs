@@ -160,7 +160,7 @@ export const networkAttributes = {
   ssid: ssid_attribute,
   psk: psk_attribute,
   secretName: { ...string_attribute_writable, name: "secretName" },
-  metric: { ...integer_attribute_writable, name: "metric" /*default: 1004*/ },
+  metric: { ...integer_attribute_writable, name: "metric" },
   mtu: { ...integer_attribute_writable, name: "mtu", default: 1500 },
   gateway: { ...default_attribute_writable, name: "gateway", type: "host" },
   multicastDNS: {
