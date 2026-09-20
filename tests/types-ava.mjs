@@ -33,7 +33,7 @@ test("types", t => {
 
   t.is(types.root, root);
   t.is(types.root.extends, owner);
-  t.is(types.root.priority, 3);
+  t.is(types.root.priority, 100);
 
   t.is(types.network, network);
   t.is(types.network.extends, owner);
