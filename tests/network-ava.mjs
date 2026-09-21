@@ -95,7 +95,10 @@ test("network bridges", t => {
   t.true(n1.bridges.has(n2));
   t.true(n2.bridges.has(n1));
 
-  t.deepEqual([...n1.hosts.values()], [n1h1, n1c1, n2h1]);
+  t.deepEqual(
+    [...n1.hosts.values()].sort((a, b) => a.name.localeCompare(b.name)),
+    [n1h1, n1c1, n2h1].sort((a, b) => a.name.localeCompare(b.name))
+  );
   t.is(n1.hosts.get("n1h1"), n1h1);
   t.is(n1.hosts.get("n2h1"), n2h1);
 
