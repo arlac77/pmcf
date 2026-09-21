@@ -35,24 +35,13 @@ export function domainFromDominName(domainName, defaultDomain) {
   return defaultDomain;
 }
 
-export async function writeLines(dir, name, lines) {
-  let data;
-
-  switch (typeof lines) {
-    case "undefined":
-      return;
-    case "string":
-      data = lines;
-      break;
-
-    default:
-      data = [...lines]
+export async function writeLines(dir, name, ...lines) {
+  const data = lines
         .flat()
         .filter(line => line !== undefined)
         .map(l => l + "\n")
         .join("");
-  }
-
+  
   const full = join(dir, name);
   dir = dirname(full);
   name = basename(full);

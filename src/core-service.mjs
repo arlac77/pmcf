@@ -109,7 +109,7 @@ export class CoreService extends base {
   }
 
   get credentials() {
-    return this.mapFromDirections(["this", "extends"], "_credentials")
+    return this.mapFromDirections(["this", "extends"], "_credentials");
   }
 
   get network() {
@@ -302,6 +302,7 @@ export class CoreService extends base {
       await writeLines(
         join(dir, `etc/systemd/system/${name}.service.d`),
         `credentials.conf`,
+        "[Service]",
         lines
       );
     }
