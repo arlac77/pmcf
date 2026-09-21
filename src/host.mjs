@@ -6,6 +6,7 @@ import {
   string_attribute_writable,
   number_attribute_writable,
   priority_attribute,
+  enum_string_attribute_writable,
   asArray
 } from "pacc";
 import { cidrAddresses, addresses, addType, assign } from "pmcf";
@@ -26,14 +27,14 @@ export class host extends ServiceOwner {
     ...networkAddressAttributes,
     networkInterfaces: networkInterfaces_attribute,
     os: {
-      ...string_attribute_writable,
+      ...enum_string_attribute_writable,
       name: "os",
       values: new Set(["osx", "windows", "linux"])
     },
     id: { ...string_attribute_writable, name: "id" },
     distribution: { ...string_attribute_writable, name: "distribution" },
     deployment: {
-      ...string_attribute_writable,
+      ...enum_string_attribute_writable,
       name: "deployment",
       values: new Set(["production", "development"])
     },
@@ -43,7 +44,7 @@ export class host extends ServiceOwner {
     vendor: { ...string_attribute_writable, name: "vendor" },
     keymap: { ...string_attribute_writable, name: "keymap" },
     chassis: {
-      ...string_attribute_writable,
+      ...enum_string_attribute_writable,
       name: "chassis",
       values: new Set([
         "phone",
@@ -62,7 +63,7 @@ export class host extends ServiceOwner {
       ])
     },
     architecture: {
-      ...string_attribute_writable,
+      ...enum_string_attribute_writable,
       name: "architecture",
       values: new Set(["x86", "x86_64", "aarch64", "armv7", "riscv"])
     },
