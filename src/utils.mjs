@@ -1,5 +1,6 @@
 import { writeFile, mkdir } from "node:fs/promises";
 import { join, dirname, basename } from "node:path";
+import { leafValues } from "pacc";
 
 export function yesno(flag) {
   return flag ? "yes" : "no";
@@ -36,17 +37,12 @@ export function domainFromDominName(domainName, defaultDomain) {
 }
 
 export async function writeLines(dir, name, ...lines) {
-  const data = lines
-        .flat()
-        .filter(line => line !== undefined)
-        .map(l => l + "\n")
-        .join("");
-  
   const full = join(dir, name);
   dir = dirname(full);
   name = basename(full);
   await mkdir(dir, { recursive: true });
 
+  const data = [...leafValues(lines)].map(l => l + "\n").join("");
   return writeFile(join(dir, name), data, "utf8");
 }
 
