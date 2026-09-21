@@ -1,6 +1,7 @@
 import { normalizeCIDR, familyIP, FAMILY_IPV4 } from "ip-utilties";
 import { FileContentProvider } from "npm-pkgbuild";
 import { AggregatedMap } from "aggregated-map";
+import { FilteredMap } from "filtered-map";
 import {
   string_set_attribute_writable,
   string_attribute_writable,
@@ -59,21 +60,13 @@ export class owner extends ServiceOwner {
   owners = new Map();
   networkInterfaces = new Map();
   _networks = new Map();
-  _clusters = new Map();
   _hosts = new Map();
   _subnets = new Map();
-
-  /**
-   * hosts we own direcly.
-   */
-  get directHosts() {
-    return new AggregatedMap([this._hosts, this._clusters]);
-  }
 
   get hosts() {
     return new AggregatedMap(
       [this, ...this.networks.values(), ...this.owners.values()].map(
-        node => node.directHosts
+        node => node._hosts
       )
     );
   }
@@ -83,15 +76,7 @@ export class owner extends ServiceOwner {
   }
 
   get clusters() {
-    return new AggregatedMap(
-      [this, ...this.networks.values(), ...this.owners.values()].map(
-        node => node._clusters
-      )
-    );
-  }
-
-  set clusters(value) {
-    this._clusters = value;
+    return new FilteredMap(this.hosts, host => host.isCluster);
   }
 
   get networks() {
