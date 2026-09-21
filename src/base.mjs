@@ -272,7 +272,7 @@ export class base extends core {
               typeof at?.value === "function" ? at.value(name) : globals[name]
           });
 
-          return typeof result === "string" ? result : asArray(result).join("");
+          return asArray(result).join("");
         }
       )
     ];
