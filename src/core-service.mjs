@@ -45,12 +45,6 @@ import {
 } from "./dns-utils.mjs";
 
 export class credential extends base {
-  static attributes = {
-    systemdCredential: {
-      ...boolean_attribute_writable_false,
-      name: "systemdCredential"
-    }
-  };
   static {
     addType(this);
   }
@@ -289,7 +283,7 @@ export class CoreService extends base {
     const seen = new Set();
 
     for (const [name, cred] of this.credentials) {
-      if (cred.systemdCredential && !seen.has(name)) {
+      if (cred.tags.has(name) && !seen.has(name)) {
         seen.add(name);
         lines.push(
           `LoadCredentialEncrypted=${name}:/etc/credstore.encrypted/${name}`
