@@ -299,7 +299,7 @@ export class CoreService extends base {
 
     if (lines.length) {
       await writeLines(
-        join(dir, `etc/systemd/system/${name}.d`),
+        join(dir, `usr/lib/systemd/system/${name}.d`),
         `credentials.conf`,
         "[Service]",
         lines
