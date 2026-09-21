@@ -22,6 +22,7 @@ import {
   HTTPEndpoint,
   unix_endpoint
 } from "pmcf";
+import { writeLines } from "./utils.mjs";
 import { addType } from "./type.mjs";
 import { FAMILY_UNIX, FAMILY_DNS } from "./constants.mjs";
 import {
@@ -101,10 +102,14 @@ export class CoreService extends base {
   _weight;
   _port;
   _systemdService;
-  credentials = new Map();
+  _credentials = new Map();
 
   toString() {
     return `${this.fullName}(${this.type})`;
+  }
+
+  get credentials() {
+    return this.mapFromDirections(["this", "extends"], "_credentials")
   }
 
   get network() {
@@ -280,8 +285,13 @@ export class CoreService extends base {
 
   async writeSystemdCredentialConfig(dir, name) {
     let lines = [];
+
+    const seen = new Set();
+
     for (const [name, cred] of this.credentials) {
-      if (cred.systemdCredential) {
+      //console.log(this.fullName,name);
+      if (cred.systemdCredential && !seen.has(name)) {
+        seen.add(name);
         lines.push(
           `LoadCredentialEncrypted=${name}:/etc/credstore.encrypted/${name}`
         );
