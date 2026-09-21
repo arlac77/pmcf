@@ -107,7 +107,6 @@ generates config packages for:
     *   [Parameters](#parameters-21)
 *   [families](#families)
 *   [secretName](#secretname)
-*   [directHosts](#directhosts)
 *   [subnetForAddress](#subnetforaddress)
     *   [Parameters](#parameters-22)
 *   [ServiceType](#servicetype)
@@ -420,10 +419,6 @@ Returns **[Set](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Glob
 ## secretName
 
 Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
-
-## directHosts
-
-hosts we own direcly.
 
 ## subnetForAddress
 
