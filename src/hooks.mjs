@@ -8,7 +8,7 @@ export async function loadHooks(packageData, file) {
 }
 
 export function addHook(packageData, name, content) {
-  packageData.properties.hooks ||= {};
+  packageData.properties.hooks ??= {};
 
   const hook = packageData.properties.hooks[name];
   if (hook) {
