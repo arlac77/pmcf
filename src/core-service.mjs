@@ -289,7 +289,6 @@ export class CoreService extends base {
     const seen = new Set();
 
     for (const [name, cred] of this.credentials) {
-      //console.log(this.fullName,name);
       if (cred.systemdCredential && !seen.has(name)) {
         seen.add(name);
         lines.push(
@@ -300,7 +299,7 @@ export class CoreService extends base {
 
     if (lines.length) {
       await writeLines(
-        join(dir, `etc/systemd/system/${name}.service.d`),
+        join(dir, `etc/systemd/system/${name}.d`),
         `credentials.conf`,
         "[Service]",
         lines

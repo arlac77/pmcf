@@ -470,8 +470,8 @@ export class kea extends CoreService {
 
     const packageData = await this.preparePackage(dir);
 
-    await this.writeSystemdCredentialConfig(dir, "kea-dhcp4");
-    await this.writeSystemdCredentialConfig(dir, "kea-dhcp6");
+    await this.writeSystemdCredentialConfig(dir, "kea-dhcp4.service");
+    await this.writeSystemdCredentialConfig(dir, "kea-dhcp6.service");
 
     for (const [name, data] of Object.entries({
       "kea-dhcp-ddns": ddns,
