@@ -360,19 +360,19 @@ export function serviceTypes(type) {
  */
 export function serviceTypeEndpoints(type, bundeledToo) {
   if (type) {
-    const aggregator = (acc, type) => {
-      acc.push(...serviceTypeEndpoints(type, bundeledToo));
-      return acc;
+    const aggregator = (result, type) => {
+      result.push(...serviceTypeEndpoints(type, bundeledToo));
+      return result;
     };
 
     return type.extends.reduce(
       aggregator,
       type.endpoints.reduce(
-        (acc, ep) => {
-          for (const family of asArray(ep.family)) {
-            acc.push({ ...ep, family });
+        (result, endpoint) => {
+          for (const family of asArray(endpoint.family)) {
+            result.push({ ...endpoint, family });
           }
-          return acc;
+          return result;
         },
         bundeledToo ? type.services.reduce(aggregator, []) : []
       )
