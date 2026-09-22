@@ -22,7 +22,8 @@ import {
   Endpoint,
   sortDescendingByPriority,
   bind_key,
-  systemdCredentialFileName
+  systemdCredentialFileName,
+  credential
 } from "pmcf";
 import { FAMILY_UNIX, PROTOCOL_TCP } from "../constants.mjs";
 import { writeLines } from "../utils.mjs";
@@ -193,6 +194,18 @@ export class kea extends CoreService {
   }
 
   subnets = new Map();
+
+  get credentials() {
+    //TODO maybe introduce synthetic extends
+    asArray(this.keys).forEach(key => {
+      const cred = new credential(this);
+      cred.name = `key.${key.name}.tsig`;
+      cred._tags.add("kea-dhcp-ddns.service");
+      this._credentials.set(cred.name, cred);
+    });
+
+    return super.credentials;
+  }
 
   listenInterfaces(family) {
     return this.endpoints(
