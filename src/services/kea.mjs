@@ -33,6 +33,11 @@ class kea_subnet extends Subnet {
     pool: {
       ...string_collection_attribute_writable,
       name: "pool"
+    },
+    clientClasses: {
+      ...string_collection_attribute_writable,
+      name: "clientClasses",
+      externalName: "client-classes"
     }
   };
 
@@ -433,7 +438,7 @@ export class kea extends CoreService {
 
           if (family === "4") {
             const dhcpClientId = networkInterface.dhcpClientId;
-            if (dhcpClientId) {
+            if (dhcpClientId !== undefined) {
               ids = { "client-id": dhcpClientId };
             }
           }
