@@ -1,18 +1,13 @@
-import { default_collection_attribute_writable } from "pacc";
-import { base, addType } from "pmcf";
-import { owner_attribute } from "./common-attributes.mjs";
+import { base } from "./base.mjs";
+import { addType } from "./type.mjs";
+import { services_attribute } from "./common-attributes.mjs";
 
 export class ServiceOwner extends base {
   static name = "service-owner";
   static priority = 1.9;
   static owners = ["owner", "site", "network", "root"];
   static attributes = {
-    services: {
-      ...default_collection_attribute_writable,
-      name: "services",
-      type: "service",
-      backpointer: owner_attribute
-    }
+    services: services_attribute
   };
 
   static {
