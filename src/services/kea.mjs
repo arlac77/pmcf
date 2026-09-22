@@ -33,11 +33,6 @@ class kea_subnet extends Subnet {
     pool: {
       ...string_collection_attribute_writable,
       name: "pool"
-    },
-    clientClasses: {
-      ...string_collection_attribute_writable,
-      name: "clientClasses",
-      externalName: "client-classes"
     }
   };
 
