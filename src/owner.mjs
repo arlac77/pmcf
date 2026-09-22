@@ -71,10 +71,6 @@ export class owner extends ServiceOwner {
     );
   }
 
-  set hosts(value) {
-    this._hosts = value;
-  }
-
   get clusters() {
     return new FilteredMap(this.hosts, host => host.isCluster);
   }
@@ -83,10 +79,6 @@ export class owner extends ServiceOwner {
     return new AggregatedMap(
       [this, ...this.owners.values()].map(node => node._networks)
     );
-  }
-
-  set networks(value) {
-    this._networks = value;
   }
 
   get services() {

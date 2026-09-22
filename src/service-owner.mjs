@@ -16,10 +16,6 @@ export class ServiceOwner extends base {
 
   _services = new Map();
 
-  set services(value) {
-    this._services = value;
-  }
-
   get services() {
     return this._services;
   }
