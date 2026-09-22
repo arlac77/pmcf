@@ -21,7 +21,7 @@ export class keepalived extends cluster {
     addType(this);
   }
 
-    checkInterval = 60;
+  checkInterval = 60;
 
   async *preparePackages(stagingDir) {
     for (const ni of [...this.owner.clusters.values()].reduce(

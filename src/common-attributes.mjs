@@ -70,6 +70,12 @@ export const owners_attribute = {
   backpointer: owner_attribute
 };
 
+export const credentials_attribute = {
+  ...default_collection_attribute_writable,
+  type: "credential",
+  name: "credentials"
+};
+
 export const services_attribute = {
   ...default_collection_attribute_writable,
   name: "services",

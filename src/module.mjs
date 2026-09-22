@@ -4,6 +4,7 @@ export * from "./core.mjs";
 export * from "./content.mjs";
 export * from "./common-attributes.mjs";
 export * from "./base.mjs";
+export * from "./credential.mjs";
 export * from "./cluster.mjs";
 export * from "./keepalived.mjs";
 

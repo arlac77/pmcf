@@ -27,7 +27,7 @@ import { addType } from "./type.mjs";
 import { FAMILY_UNIX, FAMILY_DNS } from "./constants.mjs";
 import {
   networkAddressAttributes,
-  extends_attribute,
+  extends_attribute,credentials_attribute,
   networkInterfaces_attribute,
   endpointAttributes
 } from "./common-attributes.mjs";
@@ -43,12 +43,6 @@ import {
   dnsMergeParameters,
   dnsPriority
 } from "./dns-utils.mjs";
-
-export class credential extends base {
-  static {
-    addType(this);
-  }
-}
 
 export class CoreService extends base {
   static name = "core-service";
@@ -82,11 +76,7 @@ export class CoreService extends base {
     systemdService: { ...string_attribute_writable, name: "systemdService" },
     systemUserName: { ...string_attribute_writable, name: "systemUserName" },
     systemGroupName: { ...string_attribute_writable, name: "systemGroupName" },
-    credentials: {
-      ...default_collection_attribute_writable,
-      type: credential,
-      name: "credentials"
-    }
+    credentials: credentials_attribute
   };
 
   static {
