@@ -460,5 +460,5 @@ export function endpointAddresses(entries) {
 }
 
 export function systemdCredentialFileName(serviceName, credentialName) {
-  return `/run/credentials/${serviceName}${credentialName}`;
+  return `/run/credentials/${serviceName}/${credentialName}`;
 }
