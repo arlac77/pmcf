@@ -277,23 +277,23 @@ export class CoreService extends base {
     return serviceTypes(ServiceTypes[this.type]);
   }
 
-  async writeSystemdCredentialConfig(dir, name) {
+  async writeSystemdCredentialConfig(dir, serviceName) {
     let lines = [];
 
     const seen = new Set();
 
-    for (const [name, cred] of this.credentials) {
-      if (cred.tags.has(name) && !seen.has(name)) {
-        seen.add(name);
+    for (const [credentialName, cred] of this.credentials) {
+      if (cred.tags.has(serviceName) && !seen.has(credentialName)) {
+        seen.add(credentialName);
         lines.push(
-          `LoadCredentialEncrypted=${name}:/etc/credstore.encrypted/${name}`
+          `LoadCredentialEncrypted=${credentialName}:/etc/credstore.encrypted/${credentialName}`
         );
       }
     }
 
     if (lines.length) {
       await writeLines(
-        join(dir, `usr/lib/systemd/system/${name}.d`),
+        join(dir, `usr/lib/systemd/system/${serviceName}.d`),
         `credentials.conf`,
         "[Service]",
         lines
