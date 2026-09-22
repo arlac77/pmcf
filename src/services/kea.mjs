@@ -199,7 +199,7 @@ export class kea extends CoreService {
     //TODO maybe introduce synthetic extends
     asArray(this.keys).forEach(key => {
       const cred = new credential(this);
-      cred.name = `key.${key.name}.tsig`;
+      cred.name = `kea.${key.name}.tsig`;
       cred._tags.add("kea-dhcp-ddns.service");
       this._credentials.set(cred.name, cred);
     });
