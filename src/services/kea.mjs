@@ -42,6 +42,8 @@ class kea_subnet extends Subnet {
   pool = [];
 }
 
+const SCOPE_KEA = "kea";
+
 export class kea extends CoreService {
   static attributes = {
     subnets: {
@@ -70,31 +72,31 @@ export class kea extends CoreService {
     "ddns-send-updates": {
       ...boolean_attribute_writable_true,
       name: "ddns-send-updates",
-      configurable: true
+      scope: SCOPE_KEA
     },
     "renew-timer": {
       ...number_attribute_writable,
       name: "renew-timer",
-      configurable: true,
+      scope: SCOPE_KEA,
       default: 900
     },
     "rebind-timer": {
       ...number_attribute_writable,
       name: "rebind-timer",
-      configurable: true,
+      scope: SCOPE_KEA,
       default: 1800
     },
     "valid-lifetime": {
       ...number_attribute_writable,
       name: "valid-lifetime",
       mandatory: true,
-      configurable: true,
+      scope: SCOPE_KEA,
       default: 86400
     },
     "ddns-conflict-resolution-mode": {
       ...string_attribute_writable,
       name: "ddns-conflict-resolution-mode",
-      configurable: true
+      scope: SCOPE_KEA
       //values: new Set(["check-exists-with-dhcid","no-check-with-dhcid"])
     }
   };
@@ -300,7 +302,8 @@ export class kea extends CoreService {
 
     for (const [path, attribute] of extendingAttributeIterator(
       this.constructor,
-      attribute => attribute.configurable && this[attribute.name] !== undefined
+      attribute =>
+        attribute.scope === SCOPE_KEA && this[attribute.name] !== undefined
     )) {
       const name = path.join(".");
       cfg[name] = this[name];
@@ -359,7 +362,10 @@ export class kea extends CoreService {
           return {
             name: key.name,
             algorithm: key.algorithm,
-            "secret-file": systemdCredentialFileName('kea-dhcp-ddns.service',`key.${key.name}.tsig`)
+            "secret-file": systemdCredentialFileName(
+              "kea-dhcp-ddns.service",
+              `key.${key.name}.tsig`
+            )
           };
         }),
         "forward-ddns": {
