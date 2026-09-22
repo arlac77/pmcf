@@ -377,7 +377,7 @@ export class kea extends CoreService {
             algorithm: key.algorithm,
             "secret-file": systemdCredentialFileName(
               "kea-dhcp-ddns.service",
-              `key.${key.name}.tsig`
+              `kea.${key.name}.tsig`
             )
           };
         }),
