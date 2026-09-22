@@ -21,7 +21,8 @@ import {
   CoreService,
   Endpoint,
   sortDescendingByPriority,
-  bind_key
+  bind_key,
+  systemdCredentialFileName
 } from "pmcf";
 import { FAMILY_UNIX, PROTOCOL_TCP } from "../constants.mjs";
 import { writeLines } from "../utils.mjs";
@@ -358,7 +359,7 @@ export class kea extends CoreService {
           return {
             name: key.name,
             algorithm: key.algorithm,
-            "secret-file": `/run/credentials/kea-dhcp-ddns.service/kea.${key.name}.tsig`
+            "secret-file": systemdCredentialFileName('kea-dhcp-ddns.service',`key.${key.name}.tsig`)
           };
         }),
         "forward-ddns": {

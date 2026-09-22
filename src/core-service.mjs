@@ -458,3 +458,7 @@ export function endpointAddresses(entries) {
     )
     .map(e => e.networkAddress.address);
 }
+
+export function systemdCredentialFileName(serviceName, credentialName) {
+  return `/run/credentials/${serviceName}${credentialName}`;
+}
