@@ -19,7 +19,7 @@ import {
   boolean_attribute_writable,
   default_attribute_writable
 } from "pacc";
-import { union } from "./utils.mjs";
+import { union, writeLines } from "./utils.mjs";
 import { addType } from "./type.mjs";
 import { core } from "./core.mjs";
 import { owner_attribute, aliases_attribute } from "./common-attributes.mjs";
@@ -208,6 +208,30 @@ export class base extends core {
 
   get systemGroupName() {
     return this.constructor.name;
+  }
+
+  async writeSystemdCredentialConfig(dir, serviceName) {
+    let lines = [];
+
+    const seen = new Set();
+
+    for (const [credentialName, cred] of this.credentials) {
+      if (cred.tags.has(serviceName) && !seen.has(credentialName)) {
+        seen.add(credentialName);
+        lines.push(
+          `LoadCredentialEncrypted=${cred.localName}:/etc/credstore.encrypted/${credentialName}`
+        );
+      }
+    }
+
+    if (lines.length) {
+      await writeLines(
+        join(dir, `usr/lib/systemd/system/${serviceName}.d`),
+        `credentials.conf`,
+        "[Service]",
+        lines
+      );
+    }
   }
 
   set content(value) {

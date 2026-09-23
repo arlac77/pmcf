@@ -2,9 +2,12 @@ import { join } from "node:path";
 import { duration_attribute_writable } from "pacc";
 import { addType } from "./type.mjs";
 import { cluster } from "./cluster.mjs";
+import { credential } from "./credential.mjs";
 import { FAMILY_IPV4 } from "ip-utilties";
 import { serviceEndpoints } from "./core-service.mjs";
 import { PROTOCOL_TCP } from "./constants.mjs";
+import { credentials_attribute } from "./common-attributes.mjs";
+
 import { writeLines } from "./utils.mjs";
 
 export class keepalived extends cluster {
@@ -14,7 +17,8 @@ export class keepalived extends cluster {
       ...duration_attribute_writable,
       name: "checkInterval",
       default: 60
-    }
+    },
+    credentials: credentials_attribute
   };
 
   static {
@@ -22,6 +26,7 @@ export class keepalived extends cluster {
   }
 
   checkInterval = 60;
+  credentials = new Map();
 
   async *preparePackages(stagingDir) {
     for (const ni of [...this.owner.clusters.values()].reduce(
@@ -55,7 +60,6 @@ export class keepalived extends cluster {
         ""
       ];
 
-      const credentials = new Map();
       for (const cluster of [...this.owner.clusters.values()].sort((a, b) =>
         a.name.localeCompare(b.name)
       )) {
@@ -87,16 +91,20 @@ export class keepalived extends cluster {
           reducedPrio = cluster.backups.indexOf(ni) + 5;
         }
 
-        const credential = name.toUpperCase() + "_PASSWORD";
-        credentials.set(credential, name);
+        const cred = new credential(this);
+        cred.name = `keepalived.${name}.password`;
+        cred.localName = name.toUpperCase() + "_PASSWORD";
+        cred._tags.add("keepalived.service");
+        this.credentials.set(cred.name, cred);
+
         cfg.push(`  priority ${host.priority - reducedPrio}`);
         cfg.push("  smtp_alert");
         cfg.push("  advert_int 5");
         cfg.push("  authentication {");
         cfg.push("    auth_type PASS");
         cfg.push("    auth_pass pass1234");
-        cfg.push("    # auth_pass ${_ENV " + credential + "}");
-        cfg.push("    # auth_pass ${" + credential + "}");
+        cfg.push("    # auth_pass ${_ENV " + cred.localName + "}");
+        cfg.push("    # auth_pass ${" + cred.localName + "}");
         cfg.push("  }");
 
         cfg.push(
@@ -191,19 +199,7 @@ export class keepalived extends cluster {
           ]
         );
 
-        await writeLines(
-          join(packageStagingDir, "/usr/lib/systemd/system/keepalived.d"),
-          "credentials.conf",
-          [
-            "[Service]",
-            ...credentials
-              .entries()
-              .map(
-                ([credName, instance]) =>
-                  `LoadCredentialEncrypted=${credName}:/etc/credstore.encrypted/keepalived.${instance}.password`
-              )
-          ]
-        );
+        await this.writeSystemdCredentialConfig(packageStagingDir, "keepalived.service");
       }
 
       await writeLines(

@@ -10,9 +10,7 @@ import {
   string_set_attribute_writable,
   number_attribute_writable,
   priority_attribute,
-  default_collection_attribute_writable,
-  asArray,
-  boolean_attribute_writable_false
+  asArray
 } from "pacc";
 import {
   base,
@@ -22,12 +20,12 @@ import {
   HTTPEndpoint,
   unix_endpoint
 } from "pmcf";
-import { writeLines } from "./utils.mjs";
 import { addType } from "./type.mjs";
 import { FAMILY_UNIX, FAMILY_DNS } from "./constants.mjs";
 import {
   networkAddressAttributes,
-  extends_attribute,credentials_attribute,
+  extends_attribute,
+  credentials_attribute,
   networkInterfaces_attribute,
   endpointAttributes
 } from "./common-attributes.mjs";
@@ -265,30 +263,6 @@ export class CoreService extends base {
 
   get types() {
     return serviceTypes(ServiceTypes[this.type]);
-  }
-
-  async writeSystemdCredentialConfig(dir, serviceName) {
-    let lines = [];
-
-    const seen = new Set();
-
-    for (const [credentialName, cred] of this.credentials) {
-      if (cred.tags.has(serviceName) && !seen.has(credentialName)) {
-        seen.add(credentialName);
-        lines.push(
-          `LoadCredentialEncrypted=${credentialName}:/etc/credstore.encrypted/${credentialName}`
-        );
-      }
-    }
-
-    if (lines.length) {
-      await writeLines(
-        join(dir, `usr/lib/systemd/system/${serviceName}.d`),
-        `credentials.conf`,
-        "[Service]",
-        lines
-      );
-    }
   }
 
   get systemdService() {
