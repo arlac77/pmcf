@@ -58,12 +58,6 @@ export function assign(attribute, object, value) {
       return value;
     }
 
-    if (attribute.values) {
-      if (!attribute.values.has(value)) {
-        error("unkown value", attribute);
-      }
-    }
-
     if (attribute.collection) {
       const current = object[attribute.name];
 
