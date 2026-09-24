@@ -6,10 +6,10 @@ import {
 } from "pacc";
 import { FAMILY_IPV4 } from "ip-utilties";
 import { addType } from "../type.mjs";
+import { PROTOCOL_TCP } from "../constants.mjs";
 import { core } from "../core.mjs";
 import { credential } from "../credential.mjs";
 import { CoreService, serviceEndpoints } from "../core-service.mjs";
-import { PROTOCOL_TCP } from "../constants.mjs";
 
 import { writeLines } from "../utils.mjs";
 
@@ -67,39 +67,39 @@ export class keepalived extends CoreService {
     addType(this);
   }
 
-  clusters = new Map();
+  clusters = new Set();
   checkInterval = 60;
 
   async *preparePackages(dir) {
     const packageData = await this.preparePackage(dir);
 
+    const extra = [];
+
+    const smtp = this.smtp;
+
+    if (smtp) {
+      extra.push(`  smtp_server ${smtp.address()}`);
+    }
+
+    const cfg = [
+      "global_defs {",
+      "   notification_email {",
+      "    " + this.administratorEmail,
+      "  }",
+      ...extra,
+      `  notification_email_from keepalived@${this.domainName}`,
+      "  enable_script_security",
+      "  script_user root",
+      "  max_auto_priority 20",
+      "}",
+      ""
+    ];
+
     for (const clusterMember of this.clusters.values()) {
       const cluster = clusterMember.cluster;
       const host = cluster.host;
-
-      const extra = [];
-
-      const smtp = this.smtp;
-
-      if (smtp) {
-        extra.push(`  smtp_server ${smtp.address()}`);
-      }
-
-      const cfg = [
-        "global_defs {",
-        "   notification_email {",
-        "    " + this.administratorEmail,
-        "  }",
-        ...extra,
-        `  notification_email_from keepalived@${host.domainName}`,
-        "  enable_script_security",
-        "  script_user root",
-        "  max_auto_priority 20",
-        "}",
-        ""
-      ];
-
       const clusterName = cluster.name;
+
       cfg.push(`vrrp_instance ${clusterName} {`);
       cfg.push(`  state ${clusterMember.role.toUpperCase()}`);
 

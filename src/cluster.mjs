@@ -1,22 +1,25 @@
-import  { duration_attribute_writable} from "pacc";
-import { host } from "./host.mjs";
-
+import {
+  duration_attribute_writable,
+  default_collection_attribute_writable
+} from "pacc";
 import { addType } from "./type.mjs";
-import { networkInterfaces_attribute } from "./common-attributes.mjs";
+import { owner_attribute } from "./common-attributes.mjs";
+import { host } from "./host.mjs";
 
 export class cluster extends host {
   static priority = 1.5;
   static attributes = {
     members: {
-      ...networkInterfaces_attribute,
+      ...default_collection_attribute_writable,
+      type: "core",
+      backpointer: owner_attribute,
       name: "members"
     },
-        checkInterval: {
-          ...duration_attribute_writable,
-          name: "checkInterval",
-          default: 60
-        },
-    
+    checkInterval: {
+      ...duration_attribute_writable,
+      name: "checkInterval",
+      default: 60
+    }
   };
 
   static {
