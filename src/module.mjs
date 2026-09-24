@@ -6,7 +6,6 @@ export * from "./common-attributes.mjs";
 export * from "./base.mjs";
 export * from "./credential.mjs";
 export * from "./cluster.mjs";
-export * from "./keepalived.mjs";
 
 export * from "./owner.mjs";
 export * from "./site.mjs";
@@ -28,6 +27,7 @@ export * from "./core-service.mjs";
 export * from "./service.mjs";
 export * from "./extra-source-service.mjs";
 export * from "./endpoint.mjs";
+
 export * from "./services/bind.mjs";
 export * from "./services/chrony.mjs";
 export * from "./services/kea.mjs";
@@ -43,4 +43,6 @@ export * from "./services/systemd-journal-remote.mjs";
 export * from "./services/systemd-journal-upload.mjs";
 export * from "./services/systemd-timesyncd.mjs";
 export * from "./services/systemd-resolved.mjs";
+export * from "./services/keepalived.mjs";
+
 export * from "./initialization-context.mjs";

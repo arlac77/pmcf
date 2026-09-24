@@ -1,6 +1,7 @@
 {
   "content": {
-    "dependencies": ["bind"]
+    "packaging" : "alpm",
+    "dependencies": "bind"
   },
   "views": {
     "trusted": {

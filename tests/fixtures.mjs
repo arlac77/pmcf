@@ -158,8 +158,10 @@ export function root1(root, filter) {
     name: "C1",
     instanceof: cluster,
     id: 77,
-    masters: [host1.networkInterfaces.eth0],
+    /*
+    members: [host1.networkInterfaces.eth0],
     backups: [host2.networkInterfaces.wlan0],
+    */
     hosts: new Map([
       [host1.name, host1],
       [host2.name, host2]

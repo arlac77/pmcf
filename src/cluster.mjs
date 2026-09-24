@@ -1,39 +1,29 @@
+import  { duration_attribute_writable} from "pacc";
 import { host } from "./host.mjs";
+
 import { addType } from "./type.mjs";
-import {
-  networkInterfaces_attribute,
-  cluster_attribute
-} from "./common-attributes.mjs";
+import { networkInterfaces_attribute } from "./common-attributes.mjs";
 
 export class cluster extends host {
   static priority = 1.5;
   static attributes = {
-    masters: {
-      ...networkInterfaces_attribute,
-      name: "masters",
-      backpointer: cluster_attribute
-    },
-    backups: {
-      ...networkInterfaces_attribute,
-      name: "backups",
-      backpointer: cluster_attribute
-    },
     members: {
       ...networkInterfaces_attribute,
       name: "members"
-    }
+    },
+        checkInterval: {
+          ...duration_attribute_writable,
+          name: "checkInterval",
+          default: 60
+        },
+    
   };
 
   static {
     addType(this);
   }
 
-  masters = [];
-  backups = [];
-
-  get members() {
-    return new Set(this.masters).union(new Set(this.backups));
-  }
+  members = new Set();
 
   get isCluster() {
     return true;

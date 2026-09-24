@@ -6,7 +6,16 @@
     "eth0": {
       "kind": "ethernet",
       "network": "/L1/n1",
-      "ipAddresses": "192.168.1.1"
+      "ipAddresses": "192.168.1.1",
+      "services": {
+        "keepalived": {
+          "clusters": {
+            "/L1/C1": {
+              "role": "master"
+            }
+          }
+        }
+      }
     }
   },
   "services": {
