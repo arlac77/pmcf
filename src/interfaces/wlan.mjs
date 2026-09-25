@@ -72,6 +72,7 @@ export class wlan extends ethernet {
       ]
     );
 
-    packageData.properties.optional.push("iwd", "impala");
+    packageData.properties.optional.add("iwd");
+    packageData.properties.optional.add("impala");
   }
 }
