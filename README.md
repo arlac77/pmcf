@@ -96,6 +96,7 @@ generates config packages for:
     *   [Properties](#properties-1)
     *   [systemdConfigs](#systemdconfigs-1)
         *   [Parameters](#parameters-18)
+*   [priority](#priority-1)
 *   [NetworkAddress](#networkaddress)
     *   [Parameters](#parameters-19)
     *   [subnet](#subnet)
@@ -372,6 +373,10 @@ Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 *   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
 Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**&#x20;
+
+## priority
+
+Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
 ## NetworkAddress
 
