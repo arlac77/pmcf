@@ -55,7 +55,7 @@
     "filtered-map": "^1.0.0",
     "ip-utilties": "^3.13.1",
     "npm-pkgbuild": "^22.2.7",
-    "pacc": "^11.17.5",
+    "pacc": "^11.17.6",
     "package-directory": "^8.2.0",
     "yaml": "^2.9.1"
   },
