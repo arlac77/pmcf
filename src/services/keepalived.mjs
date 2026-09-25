@@ -13,6 +13,11 @@ import { CoreService, serviceEndpoints } from "../core-service.mjs";
 
 import { writeLines } from "../utils.mjs";
 
+const ROLE_PRIORITIES = {
+  master: 10,
+  backup: 0
+};
+
 export class keepalive_cluster_member extends core {
   static attributes = {
     cluster: {
@@ -23,7 +28,7 @@ export class keepalive_cluster_member extends core {
     role: {
       ...enum_string_attribute_writable,
       name: "role",
-      values: new Set(["master", "backup"])
+      values: new Set(Object.keys(ROLE_PRIORITIES))
     }
   };
   static key = "cluster";
@@ -51,6 +56,10 @@ export class keepalive_cluster_member extends core {
   get address() {
     return this.owner.owner.address;
   }
+
+  get priority() {
+    return this.owner.priority + ROLE_PRIORITIES[this.role];
+  }
 }
 
 export class keepalived extends CoreService {
@@ -68,7 +77,6 @@ export class keepalived extends CoreService {
   }
 
   clusters = new Set();
-  checkInterval = 60;
 
   async *preparePackages(dir) {
     const packageData = await this.preparePackage(dir);
@@ -97,7 +105,6 @@ export class keepalived extends CoreService {
 
     for (const clusterMember of this.clusters.values()) {
       const cluster = clusterMember.cluster;
-      const host = cluster.host;
       const clusterName = cluster.name;
 
       cfg.push(`vrrp_instance ${clusterName} {`);
@@ -123,20 +130,13 @@ export class keepalived extends CoreService {
 
       cfg.push(`  virtual_router_id ${cluster.id}`);
 
-      let reducedPrio = 0;
-      /*
-      let reducedPrio = cluster.masters.indexOf(ni);
-      if (reducedPrio < 0) {
-        reducedPrio = cluster.backups.indexOf(ni) + 5;
-      }
-*/
       const cred = new credential(this);
       cred.name = `keepalived.${clusterName}.password`;
       cred.localName = clusterName.toUpperCase() + "_PASSWORD";
       cred._tags.add("keepalived.service");
       this.credentials.set(cred.name, cred);
 
-      cfg.push(`  priority ${host.priority - reducedPrio}`);
+      cfg.push(`  priority ${clusterMember.priority}`);
       cfg.push("  smtp_alert");
       cfg.push("  advert_int 5");
       cfg.push("  authentication {");
@@ -170,7 +170,7 @@ export class keepalived extends CoreService {
             `services[types[${endpoint.type}]][0]`
           );
 
-          console.log(member.fullName, endpoint.type, memberService?.fullName);
+          //console.log(member.fullName, endpoint.type, memberService?.fullName);
           cfg.push(`  real_server ${member.address} ${memberService.port} {`);
           cfg.push(`    weight ${memberService.weight}`);
 
