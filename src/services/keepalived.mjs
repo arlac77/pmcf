@@ -142,7 +142,7 @@ export class keepalived extends CoreService {
       cfg.push("  authentication {");
       cfg.push("    auth_type PASS");
       cfg.push("    # auth_pass pass1234");
-      cfg.push(`    # auth_pass file:${_ENV CREDENTIALS_DIRECTORY}/keepalived.${cluster.name}.password`);
+      cfg.push(`    # auth_pass file:\${_ENV CREDENTIALS_DIRECTORY}/keepalived.${cluster.name}.password`);
       cfg.push("    # auth_pass ${_ENV " + cred.localName + "}");
       cfg.push("    # auth_pass ${" + cred.localName + "}");
       cfg.push("  }");
