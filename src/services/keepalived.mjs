@@ -14,8 +14,8 @@ import { CoreService, serviceEndpoints } from "../core-service.mjs";
 import { writeLines } from "../utils.mjs";
 
 const ROLE_PRIORITIES = {
-  master: 10,
-  backup: 0
+  master: 0,
+  backup: -20
 };
 
 export class keepalive_cluster_member extends core {
