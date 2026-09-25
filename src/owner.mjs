@@ -33,6 +33,11 @@ export class owner extends ServiceOwner {
     networkInterfaces: networkInterfaces_attribute,
     owners: owners_attribute,
     country: { ...string_attribute_writable, name: "country" },
+    smtpServer: {
+      ...string_attribute_writable,
+      name: "smtpServer",
+      deferredExpression: true
+    },
     domain: { ...string_attribute_writable, name: "domain" },
     domains: { ...string_set_attribute_writable, name: "domains" },
     timezone: { ...string_attribute_writable, name: "timezone" },
@@ -191,14 +196,6 @@ export class owner extends ServiceOwner {
     }
 
     return "admin@" + this.domain;
-  }
-
-  get smtp() {
-    return this._smtp;
-  }
-
-  set smtp(value) {
-    this._smtp = value;
   }
 
   _domain;

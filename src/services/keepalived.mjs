@@ -92,10 +92,10 @@ export class keepalived extends CoreService {
 
     const extra = [];
 
-    const smtp = this.smtp;
+    const smtpServer = this.smtpServer;
 
-    if (smtp) {
-      extra.push(`  smtp_server ${smtp.address()}`);
+    if (smtpServer) {
+      extra.push(`  smtp_server ${smtpServer.address}`);
     }
 
     const cfg = [

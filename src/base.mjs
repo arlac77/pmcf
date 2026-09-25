@@ -109,8 +109,8 @@ export class base extends core {
     return this.owner?.network;
   }
 
-  get smtp() {
-    return this.owner?.smtp;
+  get smtpServer() {
+    return this.owner?.smtpServer;
   }
 
   get domain() {
@@ -180,7 +180,6 @@ export class base extends core {
   get priority() {
     return this._priority ?? this.owner?.priority;
   }
-
 
   get services() {
     return this.owner?.services || new Map();
