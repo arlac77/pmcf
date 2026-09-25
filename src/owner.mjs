@@ -193,6 +193,14 @@ export class owner extends ServiceOwner {
     return "admin@" + this.domain;
   }
 
+  get smtp() {
+    return this._smtp;
+  }
+
+  set smtp(value) {
+    this._smtp = value;
+  }
+
   _domain;
 
   set domain(value) {
