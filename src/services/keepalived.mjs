@@ -2,7 +2,8 @@ import { join } from "node:path";
 import {
   default_attribute_writable,
   default_collection_attribute_writable,
-  enum_string_attribute_writable
+  enum_string_attribute_writable,
+  priority_attribute_writable
 } from "pacc";
 import { FAMILY_IPV4 } from "ip-utilties";
 import { addType } from "../type.mjs";
@@ -29,7 +30,8 @@ export class keepalive_cluster_member extends core {
       ...enum_string_attribute_writable,
       name: "role",
       values: new Set(Object.keys(ROLE_PRIORITIES))
-    }
+    },
+    priority: priority_attribute_writable
   };
   static key = "cluster";
   static {
@@ -58,7 +60,14 @@ export class keepalive_cluster_member extends core {
   }
 
   get priority() {
-    return this.owner.priority + ROLE_PRIORITIES[this.role];
+    return;
+  }
+
+  /**
+   * @return {number}
+   */
+  get priority() {
+    return this._priority ?? this.owner.priority + ROLE_PRIORITIES[this.role];
   }
 }
 
@@ -142,7 +151,9 @@ export class keepalived extends CoreService {
       cfg.push("  authentication {");
       cfg.push("    auth_type PASS");
       cfg.push("    auth_pass pass1234");
-      cfg.push(`    # auth_pass file:\${_ENV CREDENTIALS_DIRECTORY}/keepalived.${cluster.name}.password`);
+      cfg.push(
+        `    # auth_pass file:\${_ENV CREDENTIALS_DIRECTORY}/keepalived.${cluster.name}.password`
+      );
       cfg.push("    # auth_pass ${_ENV " + cred.localName + "}");
       cfg.push("    # auth_pass ${" + cred.localName + "}");
       cfg.push("  }");

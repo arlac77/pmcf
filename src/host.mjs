@@ -5,7 +5,7 @@ import {
   string_attribute,
   string_attribute_writable,
   number_attribute_writable,
-  priority_attribute,
+  priority_attribute_writable,
   enum_string_attribute_writable,
   asArray
 } from "pacc";
@@ -38,7 +38,7 @@ export class host extends ServiceOwner {
       name: "deployment",
       values: new Set(["production", "development"])
     },
-    priority: priority_attribute,
+    priority: priority_attribute_writable,
     weight: { ...number_attribute_writable, name: "weight" },
     serial: { ...string_attribute_writable, name: "serial" },
     vendor: { ...string_attribute_writable, name: "vendor" },
