@@ -7,4 +7,5 @@ export const PROTOCOL_QUIC = "quic";
 export const FAMILY_UNIX = "unix";
 export const FAMILY_DNS = "dns";
 export const FAMILY_IPV4_IPV6 = new Set([FAMILY_IPV4, FAMILY_IPV6]);
+export const FAMILY_DNS_IPV4_IPV6 = new Set([FAMILY_DNS, FAMILY_IPV4, FAMILY_IPV6]);
 

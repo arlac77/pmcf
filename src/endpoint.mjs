@@ -169,7 +169,7 @@ export class DomainNameEndpoint extends PortEndpoint {
 }
 
 /**
- * Endpoint based on http
+ * Endpoint based on url
  */
 export class HTTPEndpoint extends BaseEndpoint {
   static name = "url_endpoint";
