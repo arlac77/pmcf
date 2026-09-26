@@ -145,6 +145,8 @@ export class CoreService extends base {
       filter = undefined;
     }
 
+    const seen = new Set();
+
     for (const e of data) {
       if (type && e.type.name !== type) {
         continue;
@@ -172,7 +174,11 @@ export class CoreService extends base {
             }
 
             if (e.scheme || e.pathname) {
-              result.push(new HTTPEndpoint(this, na, options));
+              const he = new HTTPEndpoint(this, na, options);
+              if (!seen.has(he.url.toString())) {
+                seen.add(he.url.toString());
+                result.push(he);
+              }
             } else {
               result.push(new Endpoint(this, na, options));
             }
