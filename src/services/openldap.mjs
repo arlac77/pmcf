@@ -10,7 +10,7 @@ export class openldap extends CoreService {
     systemdService: "slapd.service",
     systemUserName: "ldap",
     systemGroupName: "ldap",
-    extends: ["ldap", "ldapi"]
+    extends: ["ldap", "ldaps", "ldapi"]
   };
 
   static {
