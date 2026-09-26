@@ -123,19 +123,14 @@ export class keepalived extends CoreService {
 
       cfg.push(`  interface ${ni.name}`);
 
+      cfg.push("  virtual_ipaddress {");
+
       for (const na of cluster.networkAddresses(
         na => na.networkInterface.kind !== "loopback"
       )) {
-        cfg.push(
-          `  ${
-            na.family === FAMILY_IPV4
-              ? "virtual_ipaddress"
-              : "virtual_ipaddress_excluded"
-          } {`
-        );
         cfg.push(`    ${na.cidrAddress} dev ${ni.name} label ${clusterName}`);
-        cfg.push("  }");
       }
+      cfg.push("  }");
 
       cfg.push(`  virtual_router_id ${cluster.id}`);
 
