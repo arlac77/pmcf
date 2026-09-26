@@ -110,7 +110,7 @@ test("HTTPEndpoint basics", t => {
   t.is(ep.port, 80);
   t.is(ep.pathname, "/p1");
   t.is(ep.tls, false);
-  t.is(ep.url.toString(), "http://127.0.0.1/p1");
+  t.is(ep.url.toString(), "http://localhost/p1");
 });
 
 test("HTTPEndpoint from URL", t => {

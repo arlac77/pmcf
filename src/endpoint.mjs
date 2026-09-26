@@ -201,19 +201,19 @@ export class HTTPEndpoint extends BaseEndpoint {
     } else {
       this.family = data.family ?? address.family;
 
-      const scheme = data.scheme ?
-        `${data.scheme}://` :
-        (data.tls ? "https://" : "http://");
+      const scheme = data.scheme ? data.scheme : data.tls ? "https" : "http";
 
-      this.url = new URL(scheme +
-          (data.family === FAMILY_IPV6
-            ? "[" + address.address + "]"
-            : address.address) +
-          ":" +
-          data.port +
-          (data.pathname ?? "/")
+      const domainName = [...address.domainNames][0];
+      const hostname =
+        domainName ??
+        (data.family === FAMILY_IPV6
+          ? "[" + address.address + "]"
+          : address.address);
+
+      this.url = new URL(
+        `${scheme}://${hostname}:${data.port}` + (data.pathname ?? "/")
       );
-      this.hostname = address.address;
+      this.hostname = domainName ?? address.address;
     }
   }
 

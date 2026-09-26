@@ -12,7 +12,7 @@ test("influxdb basics", async t => {
 
   t.true(inst instanceof influxdb);
   t.is(inst.port, 8086);
-  t.is(inst.url.toString(), "http://192.168.1.1:8086/");
+  t.is(inst.url.toString(), "http://host1.mydomain.com:8086/");
 
   t.is(inst.metricsDisabled, true);
 });
