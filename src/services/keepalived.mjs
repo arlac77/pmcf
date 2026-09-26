@@ -71,6 +71,8 @@ export class keepalive_cluster_member extends core {
   }
 }
 
+const states = ["master", "backup", "fault"];
+
 export class keepalived extends CoreService {
   static priority = 1.5;
   static attributes = {
@@ -145,19 +147,19 @@ export class keepalived extends CoreService {
       cfg.push("  advert_int 5");
       cfg.push("  authentication {");
       cfg.push("    auth_type PASS");
-      cfg.push("    auth_pass pass1234");
       cfg.push(
-        `    # auth_pass file:\${_ENV CREDENTIALS_DIRECTORY}/keepalived.${cluster.name}.password`
+        `    auth_pass file:\${_ENV CREDENTIALS_DIRECTORY}/keepalived.${cluster.name}.password`
       );
+      cfg.push("    # auth_pass pass1234");
       cfg.push("    # auth_pass ${_ENV " + cred.localName + "}");
       cfg.push("    # auth_pass ${" + cred.localName + "}");
       cfg.push("  }");
 
-      cfg.push(
-        `  notify_master "/usr/bin/systemctl start ${clusterName}-master.target"`,
-        `  notify_backup "/usr/bin/systemctl start ${clusterName}-backup.target"`,
-        `  notify_fault "/usr/bin/systemctl start ${clusterName}-fault.target"`
-      );
+      for (const state of states) {
+        cfg.push(
+          `  notify_${state} "/usr/bin/systemctl start ${clusterName}-${state}.target"`
+        );
+      }
 
       cfg.push("}", "");
 
@@ -209,37 +211,19 @@ export class keepalived extends CoreService {
         cfg.push("}", "");
         break; // only one for now
       }
-      await writeLines(
-        join(dir, "/usr/lib/systemd/system"),
-        `${clusterName}-master.target`,
-        [
-          "[Unit]",
-          `Description=master state of cluster ${clusterName}`,
-          "PartOf=keepalived.service",
-          `Conflicts=${clusterName}-backup.target ${clusterName}-fault.target`
-        ]
-      );
 
-      await writeLines(
-        join(dir, "/usr/lib/systemd/system"),
-        `${clusterName}-backup.target`,
-        [
-          "[Unit]",
-          `Description=backup state of cluster ${clusterName}`,
-          "PartOf=keepalived.service",
-          `Conflicts=${clusterName}-master.target ${clusterName}-fault.target`
-        ]
-      );
-
-      await writeLines(
-        join(dir, "/usr/lib/systemd/system"),
-        `${clusterName}-fault.target`,
-        [
-          "[Unit]",
-          `Description=fault state of cluster ${clusterName}`,
-          `Conflicts=${clusterName}-master.target ${clusterName}-backup.target`
-        ]
-      );
+      for (const state of states) {
+        await writeLines(
+          join(dir, "/usr/lib/systemd/system"),
+          `${clusterName}-${state}.target`,
+          [
+            "[Unit]",
+            `Description=${state} state of cluster ${clusterName}`,
+            "PartOf=keepalived.service",
+            `Conflicts=${states.filter(s=>s!==state).map(other=>`${clusterName}-${other}.target`).join(' ')}`
+          ]
+        );
+      }
 
       await this.writeSystemdCredentialConfig(dir, "keepalived.service");
 
