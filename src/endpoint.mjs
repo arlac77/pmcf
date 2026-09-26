@@ -174,7 +174,8 @@ export class DomainNameEndpoint extends PortEndpoint {
 export class HTTPEndpoint extends BaseEndpoint {
   static name = "url_endpoint";
   static attributes = {
-    url: url_attribute
+    url: url_attribute,
+    addressType: { ...string_attribute, name: "addressType" }
   };
 
   static {
@@ -199,6 +200,7 @@ export class HTTPEndpoint extends BaseEndpoint {
     } else if (address instanceof URL) {
       this.url = address;
     } else {
+      this.networkAddress = address;
       this.family = data.family ?? address.family;
 
       const scheme = data.scheme ? data.scheme : data.tls ? "https" : "http";
@@ -238,6 +240,10 @@ export class HTTPEndpoint extends BaseEndpoint {
 
   get protocol() {
     return PROTOCOL_TCP;
+  }
+
+  get addressType() {
+    return this.networkAddress?.type;
   }
 
   get tls() {
