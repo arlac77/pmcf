@@ -100,7 +100,8 @@ test("HTTPEndpoint basics", t => {
   const ep = new HTTPEndpoint(s1, addr, {
     type: ServiceTypes["http-control"],
     port: 80,
-    pathname: "/p1"
+    pathname: "/p1",
+    scheme: "http"
   });
 
   t.is(ep.type, "http-control");

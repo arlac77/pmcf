@@ -171,7 +171,7 @@ export class CoreService extends base {
               continue;
             }
 
-            if (e.pathname) {
+            if (e.scheme || e.pathname) {
               result.push(new HTTPEndpoint(this, na, options));
             } else {
               result.push(new Endpoint(this, na, options));

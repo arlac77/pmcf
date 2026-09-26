@@ -186,6 +186,7 @@ export class HTTPEndpoint extends BaseEndpoint {
    * @param {Service} service
    * @param {string|URL} address
    * @param {object} data
+   * @param {string} data.scheme
    * @param {number} data.port
    * @param {string} data.pathname
    * @param {string} data.family
@@ -200,8 +201,11 @@ export class HTTPEndpoint extends BaseEndpoint {
     } else {
       this.family = data.family ?? address.family;
 
-      this.url = new URL(
-        (data.tls ? "https://" : "http://") +
+      const scheme = data.scheme ?
+        `${data.scheme}://` :
+        (data.tls ? "https://" : "http://");
+
+      this.url = new URL(scheme +
           (data.family === FAMILY_IPV6
             ? "[" + address.address + "]"
             : address.address) +
