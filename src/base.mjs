@@ -242,7 +242,9 @@ export class base extends core {
     if (!this._content) {
       for (const e of this.walkDirections(["extends"])) {
         if (e._content) {
+          const dir = e._content.directory;
           this._content = e._content.forOwner(this);
+          this._content.directory = dir;
           break;
         }
       }

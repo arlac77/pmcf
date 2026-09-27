@@ -3,7 +3,8 @@
   "base": "dc=mf,dc=de",
   "content": {
     "dependencies": "openldap",
-    "group": "config"
+    "group": "config",
+    "hooks": "hooks.sh"
   },
   "properties": {
     "certname": "primary",

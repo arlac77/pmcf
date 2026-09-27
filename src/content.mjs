@@ -151,6 +151,14 @@ export class content extends core {
     this._description = value;
   }
 
+  set directory(directory) {
+    this._directory = directory;
+  }
+
+  get directory() {
+    return this._directory ?? this.owner.directory;
+  }
+
   /**
    * @return {string}
    */
@@ -270,10 +278,9 @@ export class content extends core {
    * @param {object} packageData
    */
   async loadHooks(packageData) {
-    for (const node of this.walkDirections(["this", "extends"])) {
-      for (const hook of node._hooks) {
-        console.log("load hook",node.fullName,node.directory,node.owner.directory);
-        await loadHooks(packageData, join(node.owner.directory, hook));
+    for (const content of this.walkDirections(["this", "extends"])) {
+      for (const hook of content._hooks) {
+        await loadHooks(packageData, join(content.directory, hook));
       }
     }
   }
