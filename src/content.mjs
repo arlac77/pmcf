@@ -272,6 +272,7 @@ export class content extends core {
   async loadHooks(packageData) {
     for (const node of this.walkDirections(["this", "extends"])) {
       for (const hook of node._hooks) {
+        console.log("load hook",node.fullName,node.directory,node.owner.directory);
         await loadHooks(packageData, join(node.owner.directory, hook));
       }
     }
