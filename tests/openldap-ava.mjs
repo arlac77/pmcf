@@ -11,6 +11,13 @@ test("OpenLDAPService basics", async t => {
 
   const openldapInst = ic.named("/L1/host1/openldap");
 
+  t.is(openldapInst.directory, join(ic.directory, "/L1/host1/openldap"));
+
+  const t1 = ic.named("/templates/openldap");
+  t.true(openldapInst.extends.has(t1));
+  t.is(t1.directory, join(ic.directory, "/templates/openldap"));
+
+  //console.log([...openldapInst.extends].map(e => e.fullName));
   t.true(openldapInst instanceof openldap);
   t.is(openldapInst.base, "dc=mydomain,dc=com");
   t.is(openldapInst.uri, "ldap://");
