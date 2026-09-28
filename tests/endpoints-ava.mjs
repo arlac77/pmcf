@@ -9,7 +9,7 @@ import {
   ServiceTypes,
   addServiceType,
   Endpoint,
-  HTTPEndpoint,
+  url_endpoint,
   DomainNameEndpoint,
   unix_endpoint,
   sortByFamilyAndAddress,
@@ -92,12 +92,12 @@ test("Endpoint from Service basics", t => {
   t.is(e1.toString(), "dns:IPv4/10.0.0.1[53]");
 });
 
-test("HTTPEndpoint basics", t => {
+test("url_endpoint basics", t => {
   const { h1, s1 } = prepare();
   const nas = h1.networkAddresses();
 
   const addr = [...nas][0]
-  const ep = new HTTPEndpoint(s1, addr, {
+  const ep = new url_endpoint(s1, addr, {
     type: ServiceTypes["http-control"],
     port: 80,
     pathname: "/p1"
@@ -113,10 +113,10 @@ test("HTTPEndpoint basics", t => {
   t.is(ep.url.toString(), "http://localhost/p1");
 });
 
-test("HTTPEndpoint from URL", t => {
+test("url_endpoint from URL", t => {
   const { s1 } = prepare();
 
-  const ep = new HTTPEndpoint(s1, "https://somwhere/aPath", {
+  const ep = new url_endpoint(s1, "https://somwhere/aPath", {
     type: ServiceTypes["http-control"]
   });
 
@@ -127,10 +127,10 @@ test("HTTPEndpoint from URL", t => {
   t.is(ep.url.toString(), "https://somwhere/aPath");
 });
 
-test("HTTPEndpoint from URL with port", t => {
+test("url_endpoint from URL with port", t => {
   const { s1 } = prepare();
 
-  const ep = new HTTPEndpoint(s1, "https://somwhere:1443/aPath", {
+  const ep = new url_endpoint(s1, "https://somwhere:1443/aPath", {
     type: ServiceTypes["http-control"]
   });
 

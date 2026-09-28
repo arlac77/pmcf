@@ -6,7 +6,7 @@ import {
   kea,
   ServiceOwner,
   Endpoint,
-  HTTPEndpoint,
+  url_endpoint,
   sortByFamilyAndAddress,
   assign,
   hosts_attribute
@@ -86,7 +86,7 @@ test("kea basics", t => {
   const a1 = [...h1.networkAddresses(na => na.family === FAMILY_IPV4)][0];
 
   const expected = [
-    new HTTPEndpoint(keaInst, a1, {
+    new url_endpoint(keaInst, a1, {
       type: "kea-control-agent",
       port: 53002,
       tls: false
@@ -97,7 +97,7 @@ test("kea basics", t => {
       port: 547,
       tls: false
     }),
-    new HTTPEndpoint(keaInst, a1, {
+    new url_endpoint(keaInst, a1, {
       type: "kea-ha-4",
       port: 53003,
       tls: false

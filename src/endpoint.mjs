@@ -171,8 +171,7 @@ export class DomainNameEndpoint extends PortEndpoint {
 /**
  * Endpoint based on url
  */
-export class HTTPEndpoint extends BaseEndpoint {
-  static name = "url_endpoint";
+export class url_endpoint extends BaseEndpoint {
   static attributes = {
     url: url_attribute,
     addressType: { ...string_attribute, name: "addressType" }

@@ -17,7 +17,7 @@ import {
   host,
   Endpoint,
   DomainNameEndpoint,
-  HTTPEndpoint,
+  url_endpoint,
   unix_endpoint
 } from "pmcf";
 import { addType } from "./type.mjs";
@@ -174,7 +174,7 @@ export class CoreService extends base {
             }
 
             if (e.scheme || e.pathname) {
-              const he = new HTTPEndpoint(this, na, options);
+              const he = new url_endpoint(this, na, options);
               if (!seen.has(he.url.toString())) {
                 seen.add(he.url.toString());
                 result.push(he);
