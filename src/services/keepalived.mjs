@@ -5,7 +5,7 @@ import {
   enum_string_attribute_writable,
   priority_attribute_writable
 } from "pacc";
-import { FAMILY_IPV4 } from "ip-utilties";
+import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import { addType } from "../type.mjs";
 import { PROTOCOL_TCP } from "../constants.mjs";
 import { core } from "../core.mjs";
@@ -125,14 +125,18 @@ export class keepalived extends CoreService {
 
       cfg.push(`  interface ${ni.name}`);
 
-      cfg.push("  virtual_ipaddress {");
-
-      for (const na of cluster.networkAddresses(
-        na => na.networkInterface.kind !== "loopback"
-      )) {
-        cfg.push(`    ${na.cidrAddress} dev ${ni.name} label ${clusterName}`);
+      function vip(slot, family) {
+        cfg.push(`  ${slot} {`);
+        for (const na of cluster.networkAddresses(
+          na => na.networkInterface.kind !== "loopback" && na.family === family
+        )) {
+          cfg.push(`    ${na.cidrAddress} dev ${ni.name} label ${clusterName}`);
+        }
+        cfg.push("  }");
       }
-      cfg.push("  }");
+
+      vip("virtual_ipaddress", FAMILY_IPV4);
+      vip("virtual_ipaddress_excluded", FAMILY_IPV6);
 
       cfg.push(`  virtual_router_id ${cluster.id}`);
 
@@ -220,7 +224,10 @@ export class keepalived extends CoreService {
             "[Unit]",
             `Description=${state} state of cluster ${clusterName}`,
             "PartOf=keepalived.service",
-            `Conflicts=${states.filter(s=>s!==state).map(other=>`${clusterName}-${other}.target`).join(' ')}`
+            `Conflicts=${states
+              .filter(s => s !== state)
+              .map(other => `${clusterName}-${other}.target`)
+              .join(" ")}`
           ]
         );
       }
