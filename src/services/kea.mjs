@@ -7,7 +7,7 @@ import {
   ADDRESS_TYPE_LOOPBACK
 } from "ip-utilties";
 import {
-  string_attribute_writable,
+  enum_string_attribute_writable,
   string_collection_attribute_writable,
   number_attribute_writable,
   boolean_attribute_writable_true,
@@ -95,10 +95,16 @@ export class kea extends CoreService {
       default: 86400
     },
     "ddns-conflict-resolution-mode": {
-      ...string_attribute_writable,
+      ...enum_string_attribute_writable,
       name: "ddns-conflict-resolution-mode",
-      scope: SCOPE_KEA
-      //values: new Set(["check-exists-with-dhcid","no-check-with-dhcid"])
+      scope: SCOPE_KEA,
+      values: new Set([
+        "check-with-dhcid",
+        "no-check-with-dhcid",
+        "no-check-without-dhcid",
+        "check-exists-with-dhcid"
+      ]),
+      default: "check-with-dhcid"
     }
   };
   static service = {
