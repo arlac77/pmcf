@@ -332,7 +332,7 @@ export class CoreService extends base {
       }
     }
 
-    for(const st of this.types) {
+    for (const st of this.types) {
       const dnsRecord = ServiceTypes[st]?.dnsRecord;
       if (dnsRecord) {
         let parameters = dnsRecord.parameters;
