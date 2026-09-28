@@ -332,43 +332,45 @@ export class CoreService extends base {
       }
     }
 
-    const dnsRecord = ServiceTypes[this.type]?.dnsRecord;
-    if (dnsRecord) {
-      let parameters = dnsRecord.parameters;
+    for(const st of this.types) {
+      const dnsRecord = ServiceTypes[st]?.dnsRecord;
+      if (dnsRecord) {
+        let parameters = dnsRecord.parameters;
 
-      if (parameters) {
-        for (const service of this.services) {
-          if (service !== this) {
-            const serviceType = ServiceTypes[service.type];
-            /*if(!serviceType) {
-              throw new Error(`Unknown service '${service.type}'`);
-            }*/
-            const r = serviceType?.dnsRecord;
+        if (parameters) {
+          for (const service of this.services) {
+            if (service !== this) {
+              const serviceType = ServiceTypes[service.type];
+              /*if(!serviceType) {
+                throw new Error(`Unknown service '${service.type}'`);
+              }*/
+              const r = serviceType?.dnsRecord;
 
-            if (r?.type === dnsRecord.type) {
-              parameters = dnsMergeParameters(parameters, r.parameters);
+              if (r?.type === dnsRecord.type) {
+                parameters = dnsMergeParameters(parameters, r.parameters);
+              }
             }
           }
-        }
 
-        records.push(
-          DNSRecord(
-            dnsFullName(domainName),
-            dnsRecord.type,
-            dnsPriority(this.priority),
-            ".",
-            dnsFormatParameters(parameters)
-          )
-        );
-      } else {
-        records.push(
-          DNSRecord(
-            "@",
-            dnsRecord.type,
-            dnsPriority(this.priority),
-            dnsFullName(domainName)
-          )
-        );
+          records.push(
+            DNSRecord(
+              dnsFullName(domainName),
+              dnsRecord.type,
+              dnsPriority(this.priority),
+              ".",
+              dnsFormatParameters(parameters)
+            )
+          );
+        } else {
+          records.push(
+            DNSRecord(
+              "@",
+              dnsRecord.type,
+              dnsPriority(this.priority),
+              dnsFullName(domainName)
+            )
+          );
+        }
       }
     }
 
