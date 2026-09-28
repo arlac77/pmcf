@@ -75,7 +75,7 @@ generates config packages for:
     *   [Parameters](#parameters-12)
     *   [port](#port)
     *   [socketAddress](#socketaddress)
-*   [HTTPEndpoint](#httpendpoint)
+*   [url\_endpoint](#url_endpoint)
     *   [Parameters](#parameters-13)
     *   [port](#port-1)
 *   [domainNames](#domainnames)
@@ -280,7 +280,7 @@ Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 
 Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
-## HTTPEndpoint
+## url\_endpoint
 
 **Extends BaseEndpoint**
 
