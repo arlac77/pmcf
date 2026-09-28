@@ -3,7 +3,7 @@ import { stringify } from "yaml";
 import { boolean_attribute_writable_true } from "pacc";
 import { CoreService, addType } from "pmcf";
 import { writeLines, filterConfigurable } from "../utils.mjs";
-import { FAMILY_IPV4_IPV6, PROTOCOL_TCP } from "../constants.mjs";
+import { FAMILY_DNS_IPV4_IPV6, PROTOCOL_TCP } from "../constants.mjs";
 
 export class influxdb extends CoreService {
   static attributes = {
@@ -17,11 +17,11 @@ export class influxdb extends CoreService {
   static service = {
     endpoints: [
       {
-        family: FAMILY_IPV4_IPV6,
+        family: FAMILY_DNS_IPV4_IPV6,
         port: 8086,
         protocol: PROTOCOL_TCP,
         tls: false,
-        pathname: "/"
+        scheme: "http"
       }
     ]
   };

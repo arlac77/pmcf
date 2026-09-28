@@ -1,5 +1,5 @@
 import { getAttribute, string_attribute, url_attribute } from "pacc";
-import { FAMILY_IPV6 } from "ip-utilties";
+import { FAMILY_IPV6, FAMILY_IPV4 } from "ip-utilties";
 import { addType } from "./type.mjs";
 import { CoreService } from "./core-service.mjs";
 import { family_attribute, endpointAttributes } from "./common-attributes.mjs";
@@ -204,17 +204,25 @@ export class url_endpoint extends BaseEndpoint {
 
       const scheme = data.scheme ? data.scheme : data.tls ? "https" : "http";
 
-      const domainName = [...address.domainNames][0];
-      const hostname =
-        domainName ??
-        (data.family === FAMILY_IPV6
-          ? "[" + address.address + "]"
-          : address.address);
+      let hostname;
 
+      switch (this.family) {
+        case FAMILY_DNS:
+          hostname = [...address.domainNames][0];
+          this.hostname = hostname;
+          break;
+        case FAMILY_IPV4:
+          hostname = address.address;
+          this.hostname = address.address;
+          break;
+        case FAMILY_IPV6:
+          hostname = "[" + address.address + "]";
+          this.hostname = address.address;
+          break;
+      }
       this.url = new URL(
         `${scheme}://${hostname}:${data.port}` + (data.pathname ?? "/")
       );
-      this.hostname = domainName ?? address.address;
     }
   }
 

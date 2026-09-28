@@ -3,6 +3,7 @@ import { FAMILY_IPV6 } from "ip-utilties";
 import {
   FAMILY_UNIX,
   FAMILY_IPV4_IPV6,
+  FAMILY_DNS_IPV4_IPV6,
   PROTOCOL_UDP,
   PROTOCOL_TCP
 } from "./constants.mjs";
@@ -103,7 +104,7 @@ export const ServiceTypes = {
   ldap: {
     endpoints: [
       {
-        family: FAMILY_IPV4_IPV6,
+        family: FAMILY_DNS_IPV4_IPV6,
         scheme: "ldap",
         protocol: PROTOCOL_TCP,
         port: 389,
@@ -114,7 +115,7 @@ export const ServiceTypes = {
   ldaps: {
     endpoints: [
       {
-        family: FAMILY_IPV4_IPV6,
+        family: FAMILY_DNS_IPV4_IPV6,
         scheme: "ldaps",
         protocol: PROTOCOL_TCP,
         port: 636,
@@ -128,7 +129,7 @@ export const ServiceTypes = {
   http: {
     endpoints: [
       {
-        family: FAMILY_IPV4_IPV6,
+        family: FAMILY_DNS_IPV4_IPV6,
         scheme: "http",
         protocol: PROTOCOL_TCP,
         port: 80,
@@ -139,7 +140,7 @@ export const ServiceTypes = {
   https: {
     endpoints: [
       {
-        family: FAMILY_IPV4_IPV6,
+        family: FAMILY_DNS_IPV4_IPV6,
         scheme: "https",
         protocol: PROTOCOL_TCP,
         port: 443,
@@ -151,7 +152,7 @@ export const ServiceTypes = {
   http3: {
     endpoints: [
       {
-        family: FAMILY_IPV4_IPV6,
+        family: FAMILY_DNS_IPV4_IPV6,
         scheme: "https",
         protocol: PROTOCOL_UDP,
         port: 443,

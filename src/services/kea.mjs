@@ -136,8 +136,8 @@ export class kea extends CoreService {
               {
                 family: FAMILY_IPV4,
                 port: 53003,
-                pathname: "/",
                 protocol: PROTOCOL_TCP,
+                scheme: "http",
                 tls: false
               }
             ]
@@ -165,8 +165,8 @@ export class kea extends CoreService {
               {
                 family: FAMILY_IPV6,
                 port: 53004,
-                pathname: "/",
                 protocol: PROTOCOL_TCP,
+                scheme: "http",
                 tls: false
               }
             ]

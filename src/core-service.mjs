@@ -127,7 +127,7 @@ export class CoreService extends base {
   }
 
   get url() {
-    return this.endpoint()?.url;
+    return this.endpoints().find(e => e.url)?.url;
   }
 
   get serviceTypeEndpoints() {
@@ -166,11 +166,13 @@ export class CoreService extends base {
           delete options.kind;
 
           for (const na of this.host.networkAddresses()) {
-            if (
-              (e.family && e.family !== na.family) ||
-              (e.kind && e.kind !== na.networkInterface.kind)
-            ) {
-              continue;
+            if (e.family !== FAMILY_DNS) {
+              if (
+                (e.family && e.family !== na.family) ||
+                (e.kind && e.kind !== na.networkInterface.kind)
+              ) {
+                continue;
+              }
             }
 
             if (e.scheme || e.pathname) {

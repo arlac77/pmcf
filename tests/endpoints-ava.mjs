@@ -17,6 +17,7 @@ import {
   networks_attribute,
   hosts_attribute,
   FAMILY_UNIX,
+  FAMILY_DNS,
   PROTOCOL_UDP,
   PROTOCOL_TCP
 } from "pmcf";
@@ -100,11 +101,12 @@ test("url_endpoint basics", t => {
   const ep = new url_endpoint(s1, addr, {
     type: ServiceTypes["http-control"],
     port: 80,
+    family: FAMILY_DNS,
     pathname: "/p1"
   });
 
   t.is(ep.type, "http-control");
-  t.is(ep.family, FAMILY_IPV4);
+  t.is(ep.family, FAMILY_DNS);
   t.is(ep.protocol, PROTOCOL_TCP);
   
   t.is(ep.port, 80);
