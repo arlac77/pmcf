@@ -7,7 +7,7 @@ import {
   host,
   service,
   Endpoint,
-  DomainNameEndpoint,
+  domain_endpoint,
   ServiceTypes,
   ServiceOwner,
   assign,
@@ -373,7 +373,7 @@ test("service owner", t => {
 
   t.deepEqual(s1b.endpoints(), [
     new Endpoint(s1b, [...h2.networkAddresses()][0], options),
-    new DomainNameEndpoint(s1b, "h2", options)
+    new domain_endpoint(s1b, "h2", options)
   ]);
 });
 

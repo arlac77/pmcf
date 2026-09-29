@@ -10,7 +10,7 @@ import {
   addServiceType,
   Endpoint,
   url_endpoint,
-  DomainNameEndpoint,
+  domain_endpoint,
   unix_endpoint,
   sortByFamilyAndAddress,
   assign,
@@ -72,7 +72,7 @@ test("Endpoint from Service basics", t => {
     tls: false
   };
   t.deepEqual(eps, [
-    new DomainNameEndpoint(s1, "h1", options),
+    new domain_endpoint(s1, "h1", options),
     ...nas.map(na => new Endpoint(s1, na, options))
   ]);
 
@@ -144,7 +144,7 @@ test("url_endpoint from URL with port", t => {
   t.is(ep.url.toString(), "https://somwhere:1443/aPath");
 });
 
-test("DomainNameEndpoint", t => {
+test("domain_endpoint", t => {
   const ic = new InitializationContext();
   const root = ic.root;
 
@@ -171,7 +171,7 @@ test("DomainNameEndpoint", t => {
     tls: false
   };
 
-  t.deepEqual(s1.endpoint(), new DomainNameEndpoint(s1, "h1", options));
+  t.deepEqual(s1.endpoint(), new domain_endpoint(s1, "h1", options));
 });
 
 test("unix_endpoint", t => {

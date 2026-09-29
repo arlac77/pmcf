@@ -16,7 +16,7 @@ import {
   base,
   host,
   Endpoint,
-  DomainNameEndpoint,
+  domain_endpoint,
   url_endpoint,
   unix_endpoint
 } from "pmcf";
@@ -188,7 +188,7 @@ export class CoreService extends base {
 
           if (!domainNames.has(this.domainName)) {
             domainNames.add(this.domainName);
-            result.push(new DomainNameEndpoint(this, this.domainName, options));
+            result.push(new domain_endpoint(this, this.domainName, options));
           }
           break;
       }

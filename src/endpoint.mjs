@@ -5,8 +5,7 @@ import { CoreService } from "./core-service.mjs";
 import { family_attribute, endpointAttributes } from "./common-attributes.mjs";
 import { FAMILY_DNS, FAMILY_UNIX, PROTOCOL_TCP } from "./constants.mjs";
 
-class BaseEndpoint {
-  static name = "base_endpoint";
+class base_endpoint {
   static priority = 1.1;
   static owners = [CoreService, "network_interface"];
   static key = "type";
@@ -54,9 +53,7 @@ class BaseEndpoint {
 /**
  * Endpoint with an ip port
  */
-class PortEndpoint extends BaseEndpoint {
-  static name = "port_endpoint";
-
+class port_endpoint extends base_endpoint {
   static {
     addType(this);
   }
@@ -95,7 +92,7 @@ class PortEndpoint extends BaseEndpoint {
   }
 }
 
-export class Endpoint extends PortEndpoint {
+export class Endpoint extends port_endpoint {
   static name = "endpoint";
   static attributes = {
     family: family_attribute,
@@ -136,8 +133,7 @@ export class Endpoint extends PortEndpoint {
   }
 }
 
-export class DomainNameEndpoint extends PortEndpoint {
-  static name = "domain_endpoint";
+export class domain_endpoint extends port_endpoint {
   static attributes = {
     domainName: { ...string_attribute, name: "domainName" }
   };
@@ -171,7 +167,7 @@ export class DomainNameEndpoint extends PortEndpoint {
 /**
  * Endpoint based on url
  */
-export class url_endpoint extends BaseEndpoint {
+export class url_endpoint extends base_endpoint {
   static attributes = {
     url: url_attribute,
     addressType: { ...string_attribute, name: "addressType" }
@@ -262,7 +258,7 @@ export class url_endpoint extends BaseEndpoint {
   }
 }
 
-export class unix_endpoint extends BaseEndpoint {
+export class unix_endpoint extends base_endpoint {
   static attributes = {
     url: url_attribute
   };
