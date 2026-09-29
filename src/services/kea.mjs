@@ -27,6 +27,7 @@ import {
 } from "pmcf";
 import { FAMILY_UNIX, PROTOCOL_TCP } from "../constants.mjs";
 import { writeLines } from "../utils.mjs";
+import { dnsFullName } from "../dns-utils.mjs";
 
 class kea_subnet extends Subnet {
   static attributes = {
@@ -354,10 +355,11 @@ export class kea extends CoreService {
       }
     ];
 
-    const dnsServersSlot = names =>
+    const dnsServersSlot = (names, keyName) =>
       names.map(name => {
         return {
-          name,
+          name: dnsFullName(name),
+          "key-name": keyName,
           "dns-servers": asArray(this.dnsServerEndpoints)
             .filter(
               endpoint =>
@@ -371,6 +373,8 @@ export class kea extends CoreService {
       });
 
     const ddnsEndpoint = this.endpoint("kea-dhcp-ddns");
+
+    const keyName = asArray(this.keys)[0].name;
 
     const ddns = {
       DhcpDdns: {
@@ -388,11 +392,12 @@ export class kea extends CoreService {
           };
         }),
         "forward-ddns": {
-          "ddns-domains": dnsServersSlot([...this.domains])
+          "ddns-domains": dnsServersSlot([...this.domains], keyName)
         },
         "reverse-ddns": {
           "ddns-domains": dnsServersSlot(
-            subnets.map(s => s.prefix).map(prefix => reverseArpa(prefix))
+            subnets.map(s => s.prefix).map(prefix => reverseArpa(prefix)),
+            keyName
           )
         },
         loggers
