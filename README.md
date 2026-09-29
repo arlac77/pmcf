@@ -71,7 +71,7 @@ generates config packages for:
 *   [expression](#expression)
     *   [Parameters](#parameters-11)
 *   [isTemplate](#istemplate-1)
-*   [PortEndpoint](#portendpoint)
+*   [port\_endpoint](#port_endpoint)
     *   [Parameters](#parameters-12)
     *   [port](#port)
     *   [socketAddress](#socketaddress)
@@ -81,31 +81,31 @@ generates config packages for:
 *   [domainNames](#domainnames)
 *   [InitializationContext](#initializationcontext)
     *   [Parameters](#parameters-14)
+*   [SkeletonNetworkInterface](#skeletonnetworkinterface)
+    *   [networkAddresses](#networkaddresses)
+        *   [Parameters](#parameters-15)
 *   [Interface](#interface)
 *   [zones](#zones)
 *   [addressesStatement](#addressesstatement)
-    *   [Parameters](#parameters-15)
+    *   [Parameters](#parameters-16)
 *   [SystemdJournalRemoteService](#systemdjournalremoteservice)
     *   [Properties](#properties)
     *   [systemdConfigs](#systemdconfigs)
-        *   [Parameters](#parameters-16)
+        *   [Parameters](#parameters-17)
 *   [SystemdJournalUploadService](#systemdjournaluploadservice)
     *   [Properties](#properties-1)
     *   [systemdConfigs](#systemdconfigs-1)
-        *   [Parameters](#parameters-17)
+        *   [Parameters](#parameters-18)
 *   [priority](#priority-1)
 *   [NetworkAddress](#networkaddress)
-    *   [Parameters](#parameters-18)
+    *   [Parameters](#parameters-19)
     *   [subnet](#subnet)
     *   [networkInterface](#networkinterface)
     *   [address](#address)
 *   [addresses](#addresses)
-    *   [Parameters](#parameters-19)
-*   [cidrAddresses](#cidraddresses)
     *   [Parameters](#parameters-20)
-*   [SkeletonNetworkInterface](#skeletonnetworkinterface)
-    *   [networkAddresses](#networkaddresses)
-        *   [Parameters](#parameters-21)
+*   [cidrAddresses](#cidraddresses)
+    *   [Parameters](#parameters-21)
 *   [families](#families)
 *   [secretName](#secretname)
 *   [subnetForAddress](#subnetforaddress)
@@ -261,9 +261,9 @@ Returns **any**&#x20;
 
 Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
 
-## PortEndpoint
+## port\_endpoint
 
-**Extends BaseEndpoint**
+**Extends base\_endpoint**
 
 Endpoint with an ip port
 
@@ -282,7 +282,7 @@ Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 
 ## url\_endpoint
 
-**Extends BaseEndpoint**
+**Extends base\_endpoint**
 
 Endpoint based on url
 
@@ -307,6 +307,18 @@ Keeps track of all in flight object creations and loose ends during config initi
 ### Parameters
 
 *   `directory`   (optional, default `"/"`)
+
+## SkeletonNetworkInterface
+
+**Extends Interface**
+
+### networkAddresses
+
+#### Parameters
+
+*   `filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
+
+Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
 
 ## Interface
 
@@ -404,18 +416,6 @@ Returns **Iterable<[string](https://developer.mozilla.org/docs/Web/JavaScript/Re
 *   `networkAddresses` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[NetworkAddress](#networkaddress)>**&#x20;
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
-
-## SkeletonNetworkInterface
-
-**Extends Interface**
-
-### networkAddresses
-
-#### Parameters
-
-*   `filter` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `n=>true`)
-
-Returns **Iterable<[NetworkAddress](#networkaddress)>**&#x20;
 
 ## families
 
