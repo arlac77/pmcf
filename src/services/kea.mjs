@@ -424,7 +424,7 @@ export class kea extends CoreService {
       [...hwmap]
         .map(([k, networkInterface]) => {
           let ip = {};
-          let addr = networkInterface.networkAddress(
+          const addr = networkInterface.networkAddress(
             n => n.family === `IPv${family}`
           )?.address;
 
@@ -435,20 +435,29 @@ export class kea extends CoreService {
                 : { "ip-address": addr };
           }
 
-          let ids = { "hw-address": k };
+          let other = {};
 
-          if (family === "4") {
-            const dhcpClientId = networkInterface.dhcpClientId;
-            if (dhcpClientId !== undefined) {
-              ids = { "client-id": dhcpClientId };
-            }
+          switch (family) {
+            case "4":
+              {
+                const dhcpClientId = networkInterface.dhcpClientId;
+                if (dhcpClientId !== undefined) {
+                  other["client-id"] = dhcpClientId;
+                }
+              }
+              break;
+          }
+
+          const dhcpClientClasses = networkInterface.dhcpClientClasses;
+          if (dhcpClientClasses !== undefined) {
+            other["client-classes"] = [...dhcpClientClasses];
           }
 
           return {
-            ...ids,
             ...ip,
+            "hw-address": k,
             hostname: networkInterface.domainName,
-            "client-classes": ["SKIP_DDNS"]
+            ...other
           };
         })
         .sort((a, b) => a.hostname?.localeCompare(b.hostname));

@@ -1,6 +1,7 @@
 import { join } from "node:path";
 import {
   string_attribute_writable,
+  string_set_attribute_writable,
   default_collection_attribute_writable
 } from "pacc";
 import { network_attribute } from "../common-attributes.mjs";
@@ -54,6 +55,7 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     },
     hwaddr: { ...string_attribute_writable, name: "hwaddr" },
     dhcpClientId: { ...string_attribute_writable, name: "dhcpClientId" },
+    dhcpClientClasses: { ...string_set_attribute_writable, name: "dhcpClientClasses" },
     destination: { ...string_attribute_writable, name: "destination" }
 
     /*
