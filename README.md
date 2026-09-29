@@ -284,7 +284,7 @@ Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 
 **Extends base\_endpoint**
 
-Endpoint based on url
+endpoint based on url
 
 ### Parameters
 
