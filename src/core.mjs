@@ -4,7 +4,6 @@ import {
   filterPublic,
   parse,
   extendingAttributeIterator,
-  getAttribute,
   expand,
   globals
 } from "pacc";
@@ -167,7 +166,7 @@ export class core {
    */
   attribute(name) {
     for (const node of this.walkDirections(["this", "extends"])) {
-      const value = getAttribute(node, name);
+      const value = node[name];
       if (value !== undefined) {
         return this.expand(value);
       }
@@ -285,7 +284,7 @@ export class core {
    * @returns {any}
    */
   expand(object) {
-    if (this.isTemplate) {
+    if (object === undefined || this.isTemplate) {
       return object;
     }
 

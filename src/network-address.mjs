@@ -1,7 +1,6 @@
 import {
   default_attribute,
   type_attribute,
-  getAttribute,
   leafValues
 } from "pacc";
 import { familyIP, formatCIDR, decodeIP, addressType } from "ip-utilties";
@@ -89,7 +88,7 @@ export class NetworkAddress {
   }
 
   attribute(name) {
-    return getAttribute(this, name);
+    return this[name];
   }
 
   value(name) {

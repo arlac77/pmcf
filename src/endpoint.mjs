@@ -1,4 +1,4 @@
-import { getAttribute, string_attribute, url_attribute } from "pacc";
+import { string_attribute, url_attribute } from "pacc";
 import { FAMILY_IPV6, FAMILY_IPV4 } from "ip-utilties";
 import { addType } from "./type.mjs";
 import { CoreService } from "./core-service.mjs";
@@ -43,7 +43,7 @@ class BaseEndpoint {
   }
 
   attribute(name) {
-    return getAttribute(this, name);
+    return this[name];
   }
 
   value(name) {
