@@ -435,7 +435,9 @@ export class kea extends CoreService {
                 : { "ip-address": addr };
           }
 
-          let other = {};
+          const other = {
+            "hw-address": k
+          };
 
           switch (family) {
             case "4":
@@ -443,6 +445,7 @@ export class kea extends CoreService {
                 const dhcpClientId = networkInterface.dhcpClientId;
                 if (dhcpClientId !== undefined) {
                   other["client-id"] = dhcpClientId;
+                  delete other["hw-address"];
                 }
               }
               break;
@@ -454,9 +457,8 @@ export class kea extends CoreService {
           }
 
           return {
-            ...ip,
-            "hw-address": k,
             hostname: networkInterface.domainName,
+            ...ip,
             ...other
           };
         })
