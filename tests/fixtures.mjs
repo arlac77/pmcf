@@ -72,6 +72,7 @@ export function root1(root, filter) {
   const host1 = {
     name: "host1",
     instanceof: host,
+    extends: ["/model/linux", "/model/m1", "/templates/arch-linux"],
     owner: L1,
     os: "linux",
     content: {
@@ -91,17 +92,19 @@ export function root1(root, filter) {
       }
     },
     services: {
+      ssh: { type: "ssh" /* extends: ["/templates/arch-linux/ssh"]*/ }, // from arch-linux
+
       dns: { type: "dns", aliases: new Set("dns") },
       smb: { type: "smb" },
       timemachine: {
-        // extends: ["/templates/timemachine"],
+        extends: ["/templates/timemachine"],
         type: "timemachine"
       },
       //  mdns: {
       // extends: ["/templates/mdns"]
       //  },
       mosquitto: {
-        // extends: ["/templates/mosquitto"],
+        extends: ["/templates/mosquitto"],
         type: "mosquitto",
         aliases: new Set("mqtt"),
         port: 1883,
@@ -110,7 +113,7 @@ export function root1(root, filter) {
         acl_file: "/etc/mosquitto/acl"
       },
       openldap: {
-        //  extends: ["/templates/openldap"],
+        extends: ["/templates/openldap"],
         type: "openldap",
         aliases: new Set("ldap"),
         uri: "ldap://",

@@ -1,5 +1,8 @@
 {
   "distribution": "arch-linux",
+  "services": {
+    "ssh": {}
+  },
   "content": {
     "packaging": "alpm",
     "dependencies": "btrfs-progs"
