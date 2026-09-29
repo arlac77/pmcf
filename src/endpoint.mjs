@@ -92,8 +92,7 @@ class port_endpoint extends base_endpoint {
   }
 }
 
-export class Endpoint extends port_endpoint {
-  static name = "endpoint";
+export class endpoint extends port_endpoint {
   static attributes = {
     family: family_attribute,
     addressType: { ...string_attribute, name: "addressType" }
@@ -165,7 +164,7 @@ export class domain_endpoint extends port_endpoint {
 }
 
 /**
- * Endpoint based on url
+ * endpoint based on url
  */
 export class url_endpoint extends base_endpoint {
   static attributes = {

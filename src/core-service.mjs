@@ -15,7 +15,7 @@ import {
 import {
   base,
   host,
-  Endpoint,
+  endpoint,
   domain_endpoint,
   url_endpoint,
   unix_endpoint
@@ -182,7 +182,7 @@ export class CoreService extends base {
                 result.push(he);
               }
             } else {
-              result.push(new Endpoint(this, na, options));
+              result.push(new endpoint(this, na, options));
             }
           }
 

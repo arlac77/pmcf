@@ -21,7 +21,7 @@ import {
 import {
   base,
   CoreService,
-  Endpoint,
+  endpoint,
   endpointAddresses,
   addresses,
   networkAddressType,
@@ -753,7 +753,7 @@ export class bind extends CoreService {
   static attributes = {
     forwarders: {
       ...default_collection_attribute_writable,
-      type: Endpoint,
+      type: endpoint,
       name: "forwarders",
       deferredExpression: true
     },

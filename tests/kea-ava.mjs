@@ -5,7 +5,7 @@ import {
   host,
   kea,
   ServiceOwner,
-  Endpoint,
+  endpoint,
   url_endpoint,
   sortByFamilyAndAddress,
   assign,
@@ -91,7 +91,7 @@ test("kea basics", t => {
       port: 53002,
       tls: false
     }),
-    new Endpoint(keaInst, a1, {
+    new endpoint(keaInst, a1, {
       type: "dhcp",
       protocol: PROTOCOL_UDP,
       port: 547,

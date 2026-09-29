@@ -8,7 +8,7 @@ import {
   ServiceOwner,
   ServiceTypes,
   addServiceType,
-  Endpoint,
+  endpoint,
   url_endpoint,
   domain_endpoint,
   unix_endpoint,
@@ -59,7 +59,7 @@ function prepare() {
   return { ic, root, h1, s1 };
 }
 
-test("Endpoint from Service basics", t => {
+test("endpoint from Service basics", t => {
   const { h1, s1 } = prepare();
 
   const nas = [...h1.networkAddresses()].sort(sortByFamilyAndAddress);
@@ -73,7 +73,7 @@ test("Endpoint from Service basics", t => {
   };
   t.deepEqual(eps, [
     new domain_endpoint(s1, "h1", options),
-    ...nas.map(na => new Endpoint(s1, na, options))
+    ...nas.map(na => new endpoint(s1, na, options))
   ]);
 
   t.is(

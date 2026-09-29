@@ -19,7 +19,7 @@ import {
   addType,
   Subnet,
   CoreService,
-  Endpoint,
+  endpoint,
   sortDescendingByPriority,
   bind_key,
   systemdCredentialFileName,
@@ -66,7 +66,7 @@ export class kea extends CoreService {
     },
     dnsServerEndpoints: {
       ...default_collection_attribute_writable,
-      type: Endpoint,
+      type: endpoint,
       name: "dnsServerEndpoints",
       deferredExpression: true
     },

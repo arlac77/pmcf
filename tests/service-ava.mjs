@@ -6,7 +6,7 @@ import {
   network,
   host,
   service,
-  Endpoint,
+  endpoint,
   domain_endpoint,
   ServiceTypes,
   ServiceOwner,
@@ -116,7 +116,7 @@ test("service basics", t => {
     [
       ...lna.map(
         a =>
-          new Endpoint(s1, a, {
+          new endpoint(s1, a, {
             type: ServiceTypes.dns,
             protocol: PROTOCOL_UDP,
             port: 53,
@@ -125,7 +125,7 @@ test("service basics", t => {
       ),
       ...ena.map(
         a =>
-          new Endpoint(s1, a, {
+          new endpoint(s1, a, {
             type: ServiceTypes.dns,
             protocol: PROTOCOL_UDP,
             port: 53,
@@ -287,7 +287,7 @@ test("service without protocol", t => {
   t.deepEqual(s1.endpoints(), [
     /*...na.map(
       a =>
-        new Endpoint(s1, a, {
+        new endpoint(s1, a, {
           type: "abc",
           port: 555,
           tls: false
@@ -372,7 +372,7 @@ test("service owner", t => {
   };
 
   t.deepEqual(s1b.endpoints(), [
-    new Endpoint(s1b, [...h2.networkAddresses()][0], options),
+    new endpoint(s1b, [...h2.networkAddresses()][0], options),
     new domain_endpoint(s1b, "h2", options)
   ]);
 });

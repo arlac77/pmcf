@@ -1,5 +1,5 @@
 import test from "ava";
-import { InitializationContext, Endpoint } from "pmcf";
+import { InitializationContext, endpoint } from "pmcf";
 import { chrony } from "../src/services/chrony.mjs";
 
 test("ChronyService basics", async t => {
@@ -16,7 +16,7 @@ test("ChronyService basics", async t => {
   /*
   t.deepEqual(
     chrony.endpoint("ntp"),
-    new Endpoint(chrony, [...chrony.host.networkAddresses()][0], {
+    new endpoint(chrony, [...chrony.host.networkAddresses()][0], {
       type: "ntp"
     })
   );
