@@ -35,6 +35,11 @@ function error(message, attribute) {
 }
 
 export function assign(attribute, object, value) {
+
+  if(value === undefined && object.isTemplate) {
+    return;
+  }
+
   value = toInternal(value, attribute, attribute.default);
 
   if (value !== undefined) {
