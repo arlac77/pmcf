@@ -35,7 +35,7 @@ function error(message, attribute) {
 }
 
 export function assign(attribute, object, value) {
-  value = toInternal(value, attribute);
+  value = toInternal(value, attribute, attribute.default);
 
   if (value !== undefined) {
     // set backpointer early so that parent properties can be found during load
