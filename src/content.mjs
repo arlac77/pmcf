@@ -165,7 +165,7 @@ export class content extends core {
    * @return {string}
    */
   get access() {
-    return this.attribute("_access");
+    return this.attribute("_access") ?? this.constructor.attributes.access.default; // TODO automatically generate ?
   }
 
   set access(value) {

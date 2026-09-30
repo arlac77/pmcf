@@ -351,6 +351,6 @@ export class base extends core {
   }
 
   toJSON() {
-    return extract(this);
+    return extract(this,this.constructor,attribute=>!attribute.private);
   }
 }

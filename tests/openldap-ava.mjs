@@ -41,6 +41,8 @@ test("OpenLDAPService basics", async t => {
     await Array.fromAsync(openldapInst.preparePackages("/tmp"))
   )[0];
 
+  t.is(packageDef.properties.access, "private");
+
   const sources = await Array.fromAsync(packageDef.sources);
 
   t.is(sources.length, 2, "# of sources");
