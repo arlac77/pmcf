@@ -33,10 +33,12 @@ export class permission extends core {
   }
 }
 
+const SCOPE_PACKAGING = "packaging";
+
 export class content extends core {
   static attributes = {
-    name: { ...name_attribute_writable, packagingProperty: true },
-    description: { ...description_attribute_writable, packagingProperty: true },
+    name: { ...name_attribute_writable, scope: SCOPE_PACKAGING },
+    description: { ...description_attribute_writable, scope: SCOPE_PACKAGING },
     fragments: {
       ...string_set_attribute_writable,
       name: "fragments"
@@ -50,47 +52,47 @@ export class content extends core {
       ...string_attribute_writable,
       name: "access",
       default: "private",
-      packagingProperty: true
+      scope: SCOPE_PACKAGING
     },
     dependencies: {
       ...string_set_attribute_writable,
       name: "dependencies",
-      packagingProperty: true
+      scope: SCOPE_PACKAGING
     },
     provides: {
       ...string_set_attribute_writable,
       name: "provides",
-      packagingProperty: true
+      scope: SCOPE_PACKAGING
     },
     replaces: {
       ...string_set_attribute_writable,
       name: "replaces",
-      packagingProperty: true
+      scope: SCOPE_PACKAGING
     },
     conflicts: {
       ...string_set_attribute_writable,
       name: "conflicts",
-      packagingProperty: true
+      scope: SCOPE_PACKAGING
     },
     optional: {
       ...string_set_attribute_writable,
       name: "optional",
-      packagingProperty: true
+      scope: SCOPE_PACKAGING
     },
     groups: {
       ...string_set_attribute_writable,
       name: "groups",
-      packagingProperty: true
+      scope: SCOPE_PACKAGING
     },
     backup: {
       ...string_set_attribute_writable,
       name: "backup",
-      packagingProperty: true
+      scope: SCOPE_PACKAGING
     },
     hooks: {
       ...string_set_attribute_writable,
       name: "hooks",
-      packagingProperty: true
+      scope: SCOPE_PACKAGING
     },
     packaging: { ...string_set_attribute_writable, name: "packaging" }
   };
@@ -303,7 +305,7 @@ export class content extends core {
       properties: Object.fromEntries(
         extendingAttributeIterator(
           this.constructor,
-          attribute => attribute.packagingProperty
+          attribute => attribute.scope = SCOPE_PACKAGING
         ).map(([path, attribute]) => [path[0], this[path[0]]])
       ),
       dir: () => this.sources?.[0].dir
