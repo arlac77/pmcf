@@ -59,7 +59,7 @@ function show(value, indent, options) {
     if (options.short) {
       console.log(`${prefix()}${value[type.key]}:`);
     } else {
-      console.log(`${prefix()}${value.fullName}(${type.name}):`);
+      console.log(`${prefix()}${value.fullName}(${type.name})${value.isTemplate?'*':''}:`);
     }
 
     if (indent + 1 >= options.maxDepth) {
