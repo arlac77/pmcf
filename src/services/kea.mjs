@@ -25,6 +25,7 @@ import {
   systemdCredentialFileName,
   credential
 } from "pmcf";
+import { SOURCES_THIS_EXTENDS } from "../common-attributes.mjs";
 import { FAMILY_UNIX, PROTOCOL_TCP } from "../constants.mjs";
 import { writeLines } from "../utils.mjs";
 import { dnsFullName } from "../dns-utils.mjs";
@@ -74,18 +75,24 @@ export class kea extends CoreService {
     "ddns-send-updates": {
       ...boolean_attribute_writable_true,
       name: "ddns-send-updates",
-      scope: SCOPE_KEA
+      skipEmpty: true,
+      scope: SCOPE_KEA,
+      sources: SOURCES_THIS_EXTENDS
     },
     "renew-timer": {
       ...number_attribute_writable,
       name: "renew-timer",
+      skipEmpty: true,
       scope: SCOPE_KEA,
+      sources: SOURCES_THIS_EXTENDS,
       default: 900
     },
     "rebind-timer": {
       ...number_attribute_writable,
       name: "rebind-timer",
+      skipEmpty: true,
       scope: SCOPE_KEA,
+      sources: SOURCES_THIS_EXTENDS,
       default: 1800
     },
     "valid-lifetime": {
@@ -93,12 +100,15 @@ export class kea extends CoreService {
       name: "valid-lifetime",
       mandatory: true,
       scope: SCOPE_KEA,
+      sources: SOURCES_THIS_EXTENDS,
       default: 86400
     },
     "ddns-conflict-resolution-mode": {
       ...enum_string_attribute_writable,
       name: "ddns-conflict-resolution-mode",
+      skipEmpty: true,
       scope: SCOPE_KEA,
+      sources: SOURCES_THIS_EXTENDS,
       values: new Set([
         "check-with-dhcid",
         "no-check-with-dhcid",

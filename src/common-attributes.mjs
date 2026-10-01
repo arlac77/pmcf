@@ -18,6 +18,8 @@ import { PROTOCOL_TCP, PROTOCOL_UDP, PROTOCOL_QUIC } from "./constants.mjs";
 export const SCOPE_SYSTEMD_NETWORKD = "systemd-networkd";
 export const SCOPE_SYSTEMD_TIMESYNCD = "systemd-timesyncd";
 
+export const SOURCES_THIS_EXTENDS = ["this","extends"];
+
 export const networkAddressType = "network|host|network_interface";
 
 export const extends_attribute = {
