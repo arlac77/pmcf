@@ -1,10 +1,15 @@
 import {
+  extract,
   string_attribute_writable,
   string_collection_attribute_writable,
   boolean_attribute_writable
 } from "pacc";
 import { CoreService, addType } from "pmcf";
-import { filterConfigurable, sectionLines } from "../utils.mjs";
+import { sectionLines } from "../utils.mjs";
+import {
+  SCOPE_SYSTEMD_JOURNAL_UPLOAD,
+  SOURCES_THIS_EXTENDS
+} from "../common-attributes.mjs";
 
 /**
  * @property {string} URL
@@ -14,35 +19,45 @@ import { filterConfigurable, sectionLines } from "../utils.mjs";
 export class SystemdJournalUploadService extends CoreService {
   static name = "systemd-journal-upload";
   static attributes = {
-    URL: { ...string_attribute_writable, name: "URL", configurable: true },
+    URL: {
+      ...string_attribute_writable,
+      name: "URL",
+      scope: SCOPE_SYSTEMD_JOURNAL_UPLOAD,
+      sources: SOURCES_THIS_EXTENDS
+    },
     ServerKeyFile: {
       ...string_attribute_writable,
       name: "ServerKeyFile",
-      configurable: true
+      scope: SCOPE_SYSTEMD_JOURNAL_UPLOAD,
+      sources: SOURCES_THIS_EXTENDS
       // default: "/etc/ssl/private/journal-upload.pem"
     },
     ServerCertificateFile: {
       ...string_attribute_writable,
       name: "ServerCertificateFile",
-      configurable: true
+      scope: SCOPE_SYSTEMD_JOURNAL_UPLOAD,
+      sources: SOURCES_THIS_EXTENDS
       // default: "/etc/ssl/certs/journal-upload.pem"
     },
     TrustedCertificateFile: {
       ...string_attribute_writable,
       name: "TrustedCertificateFile",
-      configurable: true
+      scope: SCOPE_SYSTEMD_JOURNAL_UPLOAD,
+      sources: SOURCES_THIS_EXTENDS
       // default: "/etc/ssl/ca/trusted.pem"
     },
     Compression: {
       ...string_collection_attribute_writable,
       name: "Compression",
-      configurable: true
+      scope: SCOPE_SYSTEMD_JOURNAL_UPLOAD,
+      sources: SOURCES_THIS_EXTENDS
       // default: "zstd lz4 xz"
     },
     ForceCompression: {
       ...boolean_attribute_writable,
       name: "ForceCompression",
-      configurable: true
+      scope: SCOPE_SYSTEMD_JOURNAL_UPLOAD,
+      sources: SOURCES_THIS_EXTENDS
       // default: false
     }
   };
@@ -63,12 +78,17 @@ export class SystemdJournalUploadService extends CoreService {
     console.log(this.fullName, this.owner.fullName);
     console.log(this.property("domainName"), this.name);
     console.log(this.property("certs_private_dir"));
-    console.log("PROPS", this.expand(this.getAttributes(filterConfigurable)));
     */
     return {
       serviceName: this.systemdService,
       configFileName: `etc/systemd/journal-upload.conf.d/${name}.conf`,
-      content: sectionLines("Upload", this.getAttributes(filterConfigurable))
+      content: sectionLines(
+        "Upload",
+        extract(this, {
+          filter: attribute => attribute.scope === SCOPE_SYSTEMD_JOURNAL_UPLOAD,
+          externalNames: true
+        })
+      )
     };
   }
 }

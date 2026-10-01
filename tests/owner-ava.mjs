@@ -63,6 +63,7 @@ test("owner read write", t => {
         },
         subnets: {
           "fe80::/64": {
+            address: 'fe80::/64',
             family: FAMILY_IPV6,
             prefixLength: 64,
             addressType: ADDRESS_TYPE_LINK_LOCAL
@@ -72,6 +73,7 @@ test("owner read write", t => {
     },
     subnets: {
       "10.0/16": {
+        address: '10.0/16',
         family: FAMILY_IPV4,
         prefixLength: 16,
         addressType: ADDRESS_TYPE_GENERAL

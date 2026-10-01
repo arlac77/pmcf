@@ -1,7 +1,14 @@
-import { string_attribute_writable, duration_attribute_writable } from "pacc";
+import {
+  extract,
+  string_attribute_writable,
+  duration_attribute_writable
+} from "pacc";
 import { ExtraSourceService, serviceEndpoints } from "pmcf";
 import { sectionLines } from "../utils.mjs";
-import { SCOPE_SYSTEMD_TIMESYNCD } from "../common-attributes.mjs";
+import {
+  SCOPE_SYSTEMD_TIMESYNCD,
+  SOURCES_THIS_EXTENDS
+} from "../common-attributes.mjs";
 import { addType } from "../type.mjs";
 
 export class SystemdTimesyncdService extends ExtraSourceService {
@@ -10,37 +17,44 @@ export class SystemdTimesyncdService extends ExtraSourceService {
     NTP: {
       ...string_attribute_writable,
       name: "NTP",
-      scope: SCOPE_SYSTEMD_TIMESYNCD
+      scope: SCOPE_SYSTEMD_TIMESYNCD,
+      sources: SOURCES_THIS_EXTENDS
     },
     FallbackNTP: {
       ...string_attribute_writable,
       name: "FallbackNTP",
-      scope: SCOPE_SYSTEMD_TIMESYNCD
+      scope: SCOPE_SYSTEMD_TIMESYNCD,
+      sources: SOURCES_THIS_EXTENDS
     },
     RootDistanceMaxSec: {
       ...duration_attribute_writable,
       name: "RootDistanceMaxSec",
-      scope: SCOPE_SYSTEMD_TIMESYNCD
+      scope: SCOPE_SYSTEMD_TIMESYNCD,
+      sources: SOURCES_THIS_EXTENDS
     },
     PollIntervalMinSec: {
       ...duration_attribute_writable,
       name: "PollIntervalMinSec",
-      scope: SCOPE_SYSTEMD_TIMESYNCD
+      scope: SCOPE_SYSTEMD_TIMESYNCD,
+      sources: SOURCES_THIS_EXTENDS
     },
     PollIntervalMaxSec: {
       ...duration_attribute_writable,
       name: "PollIntervalMaxSec",
-      scope: SCOPE_SYSTEMD_TIMESYNCD
+      scope: SCOPE_SYSTEMD_TIMESYNCD,
+      sources: SOURCES_THIS_EXTENDS
     },
     ConnectionRetrySec: {
       ...duration_attribute_writable,
       name: "ConnectionRetrySec",
-      scope: SCOPE_SYSTEMD_TIMESYNCD
+      scope: SCOPE_SYSTEMD_TIMESYNCD,
+      sources: SOURCES_THIS_EXTENDS
     },
     SaveIntervalSec: {
       ...duration_attribute_writable,
       name: "SaveIntervalSec",
-      scope: SCOPE_SYSTEMD_TIMESYNCD
+      scope: SCOPE_SYSTEMD_TIMESYNCD,
+      sources: SOURCES_THIS_EXTENDS
     }
   };
   static service = {
@@ -69,9 +83,10 @@ export class SystemdTimesyncdService extends ExtraSourceService {
       content: sectionLines("Time", {
         NTP: serviceEndpoints(this, options(300, 399)),
         FallbackNTP: serviceEndpoints(this, options(100, 199)),
-        ...this.getAttributes(
-          attribute => attribute.scope === SCOPE_SYSTEMD_TIMESYNCD
-        )
+        ...extract(this, {
+          filter: attribute => attribute.scope === SCOPE_SYSTEMD_TIMESYNCD,
+          externalNames: true
+        })
       })
     };
   }

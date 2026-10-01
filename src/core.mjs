@@ -1,7 +1,6 @@
 import { AggregatedMap } from "aggregated-map";
 import {
   toExternal,
-  filterPublic,
   parse,
   extendingAttributeIterator,
   expand,
@@ -129,15 +128,6 @@ export class core {
         ];
       }
     }
-  }
-
-  /**
-   * Retrive attribute values from an object.
-   * @param {Function} [filter]
-   * @return {Object} values
-   */
-  getAttributes(filter = filterPublic) {
-    return Object.fromEntries(this.attributeIterator(filter));
   }
 
   value(name) {

@@ -37,7 +37,10 @@ import {
   sortZoneRecords
 } from "../dns-utils.mjs";
 import { addHook } from "../hooks.mjs";
-import { owner_attribute } from "../common-attributes.mjs";
+import {
+  owner_attribute,
+  SOURCES_THIS_EXTENDS
+} from "../common-attributes.mjs";
 import { NetworkAddress } from "../network-address.mjs";
 
 const PRIMARY = "primary";
@@ -233,7 +236,8 @@ export class bind_key extends base {
     algorithm: {
       ...string_attribute_writable,
       name: "algorithm",
-      default: "hmac-sha256"
+      default: "hmac-sha256",
+      sources: SOURCES_THIS_EXTENDS
     },
     secret: secret_attribute_writable
   };

@@ -18,8 +18,11 @@ import { PROTOCOL_TCP, PROTOCOL_UDP, PROTOCOL_QUIC } from "./constants.mjs";
 export const SCOPE_SYSTEMD_NETWORKD = "systemd-networkd";
 export const SCOPE_SYSTEMD_TIMESYNCD = "systemd-timesyncd";
 export const SCOPE_SYSTEMD_RESOLVED = "systemd-resolved";
+export const SCOPE_SYSTEMD_JOURNALD = "systemd-journald";
+export const SCOPE_SYSTEMD_JOURNAL_UPLOAD = "systemd-journal-upload";
+export const SCOPE_SYSTEMD_JOURNAL_REMOTE = "systemd-journal-remote";
 
-export const SOURCES_THIS_EXTENDS = ["this","extends"];
+export const SOURCES_THIS_EXTENDS = ["this", "extends"];
 
 export const networkAddressType = "network|host|network_interface";
 
@@ -30,6 +33,7 @@ export const extends_attribute = {
 
 export const aliases_attribute = {
   ...string_set_attribute_writable,
+  skipEmpty: true,
   name: "aliases"
 };
 
@@ -111,6 +115,7 @@ export const cidr_address_attribute = {
 
 export const cidr_addresses_attribute = {
   ...string_collection_attribute_writable,
+  separator: undefined,
   name: "cidrAddresses"
 };
 
@@ -209,7 +214,11 @@ export const networkAttributes = {
 export const networkAddressAttributes = {
   hostName: hostname_attribute,
   cidrAddresses: cidr_addresses_attribute,
-  addresses: { ...string_collection_attribute_writable, name: "addresses" },
+  addresses: {
+    ...string_collection_attribute_writable,
+    separator: undefined,
+    name: "addresses"
+  },
   address: address_attribute
 };
 

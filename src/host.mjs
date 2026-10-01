@@ -7,6 +7,7 @@ import {
   number_attribute_writable,
   priority_attribute_writable,
   enum_string_attribute_writable,
+  architecture_attribute_writable,
   asArray
 } from "pacc";
 import { cidrAddresses, addresses, addType, assign } from "pmcf";
@@ -62,11 +63,7 @@ export class host extends ServiceOwner {
         "dehumidifier"
       ])
     },
-    architecture: {
-      ...enum_string_attribute_writable,
-      name: "architecture",
-      values: new Set(["x86", "x86_64", "aarch64", "armv7", "riscv"])
-    },
+    architecture: architecture_attribute_writable,
     extends: {
       ...extends_attribute,
       type: host
@@ -177,11 +174,10 @@ export class host extends ServiceOwner {
     return parts[parts.length - 1].toLowerCase();
   }
 
-  get isCluster()
-  {
+  get isCluster() {
     return false;
   }
-  
+
   isMember(host) {
     return this === host;
   }
@@ -323,7 +319,10 @@ export class host extends ServiceOwner {
   }
 
   async *preparePackages(dir) {
-    const packageData = await this.preparePackage({ dir,  pattern: ["**/*", "**/.ssh/*"]});
+    const packageData = await this.preparePackage({
+      dir,
+      pattern: ["**/*", "**/.ssh/*"]
+    });
 
     for (const ni of this.networkInterfaces.values()) {
       await ni.systemdDefinitions(dir, packageData);

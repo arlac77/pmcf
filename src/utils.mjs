@@ -53,7 +53,7 @@ export async function writeLines(dir, name, ...lines) {
  * @returns {Array<string>}
  */
 export function sectionLines(sectionName, values) {
-  const lines = [`[${sectionName}]`];
+  const lines = sectionName ? [`[${sectionName}]`] : [];
 
   for (const [name, value] of Object.entries(values)) {
     lines.push(`${name}=${value}`);
@@ -75,9 +75,6 @@ export function* setionLinesFromAttributeIterator(properties, separator = "=") {
 export function bridgeToJSON(bridge) {
   return [...bridge].map(n => n.fullName || `(${n})`).sort();
 }
-
-export const filterConfigurable = attribute =>
-  !attribute.private && attribute.configurable;
 
 export function union(value, present = new Set()) {
   if (value instanceof Set) {

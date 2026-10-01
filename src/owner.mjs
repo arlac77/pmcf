@@ -39,16 +39,18 @@ export class owner extends ServiceOwner {
       deferredExpression: true
     },
     domain: { ...string_attribute_writable, name: "domain" },
-    domains: { ...string_set_attribute_writable, name: "domains" },
+    domains: { ...string_set_attribute_writable, skipEmpty: true, name: "domains" },
     timezone: { ...string_attribute_writable, name: "timezone" },
     architectures: {
       ...string_set_attribute_writable,
       name: "architectures",
+      skipEmpty: true,
       description: "all supported architectures"
     },
     locales: {
       ...string_set_attribute_writable,
       name: "locales",
+      skipEmpty: true,
       description: "unix locale"
     },
     administratorEmail: {

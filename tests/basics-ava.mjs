@@ -194,7 +194,7 @@ test("tags", t => {
   t.deepEqual(l1.tags, new Set(["t1", "t2"]));
 });
 
-test("extract", t => {
+test("extract toJSON()", t => {
   const ic = new InitializationContext("/somewhere");
   const l1 = new owner();
   ic.read(l1, { name: "l1", tags: "tag1" });

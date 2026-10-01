@@ -4,8 +4,10 @@ import { CoreService, addType } from "pmcf";
 import {
   writeLines,
   setionLinesFromAttributeIterator,
-  filterConfigurable
 } from "../utils.mjs";
+import { SOURCES_THIS_EXTENDS } from "../common-attributes.mjs";
+
+const SCOPE_MOSQUITTO = "mosquitto";
 
 export class mosquitto extends CoreService {
   static attributes = {
@@ -13,24 +15,28 @@ export class mosquitto extends CoreService {
       ...port_attribute,
       name: "listener",
       writable: true,
-      configurable: true
+      configurable: true,
+      scope: SCOPE_MOSQUITTO
       // alias port
       // endpoints[type='mqtt']/port
     },
     persistence_location: {
       ...string_attribute_writable,
       name: "persistence_location",
-      configurable: true
+      scope: SCOPE_MOSQUITTO,
+      sources: SOURCES_THIS_EXTENDS
     },
     password_file: {
       ...string_attribute_writable,
       name: "password_file",
-      configurable: true
+      scope: SCOPE_MOSQUITTO,
+      sources: SOURCES_THIS_EXTENDS
     },
     acl_file: {
       ...string_attribute_writable,
       name: "acl_file",
-      configurable: true
+      scope: SCOPE_MOSQUITTO,
+      sources: SOURCES_THIS_EXTENDS
     }
   };
   static service = {
@@ -56,7 +62,7 @@ export class mosquitto extends CoreService {
       join(dir, "etc", "mosquitto"),
       "mosquitto.conf",
       setionLinesFromAttributeIterator(
-        this.attributeIterator(filterConfigurable),
+        this.attributeIterator(attribute => attribute.scope === SCOPE_MOSQUITTO),
         " "
       )
     );

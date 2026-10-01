@@ -45,7 +45,7 @@ export class base extends core {
     type: type_attribute_writable,
     directory: { ...string_attribute_writable, name: "directory" },
     enabled: { ...boolean_attribute_writable, name: "enabled" },
-    tags: { ...string_set_attribute_writable, name: "tags" },
+    tags: { ...string_set_attribute_writable, name: "tags", skipEmpty: true },
     content: { ...default_attribute_writable, type: "content", name: "content" }
   };
 
@@ -351,6 +351,9 @@ export class base extends core {
   }
 
   toJSON() {
-    return extract(this,this.constructor,attribute=>!attribute.private);
+    return extract(this, {
+      filter: attribute => !attribute.private,
+      externalNames: false
+    });
   }
 }

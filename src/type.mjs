@@ -4,10 +4,12 @@ import {
   registerToken,
   DOT,
   asArray,
-  primitive_type
+  primitive_type,
+  attributeIterator
 } from "pacc";
 import { normalizeIP } from "ip-utilties";
 import { addServiceType } from "./service-types.mjs";
+import { SOURCES_THIS_EXTENDS } from "./common-attributes.mjs";
 
 const SLASH = { ...DOT, str: "/" };
 
@@ -25,6 +27,27 @@ addTypeBasic({
 export function addType(type) {
   addTypeBasic(type);
 
+  for (const [path, attribute] of attributeIterator(
+    type.attributes,
+    attribute => attribute.sources === SOURCES_THIS_EXTENDS
+  )) {
+    //console.log("SOURCES access", path, type.name);
+
+    const key = "_" + path[0];
+
+    const o = new type();
+    Object.defineProperty(Object.getPrototypeOf(o), path[0], {
+      get() {
+        return this.attribute(key) ?? attribute.default;
+      },
+      set(newValue) {
+        this[key] = newValue;
+      },
+      enumerable: true,
+      configurable: true
+    });
+  }
+
   if (type.service) {
     addServiceType(type.service, type.name);
   }
@@ -35,12 +58,15 @@ function error(message, attribute) {
 }
 
 export function assign(attribute, object, value) {
-
-  if(value === undefined && object.isTemplate) {
+  if (value === undefined && object.isTemplate) {
     return;
   }
 
-  value = toInternal(value, attribute, attribute.default);
+  value = toInternal(
+    value,
+    attribute,
+    attribute.sources ? undefined : attribute.default
+  );
 
   if (value !== undefined) {
     // set backpointer early so that parent properties can be found during load

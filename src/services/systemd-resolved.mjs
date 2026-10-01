@@ -4,84 +4,111 @@ import {
   duration_attribute_writable,
   string_attribute_writable,
   boolean_attribute_writable,
-  yesno_attribute_writable
+  yesno_attribute_writable,
+  extract
 } from "pacc";
 import { ExtraSourceService, serviceEndpoints, addType } from "pmcf";
 import {
-  filterConfigurable,
-  yesno,
-  sectionLines,
-  setionLinesFromAttributeIterator
-} from "../utils.mjs";
+  SCOPE_SYSTEMD_RESOLVED,
+  SOURCES_THIS_EXTENDS
+} from "../common-attributes.mjs";
+import { yesno, sectionLines } from "../utils.mjs";
 
 export class SystemdResolvedService extends ExtraSourceService {
   static name = "systemd-resolved";
   static attributes = {
-    DNS: { ...string_attribute_writable, name: "DNS", configurable: true },
+    DNS: {
+      ...string_attribute_writable,
+      name: "DNS",
+      scope: SCOPE_SYSTEMD_RESOLVED,
+      sources: SOURCES_THIS_EXTENDS
+    },
     FallbackDNS: {
       ...string_attribute_writable,
       name: "FallbackDNS",
-      configurable: true
+      scope: SCOPE_SYSTEMD_RESOLVED,
+      sources: SOURCES_THIS_EXTENDS
     },
     domains: {
       ...string_collection_attribute_writable,
       name: "domains",
       externalName: "Domains",
-      configurable: true
+      scope: SCOPE_SYSTEMD_RESOLVED
+      //   sources: SOURCES_THIS_EXTENDS
     },
     MulticastDNS: {
       ...yesno_attribute_writable,
       name: "MulticastDNS",
-      configurable: true
+      scope: SCOPE_SYSTEMD_RESOLVED,
+      sources: SOURCES_THIS_EXTENDS
     },
-    Cache: { ...boolean_attribute_writable, name: "Cache", configurable: true },
+    Cache: {
+      ...boolean_attribute_writable,
+      name: "Cache",
+      scope: SCOPE_SYSTEMD_RESOLVED,
+      sources: SOURCES_THIS_EXTENDS
+    },
     CacheFromLocalhost: {
       ...boolean_attribute_writable,
       name: "CacheFromLocalhost",
-      configurable: true
+      scope: SCOPE_SYSTEMD_RESOLVED,
+      sources: SOURCES_THIS_EXTENDS
     },
     DNSStubListener: {
       ...boolean_attribute_writable,
       name: "DNSStubListener",
-      configurable: true
+      scope: SCOPE_SYSTEMD_RESOLVED,
+      sources: SOURCES_THIS_EXTENDS
     },
     DNSStubListenerExtra: {
       ...string_attribute_writable,
       name: "DNSStubListenerExtra",
-      configurable: true
+      scope: SCOPE_SYSTEMD_RESOLVED,
+      sources: SOURCES_THIS_EXTENDS
     },
     ReadEtcHosts: {
       ...boolean_attribute_writable,
       name: "ReadEtcHosts",
-      configurable: true
+      scope: SCOPE_SYSTEMD_RESOLVED,
+      sources: SOURCES_THIS_EXTENDS
     },
     ResolveUnicastSingleLabel: {
       ...boolean_attribute_writable,
       name: "ResolveUnicastSingleLabel",
-      configurable: true
+      scope: SCOPE_SYSTEMD_RESOLVED,
+      sources: SOURCES_THIS_EXTENDS
     },
     StaleRetentionSec: {
       ...duration_attribute_writable,
       name: "StaleRetentionSec",
-      configurable: true
+      scope: SCOPE_SYSTEMD_RESOLVED,
+      sources: SOURCES_THIS_EXTENDS
     },
     RefuseRecordTypes: {
       ...string_attribute_writable,
       name: "RefuseRecordTypes",
-      configurable: true
+      scope: SCOPE_SYSTEMD_RESOLVED,
+      sources: SOURCES_THIS_EXTENDS
     },
     DNSSEC: {
       ...yesno_attribute_writable,
       name: "DNSSEC",
       default: false,
-      configurable: true
+      scope: SCOPE_SYSTEMD_RESOLVED,
+      sources: SOURCES_THIS_EXTENDS
     },
     DNSOverTLS: {
       ...yesno_attribute_writable,
       name: "DNSOverTLS",
-      configurable: true
+      scope: SCOPE_SYSTEMD_RESOLVED,
+      sources: SOURCES_THIS_EXTENDS
     },
-    LLMNR: { ...yesno_attribute_writable, name: "LLMNR", configurable: true }
+    LLMNR: {
+      ...yesno_attribute_writable,
+      name: "LLMNR",
+      scope: SCOPE_SYSTEMD_RESOLVED,
+      sources: SOURCES_THIS_EXTENDS
+    }
   };
   static service = {
     extends: ["dns", "mdns", "llmnr"],
@@ -109,12 +136,14 @@ export class SystemdResolvedService extends ExtraSourceService {
     return {
       serviceName: this.systemdService,
       configFileName: `etc/systemd/resolved.conf.d/${name}.conf`,
-      //content: [...setionLinesFromAttributeIterator(this.attributeIterator( filterConfigurable)), "A=1"]
       content: sectionLines("Resolve", {
         DNS: serviceEndpoints(this, options(300, 399, 4)),
         FallbackDNS: serviceEndpoints(this, options(100, 199, 4)),
         MulticastDNS: yesno(this.network.multicastDNS),
-        ...this.getAttributes(filterConfigurable)
+        ...extract(this, {
+          filter: attribute => attribute.scope === SCOPE_SYSTEMD_RESOLVED,
+          externalNames: true
+        })
       })
     };
   }

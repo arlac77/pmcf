@@ -1,12 +1,17 @@
 import {
+  extract,
   string_attribute_writable,
   string_collection_attribute_writable,
   boolean_attribute_writable,
   integer_attribute_writable
 } from "pacc";
 import { CoreService, addType } from "pmcf";
-import { filterConfigurable, sectionLines } from "../utils.mjs";
+import { sectionLines } from "../utils.mjs";
 import { FAMILY_IPV4_IPV6, PROTOCOL_TCP } from "../constants.mjs";
+import {
+  SCOPE_SYSTEMD_JOURNAL_REMOTE,
+  SOURCES_THIS_EXTENDS
+} from "../common-attributes.mjs";
 
 /**
  * @property {string} ServerCertificateFile
@@ -18,56 +23,66 @@ export class SystemdJournalRemoteService extends CoreService {
     Seal: {
       ...boolean_attribute_writable,
       name: "Seal",
-      configurable: true
+      scope: SCOPE_SYSTEMD_JOURNAL_REMOTE,
+      sources: SOURCES_THIS_EXTENDS
     },
     SplitMode: {
       ...string_attribute_writable,
       name: "SplitMode",
       values: new Set([false, "host"]),
-      configurable: true
+      scope: SCOPE_SYSTEMD_JOURNAL_REMOTE,
+      sources: SOURCES_THIS_EXTENDS
     },
     ServerKeyFile: {
       ...string_attribute_writable,
       name: "ServerKeyFile",
-      configurable: true
+      scope: SCOPE_SYSTEMD_JOURNAL_REMOTE,
+      sources: SOURCES_THIS_EXTENDS
       //   default: "/etc/ssl/private/journal-upload.pem"
     },
     ServerCertificateFile: {
       ...string_attribute_writable,
       name: "ServerCertificateFile",
-      configurable: true
+      scope: SCOPE_SYSTEMD_JOURNAL_REMOTE,
+      sources: SOURCES_THIS_EXTENDS
       //   default: "/etc/ssl/certs/journal-upload.pem"
     },
     TrustedCertificateFile: {
       ...string_attribute_writable,
       name: "TrustedCertificateFile",
-      configurable: true
+      scope: SCOPE_SYSTEMD_JOURNAL_REMOTE,
+      sources: SOURCES_THIS_EXTENDS
       //  default: "/etc/ssl/ca/trusted.pem"
     },
     MaxUse: {
       ...string_attribute_writable,
       name: "MaxUse",
-      configurable: true
+      scope: SCOPE_SYSTEMD_JOURNAL_REMOTE,
+      sources: SOURCES_THIS_EXTENDS
     },
     KeepFree: {
       ...string_attribute_writable,
       name: "KeepFree",
-      configurable: true
+      scope: SCOPE_SYSTEMD_JOURNAL_REMOTE,
+      sources: SOURCES_THIS_EXTENDS
     },
     MaxFileSize: {
       ...string_attribute_writable,
       name: "MaxFileSize",
-      configurable: true
+      scope: SCOPE_SYSTEMD_JOURNAL_REMOTE,
+      sources: SOURCES_THIS_EXTENDS
     },
     MaxFiles: {
       ...integer_attribute_writable,
       name: "MaxFiles",
-      configurable: true
+      scope: SCOPE_SYSTEMD_JOURNAL_REMOTE,
+      sources: SOURCES_THIS_EXTENDS
     },
     Compression: {
       ...string_collection_attribute_writable,
       name: "Compression",
-      configurable: true
+      scope: SCOPE_SYSTEMD_JOURNAL_REMOTE,
+      sources: SOURCES_THIS_EXTENDS
       //   default: "zstd lz4 xz"
     }
   };
@@ -98,7 +113,13 @@ export class SystemdJournalRemoteService extends CoreService {
     return {
       serviceName: this.systemdService,
       configFileName: `etc/systemd/journal-remote.conf.d/${name}.conf`,
-      content: sectionLines("Remote", this.getAttributes(filterConfigurable))
+      content: sectionLines(
+        "Remote",
+        extract(this, {
+          filter: attribute => attribute.scope === SCOPE_SYSTEMD_JOURNAL_REMOTE,
+          externalNames: true
+        })
+      )
     };
   }
 }

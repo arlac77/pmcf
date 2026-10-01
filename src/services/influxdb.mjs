@@ -1,9 +1,12 @@
 import { join } from "node:path";
 import { stringify } from "yaml";
-import { boolean_attribute_writable_true } from "pacc";
+import { boolean_attribute_writable_true, extract } from "pacc";
 import { CoreService, addType } from "pmcf";
-import { writeLines, filterConfigurable } from "../utils.mjs";
+import { writeLines } from "../utils.mjs";
 import { FAMILY_DNS_IPV4_IPV6, PROTOCOL_TCP } from "../constants.mjs";
+import { SOURCES_THIS_EXTENDS } from "../common-attributes.mjs";
+
+const SCOPE_INFLUXDB = "influxdb";
 
 export class influxdb extends CoreService {
   static attributes = {
@@ -11,7 +14,8 @@ export class influxdb extends CoreService {
       ...boolean_attribute_writable_true,
       name: "metricsDisabled",
       externalName: "metrics-disabled",
-      configurable: true
+      scope: SCOPE_INFLUXDB,
+      sources: SOURCES_THIS_EXTENDS
     }
   };
   static service = {
@@ -37,11 +41,10 @@ export class influxdb extends CoreService {
       join(dir, "etc", "influxdb"),
       "config.yml",
       stringify(
-        Object.fromEntries(
-          [...this.attributeIterator(filterConfigurable)].map(
-            ([name, value, path, attribute]) => [attribute.externalName, value]
-          )
-        )
+        extract(this, {
+          filter: attribute => attribute.scope === SCOPE_INFLUXDB,
+          externalNames: true
+        })
       )
     );
 
