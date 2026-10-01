@@ -15,9 +15,9 @@ export class MyType extends base {
       name: "undefStrings"
     },
     aString: { ...string_attribute, name: "aString", writable: true },
-    aStringWitwDefault: {
+    aStringWithDefault: {
       ...string_attribute,
-      name: "aStringWitwDefault",
+      name: "aStringWithDefault",
       default: "xyz",
       writable: true
     },
@@ -59,7 +59,7 @@ test("read basics", t => {
   ic.read(m1, data, MyType);
 
   t.is(m1.aString, "s1");
-  t.is(m1.aStringWitwDefault, "xyz");
+  t.is(m1.aStringWithDefault, "xyz");
   t.deepEqual(m1.undefStrings, ["s2"]);
   t.deepEqual(m1.arrayStrings, ["s3"]);
   t.deepEqual(m1.setStrings, new Set(["s41", "s42"]));
