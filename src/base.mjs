@@ -17,12 +17,17 @@ import {
   string_set_attribute_writable,
   description_attribute_writable,
   boolean_attribute_writable,
+  boolean_attribute_writable_true,
   default_attribute_writable
 } from "pacc";
 import { union, writeLines } from "./utils.mjs";
 import { addType } from "./type.mjs";
 import { core } from "./core.mjs";
-import { owner_attribute, aliases_attribute } from "./common-attributes.mjs";
+import {
+  owner_attribute,
+  aliases_attribute,
+  SOURCES_THIS_EXTENDS
+} from "./common-attributes.mjs";
 
 /**
  *
@@ -44,7 +49,11 @@ export class base extends core {
     description: description_attribute_writable,
     type: type_attribute_writable,
     directory: { ...string_attribute_writable, name: "directory" },
-    enabled: { ...boolean_attribute_writable, name: "enabled" },
+    enabled: {
+      ...boolean_attribute_writable_true,
+      name: "enabled",
+      sources: SOURCES_THIS_EXTENDS
+    },
     tags: { ...string_set_attribute_writable, name: "tags", skipEmpty: true },
     content: { ...default_attribute_writable, type: "content", name: "content" }
   };
@@ -139,17 +148,6 @@ export class base extends core {
 
   get timezone() {
     return this.owner?.timezone;
-  }
-
-  /**
-   * @return {boolean}
-   */
-  get enabled() {
-    return this.attribute("_enabled") ?? true;
-  }
-
-  set enabled(value) {
-    this._enabled = value;
   }
 
   get tags() {

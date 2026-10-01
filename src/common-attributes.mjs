@@ -152,7 +152,7 @@ export const networkAttributes = {
     ...enum_string_attribute_writable,
     name: "scope",
     values: new Set(["global", "site", "link", "host"])
-    //  default: "global"
+    //default: "global"
   },
   class: {
     ...enum_string_attribute_writable,
@@ -165,7 +165,8 @@ export const networkAttributes = {
       "10BASE-T",
       "802.11AX",
       "802.11BE" // WiFi 7
-    ])
+    ]),
+    sources: SOURCES_THIS_EXTENDS
   },
   kind: {
     ...enum_string_attribute_writable,
@@ -183,7 +184,12 @@ export const networkAttributes = {
   psk: psk_attribute,
   secretName: { ...string_attribute_writable, name: "secretName" },
   metric: { ...integer_attribute_writable, name: "metric" },
-  mtu: { ...integer_attribute_writable, name: "mtu", default: 1500 },
+  mtu: {
+    ...integer_attribute_writable,
+    name: "mtu",
+    default: 1500,
+    sources: SOURCES_THIS_EXTENDS
+  },
   gateway: { ...default_attribute_writable, name: "gateway", type: "host" },
   multicastDNS: {
     ...boolean_attribute_writable,

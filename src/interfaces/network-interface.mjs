@@ -11,7 +11,8 @@ import {
   networkAttributes,
   networkAddressAttributes,
   hostname_attribute,
-  cluster_attribute
+  cluster_attribute,
+  SOURCES_THIS_EXTENDS
 } from "../common-attributes.mjs";
 import { writeLines, sectionLines } from "../utils.mjs";
 import { SkeletonNetworkInterface } from "./skeleton-network-interface.mjs";
@@ -53,9 +54,20 @@ export class NetworkInterface extends SkeletonNetworkInterface {
       name: "ipAddresses",
       private: true
     },
-    hwaddr: { ...string_attribute_writable, name: "hwaddr" },
-    dhcpClientId: { ...string_attribute_writable, name: "dhcpClientId" },
-    dhcpClientClasses: { ...string_set_attribute_writable, name: "dhcpClientClasses" },
+    hwaddr: {
+      ...string_attribute_writable,
+      name: "hwaddr",
+      sources: SOURCES_THIS_EXTENDS
+    },
+    dhcpClientId: {
+      ...string_attribute_writable,
+      name: "dhcpClientId",
+      sources: SOURCES_THIS_EXTENDS
+    },
+    dhcpClientClasses: {
+      ...string_set_attribute_writable,
+      name: "dhcpClientClasses"
+    },
     destination: { ...string_attribute_writable, name: "destination" }
 
     /*
@@ -73,7 +85,6 @@ export class NetworkInterface extends SkeletonNetworkInterface {
   _metric;
   _kind;
   _hostName;
-  _hwaddr;
   _class;
 
   get cidrAddresses() {
@@ -160,22 +171,6 @@ export class NetworkInterface extends SkeletonNetworkInterface {
     );
   }
 
-  set dhcpClientId(value) {
-    this._dhcpClientId = value;
-  }
-
-  get dhcpClientId() {
-    return this.attribute("_dhcpClientId");
-  }
-
-  set hwaddr(value) {
-    this._hwaddr = value;
-  }
-
-  get hwaddr() {
-    return this.attribute("_hwaddr");
-  }
-
   set metric(value) {
     this._metric = value;
   }
@@ -186,14 +181,6 @@ export class NetworkInterface extends SkeletonNetworkInterface {
       this.network?.metric ??
       networkAttributes.metric.default
     );
-  }
-
-  set mtu(value) {
-    this._mtu = value;
-  }
-
-  get mtu() {
-    return this.attribute("_mtu");
   }
 
   set class(value) {

@@ -15,7 +15,8 @@ import {
   networkAddressAttributes,
   networkInterfaces_attribute,
   hosts_attribute,
-  extends_attribute
+  extends_attribute,
+  SOURCES_THIS_EXTENDS
 } from "./common-attributes.mjs";
 import { ServiceOwner } from "./service-owner.mjs";
 import { addHook } from "./hooks.mjs";
@@ -30,20 +31,38 @@ export class host extends ServiceOwner {
     os: {
       ...enum_string_attribute_writable,
       name: "os",
-      values: new Set(["osx", "windows", "linux"])
+      values: new Set(["osx", "windows", "linux"]),
+      sources: SOURCES_THIS_EXTENDS
     },
     id: { ...string_attribute_writable, name: "id" },
-    distribution: { ...string_attribute_writable, name: "distribution" },
+    distribution: {
+      ...string_attribute_writable,
+      name: "distribution",
+      sources: SOURCES_THIS_EXTENDS
+    },
     deployment: {
       ...enum_string_attribute_writable,
       name: "deployment",
-      values: new Set(["production", "development"])
+      values: new Set(["production", "development"]),
+      sources: SOURCES_THIS_EXTENDS
     },
     priority: priority_attribute_writable,
     weight: { ...number_attribute_writable, name: "weight" },
-    serial: { ...string_attribute_writable, name: "serial" },
-    vendor: { ...string_attribute_writable, name: "vendor" },
-    keymap: { ...string_attribute_writable, name: "keymap" },
+    serial: {
+      ...string_attribute_writable,
+      name: "serial",
+      sources: SOURCES_THIS_EXTENDS
+    },
+    vendor: {
+      ...string_attribute_writable,
+      name: "vendor",
+      sources: SOURCES_THIS_EXTENDS
+    },
+    keymap: {
+      ...string_attribute_writable,
+      name: "keymap",
+      sources: SOURCES_THIS_EXTENDS
+    },
     chassis: {
       ...enum_string_attribute_writable,
       name: "chassis",
@@ -61,9 +80,13 @@ export class host extends ServiceOwner {
         "battery",
         "virtual",
         "dehumidifier"
-      ])
+      ]),
+      sources: SOURCES_THIS_EXTENDS
     },
-    architecture: architecture_attribute_writable,
+    architecture: {
+      ...architecture_attribute_writable,
+      sources: SOURCES_THIS_EXTENDS
+    },
     extends: {
       ...extends_attribute,
       type: host
@@ -76,62 +99,6 @@ export class host extends ServiceOwner {
   }
 
   _networkInterfaces = new Map();
-  _os;
-  _distribution;
-  _deployment;
-  _chassis;
-  _vendor;
-  _architecture;
-  _serial;
-  _keymap;
-
-  set serial(value) {
-    this._serial = value;
-  }
-
-  get serial() {
-    return this.attribute("_serial");
-  }
-
-  set deployment(value) {
-    this._deployment = value;
-  }
-
-  get deployment() {
-    return this.attribute("_deployment");
-  }
-
-  set chassis(value) {
-    this._chassis = value;
-  }
-
-  get chassis() {
-    return this.attribute("_chassis");
-  }
-
-  set vendor(value) {
-    this._vendor = value;
-  }
-
-  get vendor() {
-    return this.attribute("_vendor");
-  }
-
-  set keymap(value) {
-    this._keymap = value;
-  }
-
-  get keymap() {
-    return this.attribute("_keymap");
-  }
-
-  set architecture(value) {
-    this._architecture = value;
-  }
-
-  get architecture() {
-    return this.attribute("_architecture");
-  }
 
   get isTemplate() {
     return this.isModel || super.isTemplate;
@@ -147,22 +114,6 @@ export class host extends ServiceOwner {
         return node;
       }
     }
-  }
-
-  set os(value) {
-    this._os = value;
-  }
-
-  get os() {
-    return this.attribute("_os");
-  }
-
-  set distribution(value) {
-    this._distribution = value;
-  }
-
-  get distribution() {
-    return this.attribute("_distribution");
   }
 
   get modelName() {
