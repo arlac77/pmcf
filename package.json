@@ -54,8 +54,8 @@
     "content-entry-transform": "^1.7.11",
     "filtered-map": "^1.0.0",
     "ip-utilties": "^3.13.1",
-    "npm-pkgbuild": "^22.2.12",
-    "pacc": "^13.1.2",
+    "npm-pkgbuild": "^22.2.13",
+    "pacc": "^13.2.0",
     "package-directory": "^8.2.0",
     "yaml": "^2.9.1"
   },
