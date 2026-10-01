@@ -42,7 +42,6 @@ generates config packages for:
 ### Table of Contents
 
 *   [base](#base)
-    *   [enabled](#enabled)
     *   [priority](#priority)
     *   [templateContent](#templatecontent)
         *   [Parameters](#parameters)
@@ -125,10 +124,6 @@ generates config packages for:
 
 attributes: as declared in the types
 properties: use defined values to support attribute value definitions
-
-### enabled
-
-Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
 
 ### priority
 
