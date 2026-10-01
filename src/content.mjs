@@ -12,6 +12,7 @@ import { core } from "./core.mjs";
 import { addType } from "./type.mjs";
 import { union } from "./utils.mjs";
 import { loadHooks } from "./hooks.mjs";
+import { SOURCES_THIS_EXTENDS } from "./common-attributes.mjs";
 
 export class permission extends core {
   static key = "pattern";
@@ -52,7 +53,8 @@ export class content extends core {
       ...string_attribute_writable,
       name: "access",
       default: "private",
-      scope: SCOPE_PACKAGING
+      scope: SCOPE_PACKAGING,
+      sources: SOURCES_THIS_EXTENDS
     },
     dependencies: {
       ...string_set_attribute_writable,
