@@ -55,12 +55,12 @@
     "filtered-map": "^1.0.0",
     "ip-utilties": "^3.13.1",
     "npm-pkgbuild": "^22.2.13",
-    "pacc": "^13.2.0",
+    "pacc": "^14.0.0",
     "package-directory": "^8.2.0",
     "yaml": "^2.9.1"
   },
   "devDependencies": {
-    "@types/node": "^26.6.3",
+    "@types/node": "^26.6.4",
     "ava": "^8.0.1",
     "c8": "^12.0.0",
     "documentation": "^14.0.3",
