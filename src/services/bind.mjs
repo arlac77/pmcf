@@ -842,7 +842,9 @@ export class bind extends CoreService {
   }
 
   get serverType() {
-    return this._serverType ?? (this.primaries ? SECONDARY : PRIMARY);
+    return (
+      this.attribute("_serverType") ?? (this.primaries ? SECONDARY : PRIMARY)
+    );
   }
 
   async writeForwarders(outputControl) {
