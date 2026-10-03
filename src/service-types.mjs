@@ -4,6 +4,7 @@ import {
   FAMILY_UNIX,
   FAMILY_IPV4_IPV6,
   FAMILY_DNS_IPV4_IPV6,
+  FAMILY_UNIX_IPV4_IPV6,
   PROTOCOL_UDP,
   PROTOCOL_TCP
 } from "./constants.mjs";
@@ -198,7 +199,7 @@ export const ServiceTypes = {
   },
   lmtp: {
     endpoints: [
-      { family: FAMILY_IPV4_IPV6, protocol: PROTOCOL_TCP, port: 24, tls: false }
+      { family: FAMILY_UNIX_IPV4_IPV6, protocol: PROTOCOL_TCP, port: 24, tls: false }
     ]
   },
   ssh: {

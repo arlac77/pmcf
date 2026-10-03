@@ -9,3 +9,4 @@ export const FAMILY_DNS = "dns";
 export const FAMILY_IPV4_IPV6 = new Set([FAMILY_IPV4, FAMILY_IPV6]);
 export const FAMILY_DNS_IPV4_IPV6 = new Set([FAMILY_DNS, FAMILY_IPV4, FAMILY_IPV6]);
 
+export const FAMILY_UNIX_IPV4_IPV6 = new Set([FAMILY_UNIX, FAMILY_IPV4, FAMILY_IPV6]);
