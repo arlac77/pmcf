@@ -167,7 +167,9 @@ export class content extends core {
    * @return {string}
    */
   get access() {
-    return this.attribute("_access") ?? this.constructor.attributes.access.default; // TODO automatically generate ?
+    return (
+      this.attribute("_access") ?? this.constructor.attributes.access.default
+    ); // TODO automatically generate ?
   }
 
   set access(value) {
@@ -282,11 +284,15 @@ export class content extends core {
    * @param {object} packageData
    */
   async loadHooks(packageData) {
+    const hooks = new Set();
+
     for (const content of this.walkDirections(["this", "extends"])) {
       for (const hook of content._hooks) {
-        await loadHooks(packageData, join(content.directory, hook));
+        hooks.add(join(content.directory, hook));
       }
     }
+
+    await Promise.all([...hooks].map(hook => loadHooks(packageData, hook)));
   }
 
   set fragments(value) {
@@ -307,7 +313,7 @@ export class content extends core {
       properties: Object.fromEntries(
         extendingAttributeIterator(
           this.constructor,
-          attribute => attribute.scope = SCOPE_PACKAGING
+          attribute => (attribute.scope = SCOPE_PACKAGING)
         ).map(([path, attribute]) => [path[0], this[path[0]]])
       ),
       dir: () => this.sources?.[0].dir
