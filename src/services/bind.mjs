@@ -491,7 +491,7 @@ class bind_view extends bind_object {
         `(${this.soaUpdates.join(" ")})`
       ),
       ...asArray(service.authorative).map(dns =>
-        DNSRecord("@", "NS", dnsFullName(dns.address()))
+        DNSRecord("@", "NS", dnsFullName(dns.address))
       )
     ];
   }

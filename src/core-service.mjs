@@ -201,23 +201,14 @@ export class CoreService extends base {
     return this.endpoints(filter)[0];
   }
 
-  address(
-    options = {
-      endpoints: e =>
-        e.networkInterface && e.networkInterface.kind !== "loopbak",
-      select: e => e.domainName || e.address,
-      limit: 1,
-      join: ""
-    }
-  ) {
-    const all = this.endpoints(options.endpoints);
-    const res = [...new Set(options.select ? all.map(options.select) : all)];
-
-    if (options.limit < res.length) {
-      res.length = options.limit;
-    }
-
-    return options.join !== undefined ? res.join(options.join) : res;
+  get address() {
+    return [
+      ...new Set(
+        this.endpoints(
+          e => e.networkInterface && e.networkInterface.kind !== "loopbak"
+        ).map(e => e.domainName || e.address)
+      )
+    ][0];
   }
 
   set port(value) {
