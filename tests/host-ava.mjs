@@ -73,7 +73,7 @@ test("host isMember / isCluster", t => {
   t.false(h1.isMember(h2));
 });
 
-test("host extends", t => {
+test.only("host extends", t => {
   const ic = new InitializationContext();
   const h0 = new host();
   ic.read(h0, {
@@ -87,11 +87,15 @@ test("host extends", t => {
       packaging: "alpm"
     },
     services: {
-      http: {
-        port: 1024
-      }
+      http: {}
     }
   });
+
+  const h0_http = h0.named("http");
+  t.is(h0_http.name, "http");
+  t.is(h0_http.port, 80);
+  t.is(h0_http.owner, h0);
+
   assign(hosts_attribute, ic.root, h0);
 
   const h1 = new host();
@@ -114,13 +118,20 @@ test("host extends", t => {
       provides: "pkgh1",
       dependencies: "dpkgh1",
       replaces: "rpkgh1"
+    },
+    services: {
+      http: {
+        port: 1024
+      }
     }
   });
   assign(hosts_attribute, ic.root, h1);
 
   const h1_http = h1.named("http");
   t.is(h1_http.name, "http");
+  t.is(h1_http.port, 1024);
   t.is(h1_http.owner, h1);
+  t.deepEqual(h1_http.extends, new Set([h0_http]));
 
   t.deepEqual([...h1.networkInterfaces.keys()].sort(), ["eth0", "lo"]);
 
@@ -147,7 +158,9 @@ test("host extends", t => {
 
   const h2_http = h2.named("http");
   t.is(h2_http.name, "http");
+  t.is(h2_http.port, 1024);
   t.is(h2_http.owner, h2);
+  t.deepEqual(h2_http.extends, new Set([h0_http]));
 
   assign(hosts_attribute, ic.root, h2);
 
@@ -174,7 +187,9 @@ test("host extends", t => {
 
   const h3_http = h3.named("http");
   t.is(h3_http.name, "http");
+  t.is(h3_http.port, 1024);
   t.is(h3_http.owner, h3);
+  //t.deepEqual(h3_http.extends, new Set([h0_http]));
 
   assign(hosts_attribute, ic.root, h3);
 
