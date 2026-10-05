@@ -28,15 +28,14 @@ export class InitializationContext {
       .outstandingResolves) {
       value = object.expand(value);
 
-      function resolve(resolved)
-       {
-          assign(attribute, object, resolved);
+      function resolve(resolved) {
+        assign(attribute, object, resolved);
 
-          if (attribute.name === "extends") {
-            // TODO attribute action ?
-            object.materializeExtends();
-          }
-       }
+        if (attribute.name === "extends") {
+          // TODO attribute action ?
+          object.materializeExtends();
+        }
+      }
 
       for (const node of object.walkDirections(["this", "owner"])) {
         const resolved = this.named(value, node);
@@ -48,10 +47,8 @@ export class InitializationContext {
 
       const resolved = object.expression(value);
       if (resolved) {
-        if (resolved) {
-          resolve(resolved);
-          continue nextOutstanding;
-        }
+        resolve(resolved);
+        continue nextOutstanding;
       }
 
       this.error(
