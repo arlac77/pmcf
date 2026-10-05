@@ -75,9 +75,9 @@ test("host isMember / isCluster", t => {
 
 test("host extends", t => {
   const ic = new InitializationContext();
-  const linux = new host();
-  ic.read(linux, {
-    name: "linux",
+  const h0 = new host();
+  ic.read(h0, {
+    name: "h0",
     os: "linux",
     distribution: "suse",
     networkInterfaces: {
@@ -85,18 +85,23 @@ test("host extends", t => {
     },
     content: {
       packaging: "alpm"
+    },
+    services: {
+      http: {
+        port: 1024
+      }
     }
   });
-  assign(hosts_attribute, ic.root, linux);
+  assign(hosts_attribute, ic.root, h0);
 
-  const e1 = new host();
-  ic.read(e1, {
-    extends: [linux],
-    name: "e1",
-    aliases: "e1a",
+  const h1 = new host();
+  ic.read(h1, {
+    extends: [h0],
+    name: "h1",
+    aliases: "h1a",
     deployment: "production",
     chassis: "phone",
-    vendor: "vendor e1",
+    vendor: "vendor h1",
     architecture: "aarch64",
     serial: "123",
     networkInterfaces: {
@@ -106,47 +111,6 @@ test("host extends", t => {
     },
     content: {
       packaging: "alpm",
-      provides: "pkge1",
-      dependencies: "dpkge1",
-      replaces: "rpkge1"
-    }
-  });
-  assign(hosts_attribute, ic.root, e1);
-
-  t.deepEqual([...e1.networkInterfaces.keys()].sort(), ["eth0", "lo"]);
-
-  t.deepEqual(e1.children, [
-    e1.networkInterfaces.get("eth0"),
-    e1.networkInterfaces.get("lo")
-  ]);
-
-  const e2 = new host();
-  ic.read(e2, {
-    name: "e2",
-    extends: e1,
-    aliases: "e2a",
-    content: {
-      provides: "pkge2",
-      dependencies: "dpkge2",
-      replaces: "rpkge2"
-    }
-  });
-  assign(hosts_attribute, ic.root, e2);
-
-  t.deepEqual(e2.children, [
-    e2._networkInterfaces.get("eth0"),
-    e2._networkInterfaces.get("lo")
-  ]);
-  t.deepEqual(e2.named("lo"), e2.networkInterfaces.get("lo"));
-
-  const h1 = new host();
-  ic.read(h1, {
-    name: "h1",
-    id: "1234",
-    extends: e2,
-    aliases: "h1a",
-    content: {
-      packaging: "alpm",
       provides: "pkgh1",
       dependencies: "dpkgh1",
       replaces: "rpkgh1"
@@ -154,32 +118,96 @@ test("host extends", t => {
   });
   assign(hosts_attribute, ic.root, h1);
 
+  const h1_http = h1.named("http");
+  t.is(h1_http.name, "http");
+  t.is(h1_http.owner, h1);
+
+  t.deepEqual([...h1.networkInterfaces.keys()].sort(), ["eth0", "lo"]);
+
+  const lo = h1.networkInterfaces.get("lo");
+  t.is(lo.owner, h1);
+
   t.deepEqual(h1.children, [
-    h1._networkInterfaces.get("eth0"),
-    h1._networkInterfaces.get("lo")
+    h1_http,
+    h1.networkInterfaces.get("eth0"),
+    h1.networkInterfaces.get("lo")
   ]);
-  t.deepEqual(h1.named("lo"), h1.networkInterfaces.get("lo"));
 
-  t.deepEqual([...h1.aliases].sort(), ["h1a", "e1a", "e2a"].sort());
-  t.is(h1.os, "linux");
-  t.is(h1.distribution, "suse");
-  t.is(h1.deployment, "production");
-  t.is(h1.chassis, "phone");
-  t.is(h1.vendor, "vendor e1");
-  t.is(h1.architecture, "aarch64");
-  t.is(h1.serial, "123");
-  t.is(h1.id, "1234");
-  t.is(e1.networkInterfaces.get("eth0").kind, "ethernet");
+  const h2 = new host();
+  ic.read(h2, {
+    name: "h2",
+    extends: h1,
+    aliases: "h2a",
+    content: {
+      provides: "pkgh2",
+      dependencies: "dpkgh2",
+      replaces: "rpkgh2"
+    }
+  });
 
-  const c = h1.content;
+  const h2_http = h2.named("http");
+  t.is(h2_http.name, "http");
+  t.is(h2_http.owner, h2);
 
-  t.is(c.owner, h1);
+  assign(hosts_attribute, ic.root, h2);
+
+  t.deepEqual(h2.children, [
+    h2_http,
+    h2._networkInterfaces.get("eth0"),
+    h2._networkInterfaces.get("lo")
+  ]);
+  t.deepEqual(h2.named("lo"), h2.networkInterfaces.get("lo"));
+
+  const h3 = new host();
+  ic.read(h3, {
+    name: "h3",
+    id: "1234",
+    extends: h2,
+    aliases: "h3a",
+    content: {
+      packaging: "alpm",
+      provides: "pkgh3",
+      dependencies: "dpkgh3",
+      replaces: "rpkgh3"
+    }
+  });
+
+  const h3_http = h3.named("http");
+  t.is(h3_http.name, "http");
+  t.is(h3_http.owner, h3);
+
+  assign(hosts_attribute, ic.root, h3);
+
+  t.deepEqual(h3.children, [
+    h3_http,
+    h3._networkInterfaces.get("eth0"),
+    h3._networkInterfaces.get("lo")
+  ]);
+  t.deepEqual(h3.named("lo"), h3.networkInterfaces.get("lo"));
+
+  t.deepEqual([...h3.aliases].sort(), ["h3a", "h1a", "h2a"].sort());
+  t.is(h3.os, "linux");
+  t.is(h3.distribution, "suse");
+  t.is(h3.deployment, "production");
+  t.is(h3.chassis, "phone");
+  t.is(h3.vendor, "vendor h1");
+  t.is(h3.architecture, "aarch64");
+  t.is(h3.serial, "123");
+  t.is(h3.id, "1234");
+  t.is(h1.networkInterfaces.get("eth0").kind, "ethernet");
+
+  const c = h3.content;
+
+  t.is(c.owner, h3);
   t.is(c.typeName, "content");
   t.deepEqual(c.packaging, new Set(["alpm"]));
 
-  t.deepEqual([...c.provides].sort(), ["pkge1", "pkge2", "pkgh1"].sort());
-  t.deepEqual([...c.dependencies].sort(), ["dpkge1", "dpkge2", "dpkgh1"].sort());
-  t.deepEqual([...c.replaces].sort(), ["rpkge1", "rpkge2", "rpkgh1"].sort());
+  t.deepEqual([...c.provides].sort(), ["pkgh1", "pkgh2", "pkgh3"].sort());
+  t.deepEqual(
+    [...c.dependencies].sort(),
+    ["dpkgh1", "dpkgh2", "dpkgh3"].sort()
+  );
+  t.deepEqual([...c.replaces].sort(), ["rpkgh1", "rpkgh2", "rpkgh3"].sort());
 });
 
 test("host domains & aliases", t => {
