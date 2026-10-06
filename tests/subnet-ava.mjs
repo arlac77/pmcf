@@ -103,7 +103,7 @@ st.title = (providedTitle = "subnet", address, expected) =>
 
 test(st, SUBNET_LOCALHOST_IPV4, {
   address: "127/8",
-  longAddress: "127.0.0.1/8",
+  longAddress: "127.0.0.0/8",
   prefixLength: 8,
   family: FAMILY_IPV4,
   matches: ["127.0.01"],

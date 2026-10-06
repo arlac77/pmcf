@@ -89,5 +89,5 @@ export class Subnet extends core {
 
 export const SUBNET_GLOBAL_IPV4 = new Subnet(undefined, "0.0.0.0/0");
 export const SUBNET_GLOBAL_IPV6 = new Subnet(undefined, "::0/0");
-export const SUBNET_LOCALHOST_IPV4 = new Subnet(undefined, "127.0.0.1/8");
+export const SUBNET_LOCALHOST_IPV4 = new Subnet(undefined, "127.0.0.0/8");
 export const SUBNET_LOCALHOST_IPV6 = new Subnet(undefined, "::1/128");
