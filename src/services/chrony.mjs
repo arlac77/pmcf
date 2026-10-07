@@ -1,5 +1,5 @@
 import { join } from "node:path";
-import { default_collection_attribute_writable, asArray } from "pacc";
+import { default_collection_attribute_writable, leafValues, asArray } from "pacc";
 import { addType, CoreService } from "pmcf";
 import { writeLines } from "../utils.mjs";
 import { FAMILY_UNIX, FAMILY_IPV4_IPV6, PROTOCOL_TCP } from "../constants.mjs";
@@ -41,7 +41,7 @@ export class chrony extends CoreService {
 
   async *preparePackages(dir) {
     const packageData = await this.preparePackage(dir);
-    const subnets = [...new Map(this.subnets).values()]; // TODO should be normal
+    const addresses = [...new Set(leafValues(this.subnets).map(s=>s.address))];
     const host = this.host;
 
     function chronyServer(endpoint) {
@@ -74,9 +74,9 @@ export class chrony extends CoreService {
       "ntsdumpdir /var/lib/chrony",
       "dumpdir /var/lib/chrony",
       "pidfile /run/chrony/chronyd.pid",
-      subnets.map(s => `allow ${s.address}`),
+      addresses.map(address => `allow ${address}`),
       "cmdratelimit interval -4 burst 16",
-      subnets.map(s => `cmdallow ${s.address}`)
+      addresses.map(address => `cmdallow ${address}`)
     ];
 
     await writeLines(join(dir, "etc"), "chrony.conf", lines);
