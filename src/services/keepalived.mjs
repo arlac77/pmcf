@@ -3,7 +3,8 @@ import {
   default_attribute_writable,
   default_collection_attribute_writable,
   enum_string_attribute_writable,
-  priority_attribute_writable
+  priority_attribute_writable,
+  email_attribute_writable
 } from "pacc";
 import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
 import { addType } from "../type.mjs";
@@ -73,6 +74,8 @@ export class keepalive_cluster_member extends core {
 
 const states = ["master", "backup", "fault"];
 
+const SCOPE_KEEPALIVED = "keepalived";
+
 export class keepalived extends CoreService {
   static priority = 1.5;
   static attributes = {
@@ -80,6 +83,12 @@ export class keepalived extends CoreService {
       ...default_collection_attribute_writable,
       type: keepalive_cluster_member,
       name: "clusters"
+    },
+    notification_email_from: {
+      ...email_attribute_writable,
+      name: "notification_email_from",
+      default: "keepalived",
+      scope: SCOPE_KEEPALIVED
     }
   };
 
@@ -106,7 +115,7 @@ export class keepalived extends CoreService {
       "    " + this.administratorEmail,
       "  }",
       ...extra,
-      `  notification_email_from keepalived@${this.domainName}`,
+      `  notification_email_from ${this.notification_email_from}`,
       "  enable_script_security",
       "  script_user root",
       "  max_auto_priority 20",
