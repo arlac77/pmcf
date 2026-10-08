@@ -5,7 +5,7 @@ import { FilteredMap } from "filtered-map";
 import {
   string_set_attribute_writable,
   string_attribute_writable,
-  email_attribute,
+  email_attribute_writable,
   asArray
 } from "pacc";
 import { union } from "./utils.mjs";
@@ -54,9 +54,8 @@ export class owner extends ServiceOwner {
       description: "unix locale"
     },
     administratorEmail: {
-      ...email_attribute,
-      name: "administratorEmail",
-      writable: true
+      ...email_attribute_writable,
+      name: "administratorEmail"
     }
   };
 
