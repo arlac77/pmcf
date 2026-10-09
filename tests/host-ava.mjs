@@ -138,6 +138,7 @@ test.only("host extends", t => {
   const lo = h1.networkInterfaces.get("lo");
   t.is(lo.owner, h1);
 
+  //console.log(h1.children.map(n=>n.fullName));
   t.deepEqual(h1.children, [
     h1_http,
     h1.networkInterfaces.get("eth0"),

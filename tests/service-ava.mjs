@@ -251,7 +251,6 @@ test("service basics", t => {
   assign(ServiceOwner.attributes.services, h1, s3);
 
   t.is(s3.priority, 0);
-  t.is(s3.priority, 0);
 
   t.deepEqual(
     s3.dnsRecordsForDomainName("example.com", true).map(r => r.toString()),
@@ -260,6 +259,20 @@ test("service basics", t => {
       'example.com. 1W IN HTTPS 500 . alpn="h3" no-default-alpn'
     ]
   );
+
+  const s4 = new service();
+  ic.read(s4, {
+    name: "ldap",
+    weight: 0,
+    priority: 0
+  });
+
+  const h1eth0 = h2.networkInterfaces.get('eth0');
+
+  assign(ServiceOwner.attributes.services, h1eth0, s4);
+
+  t.is(h1eth0.expression("services[types[ldap]][0]"), s4);
+ // t.is(h1.expression("services[types[ldap]][0]"), s4);
 });
 
 test("service without protocol", t => {

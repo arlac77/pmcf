@@ -136,7 +136,9 @@ export class host extends ServiceOwner {
   get services() {
     return new AggregatedMap([
       this._services,
-      ...this._networkInterfaces.values().map(ni => ni._services)
+      ...[...this.networkInterfaces.values()]
+        .filter(ni => ni.services.size > 0)
+        .map(ni => ni._services)
     ]);
   }
 
