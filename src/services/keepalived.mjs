@@ -2,11 +2,13 @@ import { join } from "node:path";
 import {
   default_attribute_writable,
   default_collection_attribute_writable,
+  string_attribute_writable,
   enum_string_attribute_writable,
   priority_attribute_writable,
   email_attribute_writable
 } from "pacc";
 import { FAMILY_IPV4, FAMILY_IPV6 } from "ip-utilties";
+import { SOURCES_THIS_EXTENDS } from "../common-attributes.mjs";
 import { addType } from "../type.mjs";
 import { PROTOCOL_TCP } from "../constants.mjs";
 import { core } from "../core.mjs";
@@ -84,10 +86,18 @@ export class keepalived extends CoreService {
       type: keepalive_cluster_member,
       name: "clusters"
     },
+    smtp_server: {
+      ...string_attribute_writable,
+      name: "smtp_server",
+      deferredExpression: true,
+      scope: SCOPE_KEEPALIVED
+    },
+
     notification_email_from: {
       ...email_attribute_writable,
       name: "notification_email_from",
       default: "keepalived",
+      sources: SOURCES_THIS_EXTENDS,
       scope: SCOPE_KEEPALIVED
     }
   };
@@ -103,10 +113,10 @@ export class keepalived extends CoreService {
 
     const extra = [];
 
-    const smtpServer = this.smtpServer;
+    const smtp_server = this.smtp_server;
 
-    if (smtpServer) {
-      extra.push(`  smtp_server ${smtpServer.address}`);
+    if (smtp_server) {
+      extra.push(`  smtp_server ${smtp_server.address}`);
     }
 
     const cfg = [

@@ -118,10 +118,6 @@ export class base extends core {
     return this.owner?.network;
   }
 
-  get smtpServer() {
-    return this.owner?.smtpServer;
-  }
-
   get domain() {
     return this.owner?.domain;
   }

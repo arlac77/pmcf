@@ -33,11 +33,6 @@ export class owner extends ServiceOwner {
     networkInterfaces: networkInterfaces_attribute,
     owners: owners_attribute,
     country: { ...string_attribute_writable, name: "country" },
-    smtpServer: {
-      ...string_attribute_writable,
-      name: "smtpServer",
-      deferredExpression: true
-    },
     domain: { ...string_attribute_writable, name: "domain" },
     domains: { ...string_set_attribute_writable, skipEmpty: true, name: "domains" },
     timezone: { ...string_attribute_writable, name: "timezone" },
