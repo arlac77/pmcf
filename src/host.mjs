@@ -212,7 +212,7 @@ export class host extends ServiceOwner {
 
   get network() {
     for (const ni of this.networkInterfaces.values()) {
-      if (ni._kind !== "loopback" && ni._network) {
+      if (ni._network) {
         return ni._network;
       }
     }
