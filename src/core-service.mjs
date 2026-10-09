@@ -165,27 +165,28 @@ export class CoreService extends base {
             this._port === undefined ? { ...e } : { ...e, port: this._port };
           delete options.kind;
 
-          for (const na of this.host.networkAddresses()) {
-            if (e.family !== FAMILY_DNS) {
-              if (
-                (e.family && e.family !== na.family) ||
-                (e.kind && e.kind !== na.networkInterface.kind)
-              ) {
-                continue;
+          if (this.host) {
+            for (const na of this.host.networkAddresses()) {
+              if (e.family !== FAMILY_DNS) {
+                if (
+                  (e.family && e.family !== na.family) ||
+                  (e.kind && e.kind !== na.networkInterface.kind)
+                ) {
+                  continue;
+                }
               }
-            }
 
-            if (e.scheme || e.pathname) {
-              const he = new url_endpoint(this, na, options);
-              if (!seen.has(he.url.toString())) {
-                seen.add(he.url.toString());
-                result.push(he);
+              if (e.scheme || e.pathname) {
+                const he = new url_endpoint(this, na, options);
+                if (!seen.has(he.url.toString())) {
+                  seen.add(he.url.toString());
+                  result.push(he);
+                }
+              } else {
+                result.push(new endpoint(this, na, options));
               }
-            } else {
-              result.push(new endpoint(this, na, options));
             }
           }
-
           if (!domainNames.has(this.domainName)) {
             domainNames.add(this.domainName);
             result.push(new domain_endpoint(this, this.domainName, options));
