@@ -73,7 +73,7 @@ test("host isMember / isCluster", t => {
   t.false(h1.isMember(h2));
 });
 
-test.only("host extends", t => {
+test("host extends", t => {
   const ic = new InitializationContext();
   const h0 = new host();
   ic.read(h0, {
