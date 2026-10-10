@@ -267,12 +267,14 @@ test("service basics", t => {
     priority: 0
   });
 
-  const h1eth0 = h2.networkInterfaces.get('eth0');
+  const h2eth0 = h2.networkInterfaces.get('eth0');
 
-  assign(ServiceOwner.attributes.services, h1eth0, s4);
+  assign(ServiceOwner.attributes.services, h2eth0, s4);
 
-  t.is(h1eth0.expression("services[types[ldap]][0]"), s4);
- // t.is(h1.expression("services[types[ldap]][0]"), s4);
+  t.is(h2eth0.expression("services[types[ldap]][0]"), s4);
+
+  t.is(h2.services.get('ldap'),s4);
+  t.is(h2.expression("services[types[ldap]][0]"), s4);
 });
 
 test("service without protocol", t => {
