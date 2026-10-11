@@ -34,7 +34,11 @@ export class owner extends ServiceOwner {
     owners: owners_attribute,
     country: { ...string_attribute_writable, name: "country" },
     domain: { ...string_attribute_writable, name: "domain" },
-    domains: { ...string_set_attribute_writable, skipEmpty: true, name: "domains" },
+    domains: {
+      ...string_set_attribute_writable,
+      skipEmpty: true,
+      name: "domains"
+    },
     timezone: { ...string_attribute_writable, name: "timezone" },
     architectures: {
       ...string_set_attribute_writable,
@@ -84,7 +88,7 @@ export class owner extends ServiceOwner {
 
   get services() {
     return new AggregatedMap(
-      [this, ...this.hosts.values()].map(host => host._services)
+      [this, ...this.hosts.values()].map(host => host.myselfServices)
     );
   }
 
