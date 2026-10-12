@@ -10,10 +10,15 @@ const SCOPE_INFLUXDB = "influxdb";
 
 export class influxdb extends CoreService {
   static attributes = {
-    metricsDisabled: {
+    "metrics-disabled": {
       ...boolean_attribute_writable_true,
-      name: "metricsDisabled",
-      externalName: "metrics-disabled",
+      name: "metrics-disabled",
+      scope: SCOPE_INFLUXDB,
+      sources: SOURCES_THIS_EXTENDS
+    },
+    "use-hashed-tokens": {
+      ...boolean_attribute_writable_false,
+      name: "use-hashed-tokens",
       scope: SCOPE_INFLUXDB,
       sources: SOURCES_THIS_EXTENDS
     }

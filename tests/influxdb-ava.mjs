@@ -14,5 +14,6 @@ test("influxdb basics", async t => {
   t.is(inst.port, 8086);
   t.is(inst.url.toString(), "http://host1.mydomain.com:8086/");
 
-  t.is(inst.metricsDisabled, true);
+  t.is(inst["metrics-disabled"], true);
+  t.is(inst["use-hashed-tokens"], false);
 });
