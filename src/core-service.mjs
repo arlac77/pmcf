@@ -8,7 +8,6 @@ import {
 import {
   string_attribute_writable,
   string_set_attribute_writable,
-  number_attribute_writable,
   priority_attribute,
   asArray
 } from "pacc";
@@ -26,7 +25,7 @@ import {
   networkAddressAttributes,
   extends_attribute,
   credentials_attribute,
-  networkInterfaces_attribute,
+  weight_attribute_writable,
   endpointAttributes
 } from "./common-attributes.mjs";
 import {
@@ -69,7 +68,7 @@ export class CoreService extends base {
       type: CoreService
     },
     priority: priority_attribute,
-    weight: { ...number_attribute_writable, name: "weight" },
+    weight: weight_attribute_writable,
     types: { ...string_set_attribute_writable, name: "types" },
     systemdService: { ...string_attribute_writable, name: "systemdService" },
     systemUserName: { ...string_attribute_writable, name: "systemUserName" },

@@ -88,7 +88,7 @@ export class owner extends ServiceOwner {
 
   get services() {
     return new AggregatedMap(
-      [this, ...this.hosts.values()].map(host => host.myselfServices)
+      [this, ...this.hosts.values()].map(host => host._services)
     );
   }
 

@@ -11,7 +11,8 @@ import {
   hostname_attribute as hostname_attribute_base,
   boolean_attribute_writable,
   boolean_attribute_false,
-  port_attribute_writable
+  port_attribute_writable,
+  number_attribute_writable
 } from "pacc";
 import { PROTOCOL_TCP, PROTOCOL_UDP, PROTOCOL_QUIC } from "./constants.mjs";
 
@@ -81,6 +82,11 @@ export const credentials_attribute = {
   ...default_collection_attribute_writable,
   type: "credential",
   name: "credentials"
+};
+
+export const weight_attribute_writable = {
+  ...number_attribute_writable,
+  name: "weight"
 };
 
 export const services_attribute = {

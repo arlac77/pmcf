@@ -4,7 +4,6 @@ import { AggregatedMap } from "aggregated-map";
 import {
   string_attribute,
   string_attribute_writable,
-  number_attribute_writable,
   priority_attribute_writable,
   enum_string_attribute_writable,
   architecture_attribute_writable,
@@ -16,6 +15,7 @@ import {
   networkInterfaces_attribute,
   hosts_attribute,
   extends_attribute,
+  weight_attribute_writable,
   SOURCES_THIS_EXTENDS
 } from "./common-attributes.mjs";
 import { ServiceOwner } from "./service-owner.mjs";
@@ -47,7 +47,7 @@ export class host extends ServiceOwner {
       sources: SOURCES_THIS_EXTENDS
     },
     priority: priority_attribute_writable,
-    weight: { ...number_attribute_writable, name: "weight" },
+    weight: weight_attribute_writable,
     serial: {
       ...string_attribute_writable,
       name: "serial",
