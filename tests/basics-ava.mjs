@@ -59,7 +59,7 @@ function setup() {
   return { ic, root, ht1, ht2, n1, l1, h1 };
 }
 
-test("Root basics", async t => {
+test("root basics", async t => {
   const ic = new InitializationContext("/somewhere");
   const root = ic.root;
 
