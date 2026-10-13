@@ -1,6 +1,10 @@
 import { join } from "node:path";
 import { stringify } from "yaml";
-import { boolean_attribute_writable_true, extract } from "pacc";
+import {
+  boolean_attribute_writable_true,
+  boolean_attribute_writable_false,
+  extract
+} from "pacc";
 import { CoreService, addType } from "pmcf";
 import { writeLines } from "../utils.mjs";
 import { FAMILY_DNS_IPV4_IPV6, PROTOCOL_TCP } from "../constants.mjs";
