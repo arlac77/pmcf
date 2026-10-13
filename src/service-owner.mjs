@@ -19,8 +19,4 @@ export class ServiceOwner extends base {
   get services() {
     return this._services;
   }
-
-  get ownServices() {
-    return this._services;
-  }
 }
