@@ -1,5 +1,4 @@
 import { normalizeCIDR, familyIP, FAMILY_IPV4 } from "ip-utilties";
-import { FileContentProvider } from "npm-pkgbuild";
 import { AggregatedMap } from "aggregated-map";
 import { FilteredMap } from "filtered-map";
 import {
@@ -20,7 +19,6 @@ import {
   networkInterfaces_attribute
 } from "./common-attributes.mjs";
 import { addType, assign } from "./type.mjs";
-import { loadHooks } from "./hooks.mjs";
 
 export class owner extends ServiceOwner {
   static priority = 2;
@@ -250,32 +248,5 @@ export class owner extends ServiceOwner {
     }
 
     return architectures;
-  }
-
-  async *preparePackages(dir) {
-    const packageData = {
-      sources: [
-        new FileContentProvider(dir + "/"),
-        new FileContentProvider(
-          { dir: this.directory, pattern: "location.json" },
-          { destination: "/etc/location/location.json" }
-        )
-      ],
-      outputs: this.outputs,
-      properties: {
-        name: `${this.typeName}-${this.name}`,
-        description: `${this.typeName} definitions for ${this.fullName}`,
-        access: "private",
-        dependencies: { jq: ">=1.6" },
-        provides: ["location"]
-      }
-    };
-
-    await loadHooks(
-      packageData,
-      new URL("location.install", import.meta.url).pathname
-    );
-
-    yield packageData;
   }
 }
