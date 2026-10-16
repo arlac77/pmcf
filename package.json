@@ -54,14 +54,14 @@
     "content-entry-transform": "^1.7.11",
     "filtered-map": "^1.0.0",
     "ip-utilties": "^3.13.1",
-    "npm-pkgbuild": "^22.2.21",
+    "npm-pkgbuild": "^22.2.22",
     "pacc": "^14.4.0",
     "package-directory": "^8.2.0",
     "yaml": "^2.9.1"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
-    "ava": "^8.0.1",
+    "ava": "^8.0.2",
     "c8": "^12.0.0",
     "documentation": "^14.0.3",
     "semantic-release": "^25.0.9"
