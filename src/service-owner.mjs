@@ -1,3 +1,4 @@
+import { AggregatedMap } from "aggregated-map";
 import { base } from "./base.mjs";
 import { addType } from "./type.mjs";
 import { services_attribute } from "./common-attributes.mjs";
@@ -18,5 +19,17 @@ export class ServiceOwner extends base {
 
   get services() {
     return this._services;
+  }
+
+  get descendantServices() {
+    return new Map();
+  }
+
+  get directServices() {
+    return this._services;
+  }
+
+  get descendantOrDirectServices() {
+    return new AggregatedMap([this.directServices, this.descendantServices]);
   }
 }

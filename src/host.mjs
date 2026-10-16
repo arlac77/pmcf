@@ -142,6 +142,14 @@ export class host extends ServiceOwner {
     ]);
   }
 
+  get descendantServices() {
+    return new AggregatedMap([
+      ...[...this.networkInterfaces.values()]
+        .filter(ni => ni._services.size > 0)
+        .map(ni => ni._services)
+    ]);
+  }
+
   get foreignDomainNames() {
     return [...this.aliases].filter(n => n.split(".").length > 1);
   }

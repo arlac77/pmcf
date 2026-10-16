@@ -90,6 +90,12 @@ export class owner extends ServiceOwner {
     );
   }
 
+  get descendantServices() {
+    return new AggregatedMap(
+      [this, ...this.hosts.values()].map(host => host.descendantOrDirectServices)
+    );
+  }
+
   get network() {
     return [...this.networks.values()][0] || super.network;
   }
