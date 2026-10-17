@@ -100,6 +100,11 @@ export class host extends ServiceOwner {
 
   _networkInterfaces = new Map();
 
+  get isHost()
+  {
+    return true;
+  }
+
   get isTemplate() {
     return this.isModel || super.isTemplate;
   }
@@ -123,10 +128,6 @@ export class host extends ServiceOwner {
   get hostName() {
     const parts = this.name.split(/\//);
     return parts[parts.length - 1].toLowerCase();
-  }
-
-  get isCluster() {
-    return false;
   }
 
   isMember(host) {

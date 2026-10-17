@@ -20,6 +20,11 @@ export class network extends owner {
   metric;
   bridges = new Set();
 
+  get isNetwork()
+  {
+    return true;
+  }
+  
   get gateway() {
     for (const b of [this, ...this.bridges]) {
       if (b._gateway) {

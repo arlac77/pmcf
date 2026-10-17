@@ -110,6 +110,18 @@ export class base extends core {
     }
   }
 
+  get isHost() {
+    return false;
+  }
+  
+  get isCluster() {
+    return false;
+  }
+  
+  get isNetwork() {
+    return false;
+  }
+
   get host() {
     return this.owner?.host;
   }
