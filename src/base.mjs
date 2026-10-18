@@ -28,6 +28,7 @@ import {
   aliases_attribute,
   SOURCES_THIS_EXTENDS
 } from "./common-attributes.mjs";
+import { DEFAULT_FILENAME_PATTERN } from "./constants.mjs";
 
 /**
  *
@@ -113,11 +114,11 @@ export class base extends core {
   get isHost() {
     return false;
   }
-  
+
   get isCluster() {
     return false;
   }
-  
+
   get isNetwork() {
     return false;
   }
@@ -274,7 +275,7 @@ export class base extends core {
         case "object":
           pd.sources.push(
             new FileContentProvider({
-              pattern: ["**/*"],
+              pattern: DEFAULT_FILENAME_PATTERN,
               permissions: content.permissions,
               ...options
             })
@@ -323,7 +324,7 @@ export class base extends core {
           yield transform(
             new FileContentProvider({
               dir,
-              pattern: "**/*",
+              pattern: DEFAULT_FILENAME_PATTERN,
               permissions: content.permissions
             }),
             this.templateTransformers

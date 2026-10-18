@@ -22,6 +22,7 @@ import { ServiceOwner } from "./service-owner.mjs";
 import { addHook } from "./hooks.mjs";
 import { domainFromDominName, domainName, writeLines } from "./utils.mjs";
 import { generateKnownHosts } from "./host-utils.mjs";
+import { DEFAULT_FILENAME_PATTERN } from "./constants.mjs";
 
 export class host extends ServiceOwner {
   static priority = 1.9;
@@ -100,8 +101,7 @@ export class host extends ServiceOwner {
 
   _networkInterfaces = new Map();
 
-  get isHost()
-  {
+  get isHost() {
     return true;
   }
 
@@ -283,7 +283,7 @@ export class host extends ServiceOwner {
   async *preparePackages(dir) {
     const packageData = await this.preparePackage({
       dir,
-      pattern: ["**/*", "**/.ssh/*"]
+      pattern: [...DEFAULT_FILENAME_PATTERN, "**/.ssh/*"]
     });
 
     for (const ni of this.networkInterfaces.values()) {
