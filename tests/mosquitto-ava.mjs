@@ -15,8 +15,6 @@ test("mosquitto basics", async t => {
   t.is(mosquittoInst.listener, 1883);
 
   t.is(mosquittoInst.attribute("persistence_location"), "/var/lib/mosquitto");
-
-  t.is(mosquittoInst.attribute("persistence_location"), "/var/lib/mosquitto");
   t.is(mosquittoInst.attribute("password_file"), "/etc/mosquitto/passwd");
   t.is(mosquittoInst.attribute("acl_file"), "/etc/mosquitto/acl");
 });
