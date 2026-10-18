@@ -55,6 +55,7 @@ export class mosquitto extends CoreService {
     return this.port;
   }
 
+  /*
   async *preparePackages(dir) {
     const packageData = await this.preparePackage(dir);
 
@@ -69,4 +70,5 @@ export class mosquitto extends CoreService {
 
     yield packageData;
   }
+  */
 }
