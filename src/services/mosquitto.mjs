@@ -1,10 +1,5 @@
-import { join } from "node:path";
 import { port_attribute, string_attribute_writable } from "pacc";
 import { CoreService, addType } from "pmcf";
-import {
-  writeLines,
-  setionLinesFromAttributeIterator,
-} from "../utils.mjs";
 import { SOURCES_THIS_EXTENDS } from "../common-attributes.mjs";
 
 const SCOPE_MOSQUITTO = "mosquitto";
@@ -54,21 +49,4 @@ export class mosquitto extends CoreService {
   get listener() {
     return this.port;
   }
-
-  /*
-  async *preparePackages(dir) {
-    const packageData = await this.preparePackage(dir);
-
-    await writeLines(
-      join(dir, "etc", "mosquitto"),
-      "mosquitto.conf",
-      setionLinesFromAttributeIterator(
-        this.attributeIterator(attribute => attribute.scope === SCOPE_MOSQUITTO),
-        " "
-      )
-    );
-
-    yield packageData;
-  }
-  */
 }
