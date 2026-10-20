@@ -305,7 +305,9 @@ export class base extends core {
               typeof at?.value === "function" ? at.value(name) : globals[name]
           });
 
-          return asArray(result).join("");
+          if (result !== undefined) {
+            return asArray(result).join("");
+          }
         }
       )
     ];
