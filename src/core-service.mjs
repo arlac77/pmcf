@@ -136,7 +136,7 @@ export class CoreService extends base {
   endpoints(filter) {
     const data = serviceTypeEndpoints(ServiceTypes[this.type], true);
     const result = [];
-    const domainNames = new Set();
+    const domainNamesByType = new Map();
 
     let type;
     if (typeof filter === "string") {
@@ -150,6 +150,8 @@ export class CoreService extends base {
       if (type && e.type.name !== type) {
         continue;
       }
+
+      const domainNames = domainNamesByType.getOrInsert(e.type.name, new Set());
 
       switch (e.family) {
         case FAMILY_UNIX:

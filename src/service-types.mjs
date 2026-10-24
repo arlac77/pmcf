@@ -199,7 +199,12 @@ export const ServiceTypes = {
   },
   lmtp: {
     endpoints: [
-      { family: FAMILY_UNIX_IPV4_IPV6, protocol: PROTOCOL_TCP, port: 24, tls: false }
+      {
+        family: FAMILY_UNIX_IPV4_IPV6,
+        protocol: PROTOCOL_TCP,
+        port: 24,
+        tls: false
+      }
     ]
   },
   ssh: {
