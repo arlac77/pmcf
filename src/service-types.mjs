@@ -64,7 +64,7 @@ export const ServiceTypes = {
   ntp: {
     endpoints: [
       {
-        family: FAMILY_IPV4_IPV6,
+        family: FAMILY_DNS_IPV4_IPV6,
         protocol: PROTOCOL_UDP,
         port: 123,
         tls: false
