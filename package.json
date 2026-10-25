@@ -51,11 +51,11 @@
     "lint:docs": "documentation lint ./src**/*.mjs"
   },
   "dependencies": {
-    "aggregated-map": "^1.1.1",
+    "aggregated-map": "^1.1.2",
     "content-entry-transform": "^1.7.12",
     "filtered-map": "^1.0.0",
     "ip-utilties": "^3.13.1",
-    "npm-pkgbuild": "^22.3.0",
+    "npm-pkgbuild": "^22.3.1",
     "pacc": "^14.4.0",
     "package-directory": "^8.2.0",
     "yaml": "^2.9.1"
