@@ -29,6 +29,7 @@ export function root1(root, filter) {
     domain: "mydomain.com",
     country: "DE",
     locales: ["C.UTF-8", "de_DE.UTF-8", "en_US.UTF-8"],
+    locale: "de_DE.UTF-8",
     timezone: "Europe/Berlin",
     administratorEmail: "admin@mydomain.com"
   };

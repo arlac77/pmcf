@@ -92,7 +92,9 @@ export class owner extends ServiceOwner {
 
   get descendantServices() {
     return new AggregatedMap(
-      [this, ...this.hosts.values()].map(host => host.descendantOrDirectServices)
+      [this, ...this.hosts.values()].map(
+        host => host.descendantOrDirectServices
+      )
     );
   }
 
@@ -172,6 +174,16 @@ export class owner extends ServiceOwner {
 
   get locales() {
     return this.unionFromDirections(["this", "owner"], "_locales");
+  }
+
+  get locale() {
+    for (const l of this.locales.difference(
+      new Set(["C.UTF-8", "en_US.UTF-8"])
+    )) {
+      return l;
+    }
+
+    return "C.UTF-8";
   }
 
   _timezone;
