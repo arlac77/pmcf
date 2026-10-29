@@ -62,6 +62,8 @@ test("host load", async t => {
 
   const content = host1.content;
   t.deepEqual(content.packaging, new Set(["alpm"]));
+
+  t.is(host1.locale, "de_DE.UTF-8");
 });
 
 test("host isMember / isCluster", t => {

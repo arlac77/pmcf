@@ -144,6 +144,12 @@ export const bridges_attribute = {
   backpointer: { ...networks_attribute, name: "bridges" }
 };
 
+export const locale_attribute = {
+  ...string_attribute,
+  name: "locale",
+  skipEmpty: true
+};
+
 export const family_attribute = { ...string_attribute, name: "family" };
 export const psk_attribute = { ...string_attribute_writable, name: "psk" };
 export const ssid_attribute = { ...string_attribute_writable, name: "ssid" };

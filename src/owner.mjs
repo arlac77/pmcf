@@ -4,6 +4,7 @@ import { FilteredMap } from "filtered-map";
 import {
   string_set_attribute_writable,
   string_attribute_writable,
+  string_attribute,
   email_attribute_writable,
   asArray
 } from "pacc";
@@ -16,7 +17,8 @@ import {
   hosts_attribute,
   clusters_attribute,
   subnets_attribute,
-  networkInterfaces_attribute
+  networkInterfaces_attribute,
+  locale_attribute
 } from "./common-attributes.mjs";
 import { addType, assign } from "./type.mjs";
 
@@ -48,8 +50,9 @@ export class owner extends ServiceOwner {
       ...string_set_attribute_writable,
       name: "locales",
       skipEmpty: true,
-      description: "unix locale"
+      description: "unix locales"
     },
+    locale: locale_attribute,
     administratorEmail: {
       ...email_attribute_writable,
       name: "administratorEmail"
@@ -174,16 +177,6 @@ export class owner extends ServiceOwner {
 
   get locales() {
     return this.unionFromDirections(["this", "owner"], "_locales");
-  }
-
-  get locale() {
-    for (const l of this.locales.difference(
-      new Set(["C.UTF-8", "en_US.UTF-8"])
-    )) {
-      return l;
-    }
-
-    return "C.UTF-8";
   }
 
   _timezone;

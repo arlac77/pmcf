@@ -42,6 +42,7 @@ test("owner read write", t => {
     name: "o1",
     directory: "/o1",
     enabled: true,
+    locale: "C.UTF-8",
     owner: {
       name: "",
       type: "root"
@@ -55,6 +56,7 @@ test("owner read write", t => {
         directory: "/o1/n1",
         kind: "ethernet",
         linkLocalAddressing: false,
+        locale: "C.UTF-8",
         mtu: 1500,
         secretName: "n1.password",
         owner: {

@@ -16,6 +16,7 @@ import {
   hosts_attribute,
   extends_attribute,
   weight_attribute_writable,
+  locale_attribute,
   SOURCES_THIS_EXTENDS
 } from "./common-attributes.mjs";
 import { ServiceOwner } from "./service-owner.mjs";
@@ -88,6 +89,7 @@ export class host extends ServiceOwner {
       ...architecture_attribute_writable,
       sources: SOURCES_THIS_EXTENDS
     },
+    locale: locale_attribute,
     extends: {
       ...extends_attribute,
       type: host

@@ -206,6 +206,7 @@ test("extract toJSON()", t => {
     owner: { name: "", type: "root" },
     administratorEmail: "admin@undefined",
     directory: "/somewhere/l1",
+    locale: "C.UTF-8",
     tags: ["tag1"]
   });
 });
