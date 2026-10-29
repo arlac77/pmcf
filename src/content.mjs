@@ -1,4 +1,5 @@
-import { join } from "node:path";
+import { FileSystemEntry } from "content-entry-filesystem";
+import { allOutputs, extractFunctions } from "npm-pkgbuild";
 import {
   name_attribute_writable,
   string_attribute_writable,
@@ -7,11 +8,10 @@ import {
   description_attribute_writable,
   extendingAttributeIterator
 } from "pacc";
-import { allOutputs } from "npm-pkgbuild";
 import { core } from "./core.mjs";
 import { addType } from "./type.mjs";
 import { union } from "./utils.mjs";
-import { loadHooks } from "./hooks.mjs";
+import { addHook } from "./hooks.mjs";
 import { SOURCES_THIS_EXTENDS } from "./common-attributes.mjs";
 
 export class permission extends core {
@@ -284,15 +284,28 @@ export class content extends core {
    * @param {object} packageData
    */
   async loadHooks(packageData) {
-    const hooks = new Set();
+    const entries = [];
 
     for (const content of this.walkDirections(["this", "extends"])) {
       for (const hook of content._hooks) {
-        hooks.add(join(content.directory, hook));
+        entries.push(
+          new FileSystemEntry(hook, {
+            baseDir: content.directory
+          })
+        );
       }
     }
 
-    await Promise.all([...hooks].map(hook => loadHooks(packageData, hook)));
+    const transformer = this.templateTransformers[0];
+
+    await Promise.all(
+      entries.map(async entry => {
+        entry = await transformer.transform(entry);
+        for await (const func of extractFunctions(await entry.stream)) {
+          addHook(packageData, func.name, func.body);
+        }
+      })
+    );
   }
 
   set fragments(value) {

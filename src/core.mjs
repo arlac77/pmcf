@@ -1,5 +1,7 @@
 import { AggregatedMap } from "aggregated-map";
+import { createExpressionTransformer } from "content-entry-transform";
 import {
+  asArray,
   toExternal,
   parse,
   extendingAttributeIterator,
@@ -299,6 +301,26 @@ export class core {
       valueFor: (name, at) =>
         typeof at?.value === "function" ? at.value(name) : globals[name]
     });
+  }
+
+  get templateTransformers() {
+    return [
+      createExpressionTransformer(
+        e => e.isBlob,
+        expression => {
+          const result = parse(expression, {
+            root: this.root,
+            current: this,
+            valueFor: (name, at) =>
+              typeof at?.value === "function" ? at.value(name) : globals[name]
+          });
+
+          if (result !== undefined) {
+            return asArray(result).join("");
+          }
+        }
+      )
+    ];
   }
 
   /**

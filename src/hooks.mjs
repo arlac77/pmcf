@@ -1,11 +1,3 @@
-import { createReadStream } from "node:fs";
-import { extractFunctions } from "npm-pkgbuild";
-
-export async function loadHooks(packageData, file) {
-  for await (const func of extractFunctions(createReadStream(file, "utf8"))) {
-    addHook(packageData, func.name, func.body);
-  }
-}
 
 export function addHook(packageData, name, content) {
   packageData.properties.hooks ??= {};

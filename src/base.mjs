@@ -1,14 +1,8 @@
 import { join } from "node:path";
 import { stat } from "node:fs/promises";
-import {
-  createExpressionTransformer,
-  transform
-} from "content-entry-transform";
+import { transform } from "content-entry-transform";
 import { FileContentProvider } from "npm-pkgbuild";
 import {
-  asArray,
-  parse,
-  globals,
   extract,
   extendingAttributeIterator,
   name_attribute_writable,
@@ -301,26 +295,6 @@ export class base extends core {
     if (packageData) {
       yield packageData;
     }
-  }
-
-  get templateTransformers() {
-    return [
-      createExpressionTransformer(
-        e => e.isBlob,
-        expression => {
-          const result = parse(expression, {
-            root: this.root,
-            current: this,
-            valueFor: (name, at) =>
-              typeof at?.value === "function" ? at.value(name) : globals[name]
-          });
-
-          if (result !== undefined) {
-            return asArray(result).join("");
-          }
-        }
-      )
-    ];
   }
 
   /**
