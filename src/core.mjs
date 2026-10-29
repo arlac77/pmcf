@@ -170,18 +170,14 @@ export class core {
    * @param {string[]} directions
    * @return {Iterable<core>}
    */
-  *walkDirections(directions = ["this", "extends", "owner"]) {
-    if (directions.indexOf("this") >= 0) {
-      yield this;
-      directions = directions.filter(d => d !== "this");
-    }
-
-    yield* this._walkDirections(directions, new Set());
-  }
-
-  *_walkDirections(directions, seen) {
+  *walkDirections(directions = ["this", "extends", "owner"], seen = new Set()) {
     if (!seen.has(this)) {
       seen.add(this);
+
+      if (directions.indexOf("this") >= 0) {
+        yield this;
+        directions = directions.filter(d => d !== "this");
+      }
 
       for (const direction of directions) {
         const value = this[direction];
@@ -189,12 +185,14 @@ export class core {
         if (value) {
           if (value[Symbol.iterator]) {
             for (const node of value) {
-              yield node;
-              yield* node._walkDirections(directions, seen);
+              if (!seen.has(node)) {
+                yield node;
+                yield* node.walkDirections(directions, seen);
+              }
             }
           } else {
             yield value;
-            yield* value._walkDirections(directions, seen);
+            yield* value.walkDirections(directions, seen);
           }
         }
       }
