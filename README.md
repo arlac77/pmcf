@@ -199,6 +199,7 @@ Walk the object graph in some directions and deliver seen nodes.
 ### Parameters
 
 *   `directions` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**  (optional, default `["this","extends","owner"]`)
+*   `seen`   (optional, default `new Set()`)
 
 Returns **Iterable\<core>**&#x20;
 
