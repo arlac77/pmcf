@@ -324,48 +324,75 @@ const acl_attribute = {
 class bind_view extends bind_object {
   static priority = 1;
   static attributes = {
-    notify: { ...boolean_attribute_writable_false, name: "notify" },
-    hasCatalog: { ...boolean_attribute_writable_false, name: "hasCatalog" },
+    notify: {
+      ...boolean_attribute_writable_false,
+      name: "notify",
+      sources: SOURCES_THIS_EXTENDS
+    },
+    hasCatalog: {
+      ...boolean_attribute_writable_false,
+      name: "hasCatalog",
+      sources: SOURCES_THIS_EXTENDS
+    },
     hasForeignDomainRecords: {
       ...boolean_attribute_writable_false,
-      name: "hasForeignDomainRecords"
+      name: "hasForeignDomainRecords",
+      sources: SOURCES_THIS_EXTENDS
     },
     hasBaseRecords: {
       ...boolean_attribute_writable_true,
-      name: "hasBaseRecords"
+      name: "hasBaseRecords",
+      sources: SOURCES_THIS_EXTENDS
     },
     hasReverseRecords: {
       ...boolean_attribute_writable_false,
-      name: "hasReverseRecords"
+      name: "hasReverseRecords",
+      sources: SOURCES_THIS_EXTENDS
     },
     hasSVRRecords: {
       ...boolean_attribute_writable_false,
-      name: "hasSVRRecords"
+      name: "hasSVRRecords",
+      sources: SOURCES_THIS_EXTENDS
     },
     hasLocationRecord: {
       ...boolean_attribute_writable_false,
-      name: "hasLocationRecord"
+      name: "hasLocationRecord",
+      sources: SOURCES_THIS_EXTENDS
     },
     recordTTL: {
       ...duration_attribute_writable,
       name: "recordTTL",
+      sources: SOURCES_THIS_EXTENDS,
       default: "1W"
     },
     serial: {
       ...integer_attribute_writable,
       name: "serial",
+      sources: SOURCES_THIS_EXTENDS,
       default: Math.ceil(Date.now() / (1000 * 60)) * 60
     },
     refresh: {
       ...duration_attribute_writable,
       name: "refresh",
+      sources: SOURCES_THIS_EXTENDS,
       default: 36000
     },
-    retry: { ...duration_attribute_writable, name: "retry", default: 72000 },
-    expire: { ...duration_attribute_writable, name: "expire", default: 600000 },
+    retry: {
+      ...duration_attribute_writable,
+      name: "retry",
+      sources: SOURCES_THIS_EXTENDS,
+      default: 72000
+    },
+    expire: {
+      ...duration_attribute_writable,
+      name: "expire",
+      sources: SOURCES_THIS_EXTENDS,
+      default: 600000
+    },
     minimum: {
       ...duration_attribute_writable,
       name: "minimum",
+      sources: SOURCES_THIS_EXTENDS,
       default: 60000
     },
     sharedWith: {
