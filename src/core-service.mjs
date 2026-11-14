@@ -113,6 +113,10 @@ export class CoreService extends base {
     return this.host?.domainName;
   }
 
+  get hostName() {
+    return this.host?.hostName;
+  }
+
   networkAddresses(filter) {
     return this.owner.networkAddresses(filter);
   }
