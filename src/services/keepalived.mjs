@@ -117,6 +117,7 @@ export class keepalived extends CoreService {
 
     if (smtp_server) {
       extra.push(`  smtp_server ${smtp_server.address}`);
+      extra.push("  smtp_connect_timeout 30");
     }
 
     const cfg = [
@@ -173,9 +174,6 @@ export class keepalived extends CoreService {
       cfg.push(
         `    auth_pass file:\${_ENV CREDENTIALS_DIRECTORY}/keepalived.${cluster.name}.password`
       );
-      cfg.push("    # auth_pass pass1234");
-      cfg.push("    # auth_pass ${_ENV " + cred.localName + "}");
-      cfg.push("    # auth_pass ${" + cred.localName + "}");
       cfg.push("  }");
 
       for (const state of states) {
@@ -206,6 +204,7 @@ export class keepalived extends CoreService {
           cfg.push(`  real_server ${member.address} ${memberService.port} {`);
           cfg.push(`    weight ${memberService.weight}`);
 
+          //console.log(endpoint.fullName,endpoint.type)
           switch (endpoint.type) {
             case "dns":
               cfg.push(`    DNS_CHECK {`);
